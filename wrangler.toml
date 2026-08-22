@@ -1,5 +1,46 @@
-# Cloudflare Pages configuration.
-# The static site is built by Astro (`npm run build` → dist/).
+# Cloudflare Worker with static assets.
+#
+# Astro builds the site to dist/ (`npm run build`) and the whole thing is served
+# as static assets — there is no Worker script, because nothing here needs to run
+# per-request. Deploy with `npm run deploy`.
+#
+# This is a Worker rather than a Pages project deliberately: Workers Static
+# Assets is the path Cloudflare develops against now, and it leaves the door open
+# for adding real request-time code later (a `main` entry point, bindings, a
+# redirect that needs logic) without moving the site to a different product first.
 name = "mozz-website"
 compatibility_date = "2026-01-01"
-pages_build_output_dir = "dist"
+
+# Which account to deploy into. Wrangler's OAuth token can reach five accounts,
+# so without this it refuses to guess in a non-interactive run. An account ID is
+# not a credential — it is the same value that sits in every dashboard URL — so
+# it is safe in a public repo.
+account_id = "471672cb7947a45f5e43023a1f02d2f5"
+
+[assets]
+directory = "./dist"
+
+# Astro emits every route as a directory holding an index.html
+# (dist/v/neon/index.html) and writes its canonical links and sitemap with the
+# trailing slash. "auto-trailing-slash" matches that: /v/neon 307s to /v/neon/,
+# so the served URL and the declared canonical are always the same string.
+html_handling = "auto-trailing-slash"
+
+# Serve the built 404 page for anything unmatched, rather than a bare runtime 404.
+not_found_handling = "404-page"
+
+# public/_headers is copied into dist/ by Astro and is honoured here exactly as it
+# was on Pages — it is what serves the content-hashed screenshot rungs immutable.
+
+# Custom domains. Attaching them this way is the main practical reason this is a
+# Worker: Workers custom domains create their own proxied DNS records as part of
+# the attach, so `wrangler deploy` sets up mozzmusic.com end to end. The Pages
+# equivalent only registers the hostname and leaves the CNAME to be added by
+# hand in the dashboard.
+[[routes]]
+pattern = "mozzmusic.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.mozzmusic.com"
+custom_domain = true

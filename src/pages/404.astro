@@ -1,0 +1,147 @@
+---
+/**
+ * Not found.
+ *
+ * Same neutral ground as the picker: this is a review deployment of seven very
+ * loud landing pages, and the 404 has no business competing with them. Its only
+ * real job is to get someone who mistyped a variant slug back to the list of
+ * variants, so the list is the page.
+ */
+import Layout from '../layouts/Layout.astro';
+import Mark from '../components/Mark.astro';
+import { VARIANTS, NAME } from '../data/site';
+---
+
+<Layout
+  title={`Not found — ${NAME}`}
+  description="That page does not exist."
+  themeColor="#0e0e11"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="nf">
+    <a class="lockup" href="/">
+      <Mark size={40} decorative />
+      <span>{NAME}</span>
+    </a>
+
+    <h1>There is nothing at this address.</h1>
+    <p>
+      If you were after one of the design directions, they all live under
+      <code>/v/</code> &mdash; here they are.
+    </p>
+
+    <ul class="vlist">
+      {VARIANTS.map((v) => (
+        <li>
+          <a href={`/v/${v.slug}`}>
+            <span class="dot" style={`background:${v.swatch[0]}`} aria-hidden="true"></span>
+            <span class="vname">{v.name}</span>
+            <span class="vvibe">{v.vibe}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: clamp(3rem, 9vh, 6rem) 1.5rem 4rem;
+    font-family: 'Familjen Grotesk', system-ui, sans-serif;
+    color: #edecef;
+    background: #0e0e11;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    margin: clamp(2.5rem, 7vh, 4rem) 0 0.75rem;
+    font-size: clamp(1.9rem, 5.5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    margin: 0 0 2.5rem;
+    max-width: 34rem;
+    /* 6.9:1 on #0e0e11 */
+    color: #a7a5ae;
+    line-height: 1.6;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    color: #edecef;
+  }
+
+  .vlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #26262c;
+  }
+
+  .vlist a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 8rem) minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 0.95rem 0.25rem;
+    border-bottom: 1px solid #26262c;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .vlist a:hover,
+  .vlist a:focus-visible {
+    background: #16161a;
+  }
+
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    /* baseline-aligned grid puts a bare span too high without this nudge */
+    translate: 0 -0.1rem;
+  }
+
+  .vname {
+    font-weight: 600;
+  }
+
+  .vvibe {
+    /* 5.1:1 on #0e0e11 */
+    color: #94929c;
+    font-size: 0.94rem;
+  }
+
+  @media (max-width: 32rem) {
+    .vlist a {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    .vvibe {
+      grid-column: 2;
+    }
+  }
+</style>
