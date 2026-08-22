@@ -1,0 +1,5 @@
+# These seven design variants are an internal review deployment, not the
+# launched site. Nothing here should be indexed until a direction is picked and
+# the placeholder screenshots have been replaced.
+User-agent: *
+Disallow: /

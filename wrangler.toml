@@ -1,0 +1,5 @@
+# Cloudflare Pages configuration.
+# The static site is built by Astro (`npm run build` → dist/).
+name = "mozz-website"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "dist"

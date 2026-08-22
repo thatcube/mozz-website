@@ -1,0 +1,65 @@
+---
+/**
+ * One real app screenshot, delivered at a sensible size for the device asking.
+ *
+ * Emits AVIF first and WebP second, so browsers that speak AVIF get the encode
+ * that measured both smaller and sharper, and everyone else falls back to WebP.
+ * The rungs come from src/data/screenshots.json, which tools/build-images.mjs
+ * writes from the pristine masters — so a srcset can never drift out of sync
+ * with the files that actually exist on disk.
+ *
+ * `sizes` does the real work. Without it the browser assumes the image is the
+ * full width of the viewport and over-fetches badly, which is the entire
+ * failure mode this component exists to prevent. Every call site passes a
+ * `sizes` that matches its CSS box.
+ */
+import { shot, shotAlt, shotFallback, shotSrcset } from '../data/shots';
+
+export interface Props {
+  /** File stem, e.g. "mozz-nowplaying" — no directory, no extension. */
+  name: string;
+  /** Defaults to the shared description in shots.ts; override only if the context needs it. */
+  alt?: string;
+  /** Must mirror the CSS box, e.g. "(max-width: 720px) 60vw, 300px". */
+  sizes: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  /** Decorative duplicates (a repeated strip) are hidden from assistive tech. */
+  ariaHidden?: boolean;
+}
+
+const {
+  name,
+  alt,
+  sizes,
+  class: className,
+  loading = 'lazy',
+  fetchpriority,
+  ariaHidden = false,
+} = Astro.props;
+
+const entry = shot(name);
+---
+
+<picture>
+  <source type="image/avif" srcset={shotSrcset(name, 'avif')} sizes={sizes} />
+  <source type="image/webp" srcset={shotSrcset(name, 'webp')} sizes={sizes} />
+  <img
+    src={shotFallback(name)}
+    alt={ariaHidden ? '' : (alt ?? shotAlt(name))}
+    width={entry.width}
+    height={entry.height}
+    class={className}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+    aria-hidden={ariaHidden ? 'true' : undefined}
+  />
+</picture>
+
+<style>
+  picture {
+    display: contents;
+  }
+</style>

@@ -1,0 +1,238 @@
+{
+  "mozz-album-dark": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-album-dark-200.d13a573c.avif",
+        "webp": "mozz-album-dark-200.5a3546d8.webp"
+      },
+      {
+        "w": 280,
+        "avif": "mozz-album-dark-280.07edef54.avif",
+        "webp": "mozz-album-dark-280.fb25f787.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-album-dark-320.85079397.avif",
+        "webp": "mozz-album-dark-320.132deef6.webp"
+      },
+      {
+        "w": 440,
+        "avif": "mozz-album-dark-440.4198f275.avif",
+        "webp": "mozz-album-dark-440.80f37557.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-album-dark-660.acb4ac66.avif",
+        "webp": "mozz-album-dark-660.65e0814f.webp"
+      },
+      {
+        "w": 880,
+        "avif": "mozz-album-dark-880.1bab67b7.avif",
+        "webp": "mozz-album-dark-880.5505defb.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-album-dark-1320.48e9ea11.avif",
+        "webp": "mozz-album-dark-1320.063b71bc.webp"
+      }
+    ]
+  },
+  "mozz-album-red": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-album-red-200.af448bd3.avif",
+        "webp": "mozz-album-red-200.6201b17d.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-album-red-320.00ce8a8b.avif",
+        "webp": "mozz-album-red-320.2b6b2350.webp"
+      },
+      {
+        "w": 480,
+        "avif": "mozz-album-red-480.88f471f4.avif",
+        "webp": "mozz-album-red-480.f144a9b3.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-album-red-660.7dadd96c.avif",
+        "webp": "mozz-album-red-660.19eb343d.webp"
+      },
+      {
+        "w": 900,
+        "avif": "mozz-album-red-900.8890a924.avif",
+        "webp": "mozz-album-red-900.e1238e39.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-album-red-1320.a22f8e0b.avif",
+        "webp": "mozz-album-red-1320.4c3ad44d.webp"
+      }
+    ]
+  },
+  "mozz-album-warm": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-album-warm-200.964743a6.avif",
+        "webp": "mozz-album-warm-200.1d97a233.webp"
+      },
+      {
+        "w": 280,
+        "avif": "mozz-album-warm-280.fe2b80f0.avif",
+        "webp": "mozz-album-warm-280.4db3f131.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-album-warm-320.510a88b3.avif",
+        "webp": "mozz-album-warm-320.c1fe3514.webp"
+      },
+      {
+        "w": 440,
+        "avif": "mozz-album-warm-440.5bff4c07.avif",
+        "webp": "mozz-album-warm-440.fe50f124.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-album-warm-660.0439c360.avif",
+        "webp": "mozz-album-warm-660.98c69ca3.webp"
+      },
+      {
+        "w": 880,
+        "avif": "mozz-album-warm-880.677040a2.avif",
+        "webp": "mozz-album-warm-880.4b26b2f5.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-album-warm-1320.c10990e8.avif",
+        "webp": "mozz-album-warm-1320.bdd57ade.webp"
+      }
+    ]
+  },
+  "mozz-artist": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-artist-200.60d48b8a.avif",
+        "webp": "mozz-artist-200.7952d367.webp"
+      },
+      {
+        "w": 280,
+        "avif": "mozz-artist-280.054109c8.avif",
+        "webp": "mozz-artist-280.019d1bb8.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-artist-320.65a006eb.avif",
+        "webp": "mozz-artist-320.cbd8664a.webp"
+      },
+      {
+        "w": 440,
+        "avif": "mozz-artist-440.b0fd6109.avif",
+        "webp": "mozz-artist-440.7f6e20f9.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-artist-660.3a064c46.avif",
+        "webp": "mozz-artist-660.f552f2a9.webp"
+      },
+      {
+        "w": 880,
+        "avif": "mozz-artist-880.245aa929.avif",
+        "webp": "mozz-artist-880.43f203ad.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-artist-1320.3400d12c.avif",
+        "webp": "mozz-artist-1320.3109d0ce.webp"
+      }
+    ]
+  },
+  "mozz-nowplaying": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-nowplaying-200.38122612.avif",
+        "webp": "mozz-nowplaying-200.772509e1.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-nowplaying-320.dc787869.avif",
+        "webp": "mozz-nowplaying-320.89b59aac.webp"
+      },
+      {
+        "w": 480,
+        "avif": "mozz-nowplaying-480.043482b3.avif",
+        "webp": "mozz-nowplaying-480.35edff78.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-nowplaying-660.05b2960e.avif",
+        "webp": "mozz-nowplaying-660.3eb60af8.webp"
+      },
+      {
+        "w": 900,
+        "avif": "mozz-nowplaying-900.1545423c.avif",
+        "webp": "mozz-nowplaying-900.7f7b1545.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-nowplaying-1320.0089c194.avif",
+        "webp": "mozz-nowplaying-1320.e8b2f1c8.webp"
+      }
+    ]
+  },
+  "mozz-playlist": {
+    "width": 1320,
+    "height": 2868,
+    "rungs": [
+      {
+        "w": 200,
+        "avif": "mozz-playlist-200.9c8765d7.avif",
+        "webp": "mozz-playlist-200.f23ac1e2.webp"
+      },
+      {
+        "w": 280,
+        "avif": "mozz-playlist-280.e502ee3f.avif",
+        "webp": "mozz-playlist-280.9a488460.webp"
+      },
+      {
+        "w": 320,
+        "avif": "mozz-playlist-320.b6f3f3de.avif",
+        "webp": "mozz-playlist-320.d0a40e26.webp"
+      },
+      {
+        "w": 440,
+        "avif": "mozz-playlist-440.cb646a87.avif",
+        "webp": "mozz-playlist-440.01d0d845.webp"
+      },
+      {
+        "w": 660,
+        "avif": "mozz-playlist-660.cb154dc3.avif",
+        "webp": "mozz-playlist-660.ee2dafc0.webp"
+      },
+      {
+        "w": 880,
+        "avif": "mozz-playlist-880.103ccb29.avif",
+        "webp": "mozz-playlist-880.d74455b2.webp"
+      },
+      {
+        "w": 1320,
+        "avif": "mozz-playlist-1320.003ce02f.avif",
+        "webp": "mozz-playlist-1320.a22f4f16.webp"
+      }
+    ]
+  }
+}

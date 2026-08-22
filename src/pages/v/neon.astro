@@ -1,0 +1,1411 @@
+---
+/**
+ * VARIANT — NEON
+ * Front of house at 1am: a deep plum room bled with ember, every glow given a
+ * physical source (par-can wash, hazer beam, LED caps, a live meter). The type
+ * stays quiet so the light can be loud. See the design contract in the HTML
+ * comment at the top of <main>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Everything you own, lit up at 1am';
+
+/**
+ * Stage-rig illustration geometry (hand-authored SVG, no raster assets).
+ * Par-cans hung on the truss, evenly spaced across it, colour cycling through
+ * the room's three lights; each drives a translucent beam cone to the floor.
+ */
+const PARS = [
+  { x: 165, hue: 'red' },
+  { x: 340, hue: 'violet' },
+  { x: 515, hue: 'magenta' },
+  { x: 690, hue: 'red' },
+  { x: 865, hue: 'violet' },
+  { x: 1040, hue: 'magenta' },
+] as const;
+
+const HUES: Record<string, { lens: string; beam: string }> = {
+  red: { lens: '#ff5a78', beam: 'url(#beamRed)' },
+  violet: { lens: '#b57cff', beam: 'url(#beamViolet)' },
+  magenta: { lens: '#ff5aa0', beam: 'url(#beamMagenta)' },
+};
+
+/** Five-box hanging line-arrays, curving out and down from the truss. */
+const ARRAY = [0, 1, 2, 3, 4];
+
+/**
+ * Spectrum-analyser bar heights — a deterministic reading with a bass hump on
+ * the left tapering to sparkle on the right, so the row looks like it is
+ * metering audio rather than decorating the page. The static heights are also
+ * the frame the analyser freezes on under prefers-reduced-motion.
+ */
+const BAR_COUNT = 34;
+const BARS = Array.from({ length: BAR_COUNT }, (_, i) => {
+  const t = i / (BAR_COUNT - 1);
+  const body = Math.pow(1 - t, 0.9) * 0.6 + 0.18;
+  const seed = Math.sin((i + 1) * 12.9898) * 43758.5453;
+  const noise = seed - Math.floor(seed);
+  const h = Math.min(0.98, Math.max(0.16, body + (noise - 0.5) * 0.5));
+  return Math.round(h * 100);
+});
+
+/** Fader-cap positions for the three input channels — a set desk, not a grid. */
+const CHANNEL_POS = ['64%', '41%', '78%'];
+---
+
+<Layout
+  title={`${NAME} — everything you own, lit up`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files. No account, no tracking, no subscription."
+  themeColor="#150a1e"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Figtree:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="ng">
+    <!--
+      THESIS: Front of house at 1am. The venue is empty, the desk is still lit,
+      the whole library is up on the system. A landing page as a stage, not a
+      product tour — light does the talking and the type stays quiet.
+      OWN-WORLD: A saturated plum room bled with ember, where every glow has a
+      real source: a par-can pointed at the phone, a hazer beam raking the hero,
+      LED caps riding the channel faders, a live spectrum analyser metering the
+      room. Brand red is the signal; violet is the light hanging in the air.
+      STORY: Here is the app, lit on stage. These are your inputs, this is what
+      it does, this is what it reads. It is yours, and nothing here is rented.
+      FIRST VIEWPORT: A split — Now Playing glows on a phone lit by the par-can,
+      the plain enormous headline and two actions inset to its left, wordmark up
+      in the corner. Drop-in hero art layers over the room and falls back to it.
+      FORM: Third in the set — the pinned reference, made specific by real light.
+    -->
+
+    <VariantBar slug="neon" tone="neutral" />
+
+    <header class="stage">
+      <!-- Drop AI hero art at /public/hero/neon.jpg, then set --hero-plate (in
+           the .stage style below) to url('/hero/neon.jpg'); it layers over the
+           CSS room. Until then --hero-plate is none, so nothing is fetched and
+           the composed light stands on its own — no broken image, no grey box. -->
+      <a class="brand" href={GITHUB_URL} aria-label={`${NAME} on GitHub`}>
+        <Mark size={30} decorative />
+        <span class="wordmark">{NAME}</span>
+      </a>
+
+      <div class="stage-inner">
+        <div class="say">
+          <h1>{HEADLINE}</h1>
+          <p class="lede">
+            Mozz plays straight off your own Plex, Jellyfin or Navidrome server —
+            no account to make, nothing watching what you play, nothing to
+            subscribe to.
+          </p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+
+        <div class="device">
+          <div class="backlight" aria-hidden="true"></div>
+          <Phone
+            name="mozz-nowplaying"
+            width={300}
+            priority
+            class="hero-phone"
+            sizes="(max-width: 60rem) min(66vw, 288px), 300px"
+          />
+        </div>
+      </div>
+    </header>
+
+    <section class="gels" aria-labelledby="ng-gels">
+      <div class="wrap">
+        <h2 id="ng-gels">It takes the colour of the record</h2>
+        <p class="lead">
+          Start a different album and the whole interface re-lights to match its
+          artwork — the same screen, gelled to whatever you're playing.
+        </p>
+      </div>
+
+      <div class="gel-row">
+        <div class="gel gel--red">
+          <span class="pool" aria-hidden="true"></span>
+          <Phone name="mozz-album-red" width={210} class="gel-phone"
+            sizes="(max-width: 48rem) 42vw, 178px" />
+        </div>
+        <div class="gel gel--amber">
+          <span class="pool" aria-hidden="true"></span>
+          <Phone name="mozz-album-warm" width={210} class="gel-phone"
+            sizes="(max-width: 48rem) 42vw, 178px" />
+        </div>
+        <div class="gel gel--sepia">
+          <span class="pool" aria-hidden="true"></span>
+          <Phone name="mozz-artist" width={210} class="gel-phone"
+            sizes="(max-width: 48rem) 42vw, 178px" />
+        </div>
+        <div class="gel gel--silver">
+          <span class="pool" aria-hidden="true"></span>
+          <Phone name="mozz-playlist" width={210} class="gel-phone"
+            sizes="(max-width: 48rem) 42vw, 178px" />
+        </div>
+      </div>
+    </section>
+
+    <section class="inputs" aria-labelledby="ng-inputs">
+      <div class="wrap">
+        <h2 id="ng-inputs">Three inputs, one library</h2>
+        <p class="lead">
+          Patch in whatever you already run. Add more than one and Mozz browses
+          them like they were always the same collection.
+        </p>
+        <div class="strips">
+          {SERVERS.map((s, i) => (
+            <div class="strip">
+              <span class="socket" aria-hidden="true">
+                <ServerLogo name={s.name} size={34} class="jack" />
+              </span>
+              <h3 class="chan">{s.name}</h3>
+              <div class="fader" style={`--pos:${CHANNEL_POS[i]}`} aria-hidden="true">
+                <span class="cap"></span>
+              </div>
+              <p class="chan-note">{s.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="path" aria-labelledby="ng-path">
+      <div class="wrap">
+        <h2 id="ng-path">Straight from your rack to your ears</h2>
+        <p class="lead">
+          Your server sends the file, your phone plays it, your headphones hear
+          it. That is the whole signal path — no Mozz cloud sits in the middle
+          taking a copy or a cut.
+        </p>
+
+        <figure class="wire">
+          <svg viewBox="0 0 1200 470" role="img" aria-labelledby="wire-t" preserveAspectRatio="xMidYMid meet">
+            <title id="wire-t">A signal path: your server, to your phone, to your headphones — and nothing else on the wire.</title>
+            <defs>
+              <linearGradient id="wMetal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#35284a"/>
+                <stop offset="1" stop-color="#160d24"/>
+              </linearGradient>
+              <linearGradient id="wUnit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#241634"/>
+                <stop offset="1" stop-color="#140a20"/>
+              </linearGradient>
+              <linearGradient id="wCable" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#7a3bd6"/>
+                <stop offset="1" stop-color="#ff2450"/>
+              </linearGradient>
+              <linearGradient id="wBand" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#544268"/>
+                <stop offset="1" stop-color="#241634"/>
+              </linearGradient>
+              <linearGradient id="wCup" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#2c1e42"/>
+                <stop offset="1" stop-color="#100a1c"/>
+              </linearGradient>
+              <linearGradient id="wArt" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ff5a78"/>
+                <stop offset="0.55" stop-color="#d6337a"/>
+                <stop offset="1" stop-color="#7a3bd6"/>
+              </linearGradient>
+              <radialGradient id="wPoolRed" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#ff4a6c" stop-opacity="0.55"/>
+                <stop offset="1" stop-color="#ff4a6c" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="wPoolVio" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#7a3bd6" stop-opacity="0.5"/>
+                <stop offset="1" stop-color="#7a3bd6" stop-opacity="0"/>
+              </radialGradient>
+              <filter id="wGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="4" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="wShadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000" flood-opacity="0.55"/>
+              </filter>
+            </defs>
+
+            <!-- ambient par pools under each station -->
+            <ellipse cx="210" cy="235" rx="150" ry="150" fill="url(#wPoolVio)"/>
+            <ellipse cx="606" cy="235" rx="120" ry="130" fill="url(#wPoolRed)"/>
+            <ellipse cx="990" cy="245" rx="150" ry="140" fill="url(#wPoolVio)"/>
+
+            <!-- ghost 'no cloud' node: the thing that is NOT on the wire -->
+            <g class="ghost" transform="translate(606 70)">
+              <path d="M-34 6 a16 16 0 0 1 4 -31 a22 22 0 0 1 42 -3 a15 15 0 0 1 20 20 l0 14 l-66 0 Z"
+                    fill="none" stroke="#8a6fb8" stroke-opacity="0.4" stroke-width="2" stroke-dasharray="5 6"/>
+              <line x1="-30" y1="14" x2="30" y2="-24" stroke="#ff2450" stroke-opacity="0.6" stroke-width="2.5"/>
+              <text x="0" y="34" class="ghost-t">no cloud in the middle</text>
+            </g>
+
+            <!-- ============ server rack ============ -->
+            <ellipse cx="210" cy="392" rx="122" ry="18" fill="#000" opacity="0.5"/>
+            <g filter="url(#wShadow)">
+              <rect x="120" y="80" width="180" height="292" rx="12" fill="url(#wMetal)" stroke="#4a3a63" stroke-width="1.5"/>
+            </g>
+            <rect x="124" y="84" width="172" height="3" fill="#fff" opacity="0.08"/>
+            <rect x="120" y="80" width="16" height="292" fill="#1b1230"/>
+            <rect x="284" y="80" width="16" height="292" fill="#1b1230"/>
+            {[112, 150, 300, 340].map((cy) => (
+              <Fragment>
+                <circle cx="128" cy={cy} r="2.4" fill="#0a0612"/>
+                <circle cx="292" cy={cy} r="2.4" fill="#0a0612"/>
+              </Fragment>
+            ))}
+            <!-- unit 1: the server, lit screen + power LED -->
+            <rect x="144" y="96" width="136" height="54" rx="6" fill="url(#wUnit)" stroke="#3a2a52"/>
+            <rect x="156" y="108" width="70" height="30" rx="3" fill="#160b28"/>
+            <polyline points="162,128 170,118 178,126 186,112 194,124 202,116 210,126 218,120"
+                      fill="none" stroke="#a45cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="262" cy="123" r="5" fill="#ff3b5a" filter="url(#wGlow)"/>
+            <!-- unit 2: drive bays -->
+            <rect x="144" y="158" width="136" height="54" rx="6" fill="url(#wUnit)" stroke="#3a2a52"/>
+            {[0,1,2,3,4,5].map((i) => (
+              <Fragment>
+                <rect x={158 + i*20} y="170" width="14" height="30" rx="2" fill="#120826" stroke="#2c1c42"/>
+                <circle cx={165 + i*20} cy="192" r="2.2" fill={i % 2 ? '#7a3bd6' : '#ff3b5a'} filter="url(#wGlow)"/>
+              </Fragment>
+            ))}
+            <!-- unit 3: interface, knob + level LEDs -->
+            <rect x="144" y="220" width="136" height="54" rx="6" fill="url(#wUnit)" stroke="#3a2a52"/>
+            <circle cx="172" cy="247" r="15" fill="#2a1c3e" stroke="#4a3a63"/>
+            <line x1="172" y1="247" x2="172" y2="236" stroke="#ff5a78" stroke-width="2.5" stroke-linecap="round"/>
+            {[0,1,2,3,4,5,6].map((i) => {
+              const on = i >= 4;
+              const fill = i >= 6 ? '#ff3b5a' : i >= 4 ? '#c80028' : '#5a0f22';
+              return <rect x={202 + i*10} y="240" width="5" height="14" rx="1.5" fill={fill} filter={on ? 'url(#wGlow)' : undefined}/>;
+            })}
+            <!-- unit 4: patch panel, one output jack lit -->
+            <rect x="144" y="282" width="136" height="54" rx="6" fill="url(#wUnit)" stroke="#3a2a52"/>
+            {[0,1,2,3].map((i) => (
+              <circle cx={166 + i*26} cy="309" r="7" fill="#0c0713" stroke="#3a2a52" stroke-width="1.5"/>
+            ))}
+            <circle cx="270" cy="309" r="8.5" fill="none" stroke="#ff2450" stroke-width="2.5" filter="url(#wGlow)"/>
+            <circle cx="270" cy="309" r="3" fill="#ff5a78"/>
+            <text x="210" y="424" class="wire-t">Your server</text>
+
+            <!-- ============ cable 1: rack → phone ============ -->
+            <path d="M270 309 C 366 372 470 300 560 250" fill="none" stroke="#0b0714" stroke-width="13" stroke-linecap="round"/>
+            <path d="M270 309 C 366 372 470 300 560 250" fill="none" stroke="url(#wCable)" stroke-width="3.5" stroke-linecap="round" filter="url(#wGlow)"/>
+            <circle class="sig" cx="420" cy="316" r="5" fill="#ffd0da"/>
+            <circle class="sig" cx="512" cy="272" r="4" fill="#ff8aa0"/>
+
+            <!-- ============ phone ============ -->
+            <g filter="url(#wShadow)">
+              <rect x="560" y="120" width="92" height="210" rx="22" fill="#06030c" stroke="#2a1a3d" stroke-width="2"/>
+            </g>
+            <rect x="592" y="130" width="28" height="8" rx="4" fill="#000"/>
+            <rect x="567" y="145" width="78" height="178" rx="15" fill="#140720"/>
+            <rect x="577" y="156" width="58" height="58" rx="8" fill="url(#wArt)"/>
+            <ellipse cx="595" cy="172" rx="20" ry="14" fill="#fff" opacity="0.16"/>
+            <rect x="577" y="223" width="44" height="6" rx="3" fill="#fff" opacity="0.85"/>
+            <rect x="577" y="234" width="30" height="5" rx="2.5" fill="#c8b6e2" opacity="0.7"/>
+            <rect x="577" y="252" width="58" height="3" rx="1.5" fill="#3a2a52"/>
+            <rect x="577" y="252" width="24" height="3" rx="1.5" fill="#ff2450"/>
+            <circle cx="606" cy="290" r="14" fill="url(#wCable)" filter="url(#wGlow)"/>
+            <path d="M602 283 v14 l11 -7 Z" fill="#fff"/>
+            <text x="606" y="424" class="wire-t">Your phone</text>
+
+            <!-- ============ cable 2: phone → headphones ============ -->
+            <path d="M650 252 C 742 306 828 306 908 256" fill="none" stroke="#0b0714" stroke-width="13" stroke-linecap="round"/>
+            <path d="M650 252 C 742 306 828 306 908 256" fill="none" stroke="url(#wCable)" stroke-width="3.5" stroke-linecap="round" filter="url(#wGlow)"/>
+            <circle class="sig" cx="742" cy="292" r="5" fill="#ffd0da"/>
+            <circle class="sig" cx="836" cy="292" r="4" fill="#ff8aa0"/>
+
+            <!-- ============ over-ear headphones ============ -->
+            <ellipse cx="990" cy="330" rx="118" ry="18" fill="#000" opacity="0.45"/>
+            <path d="M912 250 C 912 150 1068 150 1068 250" fill="none" stroke="url(#wBand)" stroke-width="18" stroke-linecap="round" filter="url(#wShadow)"/>
+            <path d="M914 244 C 916 156 1064 156 1066 244" fill="none" stroke="#b39ad6" stroke-width="3" stroke-linecap="round" opacity="0.32"/>
+            <!-- left cup -->
+            <g>
+              <ellipse cx="912" cy="258" rx="44" ry="58" fill="url(#wCup)" stroke="#3a2a52" stroke-width="1.5"/>
+              <ellipse cx="912" cy="258" rx="30" ry="44" fill="#0f0818"/>
+              <ellipse cx="912" cy="258" rx="17" ry="26" fill="none" stroke="#ff2450" stroke-width="3" filter="url(#wGlow)"/>
+              <circle cx="912" cy="258" r="4" fill="#ff8aa0"/>
+              <path d="M892 226 a30 44 0 0 0 -8 30" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="3"/>
+            </g>
+            <!-- right cup -->
+            <g>
+              <ellipse cx="1068" cy="258" rx="44" ry="58" fill="url(#wCup)" stroke="#3a2a52" stroke-width="1.5"/>
+              <ellipse cx="1068" cy="258" rx="30" ry="44" fill="#0f0818"/>
+              <ellipse cx="1068" cy="258" rx="17" ry="26" fill="none" stroke="#ff2450" stroke-width="3" filter="url(#wGlow)"/>
+              <circle cx="1068" cy="258" r="4" fill="#ff8aa0"/>
+              <path d="M1048 226 a30 44 0 0 0 -8 30" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="3"/>
+            </g>
+            <text x="990" y="424" class="wire-t">Your ears</text>
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <section class="cues" aria-labelledby="ng-cues">
+      <div class="wrap">
+        <h2 id="ng-cues">What it does once you're patched in</h2>
+        <ul class="cue-list" role="list">
+          {FEATURES.map((f) => (
+            <li class="cue">
+              <span class="sig" aria-hidden="true"></span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="desk" aria-labelledby="ng-desk">
+      <div class="wrap">
+        <h2 id="ng-desk">The room at 1am, and it still keeps up</h2>
+        <p class="lead">
+          The whole catalog lives in an on-device database, so the meters stay
+          lit whether or not the server is even reachable.
+        </p>
+
+        <div class="meter">
+          <div class="analyser" aria-hidden="true">
+            {BARS.map((h, i) => {
+              const dur = (0.72 + ((i * 7) % 11) / 11 * 0.9).toFixed(2);
+              const delay = (-((i % 13) * 0.11)).toFixed(2);
+              return <span class="bar" style={`--h:${h}%;--dur:${dur}s;--delay:${delay}s`}></span>;
+            })}
+          </div>
+          <div class="rule" aria-hidden="true"></div>
+          <dl class="readouts">
+            {STATS.map((s) => (
+              <div class="reading">
+                <span class="led" aria-hidden="true"></span>
+                <dt>{s.value}</dt>
+                <dd>{s.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="rig" aria-labelledby="ng-rig">
+      <div class="wrap">
+        <h2 id="ng-rig">Front of house, 1 a.m.</h2>
+        <p class="lead">
+          The venue is empty, the desk is still lit, and your whole library is
+          up on the system. Everything in this room is gear you already own —
+          Mozz only throws the lights.
+        </p>
+      </div>
+
+      <figure class="scene" aria-hidden="true">
+        <svg viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="rTruss" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#544a63"/>
+              <stop offset="1" stop-color="#201a2b"/>
+            </linearGradient>
+            <linearGradient id="rCab" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2a1e3c"/>
+              <stop offset="1" stop-color="#0e0818"/>
+            </linearGradient>
+            <linearGradient id="rFloor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1c1030"/>
+              <stop offset="1" stop-color="#0a0510"/>
+            </linearGradient>
+            <linearGradient id="beamRed" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ff3b5a" stop-opacity="0.5"/>
+              <stop offset="1" stop-color="#ff3b5a" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="beamViolet" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#9a5cff" stop-opacity="0.46"/>
+              <stop offset="1" stop-color="#9a5cff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="beamMagenta" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ff5aa0" stop-opacity="0.44"/>
+              <stop offset="1" stop-color="#ff5aa0" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="rHaze" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#7a3bd6" stop-opacity="0.32"/>
+              <stop offset="1" stop-color="#7a3bd6" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="rPoolR" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#ff3b5a" stop-opacity="0.4"/>
+              <stop offset="1" stop-color="#ff3b5a" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="rLens" cx="0.5" cy="0.4" r="0.6">
+              <stop offset="0" stop-color="#fff" stop-opacity="0.9"/>
+              <stop offset="0.5" stop-color="#fff" stop-opacity="0.25"/>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="rBlur" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="5"/>
+            </filter>
+            <filter id="rGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- back haze -->
+          <ellipse cx="360" cy="240" rx="300" ry="210" fill="url(#rHaze)"/>
+          <ellipse cx="860" cy="220" rx="320" ry="220" fill="url(#rHaze)"/>
+
+          <!-- beams (behind cabinets so the boxes stay readable) -->
+          {PARS.map((p) => (
+            <path d={`M${p.x - 17} 150 L${p.x + 17} 150 L${p.x + 150} 470 L${p.x - 150} 470 Z`}
+                  fill={HUES[p.hue].beam} filter="url(#rBlur)" opacity="0.72"/>
+          ))}
+
+          <!-- lighting truss -->
+          <g>
+            {[0,1,2,3,4,5,6,7,8].map((i) => (
+              <line x1={95 + i*115} y1="72" x2={152 + i*115} y2="110" stroke="#3a3348" stroke-width="4"/>
+            ))}
+            {[0,1,2,3,4,5,6,7,8].map((i) => (
+              <line x1={152 + i*115} y1="72" x2={95 + i*115} y2="110" stroke="#3a3348" stroke-width="4"/>
+            ))}
+            <rect x="88" y="64" width="1024" height="11" rx="4" fill="url(#rTruss)"/>
+            <rect x="88" y="107" width="1024" height="11" rx="4" fill="url(#rTruss)"/>
+            <rect x="90" y="66" width="1020" height="2.5" fill="#8a7ba6" opacity="0.5"/>
+            {[88, 400, 712, 1024].map((x) => (
+              <circle cx={x + 8} cy="91" r="5" fill="#4a4056"/>
+            ))}
+          </g>
+
+          <!-- par-cans on the truss -->
+          {PARS.map((p) => (
+            <g>
+              <path d={`M${p.x - 26} 96 v-20 M${p.x + 26} 96 v-20`} stroke="#3a3348" stroke-width="4"/>
+              <rect x={p.x - 24} y="94" width="48" height="52" rx="9" fill="url(#rTruss)" stroke="#15101f" stroke-width="1.5"/>
+              <rect x={p.x - 20} y="98" width="6" height="44" rx="3" fill="#7a6f92" opacity="0.4"/>
+              <ellipse cx={p.x} cy="150" rx="22" ry="9" fill={HUES[p.hue].lens} filter="url(#rGlow)"/>
+              <ellipse cx={p.x} cy="150" rx="22" ry="9" fill="url(#rLens)"/>
+            </g>
+          ))}
+
+          <!-- left hanging line-array, flown off a pickup bar -->
+          <g>
+            <line x1="286" y1="118" x2="290" y2="150" stroke="#2a2338" stroke-width="4"/>
+            <line x1="356" y1="118" x2="352" y2="150" stroke="#2a2338" stroke-width="4"/>
+            <rect x="270" y="142" width="104" height="8" rx="3" fill="url(#rTruss)"/>
+            {ARRAY.map((i) => (
+              <g transform={`translate(${248 + i*i*3} ${150 + i*46}) rotate(${i*4})`}>
+                <rect x="-4" y="-7" width="138" height="6" rx="2" fill="#2a2338"/>
+                <polygon points="130,4 148,13 148,47 130,52" fill="#0c0713"/>
+                <rect x="0" y="0" width="130" height="42" rx="4" fill="url(#rCab)" stroke="#3a2a52"/>
+                <rect x="2" y="2" width="126" height="2" fill="#6a5a86" opacity="0.35"/>
+                <circle cx="34" cy="21" r="14" fill="#0c0713" stroke="#3a2a52"/>
+                <circle cx="34" cy="21" r="6" fill="#1a1228"/>
+                <circle cx="30" cy="17" r="2.5" fill="#ff5a78" opacity="0.5"/>
+                <circle cx="96" cy="21" r="14" fill="#0c0713" stroke="#3a2a52"/>
+                <circle cx="96" cy="21" r="6" fill="#1a1228"/>
+                <rect x="58" y="12" width="14" height="18" rx="2" fill="#0c0713" stroke="#3a2a52"/>
+              </g>
+            ))}
+          </g>
+
+          <!-- right hanging line-array (mirrored curve), flown off a pickup bar -->
+          <g>
+            <line x1="846" y1="118" x2="842" y2="150" stroke="#2a2338" stroke-width="4"/>
+            <line x1="916" y1="118" x2="920" y2="150" stroke="#2a2338" stroke-width="4"/>
+            <rect x="826" y="142" width="104" height="8" rx="3" fill="url(#rTruss)"/>
+            {ARRAY.map((i) => (
+              <g transform={`translate(${820 - i*i*3} ${150 + i*46}) rotate(${-i*4})`}>
+                <rect x="-4" y="-7" width="138" height="6" rx="2" fill="#2a2338"/>
+                <polygon points="0,4 -18,13 -18,47 0,52" fill="#0c0713"/>
+                <rect x="0" y="0" width="130" height="42" rx="4" fill="url(#rCab)" stroke="#3a2a52"/>
+                <rect x="2" y="2" width="126" height="2" fill="#6a5a86" opacity="0.35"/>
+                <circle cx="34" cy="21" r="14" fill="#0c0713" stroke="#3a2a52"/>
+                <circle cx="34" cy="21" r="6" fill="#1a1228"/>
+                <circle cx="96" cy="21" r="14" fill="#0c0713" stroke="#3a2a52"/>
+                <circle cx="96" cy="21" r="6" fill="#1a1228"/>
+                <circle cx="100" cy="17" r="2.5" fill="#b57cff" opacity="0.5"/>
+                <rect x="58" y="12" width="14" height="18" rx="2" fill="#0c0713" stroke="#3a2a52"/>
+              </g>
+            ))}
+          </g>
+
+          <!-- stage floor + reflected light pools -->
+          <rect x="0" y="452" width="1200" height="68" fill="url(#rFloor)"/>
+          <rect x="0" y="452" width="1200" height="2" fill="#6a5a86" opacity="0.2"/>
+          {PARS.map((p) => (
+            <ellipse cx={p.x} cy="472" rx="90" ry="15"
+                     fill={p.hue === 'violet' ? 'url(#rHaze)' : 'url(#rPoolR)'} filter="url(#rBlur)"/>
+          ))}
+
+          <!-- foreground haze roll -->
+          <rect x="0" y="430" width="1200" height="90" fill="url(#rHaze)" opacity="0.5"/>
+        </svg>
+      </figure>
+    </section>
+
+    <section class="house" aria-labelledby="ng-house">
+      <div class="wrap">
+        <h2 id="ng-house">The house lights are yours too</h2>
+        <p class="lead">
+          There is no Mozz account, because there is no Mozz server. The app
+          talks to your server and to nobody else.
+        </p>
+        <dl class="own">
+          {OWNERSHIP.map((o) => (
+            <div class="own-row">
+              <dt>{o.title}</dt>
+              <dd>{o.body}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="qa" aria-labelledby="ng-qa">
+      <div class="wrap narrow">
+        <h2 id="ng-qa">Before you plug in</h2>
+        <div class="faq">
+          {FAQS.map((f) => (
+            <details>
+              <summary><span>{f.q}</span></summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <Mark size={36} decorative />
+      <p>
+        {NAME} is free forever and open source under GPL-3.0.
+        <a href={GITHUB_URL}>See it on GitHub</a>
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .ng {
+    --plum: #150a1e;
+    --plum-deep: #0b0512;
+    --plum-lift: #1c1030;
+    --ember: #260812;
+    --violet: #7a3bd6;
+    --violet-hot: #a45cff;
+    --magenta: #d6337a;
+    --red: #c80028;
+    --red-lit: #ff2450;
+    --red-body: #b00023;
+
+    --paper: #f6edfb;
+    --text: #ece1f6;
+    --muted: #c8b6e2;
+    --faint: #a38fc0;
+    --line: rgba(196, 167, 223, 0.16);
+
+    background:
+      radial-gradient(120% 60% at 50% -8%, #23103a 0, transparent 55%),
+      linear-gradient(180deg, var(--plum) 0%, var(--plum-deep) 100%);
+    color: var(--text);
+    font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    color: var(--paper);
+  }
+
+  .wrap {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .wrap.narrow { max-width: 48rem; }
+
+  section { position: relative; }
+
+  section > .wrap {
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  }
+
+  .lead {
+    max-width: 52ch;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: clamp(1.02rem, 1.5vw, 1.15rem);
+    text-wrap: pretty;
+  }
+
+  /* ---------- hero: the lit stage ---------- */
+
+  .stage {
+    /* Drop-in hero art hook. Put AI art at /public/hero/neon.jpg, then set this
+       to url('/hero/neon.jpg') — it layers over the CSS room below. It defaults
+       to `none` so, with no file present, nothing is fetched (no 404, no broken
+       image) and the composed light stands on its own. */
+    --hero-plate: none;
+    position: relative;
+    overflow: clip;
+    isolation: isolate;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 4vw, 2.5rem) clamp(3.5rem, 7vw, 5.5rem);
+    /* Layers, top to bottom: a left scrim so the copy always keeps its backing,
+       the drop-in hero plate, the room's ambient colour pooled on the right,
+       then the base plum. With --hero-plate: none that layer simply paints
+       nothing — it never degrades to a broken-image box or grey slab. */
+    background:
+      linear-gradient(95deg, rgba(9, 4, 15, 0.92) 0%, rgba(9, 4, 15, 0.6) 34%, rgba(9, 4, 15, 0.12) 62%, rgba(9, 4, 15, 0) 84%),
+      var(--hero-plate) center / cover no-repeat,
+      radial-gradient(64rem 46rem at 74% 16%, rgba(58, 20, 92, 0.62), transparent 66%),
+      radial-gradient(46rem 34rem at 80% 42%, rgba(122, 59, 214, 0.24), transparent 62%),
+      linear-gradient(180deg, var(--plum) 0%, var(--plum-deep) 100%);
+  }
+
+  /* The hazer beam raking down through the room over the device. */
+  .stage::after {
+    content: '';
+    position: absolute;
+    top: -28%;
+    left: 66%;
+    width: 26rem;
+    height: 130%;
+    translate: -50% 0;
+    rotate: 16deg;
+    transform-origin: top center;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(164, 92, 255, 0.26),
+      rgba(214, 51, 122, 0.1) 44%,
+      transparent 74%
+    );
+    -webkit-mask-image: radial-gradient(60% 72% at 50% 14%, #000 0, transparent 80%);
+    mask-image: radial-gradient(60% 72% at 50% 14%, #000 0, transparent 80%);
+    filter: blur(16px);
+  }
+
+  /* Small wordmark lockup — the mark is a logo in the corner, not hero art. */
+  .brand {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: max-content;
+    padding: 0.35rem 0.2rem;
+  }
+
+  .brand .mozz-mark { filter: drop-shadow(0 0 9px rgba(255, 60, 90, 0.5)); }
+
+  .brand .wordmark {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+    transition: color 0.18s ease;
+  }
+
+  .brand:hover .wordmark { color: #fff; }
+
+  .stage-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 72rem;
+    margin-inline: auto;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .say { text-align: left; }
+
+  .stage h1 {
+    font-size: clamp(2.6rem, 6.4vw, 5.25rem);
+    font-weight: 800;
+    max-width: 15ch;
+    text-wrap: balance;
+    text-shadow: 0 0 44px rgba(120, 60, 180, 0.35);
+  }
+
+  .lede {
+    margin-top: 1.4rem;
+    max-width: 46ch;
+    font-size: clamp(1.05rem, 1.7vw, 1.28rem);
+    line-height: 1.55;
+    color: var(--text);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    justify-content: flex-start;
+  }
+
+  /* ---------- the phone: a Mozz "Now Playing", lit by the par-can ---------- */
+
+  .device {
+    position: relative;
+    justify-self: center;
+    display: grid;
+    place-items: center;
+    width: 100%;
+  }
+
+  /* The par-can aimed at the device — layered sources with real falloff. */
+  .backlight {
+    position: absolute;
+    inset: -14% -8%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(closest-side circle at 50% 42%, rgba(255, 74, 108, 0.5), transparent 68%),
+      radial-gradient(closest-side circle at 50% 40%, rgba(200, 0, 40, 0.42), transparent 60%),
+      radial-gradient(70% 70% at 50% 46%, rgba(122, 59, 214, 0.4), transparent 72%);
+    filter: blur(6px);
+  }
+
+  /* Dress the shared iPhone frame to the neon world: a true black slab with a
+     violet-lit rim. The par-can wash lives on .backlight — a real light layer —
+     and --phone-shadow is a true offset+blur cast, so nothing here is a
+     zero-offset glow standing in for a shadow. */
+  .device :global(.hero-phone) {
+    position: relative;
+    z-index: 1;
+    width: clamp(232px, 82%, 300px);
+    max-width: 100%;
+    --phone-bezel: linear-gradient(158deg, #1a0d29 0%, #06030c 60%);
+    --phone-bezel-w: 0.034;
+    --phone-rim: rgba(180, 124, 255, 0.30);
+    --phone-shadow: 0 40px 70px -26px rgba(0, 0, 0, 0.85);
+  }
+
+  /* ---------- adaptive colour: the same app, gelled to the record ---------- */
+
+  .gels {
+    background: linear-gradient(180deg, var(--plum-deep) 0%, #150a24 100%);
+    overflow: clip;
+  }
+
+  .gels > .wrap { padding-bottom: clamp(1.25rem, 3vw, 2rem); }
+
+  .gel-row {
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 2.5rem) clamp(3.5rem, 7vw, 5.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  .gel {
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  /* A gel sitting in its own coloured wash — a real light layer behind the
+     phone, matching the tint the app has pulled from that record's artwork. */
+  .gel .pool {
+    position: absolute;
+    inset: -18% -20% -10%;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(14px);
+  }
+
+  .gel--red .pool    { background: radial-gradient(closest-side, rgba(255, 74, 108, 0.55), transparent 72%); }
+  .gel--amber .pool  { background: radial-gradient(closest-side, rgba(255, 170, 74, 0.52), transparent 72%); }
+  .gel--sepia .pool  { background: radial-gradient(closest-side, rgba(214, 142, 82, 0.48), transparent 72%); }
+  .gel--silver .pool { background: radial-gradient(closest-side, rgba(158, 148, 214, 0.46), transparent 72%); }
+
+  .gel :global(.gel-phone) {
+    position: relative;
+    z-index: 1;
+    width: clamp(132px, 15.5vw, 178px);
+    --phone-bezel: linear-gradient(158deg, #1a0d29 0%, #06030c 60%);
+    --phone-bezel-w: 0.036;
+    --phone-rim: rgba(180, 124, 255, 0.26);
+    --phone-shadow: 0 26px 46px -22px rgba(0, 0, 0, 0.8);
+  }
+
+  /* A gentle fan so the row reads as a lit rig, not a screenshot grid. */
+  .gel:nth-child(1) :global(.gel-phone) { rotate: -6deg; translate: 0 14px; }
+  .gel:nth-child(2) :global(.gel-phone) { rotate: -2deg; translate: 0 -6px; }
+  .gel:nth-child(3) :global(.gel-phone) { rotate: 2deg;  translate: 0 -6px; }
+  .gel:nth-child(4) :global(.gel-phone) { rotate: 6deg;  translate: 0 14px; }
+
+  /* The store button is the one hot, lit object — a real red source with a true
+     offset+blur shadow for depth, plus a glow ring that swells on hover. */
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 13px;
+    background: linear-gradient(180deg, #d6002b 0%, #8f001d 100%);
+    color: #fff;
+    border: 1px solid rgba(255, 130, 155, 0.55);
+    box-shadow: 0 12px 34px rgba(200, 0, 40, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    transition: translate 0.18s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.18s ease;
+  }
+
+  a.store:hover {
+    translate: 0 -2px;
+    box-shadow: 0 16px 44px rgba(255, 40, 80, 0.6), 0 0 0 6px rgba(255, 60, 90, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  a.store:active { translate: 0 1px; }
+
+  .store svg { width: 26px; height: 26px; fill: currentColor; }
+
+  .store span {
+    display: grid;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.05;
+    text-align: left;
+  }
+
+  .store small {
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.82;
+  }
+
+  /* Pending: the source is off. Dim, unlit, plainly not ready — not a dead link. */
+  .store.is-pending {
+    background: rgba(120, 40, 60, 0.28);
+    border-color: rgba(255, 130, 155, 0.28);
+    color: var(--muted);
+    box-shadow: inset 0 0 0 1px rgba(255, 130, 155, 0.12);
+    cursor: default;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.4rem;
+    border-radius: 13px;
+    border: 1px solid rgba(196, 167, 223, 0.4);
+    font-weight: 600;
+    color: var(--paper);
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .ghost:hover {
+    background: rgba(164, 92, 255, 0.14);
+    border-color: rgba(196, 167, 223, 0.75);
+  }
+
+  /* ---------- inputs: channel strips on a desk ---------- */
+
+  .inputs .strips {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+  }
+
+  .strip {
+    padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2rem);
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    border-left: 1px solid var(--line);
+  }
+
+  .strip:first-child { border-left: 0; }
+
+  /* A lit input socket — the real server logo dropped into the patch bay. */
+  .socket {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 1.1rem;
+    border-radius: 50%;
+    color: var(--paper);
+    background:
+      radial-gradient(circle at 50% 38%, rgba(255, 74, 108, 0.22), transparent 62%),
+      radial-gradient(circle at 50% 120%, rgba(122, 59, 214, 0.35), transparent 70%),
+      #140a22;
+    box-shadow:
+      inset 0 2px 5px rgba(0, 0, 0, 0.7),
+      inset 0 0 0 1px rgba(196, 167, 223, 0.16),
+      0 8px 18px -10px rgba(0, 0, 0, 0.8);
+    transition: color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .socket :global(.jack) {
+    filter: drop-shadow(0 0 6px rgba(255, 74, 108, 0.35));
+    transition: filter 0.2s ease;
+  }
+
+  .strip:hover .socket {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 2px 5px rgba(0, 0, 0, 0.7),
+      inset 0 0 0 1px rgba(255, 90, 120, 0.4),
+      0 10px 22px -10px rgba(0, 0, 0, 0.85),
+      0 0 22px rgba(255, 70, 100, 0.4);
+  }
+
+  .strip:hover .socket :global(.jack) {
+    filter: drop-shadow(0 0 10px rgba(255, 90, 120, 0.7));
+  }
+
+  .chan {
+    font-size: 1.35rem;
+    color: var(--paper);
+  }
+
+  /* A real fader travel with a glowing LED cap parked at the channel's level. */
+  .fader {
+    position: relative;
+    width: 3px;
+    height: 130px;
+    margin: 1.35rem 0 1.5rem;
+    border-radius: 3px;
+    background:
+      repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 13px),
+      linear-gradient(var(--plum-lift), var(--plum-lift));
+  }
+
+  .cap {
+    position: absolute;
+    left: 50%;
+    bottom: var(--pos);
+    translate: -50% 50%;
+    width: 26px;
+    height: 13px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #ff6a86, #c80028);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 60, 90, 0.55);
+    transition: box-shadow 0.2s ease, translate 0.2s ease;
+  }
+
+  .strip:hover .cap {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 24px rgba(255, 70, 100, 0.85);
+  }
+
+  .chan-note {
+    max-width: 24ch;
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-wrap: pretty;
+  }
+
+  /* ---------- signal path: a drawn rig diagram ---------- */
+
+  .path {
+    background: linear-gradient(180deg, var(--plum-deep) 0%, transparent 40%);
+  }
+
+  .wire {
+    margin: clamp(1.5rem, 4vw, 2.75rem) 0 0;
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .wire svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .wire .wire-t {
+    fill: var(--muted);
+    font-family: 'Archivo', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-anchor: middle;
+  }
+
+  .wire .ghost-t {
+    fill: var(--faint);
+    font-family: 'Figtree', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+
+  .wire .ghost { opacity: 0.85; }
+
+  .wire .sig {
+    filter: drop-shadow(0 0 6px rgba(255, 120, 150, 0.9));
+    animation: sigPulse 2.4s ease-in-out infinite;
+  }
+  .wire .sig:nth-of-type(2n) { animation-delay: -1.2s; }
+
+  @keyframes sigPulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+
+  /* ---------- features: a lit cue list ---------- */
+
+  .cues { background: linear-gradient(180deg, transparent, rgba(11, 5, 18, 0.6)); }
+
+  .cue-list {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: grid;
+  }
+
+  .cue {
+    display: grid;
+    grid-template-columns: 1.2rem minmax(0, 17rem) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: clamp(1.4rem, 3vw, 2rem) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .cue:last-child { border-bottom: 1px solid var(--line); }
+
+  /* A channel's signal LED — softly lit at rest, hot when the row is live. */
+  .cue .sig {
+    align-self: center;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #ff6a86, #7a0018 70%);
+    box-shadow: 0 0 8px rgba(255, 60, 90, 0.35);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .cue:hover .sig {
+    box-shadow: 0 0 16px 2px rgba(255, 70, 100, 0.85);
+    transform: scale(1.12);
+  }
+
+  .cue h3 {
+    font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+    transition: color 0.2s ease;
+  }
+
+  .cue:hover h3 { color: #fff; }
+
+  .cue p {
+    max-width: 48ch;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* ---------- desk: the live meter ---------- */
+
+  .desk { background: linear-gradient(180deg, rgba(11, 5, 18, 0.6), var(--plum-deep)); }
+
+  .meter {
+    margin-top: clamp(2.25rem, 5vw, 3.5rem);
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2.25rem) clamp(1.75rem, 4vw, 2.5rem);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+      radial-gradient(120% 140% at 50% 130%, rgba(122, 59, 214, 0.16), transparent 60%),
+      rgba(10, 5, 16, 0.6);
+  }
+
+  .analyser {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(2px, 0.55vw, 5px);
+    height: clamp(130px, 20vw, 210px);
+    overflow: hidden;
+  }
+
+  .bar {
+    flex: 1 1 0;
+    min-width: 0;
+    height: var(--h);
+    border-radius: 2px 2px 0 0;
+    transform-origin: bottom;
+    background: linear-gradient(
+      to top,
+      #4a0d24 0%,
+      #a1001f 42%,
+      #e01037 78%,
+      #ff5a7d 100%
+    );
+    box-shadow: 0 0 9px rgba(255, 70, 110, 0.4);
+    animation: vu var(--dur) var(--delay) ease-in-out infinite alternate;
+  }
+
+  @keyframes vu {
+    from { transform: scaleY(0.5); }
+    to   { transform: scaleY(1); }
+  }
+
+  /* The calibrated meter scale the readings hang off of. */
+  .rule {
+    height: 12px;
+    margin-top: 0.5rem;
+    background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+
+  .readouts {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .reading {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .reading .led {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff8aa0, #c80028 75%);
+    box-shadow: 0 0 9px rgba(255, 60, 90, 0.7);
+  }
+
+  .reading dt {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.45rem, 3.2vw, 1.9rem);
+    line-height: 1;
+    color: var(--red-lit);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reading dd {
+    margin: 0;
+    max-width: 20ch;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.25;
+  }
+
+  /* ---------- night stage: the full-bleed rig scene ---------- */
+
+  .rig {
+    background: linear-gradient(180deg, var(--plum-deep) 0%, #120720 62%, var(--ember) 100%);
+    overflow: clip;
+  }
+
+  .rig > .wrap { padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+
+  .scene {
+    margin: clamp(1rem, 3vw, 2rem) 0 0;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .scene svg {
+    display: block;
+    width: 100%;
+    height: clamp(300px, 44vw, 520px);
+  }
+
+  /* ---------- ownership: house lights ---------- */
+
+  .house {
+    background:
+      radial-gradient(90% 60% at 100% 0%, rgba(200, 0, 40, 0.16), transparent 60%),
+      linear-gradient(165deg, var(--ember) 0%, #180712 100%);
+  }
+
+  .own {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: grid;
+  }
+
+  .own-row {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    gap: 1.5rem 2rem;
+    align-items: baseline;
+    padding: clamp(1.4rem, 3vw, 2rem) 0;
+    border-top: 1px solid rgba(255, 120, 150, 0.18);
+  }
+
+  .own-row:last-child { border-bottom: 1px solid rgba(255, 120, 150, 0.18); }
+
+  .own-row dt {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 3.6vw, 2.15rem);
+    letter-spacing: -0.02em;
+    color: var(--red-lit);
+    text-shadow: 0 0 26px rgba(255, 40, 80, 0.35);
+  }
+
+  .own-row dd {
+    margin: 0;
+    max-width: 46ch;
+    color: #e6d4dd;
+    font-size: 1.05rem;
+    text-wrap: pretty;
+  }
+
+  /* ---------- faq ---------- */
+
+  .faq { margin-top: clamp(1.75rem, 4vw, 2.5rem); }
+
+  .faq details {
+    border-top: 1px solid var(--line);
+    transition: background-color 0.2s ease;
+  }
+
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.2rem 0.25rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--paper);
+  }
+
+  .faq summary::-webkit-details-marker { display: none; }
+
+  /* The "+" is a small unlit indicator that fires red and turns when opened. */
+  .faq summary::after {
+    content: '';
+    flex: none;
+    width: 13px;
+    height: 13px;
+    position: relative;
+    background:
+      linear-gradient(var(--faint), var(--faint)) center / 13px 1.5px no-repeat,
+      linear-gradient(var(--faint), var(--faint)) center / 1.5px 13px no-repeat;
+    transition: transform 0.24s ease, background 0.2s ease;
+  }
+
+  .faq details[open] summary::after {
+    transform: rotate(135deg);
+    background:
+      linear-gradient(var(--red-lit), var(--red-lit)) center / 13px 1.5px no-repeat,
+      linear-gradient(var(--red-lit), var(--red-lit)) center / 1.5px 13px no-repeat;
+  }
+
+  .faq details[open] summary { color: #fff; }
+  .faq summary:hover { color: #fff; }
+
+  .faq p {
+    margin: 0;
+    padding: 0 0.25rem 1.35rem;
+    max-width: 68ch;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* ---------- footer ---------- */
+
+  .foot {
+    background: var(--plum-deep);
+    border-top: 1px solid var(--line);
+    padding: 2.75rem clamp(1.25rem, 4vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    text-align: center;
+    color: var(--faint);
+    font-size: 0.95rem;
+  }
+
+  .foot .mozz-mark { filter: drop-shadow(0 0 10px rgba(255, 60, 90, 0.5)); }
+
+  .foot a {
+    color: var(--red-lit);
+    margin-left: 0.5rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .foot a:hover { color: #ff5a7d; }
+
+  /* ---------- responsive ---------- */
+
+  @media (max-width: 60rem) {
+    .stage-inner {
+      grid-template-columns: 1fr;
+      gap: clamp(2.25rem, 6vw, 3rem);
+      justify-items: center;
+    }
+    .say { text-align: center; display: grid; justify-items: center; }
+    .lede { margin-inline: auto; }
+    .actions { justify-content: center; }
+    .device :global(.hero-phone) { width: clamp(228px, 66vw, 288px); }
+  }
+
+  @media (max-width: 52rem) {
+    .cue {
+      grid-template-columns: 1.2rem minmax(0, 1fr);
+      row-gap: 0.5rem;
+    }
+    .cue p { grid-column: 2; }
+  }
+
+  @media (max-width: 44rem) {
+    .inputs .strips { grid-template-columns: 1fr; }
+    .strip {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .strip:first-child { border-top: 0; }
+    .own-row { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar { animation: none; }
+    .wire .sig { animation: none; opacity: 0.9; }
+  }
+</style>

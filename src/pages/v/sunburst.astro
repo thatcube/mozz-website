@@ -1,0 +1,871 @@
+---
+/**
+ * VARIANT — SUNBURST
+ * See the design contract in the HTML comment at the top of <body>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'You already own the music';
+---
+
+<Layout
+  title={`${NAME} — you already own the music`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files."
+  themeColor="#c1300f"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <!--
+    THESIS: A record sleeve, not a landing page. The back cover of an album you
+    already own, where the feature list is the tracklist. Refuses the centred
+    SaaS hero with two buttons and a floating phone render.
+    OWN-WORLD: Drenched warm orange ground with hard-edged sunburst rays turning
+    behind everything; cream ink; one gold rule. Fat rounded Cooper-era display
+    lettering, arced. Brand red belongs to the mark and the stamp, nothing else.
+    STORY: This is my collection. The app is free, open, and plays what I have.
+    FIRST VIEWPORT: Rays fill the frame. Left column carries the headline,
+    lede, the store button and the three server logos. Right column is a
+    gold sun disc with its legend turning around the rim and the app held in
+    front of it, tilted, so the offer and the product share one glance.
+    FORM: 1970s soul sleeve, first on the ordered list; staging is the back
+    cover, which is where a tracklist and liner notes legitimately live.
+  -->
+
+  <VariantBar slug="sunburst" tone="warm" />
+
+  <main class="sb">
+    <header class="hero">
+      <div class="rays" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <div class="topbar">
+        <a class="wordmark" href="/">
+          <Mark size={34} decorative />
+          <span>{NAME}</span>
+        </a>
+        <a class="topsource" href={GITHUB_URL}>Read the source</a>
+      </div>
+
+      <div class="hero-grid">
+        <div class="say">
+          <h1>{HEADLINE}</h1>
+
+          <p class="lede">
+            Mozz plays what is already yours — straight off your own Plex,
+            Jellyfin or Navidrome server. No account to make. Nothing to
+            subscribe to. Nothing watching what you listen to.
+          </p>
+
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Free forever · GPL-3.0</a>
+          </div>
+
+          <ul class="worksrow" role="list">
+            {SERVERS.map((s) => (
+              <li><ServerLogo name={s.name} size={26} /><span>{s.name}</span></li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="show">
+          <!-- The sun: a disc of hard rays behind the record, the app in front.
+               No legend on the rim — the phone is as tall as the disc, so any
+               ring would be sliced by the product shot at every breakpoint. -->
+          <div class="sundisc" aria-hidden="true"></div>
+
+          <div class="phone-slot">
+            <Phone
+              name="mozz-album-warm"
+              width={244}
+              sizes="244px"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="spectrum" aria-labelledby="sb-spectrum">
+      <div class="spectrum-glow" aria-hidden="true"></div>
+      <div class="spectrum-inner">
+        <div class="spectrum-head">
+          <h2 id="sb-spectrum">It takes the colour of the record</h2>
+          <p>
+            Mozz repaints its interface from the artwork of whatever is playing —
+            every record turns up in its own colour.
+          </p>
+        </div>
+
+        <div class="fan">
+          <div class="pane"><Shot name="mozz-artist" sizes="(max-width: 720px) 42vw, 200px" /></div>
+          <div class="pane"><Shot name="mozz-album-red" sizes="(max-width: 720px) 42vw, 200px" /></div>
+          <div class="pane"><Shot name="mozz-nowplaying" sizes="(max-width: 720px) 42vw, 200px" /></div>
+          <div class="pane"><Shot name="mozz-playlist" sizes="(max-width: 720px) 42vw, 200px" /></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="works" aria-labelledby="sb-servers">
+      <div class="works-inner">
+        <h2 id="sb-servers">Point it at your server</h2>
+        <p class="works-lede">
+          Mozz is the player; your server is the library. Sign in to one — or
+          all three — and browse them like a single collection.
+        </p>
+
+        <dl class="credits">
+          {SERVERS.map((s) => (
+            <div class="credit">
+              <dt><ServerLogo name={s.name} size={30} /><span>{s.name}</span></dt>
+              <dd>{s.note}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="sleeve" aria-labelledby="sb-tracks">
+      <div class="sleeve-head">
+        <h2 id="sb-tracks">What's on it</h2>
+        <p class="sleeve-sub">
+          Everything below is in the free app, because there is no other kind.
+        </p>
+      </div>
+
+      <ol class="tracks" role="list">
+        {FEATURES.map((f, i) => (
+          <li>
+            <span class="no">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="stamps" aria-labelledby="sb-own">
+      <h2 id="sb-own">Yours, in the way that actually counts</h2>
+      <div class="stamp-grid">
+        {OWNERSHIP.map((o) => (
+          <div class="stamp">
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="liner" aria-labelledby="sb-notes">
+      <h2 id="sb-notes">Liner notes</h2>
+      <dl class="specs">
+        {STATS.map((s) => (
+          <div>
+            <dt>{s.value}</dt>
+            <dd>{s.label}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="faq">
+        {FAQS.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <footer class="sb-foot">
+      <Mark size={40} decorative />
+      <p>
+        {NAME} is free forever and open source under GPL-3.0.
+        <a href={GITHUB_URL}>See it on GitHub</a>
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .sb {
+    --ink: #2a0d04;
+    --cream: #fff3df;
+    --cream-dim: #f4dcbb;
+    --orange: #c1300f;
+    --orange-deep: #9c2409;
+    --gold: #f2b134;
+    --red: #c80028;
+    --paper: #fbeacd;
+
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Bowlby One', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 0.95;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    position: relative;
+    background: var(--orange);
+    color: var(--cream);
+    padding: clamp(1.25rem, 3vw, 2rem) 1.5rem clamp(4rem, 8vw, 6.5rem);
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  /* Hard-edged rays, the way they were printed — a repeating conic sweep, not
+     a soft radial glow. The single authored motion of the page turns them. */
+  .rays {
+    position: absolute;
+    top: -60%;
+    left: 50%;
+    width: 240vmax;
+    height: 240vmax;
+    translate: -50% 0;
+    background: repeating-conic-gradient(
+      from 0deg,
+      var(--orange-deep) 0deg 7.5deg,
+      var(--orange) 7.5deg 15deg
+    );
+    z-index: -2;
+    animation: sb-turn 190s linear infinite;
+  }
+
+  @keyframes sb-turn {
+    to { rotate: 360deg; }
+  }
+
+  /* Keeps the outer rays from fighting the headline for attention. */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 34%, rgba(255, 200, 120, 0.42), transparent 62%),
+      radial-gradient(100% 90% at 50% 110%, rgba(96, 20, 4, 0.72), transparent 60%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    max-width: 74rem;
+    margin: clamp(2rem, 5vw, 4rem) auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .topbar {
+    position: relative;
+    max-width: 74rem;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1.375rem;
+    color: var(--cream);
+  }
+
+  .topsource {
+    font-weight: 700;
+    color: var(--cream);
+    border-bottom: 2px solid rgba(255, 243, 223, 0.45);
+    padding-bottom: 2px;
+  }
+
+  .topsource:hover { border-bottom-color: var(--cream); }
+
+  .say h1 {
+    font-size: clamp(2.75rem, 6.4vw, 5.25rem);
+    line-height: 0.92;
+    color: var(--cream);
+    text-wrap: balance;
+    text-shadow: 0 5px 0 rgba(74, 16, 2, 0.34);
+  }
+
+  .lede {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    line-height: 1.55;
+    color: var(--cream);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  .worksrow {
+    margin: 2rem 0 0;
+    padding: 1.25rem 0 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    border-top: 2px solid rgba(255, 243, 223, 0.28);
+  }
+
+  .worksrow li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cream);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+
+  /* ---------- the sun, and the app held in front of it ---------- */
+
+  .show {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 30rem;
+  }
+
+  .sundisc {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    width: min(33rem, 104%);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 214, 140, 0.95) 0 30%, transparent 62%),
+      repeating-conic-gradient(from 8deg, var(--gold) 0deg 6deg, #e5761d 6deg 12deg);
+    box-shadow:
+      inset 0 0 0 3px rgba(92, 26, 2, 0.28),
+      0 0 0 7px rgba(242, 177, 52, 0.14),
+      0 24px 60px rgba(60, 12, 2, 0.42);
+  }
+
+  /* The real app, held in front of the sun. Everything below targets the shared
+     Phone component's root through :global — Astro does NOT forward this page's
+     scope hash to a child component's root element, so a plain scoped
+     `.hero-phone` selector silently never matches it. Reaching it as
+     `.phone-slot :global(.phone)` both matches and outranks the component's own
+     single-class defaults, so the tilt and the brass dressing actually land. */
+  .phone-slot {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .phone-slot :global(.phone) {
+    rotate: -4deg;
+    translate: 0.75rem 1.75rem;
+
+    /* Warm brushed brass instead of the near-black default — hardware that
+       belongs on a soul-sleeve, not a spec sheet. */
+    --phone-bezel: linear-gradient(158deg, #f4d791 0%, #b07b30 38%, #6d4113 72%, #d9ad60 100%);
+    --phone-bezel-w: 0.044;
+    --phone-rim: rgba(255, 244, 214, 0.55);
+    --phone-shadow:
+      0 30px 60px -18px rgba(52, 10, 2, 0.55),
+      0 12px 22px rgba(52, 10, 2, 0.38);
+  }
+
+  /* The store button is the page's one hard-shadowed object: an offset slab of
+     ink under a cream pill, the way a sleeve prints a sticker. */
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 1.5rem 0.85rem;
+    border-radius: 999px;
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 6px 0 #6d1a05, 0 14px 24px rgba(60, 12, 2, 0.4);
+    transition: translate 0.18s cubic-bezier(0.2, 0.9, 0.3, 1),
+                box-shadow 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  a.store:hover {
+    translate: 0 -3px;
+    box-shadow: 0 9px 0 #6d1a05, 0 18px 30px rgba(60, 12, 2, 0.44);
+  }
+
+  a.store:active {
+    translate: 0 3px;
+    box-shadow: 0 3px 0 #6d1a05, 0 8px 14px rgba(60, 12, 2, 0.4);
+  }
+
+  .store svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: grid;
+    font-family: 'Bowlby One', ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.05;
+  }
+
+  .store small {
+    font-family: 'Schibsted Grotesk', sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  /* Pending, not broken: it reads as an object that is not ready rather than a
+     link that silently does nothing. */
+  .store.is-pending {
+    background: rgba(255, 243, 223, 0.9);
+    box-shadow: 0 6px 0 rgba(109, 26, 5, 0.55);
+    cursor: default;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.9rem 1.4rem;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 243, 223, 0.55);
+    font-weight: 700;
+    color: var(--cream);
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .ghost:hover {
+    background: rgba(255, 243, 223, 0.14);
+    border-color: var(--cream);
+  }
+
+  /* ---------- adaptive colour: the app takes the record's palette ---------- */
+
+  .spectrum {
+    position: relative;
+    background: #1b0702;
+    color: var(--cream);
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem clamp(4rem, 8vw, 6.5rem);
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  /* A single warm bloom so the coloured screens sit in light rather than on a
+     flat black field — the same sun, dimmed and pushed behind them. */
+  .spectrum-glow {
+    position: absolute;
+    inset: -20% 0 auto;
+    height: 70%;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(242, 177, 52, 0.22), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .spectrum-inner {
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+
+  .spectrum-head {
+    text-align: center;
+    max-width: 40rem;
+    margin: 0 auto clamp(2.5rem, 5vw, 3.75rem);
+  }
+
+  .spectrum h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .spectrum-head p {
+    margin-top: 1rem;
+    color: var(--cream-dim);
+    text-wrap: pretty;
+  }
+
+  /* A fanned deck of screens: warm at one end, cool at the other, each carrying
+     the colour it pulled from its own artwork. Wraps to a tidy 2×2 on mobile. */
+  .fan {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .pane {
+    flex: 0 0 auto;
+    width: clamp(140px, 22vw, 200px);
+  }
+
+  .pane :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 19.5;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: clamp(1rem, 2.4vw, 1.5rem);
+    background: #000;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 26px 46px -22px var(--glow, rgba(0, 0, 0, 0.55));
+  }
+
+  .pane:nth-child(1) { --glow: rgba(120, 74, 34, 0.6); rotate: -6deg; }
+  .pane:nth-child(2) { --glow: rgba(200, 0, 40, 0.55); rotate: -2deg; translate: 0 -0.7rem; }
+  .pane:nth-child(3) { --glow: rgba(124, 58, 214, 0.55); rotate: 2deg; translate: 0 -0.7rem; }
+  .pane:nth-child(4) { --glow: rgba(150, 162, 172, 0.5); rotate: 6deg; }
+
+  @media (max-width: 44rem) {
+    /* No overlap-fan on small screens — a clean grid keeps every screen legible. */
+    .pane { width: min(42vw, 200px); }
+    .pane:nth-child(n) { translate: 0 0; }
+  }
+
+  /* ---------- servers as liner-notes credits ---------- */
+
+  .works {
+    background: var(--paper);
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+  }
+
+  .works-inner {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
+  .works h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .works-lede {
+    margin-top: 1rem;
+    max-width: 40rem;
+    color: #5a2a14;
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    text-wrap: pretty;
+  }
+
+  /* Credits, the way a sleeve prints who played what: the server named on the
+     left, how you reach it on the right, one gold hairline between each. */
+  .credits {
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    border-top: 2px solid var(--gold);
+  }
+
+  .credit {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: 0.75rem 2.5rem;
+    align-items: baseline;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgba(42, 13, 4, 0.18);
+  }
+
+  .credit dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1.375rem;
+    color: var(--ink);
+  }
+
+  /* The real ServerLogo, in brand red on the cream page. */
+  .credit dt :global(svg) { color: var(--red); }
+
+  .credit dd {
+    margin: 0;
+    color: #5a2a14;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 40rem) {
+    .credit {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.4rem;
+    }
+  }
+
+  /* ---------- features as a tracklist ---------- */
+
+  .sleeve {
+    background: var(--ink);
+    color: var(--cream);
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+  }
+
+  .sleeve-head {
+    max-width: 68rem;
+    margin: 0 auto clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 3px solid var(--gold);
+    padding-bottom: 1.25rem;
+  }
+
+  .sleeve h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .sleeve-sub {
+    color: var(--cream-dim);
+    max-width: 30rem;
+  }
+
+  .tracks {
+    max-width: 68rem;
+    margin-inline: auto;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  /* A tracklist is a genuine sequence, so the numbers carry information here
+     rather than decorating three interchangeable cards. */
+  .tracks li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 18rem) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: baseline;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255, 243, 223, 0.16);
+  }
+
+  .tracks li:last-child { border-bottom: 0; }
+
+  .no {
+    font-family: 'Bowlby One', sans-serif;
+    color: var(--gold);
+    font-size: 1.25rem;
+  }
+
+  .tracks h3 { font-size: 1.25rem; }
+
+  .tracks p {
+    color: var(--cream-dim);
+    text-wrap: pretty;
+  }
+
+  /* ---------- ownership ---------- */
+
+  .stamps {
+    background: var(--gold);
+    color: #3a2000;
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+  }
+
+  .stamps h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    max-width: 24ch;
+    margin: 0 auto clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .stamp-grid {
+    max-width: 68rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  @media (max-width: 62rem) {
+    .stamp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 34rem) {
+    .stamp-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  .stamp h3 {
+    font-size: 1.375rem;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .stamp p {
+    color: #4a2a05;
+    text-wrap: pretty;
+  }
+
+  /* ---------- liner notes ---------- */
+
+  .liner {
+    background: var(--paper);
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+  }
+
+  .liner h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    text-align: center;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .specs {
+    max-width: 62rem;
+    margin: 0 auto clamp(3rem, 5vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1.5rem;
+    border-top: 3px solid var(--red);
+    border-bottom: 3px solid var(--red);
+    padding: 1.75rem 0;
+  }
+
+  .specs dt {
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1.75rem;
+    color: var(--red);
+  }
+
+  .specs dd {
+    margin: 0.25rem 0 0;
+    font-size: 0.9375rem;
+    color: #5a2a14;
+  }
+
+  .faq {
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .faq details {
+    border-bottom: 1px solid rgba(42, 13, 4, 0.18);
+  }
+
+  .faq summary {
+    cursor: pointer;
+    padding: 1.125rem 0;
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1.0625rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .faq summary::-webkit-details-marker { display: none; }
+
+  .faq summary::after {
+    content: '+';
+    color: var(--red);
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .faq details[open] summary::after { content: '–'; }
+
+  .faq p {
+    padding-bottom: 1.25rem;
+    color: #5a2a14;
+    max-width: 68ch;
+    text-wrap: pretty;
+  }
+
+  /* ---------- footer ---------- */
+
+  .sb-foot {
+    background: var(--ink);
+    color: var(--cream-dim);
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    text-align: center;
+    font-size: 0.9375rem;
+  }
+
+  .sb-foot a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-left: 0.5rem;
+  }
+
+  @media (max-width: 60rem) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      text-align: center;
+    }
+
+    .say h1, .lede { margin-inline: auto; }
+    .actions, .worksrow { justify-content: center; }
+    .show { min-height: 26rem; margin-top: 1rem; }
+  }
+
+  @media (max-width: 44rem) {
+    .tracks li {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      row-gap: 0.5rem;
+    }
+
+    .tracks p { grid-column: 2; }
+  }
+</style>

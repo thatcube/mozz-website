@@ -1,0 +1,103 @@
+---
+/**
+ * A real Mozz screenshot inside an iPhone frame.
+ *
+ * The masters are full-screen captures at 1320x2868, so they already contain
+ * the status bar and the home indicator — the frame is only the hardware around
+ * them, and the screen corners have to be clipped to match the device rather
+ * than drawn on top of the pixels.
+ *
+ * Everything visual is a custom property so each variant can dress the same
+ * hardware in its own world: the vinyl page wants warm brushed metal, the neon
+ * page wants a black slab with a glow, and neither should have to re-solve the
+ * geometry to get it.
+ */
+import Shot from './Shot.astro';
+
+export interface Props {
+  /** File stem from screenshots-src/, e.g. "mozz-nowplaying". */
+  name: string;
+  /** Rendered width of the whole device in CSS px, including the bezel. */
+  width?: number;
+  /** Mirrors the CSS box for srcset selection. Defaults from `width`. */
+  sizes?: string;
+  /** The hero phone should be eager and high priority; the rest lazy. */
+  priority?: boolean;
+  class?: string;
+  alt?: string;
+  /** Purely decorative repeats are hidden from assistive tech. */
+  ariaHidden?: boolean;
+}
+
+const {
+  name,
+  width = 300,
+  sizes,
+  priority = false,
+  class: className,
+  alt,
+  ariaHidden = false,
+} = Astro.props;
+
+// The screenshot is the screen, so the frame is the screen plus two bezels.
+const resolvedSizes = sizes ?? `(max-width: 720px) 62vw, ${width}px`;
+---
+
+<div class:list={['phone', className]} style={`--phone-w:${width}px`}>
+  <div class="phone-screen">
+    <Shot
+      name={name}
+      alt={alt}
+      sizes={resolvedSizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : undefined}
+      ariaHidden={ariaHidden}
+    />
+  </div>
+</div>
+
+<style>
+  .phone {
+    width: var(--phone-w);
+    /* 9:19.5 hardware, the ratio the masters were captured at. */
+    aspect-ratio: 9 / 19.5;
+    padding: calc(var(--phone-w) * var(--phone-bezel-w, 0.038));
+    border-radius: calc(var(--phone-w) * 0.148);
+    /*
+     * Defaults live in the var() fallbacks, never as declarations on this
+     * element. Declaring `--phone-bezel` here would beat any value a page sets
+     * on an ancestor wrapper — a directly-set custom property always wins over
+     * an inherited one — so the component would silently ignore its own
+     * theming API. Two variants hit exactly that before this was fixed.
+     */
+    background: var(--phone-bezel, #14100f);
+    box-shadow:
+      inset 0 0 0 1px var(--phone-rim, rgba(255, 255, 255, 0.16)),
+      var(--phone-shadow, 0 32px 70px -28px rgba(0, 0, 0, 0.62));
+    /*
+     * A phone is a physical object with a colour of its own; letting a section
+     * background bleed through the bezel is what makes a mockup read as a
+     * sticker instead of hardware.
+     */
+    isolation: isolate;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    /* Screen corners are tighter than the hardware corners by exactly the bezel. */
+    border-radius: calc(
+      var(--phone-w) * 0.148 - var(--phone-w) * var(--phone-bezel-w, 0.038)
+    );
+    overflow: hidden;
+    background: #000;
+  }
+
+  .phone-screen :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+</style>

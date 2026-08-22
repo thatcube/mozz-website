@@ -1,0 +1,51 @@
+---
+/**
+ * A server's own logo — Plex, Jellyfin or Navidrome.
+ *
+ * The artwork comes from the app repo via `npm run brand`, with its fills
+ * stripped, so it draws in `currentColor` and every variant can tint it to sit
+ * inside its own world. Pass `brand` to paint it in the company's real colour
+ * instead, for variants where a faithful logo is the point.
+ */
+import { SERVER_LOGOS } from '../brand/servers';
+
+export interface Props {
+  /** 'Plex' | 'Jellyfin' | 'Navidrome' — matches SERVERS in src/data/site.ts. */
+  name: string;
+  size?: number;
+  class?: string;
+  /** Paint in the company's official colour rather than inheriting the page's. */
+  brand?: boolean;
+}
+
+/** Official brand colours, for the variants that want them literal. */
+const BRAND_COLORS: Record<string, string> = {
+  plex: '#e5a00d',
+  jellyfin: '#00a4dc',
+  navidrome: '#1a72b8',
+};
+
+const { name, size = 28, class: className = '', brand = false } = Astro.props;
+
+const key = name.toLowerCase();
+const art = SERVER_LOGOS[key];
+if (!art) throw new Error(`No logo for "${name}". Run \`npm run brand\`.`);
+---
+
+<svg
+  class={`server-logo ${className}`.trim()}
+  viewBox={art.viewBox}
+  width={size}
+  height={size}
+  role="img"
+  aria-label={name}
+  style={brand ? `color:${BRAND_COLORS[key]}` : undefined}
+  set:html={art.inner}
+/>
+
+<style>
+  .server-logo {
+    fill: currentColor;
+    flex: none;
+  }
+</style>

@@ -1,0 +1,1324 @@
+---
+/**
+ * VARIANT — VINYL
+ * See the design contract in the HTML comment at the top of <main>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'The music is yours. So is the player.';
+const sideA = FEATURES.slice(0, 3);
+const sideB = FEATURES.slice(3, 6);
+
+// Adaptive colour, fanned like records pulled from a crate. Each screen is
+// tinted by the artwork it is playing; all five fan on desktop, smaller on phones.
+const HUES = [
+  'mozz-album-warm',
+  'mozz-album-red',
+  'mozz-nowplaying',
+  'mozz-playlist',
+  'mozz-artist',
+];
+
+// "The stack" illustration (anchors the features section): a perspective column
+// of pressed records, top face grooved, seen at a low angle.
+const stackTop = { cx: 260, cy: 148, rx: 196, ry: 68 };
+const stackDepth = 118;
+const stackBands = Array.from({ length: 12 }, (_, i) => ({
+  y: stackTop.cy + ((i + 1) / 13) * stackDepth,
+  // one red pressing sitting a third of the way down the pile
+  red: i === 3,
+}));
+const stackGrooves = Array.from({ length: 13 }, (_, i) => ({
+  rx: 182 - i * 12.6,
+  ry: 63 - i * 4.4,
+}));
+---
+
+<Layout
+  title={`${NAME} — the music is yours, so is the player`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — played straight off the hardware you own."
+  themeColor="#0b0b0c"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,75..125,300..900;1,75..125,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="vy">
+    <!--
+      THESIS: A record, seen up close. Not a product page with a floating phone,
+      but the object itself — black wax, concentric grooves, a tonearm tracking
+      down, a red centre label. The structure belongs to a record: two sides, a
+      tracklist, pressing details, dead wax.
+      OWN-WORLD: #0b0b0c wax cut by fine repeating-radial-gradient grooves with a
+      fixed raking highlight, so the surface has depth. Off-white ink. Archivo,
+      editorial and confident; Instrument Serif for side letters and label type.
+      Brand red printed only where a label prints it — the centre label and the
+      run-out label. The most restrained of the seven: control, not volume.
+      STORY: This is my collection, on my server, and the app that plays it is
+      mine too — free, open, nothing listening in.
+      FIRST VIEWPORT: an asymmetric split — wordmark lockup, headline, lede and
+      two actions on the left; on the right the turning record with a CSS phone
+      showing Mozz "Now Playing" set over it, the app playing the wax. A layered
+      wax background (with a --hero-plate slot for supplied artwork) sits behind.
+      FORM: second on the ordered set, the groove itself; staging is a record on
+      a platter with the app on top, where a tracklist and a label belong.
+    -->
+
+    <VariantBar slug="vinyl" tone="neutral" />
+
+    <!--
+      HERO PLATE: the client's atmospheric artwork drops in at
+      public/hero/vinyl.jpg (served as /hero/vinyl.jpg) through the --hero-plate
+      custom property in the .hero rule below. Until that file exists the layered
+      CSS "wax" background renders on its own, so a missing file degrades to the
+      CSS art — never a broken-image box.
+    -->
+    <header class="hero">
+      <div class="hero-inner">
+        <a class="wordmark" href="/" aria-label={`${NAME} home`}>
+          <Mark size={26} decorative />
+          <span>{NAME}</span>
+        </a>
+
+        <div class="hero-copy">
+          <h1>{HEADLINE}</h1>
+          <p class="lede">
+            Point {NAME} at your own Plex, Jellyfin or Navidrome server and it
+            plays what is already there. No account to make, nothing to subscribe
+            to, nothing listening to what you play. Free forever, open source.
+          </p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+
+        <div class="stage">
+          <div class="record" aria-hidden="true">
+            <div class="disc-spin">
+              <div class="label">
+                <Mark size={40} decorative />
+                <span class="rpm">33&frac13; RPM &middot; STEREO</span>
+              </div>
+              <span class="spindle"></span>
+            </div>
+            <div class="sheen"></div>
+
+            <svg class="arm" viewBox="0 0 100 100" fill="none">
+              <defs>
+                <filter id="vy-arm-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="1.4" stdDeviation="1.3" flood-color="#000" flood-opacity="0.55"/>
+                </filter>
+              </defs>
+              <g filter="url(#vy-arm-shadow)" stroke-linecap="round" stroke-linejoin="round">
+                <!-- pivot bearing housing, mounted off the platter to the right -->
+                <circle cx="92" cy="58" r="5" fill="#1b1b21"/>
+                <!-- counterweight stub + weight, in line behind the pivot -->
+                <line x1="92" y1="58" x2="97" y2="66" stroke="#c7c3bb" stroke-width="2.1"/>
+                <rect x="92.25" y="62.2" width="9.5" height="7.6" rx="3.8" transform="rotate(58.3 97 66)" fill="#d7d3cb" stroke="#0b0b0c" stroke-width="0.4"/>
+                <!-- main tube, pivot up to the headshell -->
+                <line x1="92" y1="58" x2="73.5" y2="28" stroke="#ddd9d1" stroke-width="2.2"/>
+                <line x1="92" y1="58" x2="73.5" y2="28" stroke="#ffffff" stroke-width="0.6" opacity="0.45"/>
+                <!-- pivot bearing cap over the tube joint -->
+                <circle cx="92" cy="58" r="3" fill="#35353d"/>
+                <circle cx="92" cy="58" r="3" fill="none" stroke="#e8e4dc" stroke-width="0.6" opacity="0.7"/>
+                <!-- offset headshell + cartridge dropping onto the outer groove -->
+                <line x1="73.5" y1="28" x2="69" y2="22" stroke="#cdc9c1" stroke-width="3.2"/>
+                <rect x="67.4" y="20.4" width="3.2" height="2.6" rx="0.6" transform="rotate(58.3 69 22)" fill="#26262c"/>
+                <circle cx="68.4" cy="20.6" r="0.7" fill="#e8e4dc"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- The real Mozz album page, framed as hardware set on the platter. -->
+          <div class="phone-slot">
+            <Phone
+              name="mozz-album-dark"
+              priority
+              width={236}
+              sizes="(max-width: 704px) 44vw, 236px"
+              class="hero-phone"
+            />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="servers" aria-labelledby="vy-servers">
+      <h2 id="vy-servers">Point it at your server</h2>
+      <ol class="server-list" role="list">
+        {SERVERS.map((s) => (
+          <li>
+            <span class="server-badge"><ServerLogo name={s.name} size={30} /></span>
+            <span class="server-name">{s.name}</span>
+            <p>{s.note}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="hues" aria-labelledby="vy-hues">
+      <div class="hues-head">
+        <h2 id="vy-hues">It takes the colour of the record</h2>
+        <p class="hues-lede">
+          Play anything and {NAME} repaints itself from the artwork &mdash; every
+          screen tinted to match whatever is on the platter.
+        </p>
+      </div>
+      <div class="hue-fan" role="list">
+        {HUES.map((shotName) => (
+          <div class="hue-item" role="listitem">
+            <Shot name={shotName} sizes="(max-width: 704px) 20vw, 200px" class="hue-card" />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="sleeve" aria-labelledby="vy-sleeve">
+      <div class="sleeve-head">
+        <div class="sleeve-intro">
+          <h2 id="vy-sleeve">What&rsquo;s in the grooves</h2>
+          <p>Two sides, six tracks. Every one is in the free app, because there is no other kind.</p>
+        </div>
+
+        <!-- "The stack": a pressed column of records, drawn in the vinyl palette. -->
+        <figure class="stack" aria-hidden="true">
+          <svg viewBox="0 0 520 340" role="presentation">
+            <defs>
+              <radialGradient id="vy-stack-wax" cx="50%" cy="46%" r="62%">
+                <stop offset="0%" stop-color="#1c1c22"/>
+                <stop offset="58%" stop-color="#101015"/>
+                <stop offset="100%" stop-color="#08080a"/>
+              </radialGradient>
+              <linearGradient id="vy-stack-side" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#141419"/>
+                <stop offset="100%" stop-color="#050506"/>
+              </linearGradient>
+              <radialGradient id="vy-stack-label" cx="50%" cy="38%" r="70%">
+                <stop offset="0%" stop-color="#d81030"/>
+                <stop offset="52%" stop-color="#c80028"/>
+                <stop offset="100%" stop-color="#9e0020"/>
+              </radialGradient>
+              <linearGradient id="vy-stack-sheen" x1="0" y1="0" x2="1" y2="0.55">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+                <stop offset="26%" stop-color="#ffffff" stop-opacity="0"/>
+                <stop offset="72%" stop-color="#ffffff" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.12"/>
+              </linearGradient>
+              <clipPath id="vy-stack-clip">
+                <ellipse cx={stackTop.cx} cy={stackTop.cy} rx={stackTop.rx} ry={stackTop.ry}/>
+              </clipPath>
+              <filter id="vy-stack-shadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="26" stdDeviation="22" flood-color="#000" flood-opacity="0.55"/>
+              </filter>
+            </defs>
+
+            <ellipse cx="260" cy="300" rx="196" ry="30" fill="#000" opacity="0.5"/>
+
+            <g filter="url(#vy-stack-shadow)">
+              <!-- the pressed pile: front wall of the stacked discs -->
+              <path
+                d={`M ${stackTop.cx - stackTop.rx} ${stackTop.cy}
+                    L ${stackTop.cx - stackTop.rx} ${stackTop.cy + stackDepth}
+                    A ${stackTop.rx} ${stackTop.ry} 0 0 0 ${stackTop.cx + stackTop.rx} ${stackTop.cy + stackDepth}
+                    L ${stackTop.cx + stackTop.rx} ${stackTop.cy} Z`}
+                fill="url(#vy-stack-side)"
+              />
+              {stackBands.map((b) => (
+                <path
+                  d={`M ${stackTop.cx - stackTop.rx} ${b.y} A ${stackTop.rx} ${stackTop.ry} 0 0 0 ${stackTop.cx + stackTop.rx} ${b.y}`}
+                  fill="none"
+                  stroke={b.red ? '#c80028' : 'rgba(255,255,255,0.09)'}
+                  stroke-width={b.red ? 2.4 : 1}
+                />
+              ))}
+
+              <!-- top face of the pile -->
+              <ellipse cx={stackTop.cx} cy={stackTop.cy} rx={stackTop.rx} ry={stackTop.ry} fill="url(#vy-stack-wax)"/>
+              <g clip-path="url(#vy-stack-clip)">
+                {stackGrooves.map((g) => (
+                  <ellipse cx={stackTop.cx} cy={stackTop.cy} rx={g.rx} ry={g.ry} fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                ))}
+                <ellipse cx={stackTop.cx} cy={stackTop.cy} rx={stackTop.rx} ry={stackTop.ry} fill="url(#vy-stack-sheen)"/>
+              </g>
+              <ellipse cx={stackTop.cx} cy={stackTop.cy} rx={stackTop.rx} ry={stackTop.ry} fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+
+              <!-- centre label -->
+              <ellipse cx={stackTop.cx} cy={stackTop.cy} rx="62" ry="22" fill="url(#vy-stack-label)"/>
+              <ellipse cx={stackTop.cx} cy={stackTop.cy} rx="52" ry="18" fill="none" stroke="rgba(246,239,231,0.28)" stroke-width="1"/>
+              <ellipse cx={stackTop.cx} cy={stackTop.cy} rx="4.5" ry="2" fill="#050506"/>
+            </g>
+          </svg>
+        </figure>
+      </div>
+
+      <div class="sides">
+        <div class="side">
+          <div class="side-mark"><span class="side-letter">A</span><span class="side-word">Side A</span></div>
+          <ol class="tracks" role="list">
+            {sideA.map((f, i) => (
+              <li>
+                <span class="pos">A{i + 1}</span>
+                <div class="track-copy">
+                  <h3>{f.title}</h3>
+                  <p>{f.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="side">
+          <div class="side-mark"><span class="side-letter">B</span><span class="side-word">Side B</span></div>
+          <ol class="tracks" role="list">
+            {sideB.map((f, i) => (
+              <li>
+                <span class="pos">B{i + 1}</span>
+                <div class="track-copy">
+                  <h3>{f.title}</h3>
+                  <p>{f.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div class="pressing">
+        <span class="pressing-label">This pressing</span>
+        <ul role="list">
+          {STATS.map((s) => (
+            <li><b>{s.value}</b><span>{s.label}</span></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="own" aria-labelledby="vy-own">
+      <!-- "Nothing on the line but you": server -> device -> ears, one groove. -->
+      <figure class="signal" aria-hidden="true">
+        <svg viewBox="0 0 1160 300" role="presentation">
+          <defs>
+            <linearGradient id="vy-sig-metal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3a3a42"/>
+              <stop offset="18%" stop-color="#26262d"/>
+              <stop offset="100%" stop-color="#111116"/>
+            </linearGradient>
+            <linearGradient id="vy-sig-band" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4a4a52"/>
+              <stop offset="100%" stop-color="#1c1c22"/>
+            </linearGradient>
+            <radialGradient id="vy-sig-red" cx="50%" cy="36%" r="70%">
+              <stop offset="0%" stop-color="#d81030"/>
+              <stop offset="60%" stop-color="#c80028"/>
+              <stop offset="100%" stop-color="#9e0020"/>
+            </radialGradient>
+            <filter id="vy-sig-shadow" x="-40%" y="-40%" width="180%" height="200%">
+              <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.5"/>
+            </filter>
+            <filter id="vy-sig-glow" x="-140%" y="-140%" width="380%" height="380%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#c80028" flood-opacity="0.9"/>
+            </filter>
+          </defs>
+
+          <!-- the one groove every node sits on -->
+          <g class="sig-groove">
+            <path d="M118 224 H1042" stroke="rgba(232,228,220,0.22)" stroke-width="1"/>
+            <path d="M118 228 H1042" stroke="rgba(232,228,220,0.13)" stroke-width="1"/>
+            <path d="M118 232 H1042" stroke="rgba(232,228,220,0.08)" stroke-width="1"/>
+            <circle class="sig-dot" cx="0" cy="228" r="4.5" fill="#d81030" filter="url(#vy-sig-glow)"/>
+          </g>
+
+          <!-- what is NOT on the line -->
+          <g class="sig-absent" transform="translate(486 44)">
+            <path d="M14 30 a16 16 0 0 1 3-31 a20 20 0 0 1 37 6 a15 15 0 0 1 4 25 Z"
+              fill="none" stroke="rgba(114,109,101,0.7)" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="8" y1="34" x2="60" y2="-4" stroke="#c80028" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <text class="sig-note" x="516" y="96">no account &middot; no tracking &middot; no middleman</text>
+          <line x1="580" y1="104" x2="580" y2="150" stroke="rgba(114,109,101,0.5)" stroke-width="1.4" stroke-dasharray="3 5"/>
+          <g stroke="#c80028" stroke-width="2" stroke-linecap="round">
+            <line x1="573" y1="120" x2="587" y2="134"/>
+            <line x1="587" y1="120" x2="573" y2="134"/>
+          </g>
+
+          <!-- YOUR SERVER -->
+          <g filter="url(#vy-sig-shadow)">
+            <rect x="122" y="74" width="106" height="140" rx="11" fill="url(#vy-sig-metal)"/>
+            <rect x="122.5" y="74.5" width="105" height="139" rx="10.5" fill="none" stroke="rgba(255,255,255,0.09)"/>
+            {[92, 116, 140].map((y) => (
+              <g>
+                <rect x="136" y={y} width="78" height="16" rx="3.5" fill="#0c0c10"/>
+                <rect x="140" y={y + 4} width="52" height="2" rx="1" fill="rgba(232,228,220,0.16)"/>
+                <circle cx="205" cy={y + 8} r="2" fill="rgba(232,228,220,0.4)"/>
+              </g>
+            ))}
+            <circle cx="141" cy="196" r="4" fill="#d81030" filter="url(#vy-sig-glow)"/>
+            <rect x="156" y="190" width="46" height="4" rx="2" fill="rgba(232,228,220,0.14)"/>
+          </g>
+          <text class="sig-label" x="175" y="262">Your server</text>
+
+          <!-- YOUR DEVICE -->
+          <g filter="url(#vy-sig-shadow)">
+            <rect x="548" y="150" width="64" height="150" rx="15" fill="url(#vy-sig-metal)"/>
+            <rect x="554" y="158" width="52" height="150" rx="9" fill="#0d0d11"/>
+            <rect x="571" y="163" width="18" height="4" rx="2" fill="#000"/>
+            <rect x="565" y="176" width="30" height="30" rx="4" fill="url(#vy-sig-red)"/>
+            <circle cx="580" cy="191" r="6.5" fill="none" stroke="rgba(246,239,231,0.5)" stroke-width="1.5"/>
+            <circle cx="580" cy="191" r="1.6" fill="#f6efe7"/>
+            <rect x="565" y="214" width="24" height="3.5" rx="1.75" fill="rgba(232,228,220,0.7)"/>
+            <rect x="565" y="222" width="16" height="3" rx="1.5" fill="rgba(156,150,140,0.7)"/>
+            <path d="M576 236 l10 6 l-10 6 Z" fill="rgba(232,228,220,0.85)"/>
+          </g>
+          <text class="sig-label" x="580" y="290">Your phone</text>
+
+          <!-- YOUR EARS -->
+          <g filter="url(#vy-sig-shadow)">
+            <path d="M921 196 v-14 a59 59 0 0 1 118 0 v14"
+              fill="none" stroke="url(#vy-sig-band)" stroke-width="11" stroke-linecap="round"/>
+            <path d="M921 190 v-8 a59 59 0 0 1 118 0 v8"
+              fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-linecap="round"/>
+            <rect x="905" y="176" width="34" height="70" rx="15" fill="url(#vy-sig-metal)"/>
+            <rect x="913" y="184" width="18" height="54" rx="9" fill="#0c0c10"/>
+            <rect x="1021" y="176" width="34" height="70" rx="15" fill="url(#vy-sig-metal)"/>
+            <rect x="1029" y="184" width="18" height="54" rx="9" fill="#0c0c10"/>
+            <path d="M922 244 q-16 10 -14 30 q2 16 -10 22" fill="none" stroke="rgba(232,228,220,0.4)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <text class="sig-label" x="980" y="290">Your ears</text>
+        </svg>
+        <figcaption>Your server, your device, your ears &mdash; and nothing else on the line.</figcaption>
+      </figure>
+
+      <div class="own-grid">
+        <div class="own-head">
+          <h2 id="vy-own">It answers to you, and to no one else.</h2>
+          <p class="own-lede">
+            The whole argument for {NAME} fits on the label: nothing sits between
+            you and music you already own.
+          </p>
+        </div>
+        <dl class="own-list">
+          {OWNERSHIP.map((o) => (
+            <div class="own-row">
+              <dt>{o.title}</dt>
+              <dd>{o.body}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="faq" aria-labelledby="vy-faq">
+      <h2 id="vy-faq">Questions worth asking</h2>
+      <div class="faq-list">
+        {FAQS.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <footer class="runout">
+      <div class="runout-grooves" aria-hidden="true"><span class="runout-spindle"></span></div>
+      <div class="runout-copy">
+        <Mark size={34} decorative />
+        <p>
+          {NAME} is free forever and open source under GPL-3.0.
+          <a href={GITHUB_URL}>See it on GitHub</a>
+        </p>
+        <span class="matrix" aria-hidden="true">MOZZ&nbsp;&middot;&nbsp;A1&nbsp;&middot;&nbsp;mozzmusic.com</span>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .vy {
+    --wax: #0b0b0c;
+    --wax-lift: #17171d;
+    --ink: #e8e4dc;
+    --ink-dim: #9c968c;
+    --ink-faint: #726d65;
+    --label: #c80028;
+    --label-deep: #9e0020;
+    --label-ink: #f6efe7;
+    --hair: rgba(232, 228, 220, 0.14);
+    --hair-strong: rgba(232, 228, 220, 0.3);
+
+    background: var(--wax);
+    color: var(--ink);
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  ::selection { background: var(--label); color: var(--label-ink); }
+
+  a:focus-visible,
+  summary:focus-visible,
+  .store:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    /* The client's hero artwork drops in here; absent, this resolves to no
+       image and the CSS layers below carry the composition on their own. */
+    --hero-plate: image-set(url('/hero/vinyl.jpg') 1x);
+
+    position: relative;
+    background-color: var(--wax);
+    background-image:
+      /* legibility scrim over any future photo, and depth right now */
+      linear-gradient(100deg,
+        rgba(11, 11, 12, 0.95) 0%, rgba(11, 11, 12, 0.72) 34%,
+        rgba(11, 11, 12, 0.36) 62%, rgba(11, 11, 12, 0.62) 100%),
+      /* supplied artwork (silently absent until the file exists) */
+      var(--hero-plate),
+      /* raking spotlight behind the object cluster */
+      radial-gradient(85% 78% at 74% 40%, rgba(78, 78, 92, 0.32), transparent 58%),
+      /* fine wax groove texture, centred where the record sits */
+      repeating-radial-gradient(circle at 78% 40%,
+        rgba(255, 255, 255, 0.022) 0 2px, rgba(0, 0, 0, 0) 2px 7px),
+      /* base wax gradient */
+      radial-gradient(140% 120% at 50% -8%, #16161d 0%, #0b0b0c 58%);
+    background-repeat: no-repeat;
+    background-size: cover, cover, cover, auto, cover;
+    background-position: center, center, center, 78% 40%, center;
+  }
+
+  .hero-inner {
+    max-width: 78rem;
+    margin-inline: auto;
+    min-height: min(92vh, 56rem);
+    padding: clamp(1.5rem, 3vw, 2.5rem) 1.5rem clamp(3rem, 6vw, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'brand brand'
+      'copy  stage';
+    align-items: center;
+    column-gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  .wordmark {
+    grid-area: brand;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    align-self: start;
+    padding: 0.3rem 0;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    width: max-content;
+  }
+
+  .wordmark:hover { color: #fff; }
+
+  .hero-copy { grid-area: copy; max-width: 34rem; padding: clamp(1rem, 3vw, 2.5rem) 0; }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 5.6vw, 5rem);
+    margin: 0;
+  }
+
+  .lede {
+    margin: 1.5rem 0 0;
+    max-width: 42ch;
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    color: var(--ink-dim);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    margin-top: 2.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  /* CTA as a printed white-label sticker: cream slab, black ink, a real
+     offset-and-blur shadow — no red, the way a label keeps red for itself. */
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 1.4rem;
+    background: var(--ink);
+    color: #0b0b0c;
+    border-radius: 3px;
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.85);
+    transition: translate 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+  }
+
+  a.store:hover {
+    translate: 0 -2px;
+    background: #fff;
+    box-shadow: 0 16px 32px -14px rgba(0, 0, 0, 0.9);
+  }
+
+  a.store:active { translate: 0 0; }
+
+  .store svg { width: 24px; height: 24px; fill: currentColor; }
+
+  .store span {
+    display: grid;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .store small {
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  /* Pending, not broken: a debossed blank sticker rather than a dead link. */
+  .store.is-pending {
+    background: transparent;
+    color: var(--ink-dim);
+    box-shadow: inset 0 0 0 1px var(--hair-strong);
+    cursor: default;
+  }
+
+  .ghost {
+    font-weight: 600;
+    color: var(--ink);
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--hair-strong);
+    transition: border-color 0.16s ease, color 0.16s ease;
+  }
+
+  .ghost:hover { border-color: var(--ink); }
+
+  /* ---------- the record + phone ---------- */
+
+  .stage {
+    grid-area: stage;
+    position: relative;
+    align-self: center;
+    justify-self: end;
+    width: 100%;
+    min-height: 26rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .record {
+    position: relative;
+    width: min(84%, 26rem);
+    aspect-ratio: 1;
+    isolation: isolate;
+    translate: clamp(1rem, 4vw, 3.5rem) 0;
+  }
+
+  .disc-spin {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    /* Fine concentric grooves over a radial wax base, so the surface reads as
+       cut vinyl with depth rather than a flat black circle. */
+    background:
+      repeating-radial-gradient(circle at 50% 50%,
+        rgba(0, 0, 0, 0) 0 1.5px,
+        rgba(255, 255, 255, 0.05) 1.5px 2px,
+        rgba(0, 0, 0, 0.55) 2px 3.2px),
+      radial-gradient(circle at 50% 50%,
+        #1a1a20 0 19%, #101015 44%, #0b0b0c 82%, #060608 100%);
+    box-shadow:
+      0 34px 70px -24px rgba(0, 0, 0, 0.9),
+      0 10px 26px -10px rgba(0, 0, 0, 0.75),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    animation: vy-spin 9s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes vy-spin { to { transform: rotate(360deg); } }
+
+  /* Centre label: red the way a pressing plant prints it, and nowhere else. */
+  .label {
+    position: absolute;
+    inset: 30%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 36%, #d81030 0%, var(--label) 46%, var(--label-deep) 100%);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4), 0 2px 12px -6px rgba(0, 0, 0, 0.7);
+    color: var(--label-ink);
+    display: grid;
+    place-items: center;
+  }
+
+  .label::before {
+    content: '';
+    position: absolute;
+    inset: 9%;
+    border-radius: 50%;
+    border: 1px solid rgba(246, 239, 231, 0.28);
+  }
+
+  .label :global(.mozz-mark) {
+    width: clamp(1.7rem, 5.6vw, 2.75rem);
+    height: clamp(1.7rem, 5.6vw, 2.75rem);
+    position: absolute;
+    top: 16%;
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .rpm {
+    position: absolute;
+    bottom: 16%;
+    left: 50%;
+    translate: -50% 0;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(0.5rem, 1.4vw, 0.7rem);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    opacity: 0.92;
+  }
+
+  /* Spindle hole, punched dead centre and reading as a real hole with depth. */
+  .spindle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: #050506;
+    box-shadow:
+      inset 0 1px 1.5px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Fixed raking highlight — the light stays put while the wax turns under it. */
+  .sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(
+      122deg,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.03) 20%,
+      transparent 42%,
+      transparent 60%,
+      rgba(255, 255, 255, 0.04) 80%,
+      rgba(255, 255, 255, 0.13) 100%);
+    mix-blend-mode: screen;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .arm {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ---------- the phone: the real Mozz album page, set on the platter ---------- */
+
+  .phone-slot {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    translate: -6% -50%;
+    rotate: -4deg;
+    width: max-content;
+    z-index: 3;
+  }
+
+  /* Dress the shared iPhone frame as warm brushed graphite — deck-plinth
+     hardware that belongs beside a turntable, not a generic slab. The frame
+     geometry is solved inside <Phone>; only the surface is ours. */
+  .phone-slot :global(.hero-phone) {
+    --phone-bezel: linear-gradient(152deg, #43434b 0%, #191920 30%, #0d0d11 66%, #2b2b33 100%);
+    --phone-bezel-w: 0.033;
+    --phone-rim: rgba(246, 239, 231, 0.16);
+    --phone-shadow:
+      0 34px 60px -26px rgba(0, 0, 0, 0.72),
+      0 10px 22px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* ---------- servers ---------- */
+
+  .servers {
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: clamp(2.5rem, 5vw, 4rem) 1.5rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .servers h2 {
+    font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .server-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .server-list li {
+    padding: 0.25rem clamp(1.25rem, 2.5vw, 2rem);
+    border-left: 1px solid var(--hair);
+  }
+
+  .server-list li:first-child { border-left: 0; padding-left: 0; }
+
+  /* Each server logo pressed like a centre label: a thin-ringed puck. */
+  .server-badge {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1.1rem;
+    border-radius: 50%;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 50% 38%, #1b1b21, #101015 78%);
+    box-shadow:
+      inset 0 0 0 1px var(--hair-strong),
+      inset 0 0 0 5px rgba(11, 11, 12, 0.9),
+      inset 0 0 0 6px var(--hair);
+    transition: color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .server-list li:hover .server-badge {
+    color: var(--label);
+    box-shadow:
+      inset 0 0 0 1px var(--hair-strong),
+      inset 0 0 0 5px rgba(11, 11, 12, 0.9),
+      inset 0 0 0 6px rgba(200, 0, 40, 0.4);
+  }
+
+  .server-name {
+    display: block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .server-list p {
+    margin: 0;
+    color: var(--ink-dim);
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+
+  /* ---------- features as A / B sides ---------- */
+
+  .sleeve {
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .sleeve-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .sleeve-intro { max-width: 40rem; }
+
+  .sleeve-head h2 { font-size: clamp(1.75rem, 4vw, 3rem); margin: 0; }
+
+  .sleeve-head p {
+    margin: 1rem 0 0;
+    color: var(--ink-dim);
+    max-width: 60ch;
+    text-wrap: pretty;
+  }
+
+  .stack { margin: 0; justify-self: end; width: 100%; max-width: 30rem; }
+  .stack svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .sides {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .side-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--hair-strong);
+  }
+
+  .side-letter {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(2.75rem, 6vw, 4rem);
+    line-height: 0.8;
+    color: var(--ink);
+  }
+
+  .side-word {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .tracks { list-style: none; margin: 0; padding: 0; }
+
+  .tracks li {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .tracks li:last-child { border-bottom: 0; }
+
+  /* Positions carry real information here — side and track order, A1..B3. */
+  .pos {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+    padding-top: 0.15rem;
+  }
+
+  .track-copy h3 { font-size: 1.1875rem; font-weight: 700; margin: 0 0 0.4rem; }
+
+  .track-copy p { margin: 0; color: var(--ink-dim); max-width: 46ch; text-wrap: pretty; }
+
+  /* stats, woven in as pressing metadata rather than a big-number hero row */
+  .pressing {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--hair-strong);
+  }
+
+  .pressing-label {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: var(--ink-dim);
+  }
+
+  .pressing ul {
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2.25rem;
+  }
+
+  .pressing li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .pressing b {
+    font-weight: 700;
+    font-size: 1.375rem;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pressing span { color: var(--ink-dim); font-size: 0.9375rem; }
+
+  /* ---------- ownership ---------- */
+
+  .own {
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  /* signal-path illustration: server -> device -> ears, one continuous groove */
+  .signal {
+    margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .signal svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .sig-label {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    fill: var(--ink-dim);
+    text-anchor: middle;
+  }
+
+  .sig-note {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 17px;
+    fill: var(--ink-faint);
+    text-anchor: middle;
+  }
+
+  .sig-dot { animation: vy-travel 4.6s linear infinite; }
+
+  @keyframes vy-travel {
+    0% { transform: translateX(126px); opacity: 0; }
+    8% { opacity: 1; }
+    92% { opacity: 1; }
+    100% { transform: translateX(1034px); opacity: 0; }
+  }
+
+  .signal figcaption {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    text-align: center;
+    color: var(--ink-dim);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.0625rem, 2vw, 1.3rem);
+  }
+
+  .own-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .own-head h2 {
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    margin: 0;
+    max-width: 16ch;
+  }
+
+  .own-lede {
+    margin: 1.25rem 0 0;
+    color: var(--ink-dim);
+    max-width: 40ch;
+    text-wrap: pretty;
+  }
+
+  .own-list { margin: 0; }
+
+  .own-row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .own-row:first-child { padding-top: 0; }
+  .own-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+  .own-row dt { font-weight: 700; font-size: 1.125rem; }
+
+  .own-row dd { margin: 0; color: var(--ink-dim); max-width: 52ch; text-wrap: pretty; }
+
+  /* ---------- faq ---------- */
+
+  .faq {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .faq h2 { font-size: clamp(1.75rem, 4vw, 2.75rem); margin: 0 0 clamp(1.5rem, 3vw, 2.5rem); }
+
+  .faq details { border-bottom: 1px solid var(--hair); }
+
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 1.25rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    transition: color 0.16s ease;
+  }
+
+  .faq summary:hover { color: #fff; }
+  .faq summary::-webkit-details-marker { display: none; }
+
+  .faq summary::after {
+    content: '';
+    flex: none;
+    width: 13px;
+    height: 13px;
+    background:
+      linear-gradient(var(--ink-dim), var(--ink-dim)) center/13px 1.5px no-repeat,
+      linear-gradient(var(--ink-dim), var(--ink-dim)) center/1.5px 13px no-repeat;
+    transition: transform 0.2s ease;
+  }
+
+  .faq details[open] summary::after { transform: rotate(90deg); }
+  .faq details[open] summary { color: #fff; }
+
+  .faq p {
+    margin: 0;
+    padding: 0 0 1.5rem;
+    color: var(--ink-dim);
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+
+  /* ---------- footer / run-out groove ---------- */
+
+  .runout {
+    position: relative;
+    border-top: 1px solid var(--hair);
+    padding: clamp(3rem, 6vw, 5rem) 1.5rem clamp(2.5rem, 5vw, 3.5rem);
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  /* The dead wax: tight run-out grooves closing on the spindle. */
+  .runout-grooves {
+    position: relative;
+    width: min(70vw, 16rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at 50% 50%,
+        rgba(0, 0, 0, 0) 0 1.4px,
+        rgba(255, 255, 255, 0.07) 1.4px 1.9px,
+        rgba(0, 0, 0, 0.55) 1.9px 3px),
+      radial-gradient(circle at 50% 50%, #191920 0 40%, #0b0b0c 100%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 40%, transparent 72%);
+    mask-image: radial-gradient(circle at 50% 50%, #000 40%, transparent 72%);
+    margin-bottom: 2rem;
+  }
+
+  .runout-spindle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--label);
+    box-shadow: 0 0 0 3px #0b0b0c, inset 0 1px 1px rgba(0, 0, 0, 0.6);
+  }
+
+  .runout-copy { display: grid; justify-items: center; gap: 1rem; }
+
+  .runout-copy p { margin: 0; color: var(--ink-dim); font-size: 0.9375rem; }
+
+  .runout-copy a {
+    color: var(--ink);
+    margin-left: 0.5rem;
+    border-bottom: 1px solid var(--hair-strong);
+    padding-bottom: 1px;
+    transition: border-color 0.16s ease;
+  }
+
+  .runout-copy a:hover { border-color: var(--ink); }
+
+  .matrix {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- adaptive colour ---------- */
+
+  .hues {
+    max-width: 78rem;
+    margin-inline: auto;
+    padding: clamp(3rem, 6vw, 5.5rem) 1.5rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .hues-head { max-width: 42rem; }
+
+  .hues h2 {
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    margin: 0;
+  }
+
+  .hues-lede {
+    margin: 1rem 0 0;
+    max-width: 46ch;
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    color: var(--ink-dim);
+    text-wrap: pretty;
+  }
+
+  /* A fan of screens, like records pulled from a crate — each tinted by the
+     record it is playing, so the adaptive colour reads at a glance. */
+  .hue-fan {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-block: 1.75rem;
+    /* Clip the spread locally so an oversized arc can never scroll the page. */
+    overflow: clip;
+  }
+
+  .hue-item {
+    flex: 0 0 auto;
+    filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.5));
+  }
+
+  .hue-item + .hue-item { margin-inline-start: -3.6rem; }
+
+  .hue-fan :global(.hue-card) {
+    display: block;
+    width: clamp(9rem, 15vw, 12rem);
+    height: auto;
+    border-radius: 1.15rem;
+    box-shadow: 0 0 0 1px rgba(246, 239, 231, 0.12);
+    background: #000;
+  }
+
+  .hue-item:nth-child(1) { rotate: -8deg; translate: 0 1.7rem; }
+  .hue-item:nth-child(2) { rotate: -4deg; translate: 0 0.5rem; }
+  .hue-item:nth-child(3) { rotate: 0deg; translate: 0 -0.3rem; z-index: 2; }
+  .hue-item:nth-child(4) { rotate: 4deg; translate: 0 0.5rem; }
+  .hue-item:nth-child(5) { rotate: 8deg; translate: 0 1.7rem; }
+
+  /* ---------- responsive ---------- */
+
+  @media (max-width: 60rem) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
+      grid-template-areas:
+        'brand'
+        'copy'
+        'stage';
+      row-gap: clamp(2.25rem, 6vw, 3.5rem);
+      min-height: 0;
+      align-items: start;
+    }
+    .hero-copy { padding: 0; max-width: 38rem; }
+    .stage {
+      order: 2;
+      justify-self: center;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      min-height: 27rem;
+      padding-left: 0;
+    }
+    .record {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(40%, 16rem);
+      translate: 8% -50%;
+      z-index: 1;
+    }
+    .phone-slot {
+      left: 50%;
+      top: 50%;
+      translate: -66% -50%;
+    }
+    .sleeve-head { grid-template-columns: minmax(0, 1fr); gap: clamp(2rem, 5vw, 3rem); }
+    .stack { justify-self: center; max-width: 24rem; margin-top: 0.5rem; }
+    .own-grid { grid-template-columns: minmax(0, 1fr); }
+    .sig-label { font-size: 21px; }
+    .sig-note { font-size: 23px; }
+  }
+
+  @media (max-width: 44rem) {
+    .hero h1 { font-size: clamp(2.4rem, 10vw, 3.4rem); }
+    .stage { min-height: 25rem; }
+    .record { width: min(46%, 13rem); translate: 8% -50%; }
+    .phone-slot { translate: -70% -50%; scale: 0.76; }
+    .hue-item + .hue-item { margin-inline-start: -2rem; }
+    .hue-fan :global(.hue-card) { width: clamp(5.25rem, 19vw, 7rem); }
+    .hue-item:nth-child(1) { rotate: -7deg; translate: 0 0.8rem; }
+    .hue-item:nth-child(2) { rotate: -3.5deg; translate: 0 0.2rem; }
+    .hue-item:nth-child(3) { translate: 0 -0.2rem; }
+    .hue-item:nth-child(4) { rotate: 3.5deg; translate: 0 0.2rem; }
+    .hue-item:nth-child(5) { rotate: 7deg; translate: 0 0.8rem; }
+    .server-list { grid-template-columns: minmax(0, 1fr); }
+    .server-list li {
+      border-left: 0;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--hair);
+    }
+    .server-list li:first-child { padding-top: 0; border-top: 0; }
+    .sides { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+    .own-row { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .disc-spin { animation: none; }
+    .sig-dot { animation: none; opacity: 1; transform: translateX(360px); }
+    .store, a.store:hover, .ghost, .faq summary, .faq summary::after { transition: none; }
+  }
+</style>

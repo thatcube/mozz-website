@@ -1,0 +1,1156 @@
+---
+/**
+ * VARIANT — PIXEL
+ * The 8-bit mark, all the way up: it is the design system, not decoration.
+ * See the design contract in the HTML comment at the top of <main>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Press play on music you already own';
+
+// Real Mozz screenshots replace the old hand-drawn phone. The hero shows the
+// deep-red album page; the strip below shows the same interface recoloured by
+// four other records, so the adaptive tint reads at a glance.
+const TINTS = ['mozz-nowplaying', 'mozz-album-warm', 'mozz-artist', 'mozz-playlist'];
+
+// VU-style meter fill (lit cells out of 12) that stands in for each stat.
+const METER = [9, 7, 12, 11];
+
+// On-device catalog illustration: a wall of distinct 8×8 pixel covers. Each is an
+// abstract 2-tone motif drawn from the variant palette — never a real album cover.
+// [base, ink] per tile, then a motif index into WALL_MOTIF.
+const WALL_PALETTE: [string, string][] = [
+  ['#c80028', '#f4f4f5'],
+  ['#17171e', '#c80028'],
+  ['#f4f4f5', '#c80028'],
+  ['#1f1f28', '#f4f4f5'],
+  ['#8f0018', '#f4f4f5'],
+  ['#101014', '#e5a00d'],
+];
+// Each motif is a list of [x,y,w,h] accent blocks laid on an 8×8 field.
+const WALL_MOTIF: [number, number, number, number][][] = [
+  [[1, 1, 3, 3], [4, 4, 3, 3]],
+  [[0, 0, 8, 3], [0, 6, 8, 1]],
+  [[2, 0, 4, 8]],
+  [[1, 1, 6, 6], [3, 3, 2, 2]],
+  [[0, 2, 8, 1], [0, 4, 8, 1], [0, 6, 8, 1]],
+  [[0, 5, 1, 3], [1, 3, 1, 5], [2, 4, 1, 4], [3, 2, 1, 6], [4, 4, 1, 4], [5, 1, 1, 7], [6, 3, 1, 5], [7, 5, 1, 3]],
+  [[0, 0, 4, 4], [4, 4, 4, 4]],
+  [[3, 0, 2, 8], [0, 3, 8, 2]],
+];
+// Twelve covers: cycle motif and palette so no two neighbours match. Flags mark a
+// few as downloaded-for-offline; one tile is the "now playing" record.
+const WALL = Array.from({ length: 12 }, (_, i) => ({
+  motif: WALL_MOTIF[i % WALL_MOTIF.length],
+  pal: WALL_PALETTE[(i * 5) % WALL_PALETTE.length],
+  down: [0, 2, 3, 5, 6, 8, 9, 11].includes(i),
+  playing: i === 4,
+}));
+---
+
+<Layout
+  title={`${NAME} — press play on music you already own`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files. No account, no tracking, no subscription."
+  themeColor="#101014"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Silkscreen:wght@400;700&family=Archivo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="px">
+    <!--
+    THESIS: The mark is the whole system, not a logo dropped on a page. Every
+    shape is drawn from the 8-bit face — stepped corners, hard red offset
+    shadows, an 8px grid, and the ZZ eyes and smile reused as marks. A boot
+    screen for a library you already own.
+    OWN-WORLD: Near-black #101014, off-white #f4f4f5, one brand red. Zero
+    gradients, zero radius, zero blur: flat fills and solid offset shadows only.
+    Pixelify Sans and Silkscreen display over Archivo body.
+    STORY: Point Mozz at your server, press play, and it is yours — no account,
+    no tracking, no rent.
+    FIRST VIEWPORT: Split hero — headline, lede and actions left; a real Mozz
+    screenshot in an 8-bit slab phone frame right, on a flat plate over the grid.
+    FORM: Fifth of seven; the arcade / boot-screen framing is native to a
+    pixel-art mark rather than a costume borrowed from outside the product.
+  -->
+
+  <VariantBar slug="pixel" tone="neutral" />
+
+    <svg class="grid-bg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <defs>
+        <pattern id="px-minor" width="8" height="8" patternUnits="userSpaceOnUse">
+          <path d="M8 0H0V8" fill="none" stroke="rgba(244,244,245,0.035)" stroke-width="1" />
+        </pattern>
+        <pattern id="px-major" width="64" height="64" patternUnits="userSpaceOnUse">
+          <rect width="64" height="64" fill="url(#px-minor)" />
+          <path d="M64 0H0V64" fill="none" stroke="rgba(244,244,245,0.07)" stroke-width="1" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#px-major)" />
+    </svg>
+
+    <!-- ============================ HEADER ========================== -->
+    <div class="site-head">
+      <a class="wordmark" href={GITHUB_URL} aria-label={`${NAME} on GitHub`}>
+        <Mark size={28} decorative />
+        <span>{NAME}</span>
+      </a>
+      <a class="src-tag" href={GITHUB_URL}>
+        <span>GPL-3.0</span>
+        <span class="src-sep" aria-hidden="true"></span>
+        <span>OPEN SOURCE</span>
+      </a>
+    </div>
+
+    <!-- ============================ HERO ============================ -->
+    <!-- HERO ART PLATE: drop AI-generated artwork at /public/hero/pixel.jpg and
+         it fills the hero behind this content via --hero-plate. With no file
+         present the layer is simply empty and the flat CSS pixel mosaic below
+         shows through — never a broken-image box or a grey rectangle. -->
+    <header class="hero">
+      <svg class="hero-art" aria-hidden="true" viewBox="0 0 160 120" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">
+        <g fill="#c80028" opacity="0.09">
+          <rect x="8" y="14" width="8" height="8" /><rect x="28" y="6" width="8" height="8" />
+          <rect x="132" y="20" width="8" height="8" /><rect x="150" y="10" width="8" height="8" />
+          <rect x="120" y="34" width="8" height="8" /><rect x="16" y="34" width="8" height="8" />
+        </g>
+        <g fill="#f4f4f5" opacity="0.05">
+          <rect x="20" y="22" width="8" height="8" /><rect x="140" y="30" width="8" height="8" />
+          <rect x="108" y="14" width="8" height="8" /><rect x="4" y="46" width="8" height="8" />
+        </g>
+        <g fill="#c80028" opacity="0.11">
+          <rect x="0" y="104" width="8" height="16" /><rect x="10" y="92" width="8" height="28" />
+          <rect x="20" y="100" width="8" height="20" /><rect x="30" y="84" width="8" height="36" />
+          <rect x="40" y="96" width="8" height="24" /><rect x="50" y="76" width="8" height="44" />
+          <rect x="60" y="88" width="8" height="32" /><rect x="70" y="100" width="8" height="20" />
+          <rect x="80" y="80" width="8" height="40" /><rect x="90" y="94" width="8" height="26" />
+          <rect x="100" y="86" width="8" height="34" /><rect x="110" y="98" width="8" height="22" />
+          <rect x="120" y="82" width="8" height="38" /><rect x="130" y="92" width="8" height="28" />
+          <rect x="140" y="100" width="8" height="20" /><rect x="150" y="88" width="8" height="32" />
+        </g>
+      </svg>
+      <div class="hero-plate" aria-hidden="true"></div>
+
+      <div class="hero-copy">
+        <h1>{HEADLINE}</h1>
+        <p class="lede">
+          Mozz plays what is already on your own Plex, Jellyfin or Navidrome
+          server. No account to make, nothing to subscribe to, nothing watching
+          what you listen to.
+        </p>
+
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="btn btn-primary pix" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>DOWNLOAD ON THE</small>App Store</span>
+            </a>
+          ) : (
+            <span class="btn btn-primary pix is-pending" role="note" aria-label="Coming to the App Store">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>COMING TO THE</small>App Store</span>
+            </span>
+          )}
+          <a class="btn btn-ghost pix" href={GITHUB_URL}>Read the source</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="stage pix" aria-hidden="true"></div>
+        <div class="hero-phone">
+          <Phone name="mozz-album-red" width={244} priority sizes="220px" />
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================== ADAPTIVE COLOUR ====================== -->
+    <section class="band" aria-labelledby="px-tint">
+      <div class="wrap">
+        <h2 id="px-tint"><span class="h-mark smile"></span>It takes the colour of the record</h2>
+        <p class="band-sub">
+          Mozz recolours its whole interface to match the artwork of whatever is
+          playing — the same app, a different palette for every record.
+        </p>
+
+        <div class="tints">
+          {TINTS.map((name) => (
+            <figure class="tint pix raise">
+              <span class="tint-screen"><Shot name={name} sizes="(max-width: 60rem) 46vw, 240px" /></span>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== SERVERS ========================== -->
+    <section class="band" aria-labelledby="px-servers">
+      <div class="wrap">
+        <h2 id="px-servers"><span class="h-mark smile"></span>Point it at your server</h2>
+        <p class="band-sub">
+          Mozz is the player. Your server is the library. Sign in once and every
+          record you already keep is right there to play.
+        </p>
+
+        <div class="bay pix raise">
+          {SERVERS.map((s, i) => (
+            <div class={`slot ${i > 0 ? 'ruled' : ''}`}>
+              <span class="slot-logo pix" aria-hidden="true"><ServerLogo name={s.name} size={30} brand /></span>
+              <span class="slot-name">{s.name}</span>
+              <p class="slot-note">{s.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= FEATURES ========================== -->
+    <section class="band" aria-labelledby="px-features">
+      <div class="wrap">
+        <h2 id="px-features"><span class="h-mark smile"></span>Everything, in the free app</h2>
+        <p class="band-sub">There is no paid tier holding a feature hostage — because there is no other kind.</p>
+
+        <ul class="feat" role="list">
+          {FEATURES.map((f) => (
+            <li>
+              <span class="feat-bullet" aria-hidden="true">
+                <svg viewBox="11 11 10 11" class="glyph" shape-rendering="crispEdges"><path d="M15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13Z M21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19Z" fill="currentColor"/></svg>
+              </span>
+              <div class="feat-text">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====================== ON-DEVICE CATALOG ===================== -->
+    <section class="band illo" aria-labelledby="px-catalog">
+      <div class="wrap">
+        <h2 id="px-catalog"><span class="h-mark smile"></span>Your whole library, on the device</h2>
+        <p class="band-sub">
+          Downloads are part of the design, not a bolt-on. Pull records onto the
+          device and the catalog plays the same on a plane as it does at home.
+        </p>
+
+        <!-- Illustration: the library screen, rendered as a framed device panel. -->
+        <div class="catalog pix raise" role="img" aria-label="Illustration of the Mozz library screen: a wall of downloaded albums, playing offline.">
+          <div class="catalog-bar">
+            <span class="cat-title pix">YOUR LIBRARY</span>
+            <span class="cat-badges">
+              <span class="badge pix off">OFFLINE</span>
+              <span class="cat-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </span>
+          </div>
+          <div class="wall">
+            {WALL.map((t) => (
+              <div class={`cvr pix${t.playing ? ' playing' : ''}`}>
+                <svg viewBox="0 0 8 8" shape-rendering="crispEdges" preserveAspectRatio="none">
+                  <rect width="8" height="8" fill={t.pal[0]} />
+                  {t.motif.map(([x, y, w, h]) => (
+                    <rect x={x} y={y} width={w} height={h} fill={t.pal[1]} />
+                  ))}
+                </svg>
+                {t.down && !t.playing && (
+                  <span class="cv-flag dl" aria-hidden="true">
+                    <svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M3 0H5V3H7L4 7L1 3H3V0Z" fill="currentColor"/></svg>
+                  </span>
+                )}
+                {t.playing && (
+                  <span class="cv-flag np" aria-hidden="true"><i></i><i></i><i></i></span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== STATS =========================== -->
+    <section class="band" aria-labelledby="px-stats">
+      <div class="wrap">
+        <h2 id="px-stats"><span class="h-mark smile"></span>Fast is a feature you can feel</h2>
+        <p class="band-sub">Measured on device, not in a press release. It does not get slower as the library gets bigger.</p>
+
+        <div class="levels pix raise">
+          {STATS.map((s, i) => (
+            <div class="ch">
+              <span class="ch-val">{s.value}</span>
+              <div class="meter" aria-hidden="true">
+                {Array.from({ length: 12 }).map((_, c) => (
+                  <span class={`cell${c < METER[i] ? ' on' : ''}${c === METER[i] - 1 ? ' peak' : ''}`}></span>
+                ))}
+              </div>
+              <span class="ch-label">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= OWNERSHIP ========================= -->
+    <section class="band" aria-labelledby="px-own">
+      <div class="wrap">
+        <h2 id="px-own"><span class="h-mark smile"></span>It's actually yours</h2>
+        <p class="band-sub">The whole point of the app: this one is really yours, on hardware you control.</p>
+
+        <!-- Illustration: the whole signal path, and what isn't in it. -->
+        <div class="chain pix raise" role="img" aria-label="Diagram of the signal path: your server sends music straight to your phone and your headphones. A cloud in the middle is crossed out — nothing else sits between you and your files.">
+          <svg class="chain-svg" viewBox="0 0 680 214" shape-rendering="crispEdges" aria-hidden="true">
+            <!-- SERVER -->
+            <g>
+              <rect x="44" y="54" width="96" height="120" fill="#c80028" />
+              <rect x="36" y="46" width="96" height="120" fill="#17171e" />
+              <rect x="36" y="46" width="96" height="120" fill="none" stroke="#3a3a46" stroke-width="2" />
+              <rect x="36" y="46" width="96" height="14" fill="#1f1f28" />
+              <rect x="120" y="50" width="6" height="6" fill="#c80028" />
+              <rect x="48" y="70" width="72" height="16" fill="#101014" stroke="#2a2a34" stroke-width="1" />
+              <rect x="52" y="74" width="8" height="8" fill="#3a3a46" />
+              <rect x="108" y="75" width="8" height="6" fill="#c80028" />
+              <rect x="48" y="92" width="72" height="16" fill="#101014" stroke="#2a2a34" stroke-width="1" />
+              <rect x="52" y="96" width="8" height="8" fill="#3a3a46" />
+              <rect x="108" y="97" width="8" height="6" fill="#f4f4f5" />
+              <rect x="48" y="114" width="72" height="16" fill="#101014" stroke="#2a2a34" stroke-width="1" />
+              <rect x="52" y="118" width="8" height="8" fill="#3a3a46" />
+              <rect x="108" y="119" width="8" height="6" fill="#c80028" />
+              <rect x="48" y="136" width="72" height="16" fill="#101014" stroke="#2a2a34" stroke-width="1" />
+              <rect x="52" y="140" width="8" height="8" fill="#3a3a46" />
+              <rect x="108" y="141" width="8" height="6" fill="#c80028" />
+              <text x="84" y="192" text-anchor="middle" class="chain-cap">YOUR SERVER</text>
+            </g>
+            <!-- ARROW 1 -->
+            <g fill="#c80028">
+              <rect x="146" y="112" width="12" height="12" />
+              <rect x="166" y="112" width="12" height="12" />
+              <rect x="186" y="112" width="12" height="12" />
+              <rect x="206" y="112" width="12" height="12" />
+              <rect x="226" y="112" width="12" height="12" />
+              <rect x="246" y="112" width="12" height="12" />
+              <rect x="266" y="112" width="12" height="12" />
+              <rect x="286" y="112" width="12" height="12" />
+              <path d="M300 104 L322 118 L300 132 Z" />
+            </g>
+            <!-- CROSSED CLOUD -->
+            <g>
+              <rect x="210" y="72" width="78" height="12" fill="#2a2a34" />
+              <rect x="218" y="62" width="62" height="12" fill="#2a2a34" />
+              <rect x="230" y="54" width="14" height="10" fill="#2a2a34" />
+              <rect x="248" y="50" width="16" height="14" fill="#2a2a34" />
+              <rect x="266" y="56" width="12" height="8" fill="#2a2a34" />
+              <path d="M214 48 L286 86" stroke="#c80028" stroke-width="8" />
+              <path d="M286 48 L214 86" stroke="#c80028" stroke-width="8" />
+              <text x="249" y="104" text-anchor="middle" class="chain-cap no">NO CLOUD</text>
+            </g>
+            <!-- PHONE -->
+            <g>
+              <rect x="346" y="74" width="72" height="122" fill="#c80028" />
+              <rect x="338" y="66" width="72" height="122" fill="#1f1f28" />
+              <rect x="338" y="66" width="72" height="122" fill="none" stroke="#3a3a46" stroke-width="2" />
+              <rect x="348" y="82" width="52" height="88" fill="#101014" />
+              <rect x="362" y="70" width="24" height="5" fill="#0c0c10" />
+              <path d="M366 108 L366 140 L392 124 Z" fill="#c80028" />
+              <g fill="#3a3a46">
+                <rect x="352" y="150" width="4" height="10" />
+                <rect x="358" y="146" width="4" height="14" />
+                <rect x="364" y="152" width="4" height="8" />
+                <rect x="370" y="144" width="4" height="16" />
+                <rect x="376" y="150" width="4" height="10" />
+                <rect x="382" y="148" width="4" height="12" />
+                <rect x="388" y="152" width="4" height="8" />
+                <rect x="394" y="150" width="4" height="10" />
+              </g>
+              <rect x="360" y="180" width="28" height="3" fill="#3a3a46" />
+              <text x="374" y="206" text-anchor="middle" class="chain-cap">YOUR PHONE</text>
+            </g>
+            <!-- ARROW 2 -->
+            <g fill="#c80028">
+              <rect x="424" y="112" width="12" height="12" />
+              <rect x="444" y="112" width="12" height="12" />
+              <rect x="464" y="112" width="12" height="12" />
+              <rect x="484" y="112" width="12" height="12" />
+              <path d="M492 104 L514 118 L492 132 Z" />
+            </g>
+            <!-- HEADPHONES -->
+            <g>
+              <rect x="516" y="70" width="108" height="12" fill="#3a3a46" />
+              <rect x="516" y="80" width="12" height="26" fill="#3a3a46" />
+              <rect x="612" y="80" width="12" height="26" fill="#3a3a46" />
+              <rect x="514" y="112" width="30" height="56" fill="#c80028" />
+              <rect x="506" y="104" width="30" height="56" fill="#1f1f28" />
+              <rect x="506" y="104" width="30" height="56" fill="none" stroke="#3a3a46" stroke-width="2" />
+              <rect x="512" y="110" width="18" height="44" fill="#2a2a34" />
+              <rect x="519" y="126" width="4" height="12" fill="#8e8e9c" />
+              <rect x="606" y="112" width="30" height="56" fill="#c80028" />
+              <rect x="598" y="104" width="30" height="56" fill="#1f1f28" />
+              <rect x="598" y="104" width="30" height="56" fill="none" stroke="#3a3a46" stroke-width="2" />
+              <rect x="604" y="110" width="18" height="44" fill="#2a2a34" />
+              <rect x="611" y="126" width="4" height="12" fill="#8e8e9c" />
+              <text x="571" y="206" text-anchor="middle" class="chain-cap">YOUR EARS</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="own pix raise">
+          {OWNERSHIP.map((o) => (
+            <div class="own-row">
+              <span class="own-mark" aria-hidden="true">
+                <svg viewBox="11 18 10 4" class="glyph" shape-rendering="crispEdges"><path d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19Z" fill="currentColor"/></svg>
+              </span>
+              <h3>{o.title}</h3>
+              <p>{o.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <p class="fineprint">
+          The one honest caveat: recommendations ask MusicBrainz and ListenBrainz
+          what sounds similar to an artist and title. That request carries no
+          name, no server address, no account — and you can switch it off in
+          Settings.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================ FAQ ============================ -->
+    <section class="band" aria-labelledby="px-faq">
+      <div class="wrap wrap-narrow">
+        <h2 id="px-faq"><span class="h-mark smile"></span>Questions, answered</h2>
+        <div class="faq">
+          {FAQS.map((f) => (
+            <details>
+              <summary>
+                <span class="q">{f.q}</span>
+                <span class="faq-mark" aria-hidden="true">
+                  <svg viewBox="11 11 10 5" class="glyph zz" shape-rendering="crispEdges"><path d="M15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13Z M21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z" fill="currentColor"/></svg>
+                  <svg viewBox="11 18 10 4" class="glyph sm" shape-rendering="crispEdges"><path d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19Z" fill="currentColor"/></svg>
+                </span>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== FOOTER =========================== -->
+    <footer class="foot">
+      <Mark size={32} decorative />
+      <p>
+        {NAME} is free forever and open source under GPL-3.0.
+        <a href={GITHUB_URL}>See it on GitHub</a>
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  /* ---------------------------------------------------------------- tokens */
+  .px {
+    --ground: #101014;
+    --ground-2: #17171e;
+    --ground-3: #1f1f28;
+    --ink: #f4f4f5;
+    --dim: #b8b8c4;      /* ~9:1 on ground */
+    --dim-2: #8e8e9c;    /* ~5.7:1 on ground, small labels only */
+    --red: #c80028;
+    --red-bright: #d6002b;
+    --line: rgba(244, 244, 245, 0.10);
+    --line-2: rgba(244, 244, 245, 0.16);
+    /* Solid offset shadow. On a near-black ground a black shadow is invisible,
+       so the "hard shadow" is drawn in brand red — the only ink that reads. */
+    --shadow: #c80028;
+    --shadow-deep: #4a0011;
+
+    position: relative;
+    z-index: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  /* The world grid: a genuine 8px graph behind everything, drawn as flat SVG
+     strokes so nothing on the page is a gradient. */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* One reusable stepped "pixel corner". Two-notch staircase, tuned by --c/--c2
+     so it is the same physical size on a button or a full-width panel. */
+  .pix {
+    --c: 8px;
+    --c2: 16px;
+    clip-path: polygon(
+      0 var(--c2), var(--c) var(--c2), var(--c) var(--c), var(--c2) var(--c), var(--c2) 0,
+      calc(100% - var(--c2)) 0, calc(100% - var(--c2)) var(--c), calc(100% - var(--c)) var(--c), calc(100% - var(--c)) var(--c2), 100% var(--c2),
+      100% calc(100% - var(--c2)), calc(100% - var(--c)) calc(100% - var(--c2)), calc(100% - var(--c)) calc(100% - var(--c)), calc(100% - var(--c2)) calc(100% - var(--c)), calc(100% - var(--c2)) 100%,
+      var(--c2) 100%, var(--c2) calc(100% - var(--c)), var(--c) calc(100% - var(--c)), var(--c) calc(100% - var(--c2)), 0 calc(100% - var(--c2))
+    );
+  }
+
+  /* Hard offset shadow that follows the clipped pixel corners (0 blur = solid
+     block, never a soft drop). filter runs after clip-path, so the shadow is
+     the stepped silhouette, in brand red so it reads on the near-black ground. */
+  .raise {
+    filter: drop-shadow(6px 6px 0 var(--shadow));
+  }
+
+  h1, h2, h3 {
+    font-family: 'Pixelify Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .wrap {
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+  .wrap-narrow { max-width: 46rem; }
+
+  /* --------------------------------------------------------- site header */
+  .site-head {
+    position: relative;
+    z-index: 1;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: 1.15rem 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .wordmark span {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+  .wordmark:focus-visible { outline: 2px solid var(--red-bright); outline-offset: 4px; }
+  .src-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--dim-2);
+    text-decoration: none;
+  }
+  .src-tag:hover { color: var(--dim); }
+  .src-sep { width: 5px; height: 5px; background: var(--red); flex: none; }
+
+  /* ------------------------------------------------------------------ hero */
+  .hero {
+    --hero-plate: url('/hero/pixel.jpg');
+    position: relative;
+    z-index: 1;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 4rem) 1.5rem clamp(3rem, 6vw, 5rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  /* Flat CSS pixel mosaic — the hero's own artwork, always visible until the
+     optional plate image is supplied. Pure flat rects, never a gradient. */
+  .hero-art {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  /* Optional artwork, layered OVER the CSS mosaic via --hero-plate. If the file
+     is absent the layer is empty and the mosaic shows through — background
+     images never render a broken-image box or grey rectangle. */
+  .hero-plate {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: image-set(var(--hero-plate) 1x);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .hero > .hero-copy,
+  .hero > .hero-visual { position: relative; z-index: 1; }
+
+  .hero-copy h1 {
+    font-size: clamp(2.4rem, 6vw, 4.75rem);
+    max-width: 15ch;
+    margin-bottom: 1.25rem;
+  }
+
+  .lede {
+    font-size: clamp(1.05rem, 1.6vw, 1.24rem);
+    color: var(--dim);
+    max-width: 42ch;
+    text-wrap: pretty;
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* -------------------------------------------------------------- buttons */
+  .btn {
+    --c: 6px;
+    --c2: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.4rem;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    filter: drop-shadow(5px 5px 0 var(--shadow));
+    transition: translate 0.09s steps(2), filter 0.09s steps(2);
+  }
+
+  a.btn:hover {
+    translate: -2px -2px;
+    filter: drop-shadow(7px 7px 0 var(--shadow));
+  }
+  a.btn:active {
+    translate: 3px 3px;
+    filter: drop-shadow(2px 2px 0 var(--shadow));
+  }
+
+  /* clip-path would swallow an outline, so the focus ring is drawn inside. */
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--ground), inset 0 0 0 5px var(--ink);
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: var(--ink);
+    /* deep red so the shadow reads under the bright-red fill */
+    --shadow: var(--shadow-deep);
+  }
+  .btn-primary svg { width: 22px; height: 22px; fill: currentColor; }
+  .btn-primary span { display: grid; line-height: 1.05; text-align: left; }
+  .btn-primary small {
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .btn-primary.is-pending {
+    background: var(--ground-3);
+    color: var(--dim);
+    cursor: default;
+    filter: drop-shadow(5px 5px 0 rgba(200, 0, 40, 0.3));
+  }
+  .btn-primary.is-pending small { color: var(--dim-2); }
+
+  .btn-ghost {
+    background: var(--ground-2);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 2px var(--line-2);
+  }
+  .btn-ghost:hover { background: var(--ground-3); }
+
+  /* ----------------------------------------------------- hero visual/phone */
+  .hero-visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: 21rem;
+    margin-inline: auto;
+    padding: clamp(0.75rem, 2.5vw, 1.75rem);
+  }
+  /* Flat "device plate" the phone rests on — gives the split hero its
+     product-shot depth with no image required. */
+  .stage {
+    --c: 10px;
+    --c2: 20px;
+    position: absolute;
+    inset: clamp(0.25rem, 2vw, 1.25rem);
+    z-index: 0;
+    background: var(--ground-2);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+
+  .hero-phone {
+    position: relative;
+    z-index: 1;
+    /* Dress the shared <Phone> frame as a flat 8-bit slab: a chunky near-black
+       bezel, a thin cold rim, and a hard red offset shadow (0 blur) in place of
+       the default soft drop — the era lives in the hardware, the screenshot
+       stays crisp. Custom properties inherit into the component. */
+    --phone-bezel: #050507;
+    --phone-bezel-w: 0.05;
+    --phone-rim: #26262f;
+    --phone-shadow: 8px 8px 0 var(--red);
+  }
+
+  /* Shared step-quantised "playing" bounce, used by the on-device catalog bars. */
+  @keyframes eq-level {
+    from { transform: scaleY(0.18); }
+    to   { transform: scaleY(1); }
+  }
+
+  /* ----------------------------------- adaptive-colour strip: real shots */
+  .tints {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(0.9rem, 2.2vw, 1.6rem);
+  }
+  /* Each screenshot rides in the same flat 8-bit slab as the hero phone —
+     chunky near-black bezel, thin cold rim, hard red offset shadow via .raise. */
+  .tint {
+    --c: 8px;
+    --c2: 16px;
+    margin: 0;
+    padding: clamp(6px, 1.4vw, 9px);
+    background: #050507;
+    box-shadow: inset 0 0 0 1px #26262f;
+  }
+  .tint-screen {
+    display: block;
+    background: #000;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+  /* The Shot <img> keeps its own scope, so it is reached through :global from
+     the wrapper this file owns. Kept crisp — never image-rendering: pixelated. */
+  .tint-screen :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ------------------------------------------------------------- sections */
+  .band {
+    position: relative;
+    z-index: 1;
+    padding: clamp(3rem, 6vw, 5rem) 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .band h2 {
+    font-size: clamp(1.85rem, 4vw, 2.85rem);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .h-mark {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+    background: var(--red);
+    /* the mark's own smile, punched into a red chip */
+    clip-path: polygon(9% 9%, 91% 9%, 91% 46%, 82% 46%, 82% 64%, 73% 64%, 73% 73%, 27% 73%, 27% 64%, 18% 64%, 18% 46%, 9% 46%);
+  }
+  .band-sub {
+    margin-top: 0.9rem;
+    color: var(--dim);
+    max-width: 62ch;
+    font-size: 1.05rem;
+    text-wrap: pretty;
+  }
+
+  /* --------------------------------------------------------- servers: bay */
+  .bay {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    background: var(--ground-2);
+    padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 3vw, 1.75rem);
+  }
+  .slot {
+    display: grid;
+    grid-template-columns: 3.25rem 7.5rem 1fr;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.15rem 0;
+  }
+  .slot.ruled { border-top: 1px solid var(--line); }
+  .slot-logo {
+    --c: 4px;
+    --c2: 8px;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    background: var(--ground-3);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .slot-name {
+    justify-self: start;
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+  .slot-note { color: var(--dim); text-wrap: pretty; }
+
+  /* ------------------------------------- illustration: on-device catalog */
+  .illo .band-sub { margin-bottom: clamp(1.5rem, 3vw, 2.25rem); }
+  .catalog {
+    --c: 10px;
+    --c2: 20px;
+    background: var(--ground-2);
+    padding: clamp(0.75rem, 2.2vw, 1.25rem);
+    box-shadow: inset 0 0 0 2px var(--line-2);
+  }
+  .catalog-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0.35rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: clamp(0.75rem, 2vw, 1.1rem);
+  }
+  .cat-title {
+    --c: 5px;
+    --c2: 10px;
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    background: var(--red);
+    padding: 0.45rem 0.7rem;
+  }
+  .cat-badges { display: inline-flex; align-items: center; gap: 0.65rem; }
+  .badge {
+    --c: 4px;
+    --c2: 8px;
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.56rem;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.5rem;
+    color: var(--dim);
+    background: var(--ground-3);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .badge.off { color: var(--ink); }
+  .cat-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+  .cat-eq i {
+    width: 3px;
+    height: 100%;
+    background: var(--red);
+    transform-origin: bottom;
+    transform: scaleY(0.5);
+    animation: eq-level 0.9s steps(6) infinite alternate;
+  }
+  .cat-eq i:nth-child(2) { animation-duration: 1.15s; animation-delay: 0.1s; }
+  .cat-eq i:nth-child(3) { animation-duration: 0.8s; animation-delay: 0.05s; }
+  .cat-eq i:nth-child(4) { animation-duration: 1.3s; animation-delay: 0.15s; }
+
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.5rem, 1.4vw, 0.9rem);
+  }
+  .cvr {
+    --c: 5px;
+    --c2: 10px;
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--ground);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+  .cvr svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+  .cvr.playing {
+    box-shadow: inset 0 0 0 3px var(--red);
+    outline: none;
+  }
+  .cv-flag {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cv-flag.dl {
+    width: 15px;
+    height: 15px;
+    padding: 2px;
+    color: var(--ink);
+    background: var(--ground);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .cv-flag.dl svg { width: 100%; height: 100%; }
+  .cv-flag.np {
+    left: 4px;
+    right: auto;
+    top: 4px;
+    bottom: auto;
+    gap: 2px;
+    align-items: flex-end;
+    height: 12px;
+    padding: 2px 3px;
+    background: var(--ground);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .cv-flag.np i {
+    width: 3px;
+    height: 100%;
+    background: var(--red);
+    transform-origin: bottom;
+    transform: scaleY(0.5);
+    animation: eq-level 0.85s steps(5) infinite alternate;
+  }
+  .cv-flag.np i:nth-child(2) { animation-duration: 1.1s; animation-delay: 0.08s; }
+  .cv-flag.np i:nth-child(3) { animation-duration: 0.72s; animation-delay: 0.03s; }
+
+  /* -------------------------------- illustration: server → device → ears */
+  .chain {
+    margin: clamp(0.5rem, 2vw, 1rem) 0 clamp(1.75rem, 3.5vw, 2.5rem);
+    background: var(--ground-2);
+    padding: clamp(1rem, 3vw, 1.75rem);
+    box-shadow: inset 0 0 0 2px var(--line-2);
+  }
+  .chain-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .chain-svg text { shape-rendering: geometricPrecision; }
+  .chain-cap {
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    fill: var(--dim);
+  }
+  .chain-cap.no { fill: #ff6f88; }
+
+  /* ---------------------------------------------------- features: a list */
+  .feat {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    list-style: none;
+    padding: 0;
+    display: grid;
+  }
+  .feat li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .feat li:first-child { border-top: 0; }
+  .feat-bullet { color: var(--red); }
+  .feat-bullet .glyph { width: 2rem; height: 2.2rem; }
+  .feat-text { min-width: 0; }
+  .feat h3 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .feat p { color: var(--dim); max-width: 68ch; text-wrap: pretty; }
+
+  .glyph {
+    image-rendering: pixelated;
+    shape-rendering: crispEdges;
+    display: block;
+  }
+
+  /* ------------------------------------------------------- stats: meters */
+  .levels {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    background: var(--ground-2);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+  .ch { display: grid; justify-items: start; gap: 0.75rem; }
+  .ch-val {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 3.5vw, 2.4rem);
+    color: var(--red-bright);
+    line-height: 1;
+  }
+  .meter {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 3px;
+    width: 100%;
+    max-width: 4rem;
+  }
+  .cell {
+    height: 10px;
+    background: var(--ground-3);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .cell.on { background: var(--red); box-shadow: none; }
+  .cell.peak { animation: peak 0.9s steps(2) infinite alternate; }
+  @keyframes peak {
+    from { background: var(--red); }
+    to   { background: var(--ground-3); }
+  }
+  .ch-label {
+    font-size: 0.86rem;
+    color: var(--dim);
+    text-wrap: pretty;
+  }
+
+  /* -------------------------------------------------- ownership: 1 panel */
+  .own {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    background: var(--ground-2);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .own-row {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    align-content: start;
+    gap: 0.35rem 0.85rem;
+    padding: clamp(1.25rem, 3vw, 1.9rem);
+  }
+  .own-row > h3, .own-row > p { grid-column: 2; }
+  .own-row:nth-child(2), .own-row:nth-child(4) { border-left: 1px solid var(--line); }
+  .own-row:nth-child(3), .own-row:nth-child(4) { border-top: 1px solid var(--line); }
+  .own-mark { grid-row: 1; grid-column: 1; color: var(--red); align-self: center; }
+  .own-mark .glyph { width: 1.35rem; height: 0.55rem; }
+  .own h3 { font-size: 1.45rem; align-self: center; }
+  .own p { color: var(--dim); text-wrap: pretty; }
+
+  .fineprint {
+    margin-top: 1.5rem;
+    color: var(--dim-2);
+    font-size: 0.95rem;
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+
+  /* -------------------------------------------------------------- faq */
+  .faq { margin-top: clamp(1.5rem, 3vw, 2rem); }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary:focus-visible { outline: 2px solid var(--red-bright); outline-offset: 3px; }
+
+  .faq-mark { flex: none; color: var(--red); }
+  .faq-mark .glyph { width: 1.6rem; }
+  .faq-mark .zz { height: 0.8rem; }
+  .faq-mark .sm { height: 0.64rem; display: none; }
+  .faq details[open] .zz { display: none; }
+  .faq details[open] .sm { display: block; }
+
+  .faq p {
+    padding: 0 0 1.3rem;
+    color: var(--dim);
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+
+  /* ----------------------------------------------------------- footer */
+  .foot {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--line-2);
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    text-align: center;
+    color: var(--dim);
+    font-size: 0.95rem;
+  }
+  .foot a {
+    color: var(--red-bright);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-left: 0.4rem;
+  }
+  .foot a:hover { color: var(--ink); }
+
+  /* ---------------------------------------------------------- responsive */
+  @media (max-width: 60rem) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: clamp(1.5rem, 4vw, 2.5rem);
+    }
+    .hero-copy { order: 1; }
+    .hero-visual { order: 2; margin-top: 0.5rem; }
+    .tints { grid-template-columns: repeat(2, 1fr); }
+    .levels { grid-template-columns: repeat(2, 1fr); }
+    .meter { max-width: 4.5rem; }
+    .wall { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (max-width: 40rem) {
+    .site-head { padding-top: 0.9rem; }
+    .src-tag { display: none; }
+    .own { grid-template-columns: 1fr; }
+    .own-row:nth-child(2), .own-row:nth-child(4) { border-left: 0; }
+    .own-row:nth-child(2) { border-top: 1px solid var(--line); }
+    .slot {
+      grid-template-columns: 3.25rem 1fr;
+      grid-template-areas: 'logo name' 'note note';
+      gap: 0.5rem 1rem;
+    }
+    .slot-logo { grid-area: logo; }
+    .slot-name { grid-area: name; align-self: center; }
+    .slot-note { grid-area: note; }
+    .wall { grid-template-columns: repeat(3, 1fr); }
+    .catalog-bar { flex-wrap: wrap; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cell.peak, .cat-eq i, .cv-flag.np i { animation: none; }
+    .cat-eq i, .cv-flag.np i { transform: scaleY(0.7); }
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+/**
+ * Review bar.
+ *
+ * Present only on the variant previews so the whole set can be compared without
+ * going back to the picker. It is scaffolding for choosing a direction, not part
+ * of any variant's design — so it stays visually neutral, sits above the page in
+ * its own fixed layer, and is the first thing to delete once a vibe wins.
+ */
+import { VARIANTS } from '../data/site';
+
+export interface Props {
+  slug: string;
+  /** Tints the bar so it never clashes with the page underneath it. */
+  tone?: 'warm' | 'cool' | 'neutral';
+}
+
+const { slug, tone = 'neutral' } = Astro.props;
+const current = VARIANTS.findIndex((v) => v.slug === slug);
+---
+
+<nav class={`vbar tone-${tone}`} aria-label="Design variants">
+  <a class="home" href="/" title="All vibes">
+    <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14">
+      <path d="M7 2 3 6v8h3v-4h4v4h3V6L9 2z" fill="currentColor" />
+    </svg>
+    <span>All vibes</span>
+  </a>
+
+  <ol role="list">
+    {VARIANTS.map((v, i) => (
+      <li>
+        <a
+          href={`/v/${v.slug}`}
+          aria-current={v.slug === slug ? 'page' : undefined}
+          class={v.slug === slug ? 'is-current' : ''}
+        >
+          <i style={`--sw:${v.swatch[0]}`} aria-hidden="true"></i>
+          {v.name}
+        </a>
+      </li>
+    ))}
+  </ol>
+
+  <span class="count">{current + 1} / {VARIANTS.length}</span>
+</nav>
+
+<style>
+  .vbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    font: 500 13px/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.01em;
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .vbar::-webkit-scrollbar { display: none; }
+
+  .tone-neutral { background: rgba(12, 12, 14, 0.82); color: #e8e8ea; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .tone-warm    { background: rgba(42, 13, 4, 0.86);  color: #ffeed6; border-bottom: 1px solid rgba(255,220,180,0.18); }
+  .tone-cool    { background: rgba(255, 255, 255, 0.82); color: #24242a; border-bottom: 1px solid rgba(0,0,0,0.1); }
+
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+    opacity: 0.85;
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  .home:hover { opacity: 1; background: rgba(128, 128, 128, 0.22); }
+
+  ol {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+  }
+
+  ol a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0.72;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+  }
+
+  ol a:hover { opacity: 1; background: rgba(128, 128, 128, 0.22); }
+
+  ol a.is-current {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.3);
+    font-weight: 700;
+  }
+
+  i {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    background: var(--sw);
+    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.45);
+  }
+
+  .count {
+    flex: none;
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 40rem) {
+    .home span, .count { display: none; }
+  }
+
+  @media print {
+    .vbar { display: none; }
+  }
+</style>

@@ -1,0 +1,1097 @@
+---
+/**
+ * VARIANT — CRATE
+ * The racks at the back of a record shop. Digging.
+ * See the design contract in the HTML comment at the top of <main>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Flip through a library you built';
+
+/** Dot-leader helper so the stats read like a typed catalogue card. */
+const statLead = [
+  { key: 'SEARCH', s: STATS[0] },
+  { key: 'TAP \u2192 FIRST NOTE', s: STATS[1] },
+  { key: 'SERVERS', s: STATS[2] },
+  { key: 'PRICE', s: STATS[3] },
+];
+---
+
+<Layout
+  title={`${NAME} — flip through a library you built`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. The records you already filed, tagged and own — no account, no subscription."
+  themeColor="#ded3bd"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <!--
+    THESIS: The page is a record rack you dig through. Genre divider cards with
+    raised tabs are the section system; every block is a physical object laid on
+    kraft board, not a box in a grid.
+    OWN-WORLD: Aged manila board, brown-black ink, brand red kept for the two
+    things always red in a shop — the rubber stamp and the price sticker.
+    Condensed grotesk on the tabs, typewriter on the index cards, faint
+    offset-print misregistration, soft edge shadows under overlapping cards.
+    STORY: A collection built by hand — filed, tagged, owned. Free, no account,
+    plays straight off your own server.
+    FIRST VIEWPORT: A phone showing Now Playing sits in the crate on the left;
+    wordmark, headline, lede and actions on the right; a rotated FREE FOREVER
+    stamp and a hand-marked $0 sticker overlaid.
+    FORM: Sixth on the list — the crate — staged as the rack at the back.
+  -->
+
+  <VariantBar slug="crate" tone="warm" />
+
+  <!-- Ink-bleed filters for the rubber stamps. Roughens edges so a stamp reads
+       as pressed ink, never a flat outline. -->
+  <svg class="ink-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <filter id="ink-rough" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="3" seed="7" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="4.2" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <filter id="ink-rough-fine" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04 0.05" numOctaves="2" seed="19" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <main class="crate">
+    <!-- ========================= HERO ========================= -->
+    <!-- Optional supplied artwork layers over the CSS scene below; absent it
+         degrades silently to the kraft composition. -->
+    <header class="hero">
+      <div class="hero-grain" aria-hidden="true"></div>
+
+      <div class="hero-wrap">
+        <div class="hero-stage">
+          <!-- Phone: real Mozz artist screen, rising out of the crate. -->
+          <div class="crate-lip" aria-hidden="true">
+            <div class="lip-sleeve s1"></div>
+            <div class="lip-sleeve s2"></div>
+            <div class="lip-sleeve s3"></div>
+          </div>
+
+          <div class="hero-phone">
+            <Phone name="mozz-artist" width={264} priority sizes="264px" />
+          </div>
+
+          <!-- Rubber stamp: pressed, rotated, ink-bled. -->
+          <div class="stamp stamp-hero" aria-hidden="true">
+            <span class="stamp-ink">
+              <b>FREE FOREVER</b>
+              <i>NO ACCOUNT &middot; GPL-3.0</i>
+            </span>
+          </div>
+
+          <!-- Price sticker: hand-marked, the shop joke. -->
+          <div class="sticker" aria-hidden="true">
+            <span class="sticker-cur">$</span>
+            <span class="sticker-num">0</span>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="wordmark">
+            <Mark size={30} decorative />
+            <span>{NAME}</span>
+            <span class="wordmark-cat">CAT. NO. MZ-001</span>
+          </div>
+
+          <h1>{HEADLINE}</h1>
+
+          <p class="lede">
+            Mozz plays straight off your own Plex, Jellyfin or Navidrome server —
+            the records you already filed, tagged and own. No account to make,
+            nothing to subscribe to, and nothing keeping tabs on what you spin.
+          </p>
+
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================== ADAPTIVE COLOUR (browse bin) ===================== -->
+    <!-- The payoff: the same app, repainted from whatever record is playing.
+         Screenshots stand fanned in a browse bin like sleeves mid-dig. -->
+    <section class="rack bin-rack" aria-labelledby="cr-adapt" style="--rot:-0.3deg">
+      <span class="tab tab-red" style="--tab-x:22%">NOW&nbsp;SPINNING</span>
+      <div class="rack-body">
+        <div class="rack-head">
+          <h2 id="cr-adapt">It takes the colour of the record</h2>
+          <p class="rack-sub">
+            Cue up anything and Mozz repaints itself from the sleeve — the same
+            screens, tinted to whatever's on the platter.
+          </p>
+        </div>
+
+        <div class="bin" role="group" aria-label="The same Mozz screens, each tinted to a different record">
+          <div class="bin-sleeve" style="--i:0">
+            <Shot name="mozz-album-warm" sizes="(max-width: 720px) 46vw, 178px" />
+          </div>
+          <div class="bin-sleeve" style="--i:1">
+            <Shot name="mozz-album-red" sizes="(max-width: 720px) 46vw, 178px" />
+          </div>
+          <div class="bin-sleeve bin-front" style="--i:2">
+            <Shot name="mozz-nowplaying" sizes="(max-width: 720px) 52vw, 196px" />
+          </div>
+          <div class="bin-sleeve" style="--i:3">
+            <Shot name="mozz-album-dark" sizes="(max-width: 720px) 46vw, 178px" />
+          </div>
+          <div class="bin-sleeve" style="--i:4">
+            <Shot name="mozz-playlist" sizes="(max-width: 720px) 46vw, 178px" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SERVERS (divider) ===================== -->
+    <section class="rack" aria-labelledby="cr-servers" style="--rot:-0.6deg">
+      <span class="tab" style="--tab-x:6%">FILED&nbsp;UNDER</span>
+      <div class="rack-body">
+        <div class="rack-head">
+          <h2 id="cr-servers">Point it at the shelf you already run</h2>
+          <p class="rack-sub">
+            Mozz is the player; your server is the library. Add more than one and
+            they browse as a single collection.
+          </p>
+        </div>
+
+        <!-- Illustration: the signal path, drawn in ink. -->
+        <figure class="signal" aria-hidden="true">
+          <svg viewBox="0 0 620 200" role="presentation">
+            <defs>
+              <marker id="cr-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="#2f2a22" />
+              </marker>
+            </defs>
+            <!-- server: a tower of disks -->
+            <g class="sig-ink">
+              <rect x="34" y="52" width="96" height="112" rx="8" />
+              <line x1="34" y1="82" x2="130" y2="82" />
+              <line x1="34" y1="112" x2="130" y2="112" />
+              <line x1="34" y1="142" x2="130" y2="142" />
+              <circle cx="52" cy="67" r="4" class="sig-dot" />
+              <circle cx="52" cy="97" r="4" class="sig-dot" />
+              <circle cx="52" cy="127" r="4" class="sig-dot" />
+              <circle cx="52" cy="157" r="4" class="sig-dot" />
+            </g>
+            <text x="82" y="184" class="sig-cap">your server</text>
+
+            <!-- phone -->
+            <g class="sig-ink" transform="translate(276 46)">
+              <rect x="0" y="0" width="68" height="124" rx="14" />
+              <rect x="8" y="16" width="52" height="84" rx="4" class="sig-fill" />
+              <circle cx="34" cy="112" r="5" />
+              <rect x="22" y="6" width="24" height="5" rx="2.5" class="sig-fill" />
+            </g>
+            <text x="310" y="184" class="sig-cap">your device</text>
+
+            <!-- headphones -->
+            <g class="sig-ink" transform="translate(500 60)">
+              <path d="M6 44 A42 42 0 0 1 90 44" class="sig-open" />
+              <rect x="-2" y="42" width="20" height="40" rx="9" class="sig-fill" />
+              <rect x="78" y="42" width="20" height="40" rx="9" class="sig-fill" />
+            </g>
+            <text x="548" y="184" class="sig-cap">your ears</text>
+
+            <!-- flow -->
+            <path d="M138 108 H262" class="sig-flow" marker-end="url(#cr-arrow)" />
+            <path d="M352 108 H486" class="sig-flow" marker-end="url(#cr-arrow)" />
+            <path d="M198 96 q6 -12 12 0 t12 0" class="sig-note" />
+          </svg>
+        </figure>
+
+        <ul class="servers" role="list">
+          {SERVERS.map((s) => (
+            <li class="idx" style={`--sr:${(SERVERS.indexOf(s) - 1) * 0.9}deg`}>
+              <span class="idx-punch" aria-hidden="true"></span>
+              <span class="idx-logo"><ServerLogo name={s.name} size={30} /></span>
+              <span class="idx-name">{s.name}</span>
+              <p class="idx-note">{s.note}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== FEATURES (divider) ===================== -->
+    <section class="rack rack-dark" aria-labelledby="cr-features" style="--rot:0.5deg">
+      <span class="tab tab-red" style="--tab-x:64%">THE&nbsp;COLLECTION</span>
+      <div class="rack-body">
+        <div class="rack-head">
+          <h2 id="cr-features">Everything's in the crate</h2>
+          <p class="rack-sub">
+            No Pro tier holding a record hostage. Every one of these ships in the
+            free app, because there is no other kind.
+          </p>
+        </div>
+
+        <!-- Illustration: a record rack seen from above, sleeves fanned. -->
+        <figure class="rackview" aria-hidden="true">
+          <svg viewBox="0 0 760 240" role="presentation" preserveAspectRatio="xMidYMid meet">
+            <g class="rv-ink">
+              <!-- crate rim -->
+              <rect x="14" y="20" width="732" height="200" rx="12" class="rv-crate" />
+              <rect x="30" y="34" width="700" height="172" rx="7" class="rv-well" />
+            </g>
+            <!-- fanned sleeve tops -->
+            <g class="rv-sleeves">
+              {Array.from({ length: 22 }).map((_, i) => {
+                const x = 52 + i * 30;
+                const lean = Math.sin(i * 0.7) * 5;
+                const tall = i % 5 === 0;
+                return (
+                  <g transform={`translate(${x} 44) rotate(${lean} 0 150)`}>
+                    <rect x="0" y={tall ? -18 : 0} width="24" height={tall ? 168 : 150} rx="3"
+                      class={tall ? 'rv-divider' : (i % 3 === 0 ? 'rv-red' : 'rv-sleeve')} />
+                    <line x1="4" y1={tall ? -6 : 12} x2="20" y2={tall ? -6 : 12} class="rv-spine" />
+                    <line x1="4" y1={tall ? 2 : 20} x2="16" y2={tall ? 2 : 20} class="rv-spine" />
+                  </g>
+                );
+              })}
+            </g>
+            <!-- a couple pulled forward -->
+            <g transform="translate(360 150) rotate(-9)" class="rv-pull">
+              <rect x="0" y="0" width="150" height="150" rx="4" />
+              <circle cx="75" cy="75" r="30" class="rv-label" />
+              <circle cx="75" cy="75" r="5" class="rv-well" />
+            </g>
+          </svg>
+        </figure>
+
+        <div class="sleeves">
+          {FEATURES.map((f, i) => (
+            <article class="sleeve" style={`--rot:${[-1.4, 1, -0.6, 1.3, -1, 0.7][i]}deg`}>
+              <span class="sleeve-tab">{f.title}</span>
+              <p>{f.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== OWNERSHIP (stamps) ===================== -->
+    <section class="rack" aria-labelledby="cr-own" style="--rot:-0.4deg">
+      <span class="tab" style="--tab-x:30%">PROVENANCE</span>
+      <div class="rack-body">
+        <div class="rack-head">
+          <h2 id="cr-own">Stamped on the sleeve</h2>
+          <p class="rack-sub">
+            The whole point of Mozz: this one is genuinely yours. Four marks that
+            never wash off.
+          </p>
+        </div>
+
+        <div class="stamps">
+          {OWNERSHIP.map((o, i) => (
+            <figure class="own" style={`--rot:${[-2.2, 1.8, -1.4, 2.4][i]}deg`}>
+              <div class="stamp stamp-own">
+                <span class="stamp-ink"><b>{o.title.toUpperCase()}</b></span>
+              </div>
+              <figcaption>{o.body}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== STATS + FAQ (index cards) ===================== -->
+    <section class="rack rack-tan" aria-labelledby="cr-notes" style="--rot:0.4deg">
+      <span class="tab" style="--tab-x:48%">CATALOGUE</span>
+      <div class="rack-body notes">
+        <div class="catalogue">
+          <h2 id="cr-notes">Catalogue card</h2>
+          <div class="cat-card" role="img" aria-label="Measured specifications for Mozz">
+            <span class="cat-punch" aria-hidden="true"></span>
+            <p class="cat-title">MOZZ &mdash; MEASURED</p>
+            <dl class="cat-lines">
+              {statLead.map(({ key, s }) => (
+                <div class="cat-line">
+                  <dt>{key}<span class="dots" aria-hidden="true"></span></dt>
+                  <dd><b>{s.value}</b> {s.label}</dd>
+                </div>
+              ))}
+            </dl>
+            <p class="cat-foot">ARCHITECTURE.md &sect;8 &middot; verified</p>
+          </div>
+        </div>
+
+        <div class="qa">
+          <h2 class="qa-h">Questions, filed</h2>
+          <div class="cards">
+            {FAQS.map((f, i) => (
+              <details class="qa-card" style={`--rot:${[-0.8, 0.6, -0.5, 0.9, -0.7][i]}deg`}>
+                <summary>
+                  <span class="qa-q">{f.q}</span>
+                  <span class="qa-mark" aria-hidden="true"></span>
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="foot">
+      <div class="foot-label">
+        <Mark size={34} decorative />
+        <div>
+          <p class="foot-name">{NAME}</p>
+          <p class="foot-line">Free forever, open source under GPL-3.0 with an App Store Exception.</p>
+        </div>
+        <a class="foot-link" href={GITHUB_URL}>See it on GitHub &rarr;</a>
+      </div>
+      <p class="foot-fine">One app for your music, wherever it lives.</p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .crate {
+    /* ---- kraft palette ---- */
+    --board: #ded3bd;
+    --board-2: #d6c8ac;
+    --board-3: #cbbb99;
+    --board-deep: #b7a681;
+    --ink: #2f2a22;
+    --ink-2: #4d4335;      /* secondary text, tinted from the board hue */
+    --ink-3: #5f5440;      /* faintest secondary; still >= 4.5:1 on the board */
+    --red: #c80028;
+    --red-deep: #9c0020;
+    --dark: #262019;       /* the dark divider card */
+    --dark-tint: #cfc2a6;
+
+    /* paper fibre + fleck noise, reused as masks and overlays */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)'/%3E%3C/svg%3E");
+    --fleck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23f)'/%3E%3C/svg%3E");
+
+    background:
+      radial-gradient(120% 90% at 15% -10%, rgba(255,255,255,0.28), transparent 55%),
+      radial-gradient(120% 120% at 100% 100%, rgba(80,64,40,0.16), transparent 60%),
+      var(--board);
+    color: var(--ink);
+    font-family: 'Courier Prime', ui-monospace, 'Courier New', monospace;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    position: relative;
+  }
+
+  /* card-stock grain over the whole board */
+  .crate::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 180px 180px;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ink-defs { position: absolute; }
+
+  h1, h2, h3 {
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    font-stretch: 70%;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .crate :where(section, header, footer) { position: relative; z-index: 1; }
+
+  /* ============================ HERO ============================ */
+  .hero {
+    /* Supplied artwork drops in here and multiplies over the kraft scene;
+       absent, it simply paints nothing and the CSS art stands alone. */
+    --hero-plate: url('/hero/crate.jpg');
+    position: relative;
+    padding: clamp(1.75rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem);
+    background:
+      var(--hero-plate),
+      radial-gradient(90% 70% at 82% 8%, rgba(200,0,40,0.06), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,0.22), transparent 40%);
+    background-size: cover, auto, auto;
+    background-position: center, center, center;
+    background-blend-mode: multiply, normal, normal;
+    background-repeat: no-repeat;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .hero-grain {
+    position: absolute; inset: 0;
+    background: var(--fleck);
+    background-size: 220px 220px;
+    opacity: 0.06;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .hero-wrap {
+    max-width: 74rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  /* ---- phone stage ---- */
+  .hero-stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding: 1.5rem 0 0.5rem;
+    min-width: 0;
+  }
+
+  /* the crate lip the phone rises out of */
+  .crate-lip {
+    position: absolute;
+    left: 50%;
+    bottom: -6%;
+    translate: -50% 0;
+    width: min(112%, 25rem);
+    height: 46%;
+    background:
+      linear-gradient(180deg, var(--board-3), var(--board-deep));
+    border-radius: 12px;
+    box-shadow:
+      inset 0 3px 0 rgba(255,255,255,0.25),
+      inset 0 -10px 22px rgba(60,44,20,0.35),
+      0 20px 34px rgba(60,44,20,0.28);
+    overflow: hidden;
+  }
+  .lip-sleeve {
+    position: absolute;
+    top: 12%;
+    width: 34%;
+    height: 82%;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 0 0 1px rgba(47,42,34,0.28), inset 0 6px 0 rgba(255,255,255,0.14);
+  }
+  .lip-sleeve.s1 { left: 6%;  background: #c7b791; rotate: -3deg; }
+  .lip-sleeve.s2 { left: 60%; background: #cabf9f; rotate: 2.5deg; }
+  .lip-sleeve.s3 { left: 34%; background: var(--red); opacity: 0.9; rotate: -1deg; }
+
+  /* ---- phone (real screenshot, dressed as worn shop hardware) ---- */
+  /* The wrapper carries the offset/rotation and shop-counter shadow; the frame
+     surface is dressed via inherited custom properties so the solved geometry is
+     never touched. The wrapper shrinks to the phone (stage is justify-items:center). */
+  .hero-phone {
+    position: relative;
+    z-index: 2;
+    rotate: -2deg;
+
+    /* worn dark plastic hardware, warm shop-counter shadow */
+    --phone-bezel: linear-gradient(155deg, #201b15, #322a20 55%, #14110c);
+    --phone-bezel-w: 0.044;
+    --phone-rim: rgba(255, 255, 255, 0.14);
+    --phone-shadow:
+      0 26px 40px -16px rgba(43, 32, 14, 0.52),
+      0 9px 15px rgba(43, 32, 14, 0.34);
+  }
+
+  /* ---- rubber stamp (shared) ---- */
+  .stamp {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    color: var(--red);
+    filter: url(#ink-rough);
+  }
+  .stamp-ink {
+    display: grid;
+    justify-items: center;
+    gap: 0.1em;
+    padding: 0.5em 0.85em;
+    border: 3px solid currentColor;
+    box-shadow: 0 0 0 2px currentColor;
+    border-radius: 3px;
+    text-align: center;
+    /* the worn look: patchy ink eaten away by fleck noise */
+    -webkit-mask-image: var(--fleck), linear-gradient(#000, #000);
+    mask-image: var(--fleck), linear-gradient(#000, #000);
+    -webkit-mask-size: 120px 120px, auto;
+    mask-size: 120px 120px, auto;
+    -webkit-mask-composite: source-over;
+    mask-composite: lighten;
+  }
+  .stamp-ink b {
+    font-family: 'Archivo', sans-serif; font-stretch: 68%; font-weight: 900;
+    font-size: 1.5em; line-height: 0.9; letter-spacing: 0.01em;
+  }
+  .stamp-ink i {
+    font-family: 'Archivo', sans-serif; font-stretch: 82%; font-weight: 700;
+    font-style: normal; font-size: 0.62em; letter-spacing: 0.14em;
+  }
+
+  .stamp-hero {
+    position: absolute;
+    top: 2%; right: -2%;
+    rotate: -8deg;
+    z-index: 4;
+    font-size: 0.92rem;
+  }
+
+  /* ---- price sticker ---- */
+  .sticker {
+    position: absolute;
+    left: -1%; bottom: 8%;
+    z-index: 4;
+    width: 5.2rem; height: 5.2rem;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.05rem;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    rotate: -7deg;
+    box-shadow: 0 10px 18px rgba(200,0,40,0.32), inset 0 0 0 3px rgba(255,255,255,0.55), inset 0 0 0 5px var(--red);
+    font-family: 'Archivo', sans-serif;
+  }
+  .sticker::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--fleck);
+    background-size: 80px 80px;
+    mix-blend-mode: soft-light;
+    opacity: 0.5;
+  }
+  .sticker-cur { font-size: 1.4rem; font-weight: 700; align-self: start; margin-top: 1rem; }
+  .sticker-num { font-size: 3rem; font-weight: 900; font-stretch: 75%; line-height: 1; }
+
+  /* ---- hero copy ---- */
+  .hero-copy { min-width: 0; }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: clamp(1rem, 2.5vw, 1.6rem);
+  }
+  .wordmark > span:first-of-type {
+    font-family: 'Archivo', sans-serif; font-stretch: 78%; font-weight: 800;
+    font-size: 1.4rem; letter-spacing: 0.01em; text-transform: uppercase;
+  }
+  .wordmark-cat {
+    margin-left: auto;
+    font-size: 0.62rem; letter-spacing: 0.16em;
+    color: var(--ink-2);
+    border: 1px solid rgba(47,42,34,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.5rem, 6.4vw, 5.6rem);
+    max-width: 15ch;
+    /* faint offset-print misregistration */
+    text-shadow: 0.022em 0.02em 0 rgba(200,0,40,0.16), -0.014em -0.01em 0 rgba(60,120,140,0.09);
+  }
+
+  .lede {
+    margin-top: 1.2rem;
+    max-width: 42ch;
+    font-size: clamp(1rem, 1.35vw, 1.12rem);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    margin-top: 1.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    align-items: center;
+  }
+
+  /* store button as a shop price tag punched with a hole */
+  .store {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.3rem 0.72rem 1.6rem;
+    background: var(--ink);
+    color: #f3ecdd;
+    border-radius: 4px;
+    box-shadow: 0 5px 0 #17130d, 0 12px 20px rgba(43,32,14,0.34);
+    transition: translate 0.16s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.16s cubic-bezier(0.2,0.9,0.3,1);
+  }
+  .store::before {
+    content: '';
+    position: absolute; left: 0.55rem; top: 50%;
+    translate: 0 -50%;
+    width: 0.5rem; height: 0.5rem;
+    border-radius: 50%;
+    background: var(--board);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+  }
+  a.store:hover { translate: 0 -2px; box-shadow: 0 7px 0 #17130d, 0 16px 26px rgba(43,32,14,0.4); }
+  a.store:active { translate: 0 3px; box-shadow: 0 2px 0 #17130d, 0 6px 12px rgba(43,32,14,0.4); }
+  .store svg { width: 1.4rem; height: 1.4rem; fill: currentColor; }
+  .store span { display: grid; font-family: 'Archivo', sans-serif; font-stretch: 82%; font-weight: 800; font-size: 1rem; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.01em; }
+  .store small { font-family: 'Courier Prime', monospace; font-weight: 400; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.08em; opacity: 0.72; }
+
+  .store.is-pending {
+    background: repeating-linear-gradient(45deg, #4d4335 0 8px, #443b2e 8px 16px);
+    color: #efe7d6;
+    box-shadow: 0 5px 0 rgba(23,19,13,0.7);
+    cursor: default;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    font-family: 'Archivo', sans-serif; font-stretch: 82%; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.92rem;
+    color: var(--ink);
+    transition: background-color 0.16s ease, color 0.16s ease;
+  }
+  .ghost:hover { background: var(--ink); color: var(--board); }
+
+  /* ==================== RACK / DIVIDER CARDS ==================== */
+  .rack {
+    max-width: 72rem;
+    margin: clamp(2.2rem, 5vw, 4rem) auto 0;
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
+    rotate: var(--rot, 0deg);
+  }
+
+  .rack-body {
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.35), transparent 22%),
+      var(--board-2);
+    border-radius: 3px 3px 8px 8px;
+    padding: clamp(2rem, 4vw, 3.2rem) clamp(1.25rem, 4vw, 3rem) clamp(2.2rem, 4vw, 3.4rem);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.4),
+      0 1px 0 rgba(255,255,255,0.5),
+      0 22px 30px -14px rgba(60,44,20,0.42);
+    border-top: 3px solid rgba(47,42,34,0.16);
+  }
+
+  /* the raised tab sitting on the top edge, positioned per section */
+  .tab {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    margin-left: var(--tab-x, 8%);
+    margin-bottom: -3px;
+    padding: 0.5rem 1.2rem 0.7rem;
+    background: linear-gradient(180deg, var(--board), var(--board-3));
+    color: var(--ink);
+    font-family: 'Archivo', sans-serif; font-stretch: 66%; font-weight: 900;
+    letter-spacing: 0.06em; font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+    border-radius: 7px 7px 0 0;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 -6px 12px -6px rgba(60,44,20,0.5);
+    border: 1px solid rgba(47,42,34,0.18);
+    border-bottom: none;
+  }
+  .tab-red {
+    background: linear-gradient(180deg, var(--red), var(--red-deep));
+    color: #fff;
+    border-color: rgba(0,0,0,0.15);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  }
+
+  .rack-dark .rack-body {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06), transparent 22%),
+      var(--dark);
+    color: var(--dark-tint);
+    border-top-color: rgba(0,0,0,0.4);
+  }
+  .rack-tan .rack-body { background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent 22%), var(--board-3); }
+
+  .rack-head { max-width: 46rem; }
+  .rack h2 {
+    font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+    margin-bottom: 0.7rem;
+  }
+  .rack-dark h2 { color: #f3ecdd; }
+  .rack-sub {
+    max-width: 62ch;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .rack-dark .rack-sub { color: #ccbf9e; }
+
+  /* ---- adaptive-colour browse bin ---- */
+  /* Screenshots stand fanned like sleeves mid-dig. Each leans by its index and
+     the centre one is pulled forward, so the row reads as a bin being flipped
+     through rather than a screenshot dump. */
+  .bin {
+    margin-top: clamp(1.8rem, 4vw, 2.8rem);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    padding: 0.5rem clamp(0.5rem, 3vw, 2rem) 0;
+  }
+  .bin-sleeve {
+    position: relative;
+    flex: 0 1 178px;
+    min-width: 0;
+    /* fan out from the centre index (2): lean and drop toward the edges */
+    --lean: calc((var(--i) - 2) * 4deg);
+    --drop: 0px;
+    rotate: var(--lean);
+    translate: 0 var(--drop);
+    transform-origin: bottom center;
+    transition: translate 0.22s cubic-bezier(0.2, 0.9, 0.3, 1), rotate 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  /* symmetric drop toward the edges, without relying on CSS abs() */
+  .bin-sleeve:nth-child(1), .bin-sleeve:nth-child(5) { --drop: 24px; }
+  .bin-sleeve:nth-child(2), .bin-sleeve:nth-child(4) { --drop: 12px; z-index: 2; }
+  /* overlap the neighbours so it reads as a packed bin */
+  .bin-sleeve + .bin-sleeve { margin-left: clamp(-3.5rem, -6vw, -1.5rem); }
+  .bin-front { flex-basis: 196px; z-index: 3; }
+
+  .bin-sleeve :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    /* a physical sleeve: card edge + worn shop-counter shadow */
+    box-shadow:
+      0 0 0 1px rgba(20, 16, 10, 0.28),
+      0 18px 30px -14px rgba(43, 32, 14, 0.6);
+  }
+
+  .bin-sleeve:hover, .bin-sleeve:focus-within {
+    translate: 0 calc(var(--drop) - 14px);
+    rotate: 0deg;
+    z-index: 4;
+  }
+
+  /* ---- signal path illustration ---- */
+  .signal {
+    margin: clamp(1.8rem, 4vw, 2.6rem) auto clamp(0.5rem, 2vw, 1rem);
+    max-width: 40rem;
+  }
+  .signal svg { width: 100%; height: auto; }
+  .sig-ink :where(rect, line, circle, path) {
+    fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .sig-fill { fill: rgba(47,42,34,0.1) !important; }
+  .sig-dot { fill: var(--red) !important; stroke: none !important; }
+  .sig-open { fill: none !important; stroke: var(--ink); stroke-width: 6 !important; }
+  .sig-flow { fill: none; stroke: var(--red); stroke-width: 3; stroke-dasharray: 2 8; stroke-linecap: round; }
+  .sig-note { fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; }
+  .sig-cap {
+    font-family: 'Courier Prime', monospace; font-size: 13px; fill: var(--ink-2);
+    text-anchor: middle; letter-spacing: 0.04em;
+  }
+
+  /* ---- servers as index cards ---- */
+  .servers {
+    margin-top: clamp(1.5rem, 3vw, 2.4rem);
+    list-style: none; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 1.4rem 1.1rem;
+    justify-content: center;
+  }
+  .idx {
+    position: relative;
+    flex: 1 1 15rem;
+    max-width: 20rem;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 27px, rgba(47,42,34,0.12) 27px 28px),
+      #efe7d6;
+    color: var(--ink);
+    padding: 1.5rem 1.2rem 1.3rem;
+    border-radius: 3px;
+    rotate: var(--sr, 0deg);
+    box-shadow: 0 14px 22px -12px rgba(60,44,20,0.5), 0 1px 0 rgba(255,255,255,0.6) inset;
+    border: 1px solid rgba(47,42,34,0.14);
+  }
+  .idx-punch {
+    position: absolute; top: 0.7rem; left: 0.7rem;
+    width: 0.7rem; height: 0.7rem; border-radius: 50%;
+    background: var(--board-2);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .idx-logo { display: inline-flex; color: var(--ink); }
+  .idx-name {
+    display: block; margin: 0.5rem 0 0.4rem;
+    font-family: 'Archivo', sans-serif; font-stretch: 76%; font-weight: 800;
+    font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.01em;
+  }
+  .idx-note { font-size: 0.9rem; color: var(--ink-2); text-wrap: pretty; }
+
+  /* ---- rack-view illustration ---- */
+  .rackview {
+    margin: clamp(1.6rem, 3.5vw, 2.4rem) auto clamp(0.5rem, 2vw, 1rem);
+    max-width: 46rem;
+  }
+  .rackview svg { width: 100%; height: auto; }
+  .rv-ink :where(rect) { fill: none; stroke: #f0e7d5; stroke-width: 2.4; }
+  .rv-crate { stroke-width: 3.4 !important; }
+  .rv-well { fill: rgba(0,0,0,0.18) !important; }
+  .rv-sleeve { fill: #d8c9a9; stroke: #201a12; stroke-width: 1.2; }
+  .rv-red { fill: var(--red); stroke: #4a0011; stroke-width: 1.2; }
+  .rv-divider { fill: #efe7d6; stroke: #201a12; stroke-width: 1.4; }
+  .rv-spine { stroke: rgba(20,16,10,0.5); stroke-width: 1.4; }
+  .rv-pull rect { fill: #cdbd9a; stroke: #201a12; stroke-width: 2; }
+  .rv-label { fill: var(--red); stroke: #4a0011; stroke-width: 1.5; }
+
+  /* ---- features as overlapping sleeves ---- */
+  .sleeves {
+    margin-top: clamp(1.6rem, 3.5vw, 2.6rem);
+    columns: 2;
+    column-gap: 1.4rem;
+  }
+  .sleeve {
+    break-inside: avoid;
+    margin-bottom: 1.4rem;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.5), transparent 30%),
+      #e9dec6;
+    color: var(--ink);
+    padding: 2.1rem 1.3rem 1.4rem;
+    border-radius: 2px 2px 4px 4px;
+    rotate: var(--rot, 0deg);
+    box-shadow: 0 16px 26px -14px rgba(0,0,0,0.55), inset 0 2px 0 rgba(255,255,255,0.5);
+    border: 1px solid rgba(47,42,34,0.16);
+  }
+  .sleeve-tab {
+    display: inline-block;
+    margin: 0 0 0.9rem;
+    padding: 0.35rem 0.85rem 0.45rem;
+    background: var(--ink);
+    color: #f3ecdd;
+    font-family: 'Archivo', sans-serif; font-stretch: 70%; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    font-size: 1.02rem; line-height: 1.05;
+    border-radius: 3px;
+    box-shadow: 0 4px 10px -4px rgba(0,0,0,0.5);
+  }
+  .sleeve p { color: var(--ink-2); text-wrap: pretty; }
+
+  /* ---- ownership stamps ---- */
+  .stamps {
+    margin-top: clamp(1.8rem, 4vw, 2.8rem);
+    display: flex; flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 2.6rem) clamp(1.5rem, 5vw, 3rem);
+    justify-content: center;
+  }
+  .own {
+    flex: 1 1 15rem;
+    max-width: 17rem;
+    margin: 0;
+    text-align: center;
+    rotate: var(--rot, 0deg);
+  }
+  .stamp-own { font-size: 1.05rem; margin-bottom: 0.9rem; }
+  .stamp-own .stamp-ink b { font-size: 1.7em; }
+  .own figcaption {
+    font-size: 0.92rem; color: var(--ink-2);
+    text-wrap: pretty; max-width: 30ch; margin-inline: auto;
+  }
+
+  /* ---- catalogue + faq ---- */
+  .notes {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .catalogue h2, .qa-h { font-size: clamp(1.6rem, 3.4vw, 2.4rem); margin-bottom: 1.1rem; }
+
+  .cat-card {
+    position: relative;
+    background:
+      linear-gradient(180deg, #f2ead9, #e9dfc9);
+    border-radius: 3px;
+    padding: 1.5rem 1.4rem 1.2rem;
+    box-shadow: 0 18px 26px -14px rgba(60,44,20,0.5);
+    border: 1px solid rgba(47,42,34,0.16);
+    rotate: -1deg;
+  }
+  .cat-punch {
+    position: absolute; top: 0.8rem; right: 0.9rem;
+    width: 0.85rem; height: 0.85rem; border-radius: 50%;
+    background: var(--board-2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .cat-title {
+    font-family: 'Archivo', sans-serif; font-stretch: 74%; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 0.5rem; margin-bottom: 0.8rem;
+  }
+  .cat-lines { display: grid; gap: 0.55rem; margin: 0; }
+  .cat-line { display: grid; gap: 0.05rem; }
+  .cat-line dt {
+    display: flex; align-items: baseline; gap: 0.4rem;
+    font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .cat-line .dots {
+    flex: 1;
+    border-bottom: 1.5px dotted rgba(47,42,34,0.4);
+    translate: 0 -0.18em;
+  }
+  .cat-line dd { margin: 0; font-size: 0.95rem; }
+  .cat-line dd b {
+    font-family: 'Archivo', sans-serif; font-stretch: 80%; font-weight: 900;
+    color: var(--red); font-size: 1.15rem;
+  }
+  .cat-foot {
+    margin-top: 1rem; font-size: 0.68rem; letter-spacing: 0.1em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+
+  .cards { display: grid; gap: 0.9rem; }
+  .qa-card {
+    background: #efe7d6;
+    border-radius: 3px;
+    padding: 0 1.15rem;
+    box-shadow: 0 12px 20px -14px rgba(60,44,20,0.5);
+    border: 1px solid rgba(47,42,34,0.16);
+    rotate: var(--rot, 0deg);
+    transition: box-shadow 0.18s ease, rotate 0.18s ease;
+  }
+  .qa-card[open] { rotate: 0deg; box-shadow: 0 18px 26px -14px rgba(60,44,20,0.55); }
+  .qa-card summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1rem 0;
+  }
+  .qa-card summary::-webkit-details-marker { display: none; }
+  .qa-q {
+    font-family: 'Archivo', sans-serif; font-stretch: 84%; font-weight: 700;
+    font-size: 1.02rem; letter-spacing: -0.01em;
+  }
+  .qa-mark {
+    position: relative; flex: none;
+    width: 1.1rem; height: 1.1rem;
+  }
+  .qa-mark::before, .qa-mark::after {
+    content: ''; position: absolute; inset: 50% 0 auto 0;
+    height: 2px; background: var(--red); translate: 0 -50%;
+  }
+  .qa-mark::after { rotate: 90deg; transition: opacity 0.18s ease; }
+  .qa-card[open] .qa-mark::after { opacity: 0; }
+  .qa-card p {
+    padding: 0 0 1.15rem;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+
+  /* ============================ FOOTER ============================ */
+  .foot {
+    max-width: 72rem;
+    margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 4vw, 2rem) clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .foot-label {
+    display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+    background: #efe7d6;
+    border: 1px dashed rgba(47,42,34,0.4);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    box-shadow: 0 14px 22px -16px rgba(60,44,20,0.5);
+  }
+  .foot-name {
+    font-family: 'Archivo', sans-serif; font-stretch: 78%; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.15rem;
+  }
+  .foot-line { font-size: 0.85rem; color: var(--ink-2); max-width: 52ch; text-wrap: pretty; }
+  .foot-link {
+    margin-left: auto;
+    font-family: 'Archivo', sans-serif; font-stretch: 82%; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.9rem;
+    color: var(--red);
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.16s ease;
+  }
+  .foot-link:hover { border-color: var(--red); }
+  .foot-fine {
+    margin-top: 1.1rem;
+    text-align: center;
+    font-size: 0.8rem; letter-spacing: 0.06em; color: var(--ink-3);
+  }
+
+  /* ============================ RESPONSIVE ============================ */
+  @media (max-width: 60rem) {
+    .hero-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
+    .hero-stage { order: 2; }
+    .hero-copy { order: 1; }
+    .notes { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 40rem) {
+    .crate { font-size: 16px; }
+    .sleeves { columns: 1; }
+    .stamp-hero { right: 0; top: 0; font-size: 0.8rem; }
+    .sticker { width: 4.4rem; height: 4.4rem; }
+    .sticker-num { font-size: 2.5rem; }
+    .wordmark { flex-wrap: wrap; }
+    .wordmark-cat { margin-left: 0; }
+    .hero-copy h1 { text-shadow: 0.02em 0.018em 0 rgba(200,0,40,0.16); }
+    .foot-link { margin-left: 0; }
+
+    /* the fanned bin is too tight for a phone: lay the sleeves out in a
+       gently-scattered 2-up grid so every colour stays legible */
+    .bin { flex-wrap: wrap; gap: 1rem 0.7rem; align-items: flex-start; padding-inline: 0; }
+    .bin-sleeve {
+      flex: 0 0 44%;
+      --drop: 0px;
+      rotate: calc((var(--i) - 2) * 2deg);
+      translate: 0;
+    }
+    .bin-sleeve + .bin-sleeve { margin-left: 0; }
+    .bin-front { flex-basis: 44%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .store, .qa-card, .bin-sleeve { transition: none; }
+  }
+</style>
