@@ -142,15 +142,6 @@ export interface Variant {
 
 export const VARIANTS: Variant[] = [
   {
-    slug: 'sunburst',
-    name: 'Sunburst',
-    vibe: 'a 1973 soul record sleeve',
-    blurb:
-      'Drenched orange and red, fat rounded lettering, arcs radiating out from the mark. The friendliest of the set and the most literally groovy.',
-    swatch: ['#e8481f', '#c80028', '#f2b134'],
-    mood: 'light',
-  },
-  {
     slug: 'vinyl',
     name: 'Vinyl',
     vibe: 'the groove itself',
