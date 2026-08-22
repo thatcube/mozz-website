@@ -1,0 +1,1166 @@
+---
+/**
+ * VARIANT — SPIRAL
+ *
+ * A compact disc holds one single continuous spiral, running from the centre
+ * outward; every track is the same unbroken line. This page reads that fact as
+ * geography: the spiral becomes an amber causeway winding across the disc's
+ * surface, drawn as isometric country at dusk, and the visitor travels along it
+ * as they scroll.
+ *
+ * Same craft contract as the diorama reference — one true-axonometric
+ * projection (makeScene → P), a single non-scaling stroke for one line weight
+ * everywhere, flat fills with one hard value step per face, construction guide
+ * lines left un-erased, legends skewed into their own surface plane, light riso
+ * grain — taken somewhere stranger. New primitive: spiralRoad, a depth-sorted
+ * ribbon so loops occlude each other correctly.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+import { SERVER_LOGOS } from '../../brand/servers';
+
+/** Official brand colours, so the depot marks read as the real products. */
+const BRANDC: Record<string, string> = { plex: '#e5a00d', jellyfin: '#00a4dc', navidrome: '#1a72b8' };
+
+const R6 = Math.PI / 6;
+const IC = Math.cos(R6);
+const IS = Math.sin(R6);
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+type Part = { d: string; fill: string; cls?: string };
+type Txt = { tr: string; s: string; size: number; cls: string; anchor: string; base: string };
+
+function makeScene() {
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  const parts: Part[] = [];
+  const texts: Txt[] = [];
+
+  const proj = (x: number, y: number, z: number): [number, number] => {
+    const sx = (x - y) * IC;
+    const sy = (x + y) * IS - z;
+    if (sx < minX) minX = sx; if (sx > maxX) maxX = sx;
+    if (sy < minY) minY = sy; if (sy > maxY) maxY = sy;
+    return [sx, sy];
+  };
+  const P = (x: number, y: number, z: number) => {
+    const [sx, sy] = proj(x, y, z);
+    return `${r2(sx)} ${r2(sy)}`;
+  };
+  const path = (pts: number[][]) => pts.map((p, i) => `${i ? 'L' : 'M'}${P(p[0], p[1], p[2])}`).join('') + 'Z';
+  const poly = (pts: number[][], fill: string, cls?: string) => parts.push({ d: path(pts), fill, cls });
+
+  const box = (x: number, y: number, z: number, w: number, d: number, h: number,
+    c: { top: string; left: string; right: string }, cls?: string) => {
+    poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], c.top, cls);
+    poly([[x, y + d, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x, y + d, z]], c.left, cls);
+    poly([[x + w, y, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x + w, y, z]], c.right, cls);
+  };
+  const quad = (x: number, y: number, w: number, d: number, z: number, fill: string, cls?: string) =>
+    poly([[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z]], fill, cls);
+  const faceX = (x: number, y0: number, y1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x, y0, z0], [x, y1, z0], [x, y1, z1], [x, y0, z1]], fill, cls);
+  const faceY = (y: number, x0: number, x1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], fill, cls);
+
+  const ring = (cx: number, cy: number, z: number, r: number, fill: string, cls?: string, n = 56) => {
+    let d = '';
+    for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2; d += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z); }
+    parts.push({ d: d + 'Z', fill, cls });
+  };
+
+  const line = (a: number[], b: number[], cls = 'guide') =>
+    parts.push({ d: `M${P(a[0], a[1], a[2])}L${P(b[0], b[1], b[2])}`, fill: 'none', cls });
+
+  const seam = (a: number[], b: number[], dir: 'z' | 'x' | 'y' = 'z', off = 0.5) => {
+    line(a, b, 'seam-d');
+    const o = dir === 'z' ? [0, 0, off] : dir === 'x' ? [off, 0, 0] : [0, off, 0];
+    line([a[0] + o[0], a[1] + o[1], a[2] + o[2]], [b[0] + o[0], b[1] + o[1], b[2] + o[2]], 'seam-l');
+  };
+
+  const screw = (cx: number, cy: number, z: number, r = 1.1) => {
+    ring(cx, cy, z, r, 'rgba(0,0,0,0.22)', 'flat', 12);
+    ring(cx, cy, z, r, 'none', 'screw', 12);
+    line([cx - r * 0.6, cy - r * 0.6, z], [cx + r * 0.6, cy + r * 0.6, z], 'screw');
+  };
+
+  // upright cylinder (post, silo, hub) — light top, mid body
+  const cyl = (cx: number, cy: number, z: number, r: number, h: number, cTop: string, cBody: string, cls?: string) => {
+    const aL = 3 * Math.PI / 4, aR = -Math.PI / 4, step = Math.PI / 22;
+    let d = 'M' + P(cx + r * Math.cos(aL), cy + r * Math.sin(aL), z + h);
+    for (let a = aL; a >= aR - 1e-6; a -= step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h);
+    d += 'L' + P(cx + r * Math.cos(aR), cy + r * Math.sin(aR), z);
+    for (let a = aR; a <= aL + 1e-6; a += step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z);
+    parts.push({ d: d + 'Z', fill: cBody, cls });
+    let t = '';
+    for (let i = 0; i <= 44; i++) { const a = (i / 44) * Math.PI * 2; t += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h); }
+    parts.push({ d: t + 'Z', fill: cTop, cls });
+  };
+
+  const raw = (d: string, fill: string, cls?: string) => parts.push({ d, fill, cls });
+
+  // Legend printed flat on a face, skewed into that face's isometric plane.
+  const text = (x: number, y: number, z: number, s: string, size: number,
+    cls = 'legend', plane: 'top' | 'topL' | 'left' | 'right' = 'top',
+    anchor = 'middle', base = 'auto') => {
+    const [sx, sy] = proj(x, y, z);
+    let a = IC, b = IS, c = -IC, d = IS;
+    if (plane === 'topL') { a = -IC; b = IS; c = IC; d = IS; }
+    else if (plane === 'left') { a = IC; b = IS; c = 0; d = 1; }
+    else if (plane === 'right') { a = -IC; b = IS; c = 0; d = 1; }
+    const tr = `matrix(${r2(a)} ${r2(b)} ${r2(c)} ${r2(d)} ${r2(sx)} ${r2(sy)})`;
+    texts.push({ tr, s, size, cls, anchor, base });
+  };
+
+  // A raised causeway following one continuous spiral. Every small quad is
+  // depth-sorted by (x+y) so the loops occlude each other correctly, exactly the
+  // way a real spiral would fold over itself when seen in isometric.
+  const spiralRoad = (
+    cx: number, cy: number, h: number,
+    turns: number, r0: number, rStep: number, halfW: number,
+    cols: { top: string; left: string; right: string },
+    seg = 300, thetaStart = Math.PI * 0.1,
+  ) => {
+    const total = turns * Math.PI * 2;
+    const pts: number[][] = [];
+    for (let i = 0; i <= seg; i++) {
+      const t = i / seg, th = thetaStart + t * total;
+      const r = r0 + rStep * (th - thetaStart) / (Math.PI * 2);
+      pts.push([cx + r * Math.cos(th), cy + r * Math.sin(th)]);
+    }
+    const quads: { depth: number; aL: number[]; aR: number[]; bL: number[]; bR: number[] }[] = [];
+    for (let i = 0; i < seg; i++) {
+      const a = pts[i], b = pts[i + 1];
+      const tx = b[0] - a[0], ty = b[1] - a[1], L = Math.hypot(tx, ty) || 1;
+      const nx = -ty / L, ny = tx / L;
+      const aL = [a[0] + nx * halfW, a[1] + ny * halfW], aR = [a[0] - nx * halfW, a[1] - ny * halfW];
+      const bL = [b[0] + nx * halfW, b[1] + ny * halfW], bR = [b[0] - nx * halfW, b[1] - ny * halfW];
+      quads.push({ depth: a[0] + a[1] + b[0] + b[1], aL, aR, bL, bR });
+    }
+    quads.sort((p, q) => p.depth - q.depth);
+    for (const q of quads) {
+      poly([[q.aL[0], q.aL[1], h], [q.aR[0], q.aR[1], h], [q.bR[0], q.bR[1], h], [q.bL[0], q.bL[1], h]], cols.top, 'flat');
+      const sumL = q.aL[0] + q.aL[1] + q.bL[0] + q.bL[1], sumR = q.aR[0] + q.aR[1] + q.bR[0] + q.bR[1];
+      const f = sumR >= sumL ? [q.aR, q.bR] : [q.aL, q.bL];
+      poly([[f[0][0], f[0][1], h], [f[1][0], f[1][1], h], [f[1][0], f[1][1], 0], [f[0][0], f[0][1], 0]], cols.right, 'flat');
+    }
+    let d = 'M' + P(pts[0][0], pts[0][1], h + 0.1);
+    for (let i = 1; i <= seg; i++) d += 'L' + P(pts[i][0], pts[i][1], h + 0.1);
+    return { d, pts };
+  };
+
+  const vb = (pad = 6) => `${r2(minX - pad)} ${r2(minY - pad)} ${r2(maxX - minX + pad * 2)} ${r2(maxY - minY + pad * 2)}`;
+  const bounds = () => ({ minX, minY, maxX, maxY });
+
+  return { parts, texts, poly, box, quad, faceX, faceY, ring, line, seam, screw, cyl, raw, text, spiralRoad, vb, bounds, P };
+}
+
+/* ── dusk palettes — one hard value step per face ──────────────────────────── */
+const GROUND  = { top: '#28324e', left: '#1e2740', right: '#161d31' };
+const GROUND2 = { top: '#232c46', left: '#1a2239', right: '#12182a' };
+const RIDGE   = { top: '#313c5c', left: '#232c47', right: '#19203a' };
+const ROAD    = { top: '#e8a13a', left: '#c07f27', right: '#98631d' };
+const ROADW   = { top: '#f0bd63', left: '#d1913b', right: '#a86f28' };
+const ROADC   = { top: '#5fc9c0', left: '#409a92', right: '#2c726b' };
+const ROADR   = { top: '#e0324f', left: '#a5001f', right: '#760016' };
+const TEALB   = { top: '#5fc9c0', left: '#409a92', right: '#2c726b' };
+const AMBERB  = { top: '#e8a13a', left: '#c9832b', right: '#a86a20' };
+const METAL   = { top: '#c3cbdc', left: '#98a1b6', right: '#6f7890' };
+const STEELB  = { top: '#7f8bab', left: '#5e6889', right: '#434c69' };
+const DARKB   = { top: '#202844', left: '#171d33', right: '#0f1424' };
+const DARK2   = { top: '#1a2138', left: '#12182b', right: '#0b0f1d' };
+const REDB    = { top: '#e0324f', left: '#a5001f', right: '#760016' };
+const CREAMB  = { top: '#efe6d4', left: '#d5c9b0', right: '#bcac8d' };
+
+/* helpers shared across scenes */
+const gridDiamond = (s: any, cx: number, cy: number, R: number, step: number) => {
+  for (let g = -R; g <= R + 1e-6; g += step) {
+    s.line([cx - R, cy + g, 0.05], [cx + R, cy + g, 0.05]);
+    s.line([cx + g, cy - R, 0.05], [cx + g, cy + R, 0.05]);
+  }
+};
+const softShadow = (s: any, cx: number, cy: number, r: number, ry = 0.55) => {
+  let d = '';
+  for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * ry * Math.sin(a), 0.02); }
+  s.raw(d + 'Z', 'var(--shadow)', 'flat');
+};
+// a long cast shadow smeared toward lower-right (the low sun sits back-left)
+const longShadow = (s: any, cx: number, cy: number, w: number, len: number) => {
+  s.raw(`M${s.P(cx, cy, 0.02)}L${s.P(cx + w, cy, 0.02)}L${s.P(cx + w + len, cy + len, 0.02)}L${s.P(cx + len, cy + len, 0.02)}Z`, 'var(--shadow)', 'flat');
+};
+// a roadside lamp with a real boxy lantern fixture (not a flat ellipse on a
+// stick). Kept short so its head clears whatever road or sign sits behind it.
+const lamp = (s: any, cx: number, cy: number, h: number) => {
+  softShadow(s, cx + 0.5, cy + 0.6, 1.5, 0.5);
+  s.box(cx - 0.45, cy - 0.45, 0, 0.9, 0.9, h, STEELB);                 // post
+  s.box(cx - 1.15, cy - 1.15, h, 2.3, 2.3, 1.9, DARKB);               // lantern housing
+  s.faceX(cx + 1.16, cy - 1.0, cy + 1.15, h + 0.25, h + 1.6, '#e8a13a', 'lit'); // lit face +x
+  s.faceY(cy + 1.16, cx - 1.0, cx + 1.15, h + 0.25, h + 1.6, '#f0bd63', 'lit'); // lit face +y
+  s.box(cx - 0.85, cy - 0.85, h + 1.9, 1.7, 1.7, 0.5, STEELB);        // cap roof
+};
+
+/* ══ HERO — the disc IS the ground; its one spiral is an amber causeway ══════ */
+const hero = makeScene();
+let heroFlow = '';
+{
+  const s = hero;
+  const cx = 46, cy = 46, R = 46;
+
+  // THE GROUND IS THE DISC — an isometric platter with a rim, not a square slab
+  s.cyl(cx, cy, -5, R, 5, GROUND.top, GROUND.left);
+  // un-erased construction: the pressing's concentric rings + radial spokes
+  for (let k = 8; k < R - 1; k += 4.3) s.ring(cx, cy, 0.06, k, 'none', 'guide-ring');
+  for (let a = 0; a < Math.PI * 2 - 1e-6; a += Math.PI / 6)
+    s.line([cx, cy, 0.05], [cx + (R - 0.5) * Math.cos(a), cy + (R - 0.5) * Math.sin(a), 0.05]);
+  // clamping ring + mirror band round the middle of the platter (the hole itself
+  // is cut in the hub block below, so the tower can rise straight out of it)
+  s.ring(cx, cy, 0.08, R * 0.22, 'none', 'clamp');
+  s.ring(cx, cy, 0.08, R * 0.145, 'none', 'clamp');
+
+  // THE ONE CONTINUOUS SPIRAL — a single Archimedean path, outer edge → hub
+  const road = s.spiralRoad(cx, cy, 2.4, 3.35, 8, 9.7, 2.5, ROAD, 340, Math.PI * 1.55);
+  heroFlow = road.d;
+
+  // markers sitting ON the line, each with a contact shadow so it touches down
+  const at = (frac: number) => road.pts[Math.round(frac * (road.pts.length - 1))];
+  const marker = (p: number[], lit: string) => {
+    softShadow(s, p[0] + 0.3, p[1] + 0.7, 1.9, 0.5);
+    s.box(p[0] - 0.55, p[1] - 0.55, 2.4, 1.1, 1.1, 4.2, STEELB);
+    s.ring(p[0], p[1], 6.9, 0.6, lit, 'lit', 10);
+  };
+  [0.30, 0.52, 0.74].forEach((f, i) => marker(at(f), i % 2 ? '#5fc9c0' : '#f0bd63'));
+
+  // THE TRAVELLER — a laser sled at the outer end of the line, reading it inward
+  {
+    const pv = at(0.995), pn = at(0.955);
+    const hx = pv[0], hy = pv[1];
+    softShadow(s, hx + 1.2, hy + 1.6, 5, 0.5);
+    s.box(hx - 3, hy - 2.4, 2.4, 6, 5, 3, METAL);                   // chassis
+    s.box(hx - 2, hy - 1.4, 5.4, 4, 3, 1.6, STEELB);               // cabin
+    s.faceX(hx + 4, hy - 1.4, hy + 1.6, 5.8, 8, '#0f1424', 'flat'); // windscreen
+    s.cyl(hx + 4.4, hy + 0.1, 5.4, 1, 1.1, '#8ff0e6', '#2c726b');  // reader lens
+    s.raw(`M${s.P(hx + 4.4, hy + 0.1, 5.4)}L${s.P(pn[0], pn[1], 2.6)}`, 'none', 'beam');
+    s.ring(hx - 3, hy + 1, 2.4, 1.1, '#c80028', 'lit', 10);        // tail light
+  }
+
+  // THE CENTRE HOLE — a raised silver clamping hub with the disc's hole cut
+  // through it, and the tower rising straight out of the aperture, so the ground
+  // unmistakably reads as a compact disc.
+  softShadow(s, cx + 2, cy + 3, 8.4, 0.55);
+  s.cyl(cx, cy, 0, 5, 0.7, METAL.top, METAL.left);               // silver clamping-hub plateau
+  s.ring(cx, cy, 0.72, 5, 'none', 'hubring');                    // clamp outer edge
+  s.ring(cx, cy, 0.74, 3.2, '#0a0e1c', 'flat');                  // the hole (dark aperture)
+  s.ring(cx, cy, 0.74, 3.2, 'none', 'hubring');                  // hole rim, machined
+  s.ring(cx - 0.5, cy - 0.5, -2, 2.7, '#05070f', 'flat');       // hole depth, offset down
+  s.box(cx - 1.9, cy - 1.9, -1.4, 3.8, 3.8, 16.4, STEELB);       // slim tower growing out of the hole
+  s.faceX(cx + 2, cy - 2, cy + 2, 3, 16, '#0f1424', 'flat');
+  for (let z = 4; z < 15.2; z += 2.4) s.faceX(cx + 2.02, cy - 1.5, cy - 0.3, z, z + 1, '#e8a13a', 'lit');
+  s.faceY(cy + 2.02, cx - 1.6, cx - 0.4, 3, 14, '#0f1424', 'flat');
+  s.cyl(cx, cy, 15, 1.2, 3.6, '#e0324f', '#a5001f');              // beacon mast
+  s.ring(cx, cy, 19.2, 2.1, '#ff4d64', 'lit', 12);               // beacon light
+}
+const hb = hero.vb(7).split(' ').map(Number);
+const skyH = hb[3] * 0.66;
+const heroVB = `${hb[0]} ${r2(hb[1] - skyH)} ${hb[2]} ${r2(hb[3] + skyH)}`;
+const sun = { cx: hb[0] + hb[2] * 0.26, cy: hb[1] - skyH * 0.24, r: hb[2] * 0.075 };
+
+/* Face-on server-logo badges, anchored to each depot roof (computed in-scene). */
+const depotBadges: { x: number; y: number; side: number; key: string; color: string }[] = [];
+
+/* ══ SERVERS — three DIFFERENT depots plugged into one shared line ═══════════ */
+const depots = makeScene();
+{
+  const s = depots;
+  // a compact yard, seen close in — the three buildings are the subject and
+  // nearly fill the frame; only a snug apron of ground shows around them.
+  s.box(0, -2, -4, 100, 44, 4, GROUND2);
+  gridDiamond(s, 48, 20, 40, 15);
+
+  // A small sign board standing on a building's roof, on two legs, facing the
+  // camera — the scene's own flat, hard-edged language (no glow, no rounded card).
+  // The real brand mark is dropped face-on onto the plate afterwards.
+  const sign = (cx: number, cy: number, roofZ: number, bw: number, key: string, color: string) => {
+    const bh = bw * 0.66, lift = 2.4;
+    const z0 = roofZ + lift, z1 = z0 + bh;
+    const x0 = cx - bw / 2, x1 = cx + bw / 2;
+    s.box(x0 + 0.7, cy - 0.35, roofZ, 1, 0.9, lift + 0.4, STEELB);     // left leg
+    s.box(x1 - 1.7, cy - 0.35, roofZ, 1, 0.9, lift + 0.4, STEELB);     // right leg
+    s.box(x0, cy - 0.5, z0, bw, 1, bh, DARKB);                          // board carcass
+    s.faceY(cy + 0.51, x0, x1, z0, z1, '#efe6d4', 'sign-plate');        // cream plate, scene outline
+    const [mx, my] = s.P((x0 + x1) / 2, cy + 0.52, (z0 + z1) / 2).split(' ').map(Number);
+    const side = Math.min((x1 - x0) * IC, z1 - z0) * 0.62;
+    depotBadges.push({ x: mx, y: my, side, key, color });
+  };
+
+  // the shared library line — a grounded causeway all three depots back onto. Its
+  // south-east end sits flush in the slab's own drawn edge (x=100); its north-west
+  // end ramps down to grade. Neither end hangs a cut face over the void.
+  s.box(6, 27, 0, 94, 7, 2.4, ROAD);
+  s.raw(`M${s.P(6, 30.5, 2.55)}L${s.P(100, 30.5, 2.55)}`, 'none', 'flowline');
+  s.seam([6, 30.5, 2.46], [100, 30.5, 2.46], 'z', 0);
+  s.raw(`M${s.P(6, 27, 2.4)}L${s.P(6, 34, 2.4)}L${s.P(1, 34, 0)}L${s.P(1, 27, 0)}Z`, ROAD.top, 'flat');  // ramp deck down to grade
+  s.raw(`M${s.P(6, 34, 2.4)}L${s.P(1, 34, 0)}L${s.P(6, 34, 0)}Z`, ROAD.left, 'flat');                    // ramp side wall
+
+  // ── PLEX — a tall stepped signal tower, amber ──────────────────────────────
+  {
+    const bx = 10, by = 6;
+    longShadow(s, bx, by + 5, 15, 14);
+    s.box(bx, by, 2.4, 15, 13, 10, DARKB);                            // base
+    s.box(bx + 2, by + 2, 12.4, 10, 9, 9, DARKB);                    // setback
+    s.box(bx + 4.5, by + 4.5, 21.4, 6, 4.5, 7, STEELB);            // crown cab
+    s.faceX(bx + 15.01, by + 3, by + 10, 2.4, 9.6, '#e8a13a', 'lit'); // full-height door
+    for (let i = 0; i < 3; i++) s.faceY(by + 13.02, bx + 2 + i * 3.8, bx + 4.2 + i * 3.8, 3.5, 9, '#5fc9c0', 'lit'); // vent slots
+    s.faceX(bx + 10.01, by + 5, by + 7, 22.2, 26.9, '#0f1424', 'flat'); // crown window
+    s.screw(bx + 15, by + 3, 2.4); s.screw(bx + 15, by + 10, 9.4);
+    s.ring(bx + 7.5, by + 6.5, 28.6, 0.9, '#e8a13a', 'lit', 10);      // beacon
+    s.box(bx + 4, by + 13, 2.2, 5, 4, 1.6, ROADC);                   // a low junction box (distinct)
+    sign(bx + 7.5, 18, 12.4, 11, 'plex', BRANDC.plex);               // Plex fascia sign on the base roof
+  }
+
+  // ── JELLYFIN — a wide low hall, flat roof + rooftop units, teal ────────────
+  {
+    const bx = 40, by = 8;
+    longShadow(s, bx, by + 7, 30, 12);
+    s.box(bx, by, 2.4, 30, 17, 9, DARKB);                             // long hall
+    s.box(bx + 1, by + 1, 11.4, 28, 15, 0.9, STEELB);              // flat roof cap
+    for (let i = 0; i < 3; i++) s.box(bx + 5 + i * 9, by + 5, 12.3, 5, 5, 2.8, STEELB); // rooftop units
+    s.faceX(bx + 30.01, by + 2, by + 15, 4.5, 8.2, '#5fc9c0', 'lit');  // teal window band
+    s.seam([bx + 30.02, by + 2, 6.3], [bx + 30.02, by + 15, 6.3], 'z', 0);
+    s.faceX(bx + 30.01, by + 6, by + 11, 2.4, 6.2, '#e8a13a', 'lit'); // door
+    s.screw(bx + 30, by + 2, 4.5); s.screw(bx + 30, by + 15, 4.5);
+    s.ring(bx + 15, by + 8.5, 11.9, 0.9, '#5fc9c0', 'lit', 10);
+    s.box(bx + 12, by + 17, 2.2, 8, 3.4, 2, ROADC);                  // a wide plant deck (distinct)
+    sign(bx + 15, 22, 11.4, 13, 'jellyfin', BRANDC.jellyfin);        // Jellyfin roof sign
+  }
+
+  // ── NAVIDROME — a medium cube, rooftop dish + window grid, blue ────────────
+  {
+    const bx = 74, by = 6;
+    longShadow(s, bx, by + 7, 18, 6);
+    s.box(bx, by, 2.4, 20, 17, 15, DARKB);                            // cube
+    s.box(bx + 1, by + 1, 17.4, 18, 15, 0.9, STEELB);              // roof cap
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++)
+      s.faceX(bx + 20.01, by + 3 + c * 4.4, by + 6 + c * 4.4, 4.5 + r * 3.2, 7 + r * 3.2, r === 1 && c === 1 ? '#e8a13a' : '#5fc9c0', 'lit'); // window grid
+    s.faceX(bx + 20.01, by + 7, by + 10.5, 2.4, 4.6, '#0f1424', 'flat'); // door
+    s.cyl(bx + 5.5, by + 4.5, 18.2, 0.6, 2.6, STEELB.top, STEELB.left); // dish mast
+    s.ring(bx + 5.5, by + 4.5, 21, 2.4, '#7f8bab', 'lit', 12);        // dish
+    s.screw(bx + 20, by + 2, 4.5); s.screw(bx + 20, by + 15, 13.5);
+    s.ring(bx + 10, by + 8.5, 18, 0.9, '#5fc9c0', 'lit', 10);
+    s.cyl(bx + 4, by + 17.5, 2.2, 1.6, 3.4, STEELB.top, STEELB.left); // a coolant drum (distinct)
+    sign(bx + 10, 20, 17.4, 11, 'navidrome', BRANDC.navidrome);      // Navidrome roof sign
+  }
+
+  // incidental charm on the apron, all grounded, none repeated: a parked sled, a
+  // crate stack of three sizes, and a lamp post throwing amber over the yard
+  // incidental charm on the apron, all grounded on the verge (clear of the road),
+  // none repeated: a parked sled, a crate stack, and a lamp post throwing amber
+  softShadow(s, 15.2, 38, 4.4); s.box(12, 36, 0, 6.5, 4, 2.6, METAL); s.box(12.7, 36.7, 2.6, 5, 3, 1.5, STEELB);   // parked sled
+  softShadow(s, 65, 39, 3.6); s.box(63, 37, 0, 3.4, 3.4, 3.4, CREAMB); s.box(66.6, 37.8, 0, 2.6, 2.6, 2.6, CREAMB); s.box(63.6, 37.6, 3.4, 2.4, 2.4, 2.4, CREAMB); // crate stack
+  lamp(s, 24, 40, 6);   // lamp on the front verge, head clears the road behind it
+}
+
+/* ══ FEATURES — one fingerpost: six named arms on a single junction pole ══════ */
+const route = makeScene();
+{
+  const s = route;
+  const px = 0, py = 9;
+  // a small ground patch — the pole and its six arms fill the frame; there is no
+  // wide empty slab here, the composition is vertical, not a receding road
+  s.box(-16, 0, -4, 42, 26, 4, GROUND2);
+  gridDiamond(s, px + 4, py + 3, 15, 8);
+
+  // a short patch of the route runs through the base so the post stands in the
+  // world (one amber line, still gapless). It sits flush in the slab's own drawn
+  // south-east edge and ramps down to grade at the north-west — no cut faces.
+  s.box(-9, py + 6, 0, 35, 6, 2.4, ROAD);
+  s.raw(`M${s.P(-9, py + 9, 2.55)}L${s.P(26, py + 9, 2.55)}`, 'none', 'flowline');
+  s.seam([-9, py + 9, 2.46], [26, py + 9, 2.46], 'z', 0);
+  s.raw(`M${s.P(-9, py + 6, 2.4)}L${s.P(-9, py + 12, 2.4)}L${s.P(-13, py + 12, 0)}L${s.P(-13, py + 6, 0)}Z`, ROAD.top, 'flat');  // ramp deck to grade
+  s.raw(`M${s.P(-9, py + 12, 2.4)}L${s.P(-13, py + 12, 0)}L${s.P(-9, py + 12, 0)}Z`, ROAD.left, 'flat');                        // ramp side
+
+  // the junction pole
+  softShadow(s, px + 1, py + 1, 4.6, 0.5);
+  s.cyl(px, py, 0, 4.4, 1.4, RIDGE.top, RIDGE.left);                  // base plinth
+  s.box(px - 1.4, py - 1.4, 1.4, 2.8, 2.8, 38, STEELB);              // pole
+  s.seam([px - 1.4, py - 1.4, 1.4], [px - 1.4, py - 1.4, 39.4], 'z', 0);
+  s.box(px - 1, py - 1, 39.4, 2, 2, 1.2, STEELB);                    // cap
+  s.ring(px, py, 41.6, 1.2, '#e8a13a', 'lit', 10);                   // lamp on top
+
+  const SIGN_LINES = [
+    ['YOUR SERVERS', 'ONE LIBRARY'],
+    ['WORKS', 'OFFLINE'],
+    ['FAST', 'SEARCH'],
+    ['STARTS', 'INSTANTLY'],
+    ['RADIO BY', 'TASTE'],
+    ['TUNED TO', 'YOUR EARS'],
+  ];
+  // each arm is a board mounted on the front of the pole. The board is sized to
+  // its own MEASURED text (Khand caps are uneven widths), so every glyph sits
+  // inside its plank with margin on all four sides and never reaches the frame.
+  // Estimates run generous — under-sizing is what let earlier passes clip glyphs.
+  const charEm = (ch: string) => (ch === ' ') ? 0.30 : ('IJ1il.'.includes(ch)) ? 0.40 : ('MW'.includes(ch)) ? 0.96 : 0.67;
+  const strEm = (str: string) => [...str].reduce((a, c) => a + charEm(c), 0) + Math.max(0, str.length - 1) * 0.06;
+  const nameSize = 1.85, bh = 5, tabW = 4.0, yf = py - 2, gap = 1.2, mrg = 2.4;
+  const lineW = (l: string) => strEm(l) * nameSize + 0.6;
+  const arm = (dir: number, zb: number, n: number, lines: string[], kind: string) => {
+    const zt = zb + bh;
+    const nameW = Math.max(...lines.map(lineW));
+    const bw = tabW + gap + nameW + mrg;
+    const bx0 = dir > 0 ? px + 1.2 : px - 1.2 - bw, bx1 = bx0 + bw;
+    s.box(px - 1.5, py - 1.5, zb + 1.1, 3, 1.6, 2.4, STEELB);         // collar / mount
+    if (kind === 'double') s.faceY(yf + 1.22, bx0, bx1, zb, zt, '#c9bd9f', 'flat'); // back panel
+    s.box(bx0, yf, zb, bw, 1.2, bh, CREAMB);                          // board (fits its text)
+    const tabX = dir > 0 ? bx0 : bx1 - tabW;
+    s.faceY(yf - 0.02, tabX, tabX + tabW, zb, zt, n % 2 ? '#e8a13a' : '#5fc9c0', 'lit'); // number tab
+    s.text(tabX + tabW / 2, yf - 0.03, zb + bh / 2, String(n), 2.7, 'stone-num', 'left', 'middle', 'central');
+    const nx = dir > 0 ? bx0 + tabW + gap : bx0 + mrg;
+    lines.forEach((ln, i) => s.text(nx, yf - 0.03, zt - 1.7 - i * 1.6, ln, nameSize, 'sign-name', 'left', 'start', 'central'));
+    s.P(nx + nameW, yf - 0.03, zt); s.P(nx + nameW, yf - 0.03, zb); // register text extent
+    // every arm ends in a pointed fingerpost tip, on the side it points toward
+    const base = dir > 0 ? bx1 : bx0, tip = dir > 0 ? bx1 + 3.2 : bx0 - 3.2;
+    s.raw(`M${s.P(base, yf - 0.03, zt)}L${s.P(tip, yf - 0.03, zb + bh / 2)}L${s.P(base, yf - 0.03, zb)}Z`, n % 2 ? '#e8a13a' : '#5fc9c0', 'lit');
+  };
+  arm(+1, 32, 1, SIGN_LINES[0], 'plain');
+  arm(-1, 26.2, 2, SIGN_LINES[1], 'double');
+  arm(+1, 20.4, 3, SIGN_LINES[2], 'plain');
+  arm(-1, 14.6, 4, SIGN_LINES[3], 'plain');
+  arm(+1, 8.8, 5, SIGN_LINES[4], 'double');
+  arm(-1, 3, 6, SIGN_LINES[5], 'plain');
+
+  // density at the foot: a bench, a crate stack, two route stones, a signal box,
+  // a lamp post — all beside the junction, grounded on the verge, none on the road
+  softShadow(s, -9.5, 24, 3.4); s.box(-12.5, 22.5, 0, 6, 2, 0.8, CREAMB); s.box(-12.3, 22.5, 0.8, 0.7, 2, 1.6, STEELB); s.box(-7.2, 22.5, 0.8, 0.7, 2, 1.6, STEELB); // bench
+  softShadow(s, 17, 25, 3); s.box(15, 23, 0, 3, 3, 3, CREAMB); s.box(18.2, 23.6, 0, 2.4, 2.4, 2.4, CREAMB); s.box(15.6, 23.5, 3, 2.2, 2.2, 2.2, CREAMB); // crates
+  softShadow(s, 8.4, 24.4, 1.6); s.cyl(8, 24, 0, 1.5, 2.8, RIDGE.top, RIDGE.left); // route stone (south verge)
+  softShadow(s, -5, 4.4, 1.3); s.cyl(-5, 4, 0, 1.1, 2, RIDGE.top, RIDGE.left);     // route stone (north verge)
+  softShadow(s, 21, 6, 3); s.box(19, 4, 0, 4, 3.4, 3.6, DARKB); s.faceX(23.01, 5, 6.6, 0, 2.4, '#e8a13a', 'lit'); // signal box (north verge)
+  lamp(s, 23, 24.5, 5.5);   // lamp on the south verge, clear of every sign board and the road
+}
+
+/* ══ PITS — the disc surface at magnification: a canyon of pits + a reader ═══ */
+const pits = makeScene();
+{
+  const s = pits;
+  const cx = 40, cy = 30, R = 46;
+  s.box(cx - R, cy - R * 0.6, -6, R * 2, R * 1.2, 6, RIDGE);
+  // canyon banks — two long raised walls with a channel between
+  s.box(-6, 4, 0, 96, 8, 9, GROUND);
+  s.box(-6, 36, 0, 96, 8, 9, GROUND);
+  s.seam([-6, 12, 9], [90, 12, 9], 'z', 0); s.seam([-6, 44, 9], [90, 44, 9], 'z', 0);
+
+  // the channel floor: a dark base, with discrete reflective LANDS (amber dashes)
+  // raised over it — the GAPS between dashes are the pits. Factually a run of
+  // rectangular pits and lands, and a better texture than unbroken stripes.
+  s.quad(-2, 12, 94, 20, 0.05, '#0c1020', 'flat');
+  const rowY = [12.6, 18.6, 24.6, 30.6];
+  rowY.forEach((ry, r) => {
+    let px = -2 + (r % 2) * 2.6, k = 0;
+    while (px < 90) {
+      const w = 2.6 + ((k + r) % 3) * 1.5;
+      s.quad(px, ry, w, 1.6, 0.5, '#d1913b', 'flat');                // land top (lit amber)
+      s.faceY(ry + 1.6, px, px + w, 0.05, 0.5, '#8a5f22', 'flat');   // land front (one value step)
+      px += w + 1.9; k++;                                            // the gap is a pit
+    }
+  });
+
+  // the laser reader on a gantry, red beam striking the floor — reading the line.
+  // The beam lands squarely on both banks (feet at each corner), no overhang.
+  const gx = 70;
+  const gfoot = (lx: number, ly: number) => s.box(lx, ly, 9, 2, 2, 0.9, STEELB);
+  gfoot(gx, 7); gfoot(gx + 8, 7); gfoot(gx, 39); gfoot(gx + 8, 39);
+  // two legs planted on the canyon floor, flanking the reader, so the span is
+  // carried down to the floor as well as onto the banks — nothing cantilevers.
+  s.box(gx + 2, 15, 0.05, 2.4, 2.4, 9.65, STEELB);
+  s.box(gx + 2, 31, 0.05, 2.4, 2.4, 9.65, STEELB);
+  s.box(gx, 7, 9.7, 10, 34, 2.8, METAL);                          // gantry beam, resting on the banks
+  s.box(gx + 1, 20, 12, 8, 8, 7, STEELB);                          // reader head
+  s.faceX(gx + 9, 20, 28, 12, 18, '#0f1424', 'flat');
+  s.cyl(gx + 5, 24, 10.4, 1.5, 1.6, '#8ff0e6', '#2c726b');         // lens
+  s.raw(`M${s.P(gx + 5, 24, 10.4)}L${s.P(gx + 5, 24, 0.2)}`, 'none', 'beam');
+  s.ring(gx + 5, 24, 0.2, 2.2, '#e0324f', 'lit', 10);              // spot on the floor
+
+  // measured readout — a billboard planted on the near bank, held up on two posts
+  // (no longer floating): the facts on a green LCD, three leaded lines.
+  const lbx = 2, lbz = 12, lbw = 27, lbh = 7.2;
+  s.box(lbx + 2, 6.4, 9, 1.3, 1.3, lbz - 9, STEELB);              // left post
+  s.box(lbx + lbw - 3.3, 6.4, 9, 1.3, 1.3, lbz - 9, STEELB);      // right post
+  s.faceY(5.4, lbx, lbx + lbw, lbz, lbz + lbh, '#0a2b23', 'flat');         // bezel
+  s.faceY(5.28, lbx + 0.9, lbx + lbw - 0.9, lbz + 0.7, lbz + lbh - 0.7, '#0c231d', 'flat'); // screen
+  s.text(5.26, lbx + 1.9, lbz + lbh - 1.7, '16MS SEARCH', 2, 'lcd', 'left', 'start', 'central');
+  s.text(5.26, lbx + 1.9, lbz + lbh - 3.6, '100,000 TRACKS', 2, 'lcd', 'left', 'start', 'central');
+  s.text(5.26, lbx + 1.9, lbz + lbh - 5.5, '75MS TO FIRST NOTE', 1.7, 'lcd', 'left', 'start', 'central');
+}
+
+/* ══ OFF-GRID — tight crop on the traveller; the server is small, far back ════ */
+const offgrid = makeScene();
+{
+  const s = offgrid;
+  // The end of the line, no traveller. The origin server sits small and far back
+  // at the north-west; the amber line thins to a dashed run off the left edge (the
+  // connection being left behind), resumes as a solid causeway and runs off the
+  // south-east slab edge. On the near apron a phone lies face-up on a crate beside
+  // a bench, its amber screen still lit — off the server, still playing.
+  s.box(-8, 0, -2, 35, 15, 2, GROUND2);
+  gridDiamond(s, 9, 7, 12, 6);
+
+  // the origin server, small and far back at the north-west — the place being
+  // left behind; its lit windows the only thing still glowing back down the line.
+  // Kept clearly the tallest object so it sets the scene's scale.
+  {
+    const bx = -6, by = 1;
+    longShadow(s, bx, by + 2.4, 3.5, 3);
+    s.box(bx, by, 0, 3.5, 2.4, 4.6, STEELB);                           // main block
+    s.box(bx + 3.4, by + 0.5, 0, 1.7, 1.6, 2.6, DARKB);               // annex
+    s.faceY(by + 2.42, bx + 0.5, bx + 1.2, 1.2, 3.2, '#e8a13a', 'lit'); // lit windows down the line
+    s.faceY(by + 2.42, bx + 1.6, bx + 2.3, 1.2, 3.2, '#e8a13a', 'lit');
+    s.faceY(by + 2.42, bx + 2.6, bx + 3.2, 1.2, 2.6, '#5fc9c0', 'lit');
+    s.box(bx + 1.2, by + 0.7, 4.6, 0.5, 0.5, 1.2, STEELB);            // roof aerial
+  }
+
+  // the connection home thinning out: flat amber dashes running off the LEFT
+  // frame edge, gaps widening the further back toward the off-frame server
+  for (let dx = 4.2; dx > -8;) {
+    const t = Math.max(0, Math.min(1, (dx + 7) / 11));
+    const dl = 0.7 + 2.6 * t, gp = 0.6 + 2.6 * (1 - t);
+    const shade = t > 0.62 ? '#c9832b' : t > 0.32 ? '#9c6626' : '#6f4a20';
+    s.quad(dx - dl, 3.6, dl, 1.8, 0.06, shade, 'flat');
+    dx -= dl + gp;
+  }
+
+  // the solid raised causeway: ramps up on the left, runs east and off the slab's
+  // own south-east edge (end face flush at x=27, no cut face over the void)
+  s.raw(`M${s.P(6, 3, 1.6)}L${s.P(6, 6, 1.6)}L${s.P(4, 6, 0)}L${s.P(4, 3, 0)}Z`, ROAD.top, 'flat'); // ramp deck
+  s.raw(`M${s.P(6, 6, 1.6)}L${s.P(4, 6, 0)}L${s.P(6, 6, 0)}Z`, ROAD.left, 'flat');                    // ramp side
+  s.box(6, 3, 0, 21, 3, 1.6, ROAD);                                  // deck runs flush to the slab edge (x=27)
+  s.raw(`M${s.P(6, 4.5, 1.7)}L${s.P(27, 4.5, 1.7)}`, 'none', 'flowline');
+  s.seam([6, 4.5, 1.62], [27, 4.5, 1.62], 'z', 0);
+
+  // a bollard out on the near south-west apron, filling the foreground
+  longShadow(s, 9.3, 12.9, 1.4, 1.0);
+  s.cyl(10.0, 12.2, 0, 0.7, 1.6, STEELB.top, STEELB.left);
+  s.ring(10.0, 12.2, 1.66, 0.5, '#5fc9c0', 'lit', 12);              // teal cap light
+
+  // ── the near apron: a bench, and on a crate beside it the phone, still lit ──
+  // bench on the south verge, clear of the roadway, grounded on a hard footprint
+  longShadow(s, 12.9, 10.8, 3.8, 1.8);
+  s.box(13.1, 8.4, 0, 0.6, 2.0, 1.4, STEELB); s.box(15.9, 8.4, 0, 0.6, 2.0, 1.4, STEELB); // legs
+  s.box(12.8, 8.2, 1.4, 3.6, 2.4, 0.5, CREAMB);                      // seat
+  s.box(12.8, 10.2, 1.9, 3.6, 0.4, 1.4, CREAMB);                     // backrest
+
+  // a low crate beside the bench (toward the viewer) carrying the phone
+  longShadow(s, 17.7, 11.2, 2.8, 1.6);
+  s.box(17.5, 8.6, 0, 2.8, 2.4, 1.3, CREAMB);                        // crate
+  s.seam([17.5, 8.6, 1.32], [20.3, 8.6, 1.32], 'x', 0);
+  s.seam([17.5, 8.6, 1.32], [17.5, 11.0, 1.32], 'y', 0);
+
+  // THE PHONE — lying at a slight angle on the crate, screen up and amber-lit with
+  // a now-playing bar (played portion in Mozz red). The only warm-lit thing near
+  // the viewer: off the server, still playing. No figure anywhere in the scene.
+  {
+    const cx = 18.9, cy = 9.8, a = 0.34;
+    const rot = (dx: number, dy: number, zz: number): number[] =>
+      [cx + dx * Math.cos(a) - dy * Math.sin(a), cy + dx * Math.sin(a) + dy * Math.cos(a), zz];
+    s.poly([rot(-1.3, -0.72, 1.44), rot(1.3, -0.72, 1.44), rot(1.3, 0.72, 1.44), rot(-1.3, 0.72, 1.44)], DARKB.top, 'flat');     // phone body
+    s.poly([rot(-1.15, -0.56, 1.45), rot(1.15, -0.56, 1.45), rot(1.15, 0.56, 1.45), rot(-1.15, 0.56, 1.45)], '#e8a13a', 'lit');  // lit amber screen, face up
+    s.poly([rot(-0.92, 0.36, 1.46), rot(0.9, 0.36, 1.46), rot(0.9, 0.5, 1.46), rot(-0.92, 0.5, 1.46)], '#231404', 'flat');        // now-playing bar track
+    s.poly([rot(-0.92, 0.36, 1.47), rot(-0.1, 0.36, 1.47), rot(-0.1, 0.5, 1.47), rot(-0.92, 0.5, 1.47)], '#c80028', 'flat');      // played portion (Mozz red)
+  }
+
+  // fill the south-east apron with a couple of small props at the depot's scale,
+  // none taller than it, grounded on hard footprints and clear of the roadway
+  // a route marker post on the south verge near the slab's exit
+  longShadow(s, 24.7, 8.2, 0.8, 1.2);
+  s.box(24.7, 7.5, 0, 0.7, 0.7, 2.2, STEELB);
+  s.box(24.5, 7.3, 2.2, 1.1, 1.1, 0.5, AMBERB, 'lit');              // amber cap light
+  // a low stack of crates in the south-east corner
+  longShadow(s, 23.0, 13.2, 2.4, 1.2);
+  s.box(23.0, 11.0, 0, 2.4, 2.2, 1.9, CREAMB);
+  s.box(24.9, 11.6, 0, 1.5, 1.5, 1.3, CREAMB);
+  s.seam([23.0, 11.0, 1.92], [25.4, 11.0, 1.92], 'x', 0);
+}
+
+const specA = STATS[0], specB = STATS[1];
+
+/* the six skies tying the six tinted screenshots to six stretches of route */
+const SKIES = [
+  { shot: 'mozz-album-warm', sky: '#e8a13a', ink: '#231404', label: 'Amber noon' },
+  { shot: 'mozz-album-red', sky: '#c80028', ink: '#fbe6ea', label: 'Crimson dusk' },
+  { shot: 'mozz-album-dark', sky: '#6d1626', ink: '#f6dfe4', label: 'Deep maroon' },
+  { shot: 'mozz-artist', sky: '#8a6a3f', ink: '#241705', label: 'Sepia evening' },
+  { shot: 'mozz-playlist', sky: '#5fc9c0', ink: '#0a2420', label: 'Silver teal' },
+];
+---
+
+<Layout
+  title={`${NAME} — one continuous line, drawn as country`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. A disc holds one unbroken spiral from the centre out — here it is an isometric landscape at dusk, and the page is a journey along it."
+  themeColor="#1d2233"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=supreme@400,500&f[]=khand@500,600,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="sp">
+    <!--
+      THESIS: A compact disc is one single continuous spiral from the centre out.
+      This page reads that literally — the spiral becomes an amber causeway
+      winding across the disc's surface, drawn as isometric country at dusk, and
+      you travel along it as you scroll. Stations along the route are the content.
+      OWN-WORLD: Deep twilight-blue ground, a low amber sun, pale-teal light and
+      brand red for beacons. Flat screen-print colour, one hard value step per
+      face, one outline weight, un-erased construction rings on the pressing, a
+      light riso grain. A single marching flowline never breaks — gapless.
+      FIRST VIEWPORT: the spiral landscape, wordmark + headline beside it.
+      AI-ART DROP-IN: /hero/spiral.jpg layers over --hero-plate; absent, the CSS
+      dusk sky + the drawn landscape stand alone with nothing broken.
+    -->
+
+    <VariantBar slug="spiral" tone="neutral" />
+
+    <!-- HERO ---------------------------------------------------------------- -->
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="lockup">
+          <Mark size={26} decorative />
+          <span class="wordmark">{NAME}</span>
+          <span class="lockup-tick">one line, centre → out</span>
+        </div>
+        <h1>{TAGLINE}</h1>
+        <p class="lede">
+          {SUBLINE} A disc is one unbroken spiral from the middle out — every
+          track the same line. Mozz plays your own Plex, Jellyfin or Navidrome
+          library along it, drawn here as country you travel at dusk.
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source →</a>
+        </div>
+      </div>
+
+      <figure class="stage">
+        <div class="plate" aria-hidden="true"></div>
+        <svg class="art hero-art" viewBox={heroVB} role="img"
+             aria-label="An isometric compact disc drawn as land at dusk: its single continuous spiral is a raised amber road winding from the front edge inward to a small lit hub tower, a laser sled travels the outer road reading it with a red beam, under a low amber sun and a twilight sky.">
+          <defs>
+            <clipPath id="sp-sky"><rect x={hb[0]} y={r2(hb[1] - skyH)} width={hb[2]} height={r2(skyH + hb[3])} /></clipPath>
+            {/* Radial fade so the sky has NO hard rectangle — it glows around the
+               low sun and dissolves into the page's dusk gradient on every edge. */}
+            <radialGradient id="sp-skyfade" cx="0.3" cy="0.34" r="0.86">
+              <stop offset="0" stop-color="#fff" /><stop offset="0.5" stop-color="#fff" />
+              <stop offset="0.82" stop-color="#fff" stop-opacity="0.55" /><stop offset="1" stop-color="#000" />
+            </radialGradient>
+            <mask id="sp-skymask">
+              <rect x={hb[0]} y={r2(hb[1] - skyH)} width={hb[2]} height={r2(skyH + hb[3])} fill="url(#sp-skyfade)" />
+            </mask>
+            <linearGradient id="sp-band-purple" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#1d2233" /><stop offset="0.24" stop-color="#3a2f45" />
+              <stop offset="0.76" stop-color="#3a2f45" /><stop offset="1" stop-color="#1d2233" />
+            </linearGradient>
+            <linearGradient id="sp-band-brown" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#1d2233" /><stop offset="0.2" stop-color="#7a4a2e" />
+              <stop offset="0.8" stop-color="#7a4a2e" /><stop offset="1" stop-color="#1d2233" />
+            </linearGradient>
+          </defs>
+          <g clip-path="url(#sp-sky)" mask="url(#sp-skymask)">
+            <rect x={hb[0]} y={r2(hb[1] - skyH)} width={hb[2]} height={r2(skyH + hb[3])} fill="#1d2233" />
+            <rect x={hb[0]} y={r2(hb[1] - skyH * 0.42)} width={hb[2]} height={r2(skyH * 0.42 + hb[3] * 0.5)} fill="url(#sp-band-purple)" />
+            <rect x={hb[0]} y={r2(hb[1] - skyH * 0.16)} width={hb[2]} height={r2(skyH * 0.16 + hb[3] * 0.5)} fill="url(#sp-band-brown)" />
+            <circle cx={r2(sun.cx)} cy={r2(sun.cy)} r={r2(sun.r)} fill="#e8a13a" />
+            <circle cx={r2(sun.cx)} cy={r2(sun.cy)} r={r2(sun.r * 1.5)} fill="none" stroke="#e8a13a" stroke-opacity="0.3" stroke-width="1.2" />
+            {/* dusk haze bands crossing the sun's base so it sets into the horizon
+               rather than floating like a sticker */}
+            <rect x={hb[0]} y={r2(sun.cy + sun.r * 0.16)} width={hb[2]} height={r2(sun.r * 0.34)} fill="#2b2436" opacity="0.7" />
+            <rect x={hb[0]} y={r2(sun.cy + sun.r * 0.62)} width={hb[2]} height={r2(sun.r * 0.26)} fill="#241d2e" opacity="0.85" />
+          </g>
+          {hero.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {hero.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+          <path d={heroFlow} class="flowline" />
+        </svg>
+      </figure>
+    </header>
+
+    <!-- SERVERS ------------------------------------------------------------- -->
+    <section class="scene servers" aria-labelledby="srv-h">
+      <div class="scene-head">
+        <h2 id="srv-h">Three depots on the one line.</h2>
+        <p>Point Mozz at a machine you already own. Plex, Jellyfin and Navidrome patch onto the same route — add more than one and the whole catalogue reads as a single road.</p>
+      </div>
+      <figure class="band-art">
+        <svg class="art" viewBox={depots.vb(6)} role="img"
+             aria-label="Three different isometric depot buildings at dusk — a tall stepped Plex tower, a wide low Jellyfin hall, and a Navidrome cube with a rooftop dish — each labelled with its server logo and joined by a short teal spur to one long amber road.">
+          {depots.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {depots.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+          {depotBadges.map((b) => (
+            <svg class="depot-logo" x={r2(b.x - b.side / 2)} y={r2(b.y - b.side / 2)} width={r2(b.side)} height={r2(b.side)}
+                 viewBox={SERVER_LOGOS[b.key].viewBox} fill={b.color} stroke="none" style={`color:${b.color}`} set:html={SERVER_LOGOS[b.key].inner} />
+          ))}
+        </svg>
+      </figure>
+      <ul class="server-list" role="list">
+        {SERVERS.map((sv) => (
+          <li>
+            <span class="server-logo-wrap"><ServerLogo name={sv.name} size={28} brand /></span>
+            <div>
+              <h3>{sv.name}</h3>
+              <p>{sv.note}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- FEATURES ------------------------------------------------------------ -->
+    <section class="scene route-sec" aria-labelledby="feat-h">
+      <div class="scene-head">
+        <h2 id="feat-h">Six waypoints down the route.</h2>
+        <p>Everything Mozz does, marked the way a road marks its miles — numbered stones you pass, not a wall of cards.</p>
+      </div>
+      <figure class="band-art">
+        <svg class="art" viewBox={route.vb(6)} role="img"
+             aria-label="A single tall isometric fingerpost at dusk: six large direction boards mounted up the pole, alternating left and right, each numbered and naming one feature, with a lamp on top and a bench, crates, route stones, a signal box and a lamp post grouped at its foot.">
+          {route.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {route.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <ol class="parts-list" role="list">
+        {FEATURES.map((ft, i) => (
+          <li>
+            <span class="part-num">{i + 1}</span>
+            <div>
+              <h3>{ft.title}</h3>
+              <p>{ft.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- PITS / MECHANISM ---------------------------------------------------- -->
+    <section class="scene pits-sec" aria-labelledby="pit-h">
+      <figure class="band-art">
+        <svg class="art" viewBox={pits.vb(6)} role="img"
+             aria-label="The disc surface drawn at magnification as a canyon: a channel floor of rectangular pits between two raised banks, with a gantry-mounted laser reader striking the floor with a red beam, and a green readout showing sixteen milliseconds across a hundred thousand tracks and seventy-five milliseconds to first note.">
+          {pits.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {pits.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <div class="scene-head narrow">
+        <h2 id="pit-h">Close up, the line is pits and lands.</h2>
+        <p>Zoom into the road and it is the mechanism itself — pits read by a laser. Mozz mirrors the whole catalogue into an on-device database, so the reader never stalls.</p>
+        <div class="spec-plates">
+          <div class="plate-chip"><b>{specA.value}</b><span>{specA.label}</span></div>
+          <div class="plate-chip"><b>{specB.value}</b><span>{specB.label}</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADAPTIVE COLOUR / SKIES + PHONE ------------------------------------- -->
+    <section class="scene skies" aria-labelledby="sky-h">
+      <div class="scene-head">
+        <h2 id="sky-h">Every cover paints its own sky.</h2>
+        <p>Mozz repaints its whole interface from the artwork of the current record. Along the route that reads as weather — a new light over the land for whatever is playing.</p>
+      </div>
+
+      <div class="skies-grid">
+        <figure class="billboard">
+          <div class="bb-sky" aria-hidden="true"></div>
+          <div class="bb-phone">
+            <Phone name="mozz-nowplaying" width={224} priority sizes="(max-width: 720px) 60vw, 224px"
+                   class="sp-phone" alt="The Mozz now-playing screen, its interface tinted violet to match the album art." />
+          </div>
+          <figcaption><span class="sky-tag" style="--sky:#7a3bd6">Violet nightfall</span></figcaption>
+        </figure>
+
+        <ul class="sky-strip" role="list">
+          {SKIES.map((k) => (
+            <li class="sky-card" style={`--sky:${k.sky}; --sky-ink:${k.ink}`}>
+              <div class="sky-band" aria-hidden="true">
+                <svg viewBox="0 0 60 34" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                  <circle cx="44" cy="12" r="6" fill="var(--sky-ink)" opacity="0.35" />
+                  <path d="M0 34 L18 20 L30 26 L46 16 L60 24 L60 34 Z" fill="var(--sky-ink)" opacity="0.28" />
+                </svg>
+              </div>
+              <div class="sky-shot">
+                <Shot name={k.shot} sizes="(max-width: 720px) 42vw, 150px" class="sky-img" />
+              </div>
+              <span class="sky-tag">{k.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- OWNERSHIP / OFF-GRID ------------------------------------------------ -->
+    <section class="scene own" aria-labelledby="own-h">
+      <div class="scene-head">
+        <h2 id="own-h">The road can leave the server behind.</h2>
+        <p>Download a record and it stays played — the catalogue rides along, the server's lights small in the distance. This one is actually yours.</p>
+      </div>
+      <figure class="band-art">
+        <svg class="art" viewBox={offgrid.vb(0.8)} role="img"
+            aria-label="A wide isometric view at dusk of the end of the line. At the far north-west the origin server stands small in the distance, a few windows still lit. An amber track leaves it as a broken, dashed run whose gaps widen — the connection being left behind — then rises into a solid raised causeway that runs east and off the south-east edge of the ground. On the near apron a low bench sits beside a crate, and on the crate a phone lies face-up, its amber screen still lit with a now-playing bar: off the server, still playing. A route marker post, a low stack of crates and a bollard stand about the yard. There is no figure.">    
+          {offgrid.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {offgrid.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <ul class="own-list" role="list">
+        {OWNERSHIP.map((o) => (<li><h3>{o.title}</h3><p>{o.body}</p></li>))}
+      </ul>
+    </section>
+
+    <!-- FAQ ----------------------------------------------------------------- -->
+    <section class="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">Notes from the roadside</h2>
+      <dl>
+        {FAQS.map((qa) => (
+          <div class="faq-row"><dt>{qa.q}</dt><dd>{qa.a}</dd></div>
+        ))}
+      </dl>
+    </section>
+
+    <!-- FOOTER -------------------------------------------------------------- -->
+    <footer class="foot">
+      <div class="foot-rule" aria-hidden="true"></div>
+      <div class="foot-grid">
+        <div class="foot-disc" aria-hidden="true">
+          <svg viewBox="0 0 120 120" role="presentation">
+            <circle cx="60" cy="60" r="52" fill="#161d31" stroke="#28324e" stroke-width="2" />
+            {[46, 38, 30, 22, 14].map((rr, i) => (
+              <circle cx="60" cy="60" r={rr} fill="none" stroke={i % 2 ? '#5fc9c0' : '#e8a13a'} stroke-opacity="0.5" stroke-width="1" />
+            ))}
+            <circle cx="60" cy="60" r="7" fill="#1d2233" stroke="#5fc9c0" stroke-width="1.4" />
+            <circle cx="60" cy="60" r="2.4" fill="#c80028" />
+          </svg>
+        </div>
+        <div class="foot-body">
+          <div class="foot-mark">
+            <Mark size={22} decorative />
+            <span class="wordmark">{NAME}</span>
+            <span class="foot-legend">End of the line · one spiral, middle out</span>
+          </div>
+          <p class="foot-line">{TAGLINE} {SUBLINE}</p>
+          <p class="foot-meta">
+            Free forever · GPL-3.0 with an App Store Exception · <a href={GITHUB_URL}>source on GitHub</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .sp {
+    --twilight: #1d2233;
+    --twi-2: #171d2c;
+    --twi-3: #131826;
+    --amber: #e8a13a;
+    --teal: #5fc9c0;
+    --red: #c80028;
+    --ink: #f2ede1;
+    --body: #c7cede;
+    --muted: #93a0ba;
+    --line: rgba(140, 158, 196, 0.24);
+    --shadow: rgba(6, 9, 18, 0.5);
+    --guide: rgba(120, 150, 200, 0.24);
+
+    --hero-plate: url('/hero/spiral.jpg');
+
+    background:
+      linear-gradient(#12172400, #12172400),
+      radial-gradient(120% 80% at 78% -6%, #2a3350 0%, var(--twilight) 46%, var(--twi-3) 100%);
+    color: var(--body);
+    font-family: 'Supreme', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* riso grain over the dusk flats */
+  .sp::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0.7'/></feComponentTransfer></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 150px 150px;
+  }
+
+  /* one outline weight everywhere, in screen pixels */
+  .art { width: 100%; height: auto; overflow: visible; display: block; }
+  .art path, .art circle, .art ellipse, .art line, .art rect {
+    vector-effect: non-scaling-stroke;
+    stroke: #0c1120;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .art .flat { stroke: none; }
+  .art .edge { fill: none; }
+  .art .guide { stroke: var(--guide); stroke-width: 1; fill: none; }
+  .art .guide-ring { stroke: rgba(95, 201, 192, 0.22); stroke-width: 1; fill: none; }
+  .art .seam-d { stroke: rgba(6,9,18,0.6); stroke-width: 1.1; }
+  .art .seam-l { stroke: rgba(255,240,210,0.35); stroke-width: 1.1; }
+  .art .screw { stroke: rgba(6,9,18,0.7); stroke-width: 1.1; }
+  .art .lit { fill: currentColor; stroke: rgba(6,9,18,0.45); stroke-width: 0.7; }
+  .art .beam { stroke: #ff3d5c; stroke-width: 2.4; fill: none; opacity: 0.92; }
+  .art .band { stroke: #cdd4e2; stroke-width: 2.6; fill: none; stroke-linecap: round; }
+  .art .ghostline { fill: none; stroke: #5a6486; stroke-width: 1.8; stroke-dasharray: 2.4 3.2; stroke-linecap: round; opacity: 0.55; }
+  .art .notestem { stroke: #5fc9c0; stroke-width: 1; fill: none; stroke-linecap: round; }
+  .art .strapline { stroke: #7a0f22; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+  .art .bird { stroke: #0c1120; stroke-width: 1.4; fill: none; }
+  .art .flowline { fill: none; stroke: #8ff0e6; stroke-width: 1.8; stroke-dasharray: 1.6 6; stroke-linecap: round; animation: march 5.5s linear infinite; }
+  .art text { fill: var(--ink); font-family: 'Khand', sans-serif; letter-spacing: 0.02em; }
+  .art .lcd { fill: #7fe6c4; font-family: 'Khand', sans-serif; letter-spacing: 0.06em; }
+  .art .legend-tick { fill: #0c1120; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .art .legend-road { fill: #e8a13a; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .art .stone-num { fill: #231404; font-weight: 700; }
+  .art .sign-name { fill: #241a08; font-weight: 600; font-family: 'Khand', sans-serif; letter-spacing: 0.02em; }
+  .art .bird-sil { stroke: none; }
+  .art .cable { fill: none; stroke: #0c1120; stroke-width: 1.3; opacity: 0.7; }
+  .art .clamp { fill: none; stroke: rgba(95, 201, 192, 0.4); stroke-width: 1; }
+  .art .hubring { fill: none; stroke: #c3cbdc; stroke-width: 0.9; opacity: 0.85; }
+  .art .sign-plate { stroke: #0c1120; stroke-width: 1.4; stroke-linejoin: round; }
+  /* face-on depot marks — real server logos, unskewed, sitting on the roof signs */
+  .depot-logo { overflow: visible; }
+  .art .depot-logo path, .art .depot-logo g, .art .depot-logo circle, .art .depot-logo rect, .art .depot-logo polygon {
+    stroke: none;
+    fill: currentColor;
+  }
+
+  @keyframes march { to { stroke-dashoffset: -76; } }
+
+  h1, h2, h3 { font-family: 'Clash Display', ui-sans-serif, sans-serif; font-weight: 600; letter-spacing: -0.02em; line-height: 1.04; color: var(--ink); }
+
+  /* ── hero ── */
+  .hero {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3.4vw, 3rem) clamp(1.25rem, 4vw, 3rem) clamp(0.5rem, 2vw, 1.5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+    min-height: min(88vh, 820px);
+  }
+  .lockup { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem; }
+  .wordmark { font-family: 'Clash Display', sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: -0.03em; color: var(--ink); }
+  .lockup-tick {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.14em;
+    font-size: 0.7rem; color: var(--muted); border-left: 1px solid var(--line);
+    padding-left: 0.6rem; margin-left: 0.2rem;
+  }
+  .hero h1 { font-size: clamp(2.5rem, 5.6vw, 4.4rem); max-width: 14ch; margin-bottom: 1rem; font-weight: 600; }
+  .lede { max-width: 42ch; color: var(--body); font-size: 1.06rem; }
+  .actions { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; margin-top: 1.9rem; }
+  .store {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: var(--amber); color: #201203;
+    padding: 0.7rem 1.15rem; border-radius: 12px; font-weight: 600;
+    box-shadow: 4px 5px 0 rgba(6, 9, 18, 0.5);
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+  }
+  .store:hover { transform: translate(-1px, -1px); box-shadow: 5px 6px 0 rgba(6, 9, 18, 0.55); }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: flex; flex-direction: column; line-height: 1.05; font-size: 1.02rem; }
+  .store small { font-size: 0.64rem; font-weight: 600; opacity: 0.78; text-transform: uppercase; letter-spacing: 0.06em; }
+  .store.is-pending { background: #2b3653; color: var(--ink); box-shadow: 4px 5px 0 rgba(6, 9, 18, 0.45); cursor: default; }
+  .store.is-pending small::after { content: ' · pending'; opacity: 0.7; }
+  .ghost { font-weight: 600; color: var(--teal); border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .ghost:hover { color: var(--amber); }
+
+  .stage { position: relative; margin: 0; min-width: 0; }
+  .stage .plate {
+    position: absolute; inset: 4% 2%; z-index: -1;
+    background-image: var(--hero-plate);
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    border-radius: 20px; opacity: 0.85;
+  }
+  .hero-art { filter: drop-shadow(0 30px 46px rgba(6, 9, 18, 0.55)); }
+
+  /* ── generic scene ── */
+  .scene {
+    max-width: 1180px;
+    margin: clamp(2rem, 5vw, 4rem) auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem);
+    display: grid;
+    gap: clamp(1.2rem, 2.4vw, 2rem);
+    align-items: center;
+  }
+  .scene-head h2 { font-size: clamp(1.9rem, 3.8vw, 3rem); max-width: 17ch; margin-bottom: 0.7rem; }
+  .scene-head p { max-width: 50ch; color: var(--body); }
+  .scene-head.narrow p { max-width: 46ch; }
+  .band-art { margin: 0; width: 100%; }
+  .band-art .art { filter: drop-shadow(0 22px 34px rgba(6, 9, 18, 0.45)); }
+
+  /* ── servers ── */
+  .servers { grid-template-columns: 1fr; }
+  .servers .band-art { max-width: 1080px; margin-inline: auto; }
+  .server-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin: 0; padding: 0; }
+  .server-list li { display: flex; gap: 0.8rem; align-items: flex-start; }
+  .server-logo-wrap {
+    flex: none; width: 46px; height: 46px; border-radius: 10px;
+    display: grid; place-items: center; color: var(--teal);
+    background: #222b44;
+    box-shadow: inset 0 0 0 1px rgba(140, 158, 196, 0.2), 3px 3px 0 rgba(6, 9, 18, 0.4);
+  }
+  .server-list h3 { font-size: 1.08rem; margin-bottom: 0.15rem; }
+  .server-list p { font-size: 0.92rem; color: var(--muted); }
+
+  /* ── features route ── */
+  .route-sec { grid-template-columns: 1fr; }
+  .route-sec .band-art { max-width: 900px; margin-inline: auto; }
+  .parts-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem 2.2rem; margin: 0.4rem 0 0; padding: 0; }
+  .parts-list li { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; }
+  .part-num {
+    font-family: 'Khand', sans-serif; font-weight: 700; font-size: 1.05rem;
+    width: 30px; height: 30px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; color: #201203; background: var(--amber);
+  }
+  .parts-list h3 { font-size: 1.04rem; margin-bottom: 0.1rem; }
+  .parts-list p { font-size: 0.92rem; color: var(--muted); max-width: 46ch; }
+
+  /* ── pits ── */
+  .pits-sec { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: center; }
+  .pits-sec .band-art { max-width: 720px; }
+  .spec-plates { display: flex; gap: 1rem; margin-top: 1.4rem; flex-wrap: wrap; }
+  .plate-chip {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: 0.7rem 1rem; border-radius: 12px; background: #222b44;
+    box-shadow: inset 0 0 0 1px rgba(140, 158, 196, 0.2), 3px 3px 0 rgba(6, 9, 18, 0.4);
+  }
+  .plate-chip b { font-family: 'Khand', sans-serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; color: var(--amber); }
+  .plate-chip span { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── skies ── */
+  .skies { grid-template-columns: 1fr; }
+  .skies-grid { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .billboard {
+    position: relative; margin: 0; border-radius: 18px; overflow: hidden;
+    display: grid; place-items: center; padding: 1.6rem 1.2rem 1.2rem;
+    background: #171d2c;
+    box-shadow: inset 0 0 0 1px rgba(140, 158, 196, 0.18);
+  }
+  .bb-sky {
+    position: absolute; inset: 0; z-index: 0;
+    background: #7a3bd6;
+  }
+  .bb-sky::after {
+    content: ''; position: absolute; inset: 0;
+    background: #171d2c;
+    clip-path: polygon(0 46%, 22% 34%, 40% 42%, 62% 28%, 82% 40%, 100% 32%, 100% 100%, 0 100%);
+  }
+  .bb-phone { position: relative; z-index: 1; }
+  .sp-phone {
+    --phone-bezel: linear-gradient(#2a3350, #12182a);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(143, 240, 230, 0.22);
+    --phone-shadow: 0 26px 48px -20px rgba(6, 9, 18, 0.7);
+  }
+  .billboard figcaption { position: relative; z-index: 1; margin-top: 0.9rem; }
+  .sky-tag {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 0.72rem; font-weight: 600; color: var(--ink);
+    display: inline-flex; align-items: center; gap: 0.45rem;
+  }
+  .sky-tag::before { content: ''; width: 9px; height: 9px; border-radius: 2px; background: var(--sky, var(--amber)); box-shadow: inset 0 0 0 1px rgba(6,9,18,0.4); }
+
+  .sky-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.9rem; margin: 0; padding: 0; }
+  .sky-card {
+    display: flex; flex-direction: column; border-radius: 14px; overflow: hidden;
+    background: #171d2c; box-shadow: inset 0 0 0 1px rgba(140, 158, 196, 0.16);
+  }
+  .sky-band { background: var(--sky); line-height: 0; }
+  .sky-band svg { width: 100%; height: auto; display: block; }
+  .sky-shot { padding: 0.55rem 0.55rem 0.35rem; }
+  /* Shot emits its <img> from its own component, so a plain `.sky-img` rule is
+     scoped to spiral.astro and never matches. Reach the child image the way
+     Phone.astro does — with :global() — or the master ships at its intrinsic
+     ~1290×2796 and blows the page height out by thousands of px. */
+  .sky-shot :global(img) { width: 100%; height: auto; display: block; border-radius: 7px; box-shadow: 0 8px 16px -8px rgba(6, 9, 18, 0.8); }
+  .sky-card .sky-tag { padding: 0 0.6rem 0.7rem; font-size: 0.62rem; letter-spacing: 0.09em; }
+
+  /* ── ownership ── */
+  .own { grid-template-columns: 1fr; position: relative; }
+  .own .band-art { max-width: 808px; margin-inline: auto; }
+  .own-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin: 0; padding: 0; }
+  .own-list li { padding-top: 0.9rem; border-top: 1px solid var(--line); }
+  .own-list h3 { font-size: 1.02rem; margin-bottom: 0.25rem; }
+  .own-list p { font-size: 0.9rem; color: var(--muted); }
+
+  /* ── faq ── */
+  .faq { max-width: 900px; margin: clamp(2.5rem, 6vw, 4.5rem) auto clamp(2rem, 4vw, 3rem); padding: 0 clamp(1.25rem, 4vw, 3rem); }
+  .faq h2 {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 1.1rem; color: var(--muted); font-weight: 600; margin-bottom: 1.4rem;
+    padding-bottom: 0.7rem; border-bottom: 1px solid var(--line);
+  }
+  .faq dl { display: grid; gap: 0; }
+  .faq-row { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: 1.5rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
+  .faq dt { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+  .faq dd { margin: 0; color: var(--body); max-width: 62ch; }
+
+  /* ── footer — spiral's own terminus panel: the hub disc leads, a dashed route
+        rule caps it, content sits to the side (not diorama's stacked block) ── */
+  .foot { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem) 2.25rem; }
+  .foot-rule { height: 2px; margin-bottom: clamp(1.4rem, 3vw, 2.2rem);
+    background: repeating-linear-gradient(90deg, var(--amber) 0 15px, transparent 15px 24px); opacity: 0.75; }
+  .foot-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(1.4rem, 4vw, 3rem); align-items: center; }
+  .foot-disc { position: static; width: clamp(84px, 11vw, 122px); }
+  .foot-disc svg { width: 100%; height: auto; filter: drop-shadow(0 10px 16px rgba(6, 9, 18, 0.5)); }
+  .foot-mark { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.7rem; flex-wrap: wrap; }
+  .foot-legend { font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.16em;
+    font-size: 0.68rem; color: var(--teal); padding-left: 0.6rem; margin-left: 0.1rem; border-left: 1px solid var(--line); }
+  .foot-line { font-family: 'Clash Display', sans-serif; font-size: 1.2rem; font-weight: 600;
+    letter-spacing: 0; word-spacing: 0.08em; max-width: 34ch; color: var(--ink); }
+  .foot-meta { margin-top: 0.6rem; color: var(--muted); font-size: 0.92rem; }
+  .foot-meta a { color: var(--teal); border-bottom: 1px solid currentColor; }
+  .foot-meta a:hover { color: var(--amber); }
+
+  /* ── responsive ── */
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; min-height: 0; }
+    .pits-sec { grid-template-columns: 1fr; }
+    .skies-grid { grid-template-columns: 1fr; }
+    .server-list, .own-list, .parts-list { grid-template-columns: repeat(2, 1fr); }
+    .sky-strip { grid-template-columns: repeat(3, 1fr); }
+    .pits-sec .scene-head { order: 2; }
+  }
+  @media (max-width: 560px) {
+    .sp { font-size: 16px; }
+    .server-list, .own-list, .parts-list { grid-template-columns: 1fr; }
+    .sky-strip { grid-template-columns: repeat(2, 1fr); }
+    .faq-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    .lockup-tick { display: none; }
+    .foot-grid { grid-template-columns: 1fr; row-gap: 1.2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .store { transition: none; }
+    .art .flowline { animation: none; }
+  }
+</style>

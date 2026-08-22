@@ -15,7 +15,8 @@
     "thumbs": "node tools/thumbs.mjs",
     "images": "node tools/build-images.mjs",
     "qa": "node tools/qa.mjs",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "art": "node tools/art-audit.mjs"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",

@@ -1,0 +1,1317 @@
+---
+/**
+ * VARIANT — HOMELAB
+ *
+ * Illustration-led, in the same craft as /v/diorama: one true axonometric
+ * projection (makeScene → P) shared by every scene, a single non-scaling stroke
+ * for one line weight everywhere, flat screen-print colour with exactly one hard
+ * value step per visible face (top light → left mid → right dark), un-erased
+ * construction guides and a light riso grain. Legends are skewed into their
+ * surface's own isometric plane so they lie on the object, never float.
+ *
+ * The concept: "homelab" is the self-hoster's word for the machine in the house.
+ * So the whole page is that house — a giant cutaway with the server humming in
+ * the basement, cables traced through the walls, and music in every room and out
+ * the front door.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const R6 = Math.PI / 6;
+const IC = Math.cos(R6);
+const IS = Math.sin(R6);
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+type Part = { d: string; fill: string; cls?: string };
+type Txt = { tr: string; s: string; size: number; cls: string; anchor: string; base: string };
+
+function makeScene() {
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  const parts: Part[] = [];
+  const texts: Txt[] = [];
+
+  const proj = (x: number, y: number, z: number): [number, number] => {
+    const sx = (x - y) * IC;
+    const sy = (x + y) * IS - z;
+    if (sx < minX) minX = sx; if (sx > maxX) maxX = sx;
+    if (sy < minY) minY = sy; if (sy > maxY) maxY = sy;
+    return [sx, sy];
+  };
+  const P = (x: number, y: number, z: number) => {
+    const [sx, sy] = proj(x, y, z);
+    return `${r2(sx)} ${r2(sy)}`;
+  };
+  const path = (pts: number[][]) => pts.map((p, i) => `${i ? 'L' : 'M'}${P(p[0], p[1], p[2])}`).join('') + 'Z';
+  const poly = (pts: number[][], fill: string, cls?: string) => parts.push({ d: path(pts), fill, cls });
+
+  const box = (x: number, y: number, z: number, w: number, d: number, h: number,
+    c: { top: string; left: string; right: string }, cls?: string) => {
+    poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], c.top, cls);
+    poly([[x, y + d, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x, y + d, z]], c.left, cls);
+    poly([[x + w, y, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x + w, y, z]], c.right, cls);
+  };
+  const quad = (x: number, y: number, w: number, d: number, z: number, fill: string, cls?: string) =>
+    poly([[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z]], fill, cls);
+  const faceX = (x: number, y0: number, y1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x, y0, z0], [x, y1, z0], [x, y1, z1], [x, y0, z1]], fill, cls);
+  const faceY = (y: number, x0: number, x1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], fill, cls);
+
+  const ring = (cx: number, cy: number, z: number, r: number, fill: string, cls?: string, n = 48) => {
+    let d = '';
+    for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2; d += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z); }
+    parts.push({ d: d + 'Z', fill, cls });
+  };
+
+  // the stylised diffraction disc — a fan of hard flat wedges (the app's tint trick)
+  const fan = (cx: number, cy: number, z: number, r: number, palette: string[], seg = 32, spin = 0) => {
+    const c = P(cx, cy, z);
+    for (let i = 0; i < seg; i++) {
+      const a0 = spin + (i / seg) * Math.PI * 2, a1 = spin + ((i + 1) / seg) * Math.PI * 2;
+      const pa = P(cx + r * Math.cos(a0), cy + r * Math.sin(a0), z);
+      const pb = P(cx + r * Math.cos(a1), cy + r * Math.sin(a1), z);
+      parts.push({ d: `M${c}L${pa}L${pb}Z`, fill: palette[i % palette.length], cls: 'flat' });
+    }
+    ring(cx, cy, z, r, 'none', 'edge');
+    ring(cx, cy, z, r * 0.3, '#f4ead9', 'edge');
+    ring(cx, cy, z, r * 0.12, 'var(--hole)', 'edge');
+  };
+
+  const line = (a: number[], b: number[], cls = 'guide') =>
+    parts.push({ d: `M${P(a[0], a[1], a[2])}L${P(b[0], b[1], b[2])}`, fill: 'none', cls });
+
+  const seam = (a: number[], b: number[], dir: 'z' | 'x' | 'y' = 'z', off = 0.5) => {
+    line(a, b, 'seam-d');
+    const o = dir === 'z' ? [0, 0, off] : dir === 'x' ? [off, 0, 0] : [0, off, 0];
+    line([a[0] + o[0], a[1] + o[1], a[2] + o[2]], [b[0] + o[0], b[1] + o[1], b[2] + o[2]], 'seam-l');
+  };
+
+  const screw = (cx: number, cy: number, z: number, r = 1.1) => {
+    ring(cx, cy, z, r, 'rgba(0,0,0,0.10)', 'flat', 12);
+    ring(cx, cy, z, r, 'none', 'screw', 12);
+    line([cx - r * 0.6, cy - r * 0.6, z], [cx + r * 0.6, cy + r * 0.6, z], 'screw');
+  };
+
+  const cyl = (cx: number, cy: number, z: number, r: number, h: number, cTop: string, cBody: string, cls?: string) => {
+    const aL = 3 * Math.PI / 4, aR = -Math.PI / 4, step = Math.PI / 20;
+    let d = 'M' + P(cx + r * Math.cos(aL), cy + r * Math.sin(aL), z + h);
+    for (let a = aL; a >= aR - 1e-6; a -= step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h);
+    d += 'L' + P(cx + r * Math.cos(aR), cy + r * Math.sin(aR), z);
+    for (let a = aR; a <= aL + 1e-6; a += step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z);
+    parts.push({ d: d + 'Z', fill: cBody, cls });
+    let t = '';
+    for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; t += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h); }
+    parts.push({ d: t + 'Z', fill: cTop, cls });
+  };
+
+  const raw = (d: string, fill: string, cls?: string) => parts.push({ d, fill, cls });
+
+  const text = (x: number, y: number, z: number, s: string, size: number,
+    cls = 'legend', plane: 'top' | 'topL' | 'left' | 'right' = 'top',
+    anchor = 'middle', base = 'auto') => {
+    const [sx, sy] = proj(x, y, z);
+    let a = IC, b = IS, c = -IC, d = IS;
+    if (plane === 'topL') { a = -IC; b = IS; c = IC; d = IS; }
+    else if (plane === 'left') { a = IC; b = IS; c = 0; d = 1; }
+    else if (plane === 'right') { a = -IC; b = IS; c = 0; d = 1; }
+    const tr = `matrix(${r2(a)} ${r2(b)} ${r2(c)} ${r2(d)} ${r2(sx)} ${r2(sy)})`;
+    texts.push({ tr, s, size, cls, anchor, base });
+  };
+
+  const vb = (pad = 6) => `${r2(minX - pad)} ${r2(minY - pad)} ${r2(maxX - minX + pad * 2)} ${r2(maxY - minY + pad * 2)}`;
+  const bounds = () => ({ minX, minY, maxX, maxY });
+
+  return { parts, texts, poly, box, quad, faceX, faceY, ring, fan, line, seam, screw, cyl, raw, text, vb, bounds, P };
+}
+
+/* ── flat palettes (small, disciplined) ──────────────────────────────────────
+   cream #f4ead9 · teal-green #2f7d6e · burnt orange #e8703a · mozz red #c80028 */
+const CREAM  = { top: '#f7efe0', left: '#e9dcc2', right: '#d8c8a6' };
+const WALL   = { top: '#efe3cc', left: '#ddccad', right: '#c9b58f' };  // interior wall
+const WALLO  = { top: '#e7d6b8', left: '#d2bd97', right: '#bda279' };  // outer structure
+const TEAL   = { top: '#3a9384', left: '#2f7d6e', right: '#245f54' };
+const TEAL2  = { top: '#348476', left: '#2a6d60', right: '#1f5249' };
+const TEALDK = { top: '#296a5e', left: '#20544b', right: '#173e37' };
+const ORANGE = { top: '#f0854f', left: '#e8703a', right: '#c85a2b' };
+const ORANG2 = { top: '#ec7a44', left: '#d9642f', right: '#b85326' };
+const RED     = { top: '#e01234', left: '#c80028', right: '#9c001f' };
+const WOOD   = { top: '#e5cfa2', left: '#d0b787', right: '#b89f6e' };
+const WOOD2  = { top: '#d8bd8f', left: '#c2a674', right: '#a88d5e' };
+const DARKB  = { top: '#34333c', left: '#26252d', right: '#191820' };
+const DARK2  = { top: '#2a2932', left: '#201f27', right: '#14131a' };
+const METAL  = { top: '#cdd2d8', left: '#b1b7bf', right: '#969da7' };
+const STEEL  = { top: '#7f8a93', left: '#68727a', right: '#525a61' };
+const PAPER  = { top: '#f4ecd9', left: '#e4d8bf', right: '#d0c1a0' };
+const CREAMH = { top: '#fbf5ea', left: '#efe4cf', right: '#ddceb2' };
+const SOIL   = { top: '#6f5a3d', left: '#5a4830', right: '#453722' };
+const ROOF   = { top: '#347b6d', left: '#296257', right: '#1d463e' };
+const SKIN   = { top: '#e7b587', left: '#d59f6e', right: '#bd8656' };
+const SKIN2  = { top: '#d8a273', left: '#c48a5c', right: '#a97347' };
+
+const FAN_WARM  = ['#e9b25a', '#e8703a', '#f4ead9', '#d98f34', '#f0d49a', '#e57d3f', '#c99a45'];
+const FAN_RED   = ['#c80028', '#e8703a', '#f4ead9', '#a30220', '#e0a94e', '#d6486a'];
+const FAN_TEAL  = ['#2f7d6e', '#49a08d', '#e8c98a', '#3d8f7f', '#8fc7b8', '#256257'];
+const FAN_VIOL  = ['#7a4bd6', '#c455a8', '#f0d49a', '#5f3bb0', '#b58fe0', '#8e3fb0'];
+const FAN_SILV  = ['#c6ccd4', '#9aa4b0', '#eef1f4', '#aeb7c2', '#dfe4ea', '#8b96a4'];
+const FAN_SEPIA = ['#c98b4e', '#9c6233', '#e7c79a', '#b5793f', '#dcb583', '#8a5a30'];
+
+/* ── shared scene helpers ─────────────────────────────────────────────────── */
+const grid = (s: any, x0: number, x1: number, y0: number, y1: number, sx: number, sy: number, z = 0) => {
+  for (let y = y0; y <= y1 + 1e-6; y += sy) s.line([x0, y, z], [x1, y, z]);
+  for (let x = x0; x <= x1 + 1e-6; x += sx) s.line([x, y0, z], [x, y1, z]);
+};
+const shadow = (s: any, cx: number, cy: number, r: number, ry = 1, z = -0.2) => {
+  let d = '';
+  for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * ry * Math.sin(a), z); }
+  s.raw(d + 'Z', 'var(--shadow)', 'flat');
+};
+const vents = (s: any, plane: 'x' | 'y', c: number, a0: number, a1: number, z0: number, z1: number, n: number) => {
+  for (let i = 0; i < n; i++) {
+    const z = z0 + ((i + 0.5) / n) * (z1 - z0);
+    if (plane === 'y') s.line([a0, c, z], [a1, c, z], 'vent');
+    else s.line([c, a0, z], [c, a1, z], 'vent');
+  }
+};
+
+/* a person: head, torso, headphone band. seated=false stands with a stride. */
+const person = (s: any, x: number, y: number, z: number, shirt: any, skin: any,
+  opts: { seated?: boolean; band?: string } = {}) => {
+  const band = opts.band ?? 'hp';
+  if (opts.seated) {
+    s.box(x, y, z, 7, 9, 6, shirt);                 // lap
+    s.box(x - 5.5, y + 0.6, z + 6, 7, 7.6, 11, shirt); // torso, reclined back
+    s.cyl(x - 2, y + 4.4, z + 17, 3.2, 4.2, skin.top, skin.left); // head
+    s.raw(`M${s.P(x - 5.2, y + 4.4, 25)}Q${s.P(x - 2, y + 4.4, 27.6)} ${s.P(x + 1.2, y + 4.4, 25)}`, 'none', band);
+  } else {
+    // a single continuous figure: legs joined at a pelvis, torso up to the shoulders, head + headphones
+    s.box(x + 0.3, y + 2, z, 2.2, 2.4, 6.6, shirt);              // back leg
+    s.box(x + 0.3, y + 4.3, z, 2.2, 2.4, 6.6, shirt);           // front leg (side-by-side, joined — no stride gap)
+    s.box(x - 0.2, y + 1.8, z + 6, 5, 4.8, 2.2, shirt);         // pelvis joining the legs
+    s.box(x - 0.2, y + 2, z + 8, 5, 4.4, 7.4, shirt);           // torso, continuous
+    s.box(x - 0.4, y + 2.2, z + 14.6, 5.4, 4, 1.6, shirt);      // shoulders
+    s.cyl(x + 2.3, y + 4, z + 16.2, 3, 4, skin.top, skin.left); // head
+    s.raw(`M${s.P(x - 0.5, y + 4, z + 18.4)}Q${s.P(x + 2.3, y + 4, z + 21.6)} ${s.P(x + 5.1, y + 4, z + 18.4)}`, 'none', band); // headphone band over the head
+    s.raw(`M${s.P(x - 0.5, y + 4, z + 16.4)}L${s.P(x - 0.5, y + 4, z + 18.6)}`, 'none', band); // near earcup
+  }
+};
+
+const potPlant = (s: any, x: number, y: number, z: number, r = 3.2, h = 4) => {
+  s.cyl(x, y, z, r, h, '#c98b4e', '#a5672f');
+  for (const [dx, dy, hh] of [[0, 0, 12], [-1.8, 0.6, 9], [1.8, -0.4, 10], [0.6, 1.6, 8]]) {
+    s.raw(`M${s.P(x, y, z + h)}Q${s.P(x + dx * 1.4, y + dy * 1.4, z + h + hh * 0.6)} ${s.P(x + dx * 2.2, y + dy * 2.2, z + h + hh)}`, 'none', 'leaf');
+  }
+};
+
+/* the footer mark — a small isometric enamel house-number plate that carries the
+   Mozz red-CD mark: it belongs to a house and to nothing else on the site. Flat
+   fills, hard edges, one outline weight, teal / cream / warm-red / orange only. */
+const plateMark = (c: any) => {
+  // the mounted plate — a thin slab with real thickness at the edges
+  c.box(0, 0, 0, 30, 18, 2.4, { top: '#2f7d6e', left: '#276b5f', right: '#1f5249' });
+  // recessed cream number panel
+  c.quad(4, 3.2, 22, 11.6, 2.42, '#f4ead9');
+  // two countersunk mounting screws, diagonally opposed, clear of the panel
+  c.screw(2.4, 2.4, 2.42, 0.85);
+  c.screw(27.6, 15.6, 2.42, 0.85);
+  // the Mozz mark, printed on the panel — a compact red disc with a cream hub
+  const mx = 15, my = 9, mz = 2.44;
+  c.ring(mx, my, mz, 4.2, '#c80028', 'flat');   // red disc body
+  c.ring(mx, my, mz, 1.4, '#f4ead9', 'flat');   // cream centre hub
+  c.ring(mx, my, mz, 4.2, 'none', 'edge');      // disc rim
+  c.ring(mx, my, mz, 3.4, 'none', 'cd-orange'); // warm-orange sheen ring
+  c.ring(mx, my, mz, 2.3, 'none', 'seam-d');    // pressing groove
+  c.ring(mx, my, mz, 1.4, 'none', 'edge');      // hub rim
+};
+
+/* ══ HERO — the cutaway house ════════════════════════════════════════════════
+   Corner-open dollhouse: near walls (x=max, y=max) removed. Three interior
+   floors stacked in z — basement (server), ground (living / hall+door / kitchen),
+   upper (bedroom / office+router) — under a teal gable roof. A cable is traced
+   from the basement switch up through the floors to every device. */
+const hero = makeScene();
+{
+  const s = hero;
+  const W = 176, D = 34;
+
+  // ground plane + lawn tiles, and the shallow foundation the basement sits in
+  grid(s, -30, W + 46, -12, D + 40, 22, 14, -34);
+  s.box(-8, -8, -37, W + 20, D + 16, 3, SOIL);              // soil top slab (lawn cut edge)
+  s.faceX(W + 12, -8, D + 8, -40, -34, '#5a4830', 'flat');  // foundation cross-section right (shallow)
+  s.faceY(D + 8, -8, W + 12, -40, -34, '#4c3c28', 'flat');  // foundation cross-section front (shallow)
+  s.quad(-8, -8, W + 20, D + 16, -34, '#7c6544', 'flat');   // soil top face
+
+  /* ---- BASEMENT : z -34 .. -4 — lit like a room, the heart of the page --------- */
+  const BFLOOR = { top: '#dcd2bd', left: '#c9bea3', right: '#b0a488' };
+  s.box(0, 0, -34, W, D, 2, BFLOOR);                       // light poured-concrete floor slab
+  s.faceX(0, 0, D, -32, -4, '#f3ecda', 'flat'); s.line([0, 0, -32], [0, D, -32], 'faint'); // back-right wall (bright)
+  s.faceY(0, 0, W, -32, -4, '#ece2ca', 'flat');            // back-left wall (bright)
+  // patch panel on the back-right wall
+  s.faceX(0.2, 6, 22, -14, -6, '#2a2932', 'flat');
+  for (let i = 0; i < 8; i++) s.faceX(0.4, 7.4 + i * 1.7, 8.6 + i * 1.7, -13, -11.6, i % 3 ? '#e0a94e' : '#35e08f', 'led');
+  for (let i = 0; i < 8; i++) s.faceX(0.4, 7.4 + i * 1.7, 8.6 + i * 1.7, -9.4, -8, '#3b6ea5', 'led');
+
+  // footprint shadows on the pale floor — one under each machine, offset in the light
+  // direction so a grounding band reads on the near side (one shadow language page-wide)
+  s.quad(20, 12, 20, 16, -31.9, 'var(--shadow)', 'flat'); s.quad(46, 12, 13, 15, -31.9, 'var(--shadow)', 'flat');
+  s.quad(84, 10, 8, 18, -31.9, 'var(--shadow)', 'flat'); s.quad(124, 10, 12, 12, -31.9, 'var(--shadow)', 'flat');
+
+  // ── THE SERVER — brightest, most detailed object on the page. It stands ON the
+  //    basement floor against the back wall with clear headroom above it (so it can
+  //    never read as "cut by the floor slab" the way a full-height tower did). ──────
+  const SVR = { top: '#eef1f4', left: '#dbe0e6', right: '#cbd0d7' };
+  s.box(20, 8, -32, 20, 16, 15, SVR);
+  for (const [fx, fy] of [[20, 8], [20, 22.4], [38.4, 8], [38.4, 22.4]]) s.box(fx, fy, -33.4, 1.6, 1.6, 1.4, DARK2); // feet
+  s.faceX(40, 9, 24, -31, -18, '#26252d', 'flat');         // dark faceplate on the viewer-facing (+x) face
+  // four drive sleds, each a pale sled front with a lit activity LED
+  for (let i = 0; i < 4; i++) {
+    const z0 = -30.2 + i * 3.0;
+    s.faceX(40.05, 10, 23, z0, z0 + 2.2, '#d3d8de', 'flat');                            // sled front (light)
+    s.faceX(40.1, 11, 12.8, z0 + 0.55, z0 + 1.6, i % 2 ? '#35e08f' : '#e0a94e', 'led'); // activity LED
+    s.line([40.05, 10, z0 + 2.4], [40.05, 23, z0 + 2.4], 'seam-d');
+    s.screw(40, 22, z0 + 1.1, 0.55);
+  }
+  vents(s, 'x', 40.1, 17, 23, -17.4, -16.4, 3);            // vent slots along the faceplate top
+  s.faceX(40.12, 10.4, 13.0, -17.4, -16.2, '#35e08f', 'led'); // glowing power LED
+  // a small blank nameplate on the top face (the HOMELAB-01 text rendered ~5px and was
+  // occluded by the ground-floor slab, so the wordmark lives in HTML — here just a plate)
+  s.quad(19.8, 8.4, 20.4, 6.6, -16.98, '#f4ead9', 'flat'); s.quad(19.8, 8.4, 20.4, 6.6, -16.97, 'none', 'edge');
+  s.line([21, 9.6, -16.95], [37.4, 9.6, -16.95], 'seam-d'); s.line([21, 13.4, -16.95], [31, 13.4, -16.95], 'seam-d');
+  s.ring(32, 20.6, -16.9, 2.2, '#2f7d6e', 'edge'); s.ring(32, 20.6, -16.9, 1.1, '#2f7d6e', 'edge');
+
+  // ── far-left laundry zone so the basement's lower-left isn't bare floor ──
+  const APP = { top: '#eef0f2', left: '#dde0e4', right: '#ccd0d5' };
+  const ydisc = (x: number, cy: number, cz: number, r: number, fill: string, cls?: string) => {
+    let d = ''; for (let i = 0; i <= 24; i++) { const a = (i / 24) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(x, cy + r * Math.cos(a), cz + r * Math.sin(a)); }
+    s.raw(d + 'Z', fill, cls);
+  };
+  s.quad(3, 12, 9, 13, -31.9, 'var(--shadow)', 'flat');
+  s.box(3, 8, -32, 9, 13, 13, APP);                          // washing machine against the back-left wall
+  s.faceX(12, 10, 20, -30, -20, '#dfe3e8', 'flat');          // front panel
+  ydisc(12.06, 15, -25, 3.2, '#aab6c0', 'flat'); ydisc(12.08, 15, -25, 2.1, '#5f6f7a', 'edge'); // porthole door
+  s.faceX(12.06, 10.6, 14, -18.9, -17.7, '#35e08f', 'led');  // control LED
+  s.box(3, 8, -19, 9, 13, 3, DARK2);                         // shelf stacked on top
+  s.box(4, 9, -16, 7, 5, 4, ORANGE); s.box(4, 15, -16, 7, 5, 4, TEAL); // stacked storage totes
+  s.box(14, 24, -32, 7, 6, 6, PAPER);                        // laundry basket on the floor
+  s.quad(14, 24, 7, 6, -26, '#e2d3b6', 'flat');              // folded laundry poking out
+  s.box(46, 8, -32, 13, 15, 11, TEALDK);
+  s.faceX(59, 10, 22, -30, -23, '#123a33', 'flat');
+  s.faceX(59.1, 12, 20, -29, -24, '#173a33', 'led');
+  s.box(46, 8, -21, 13, 15, 3, DARK2);                     // switch on the UPS
+  for (let i = 0; i < 6; i++) s.faceX(59, 10 + i * 1.9, 11.3 + i * 1.9, -20, -18, i < 4 ? '#e0a94e' : '#2f7d6e', 'led');
+  // a coil of ethernet resting on the floor
+  for (let i = 0; i < 4; i++) s.ring(72, 12, -31.6, 3.2 + i * 1.0, i % 2 ? '#e8703a' : '#2f7d6e', 'edge', 30);
+
+  // ── shelving with storage tubs + a stack of cases + the water heater, all grounded ─
+  s.box(84, 6, -32, 8, 18, 16, WOOD2);                     // shelving unit
+  s.box(85.6, 8, -30, 5, 6, 5, ORANGE); s.box(85.6, 15, -30, 5, 6, 5, TEAL);
+  s.box(85.6, 8, -23, 5, 6, 5, PAPER);
+  s.box(102, 8, -32, 10, 10, 8, PAPER); s.box(104, 10, -24, 6, 6, 5, CREAM); // stacked cases (charm)
+  s.cyl(130, 12, -32, 6, 15, '#c9cdd2', '#9aa0a8'); // water heater
+
+  // a workbench with tools + a dehumidifier + a floor drain fill the rest of the basement
+  s.box(144, 7, -32, 26, 9, 11, WOOD2);                    // workbench
+  s.box(144, 7, 9 - 32, 26, 9, 1, WOOD);                   // bench top
+  s.box(146, 8, -21, 5, 5, 4, TEALDK);                     // a tool caddy on the bench
+  s.box(153, 8, -21, 4, 4, 3, DARK2);
+  s.box(160, 8, -21, 3, 6, 5, ORANGE);                     // a cordless drill body
+  vents(s, 'y', 6, 118, 168, -12, -7, 4);                  // ductwork / pipe run along the back wall
+  s.box(150, 22, -32, 8, 8, 10, TEALDK);                   // dehumidifier on the floor
+  s.faceX(158, 24, 28, -30, -24, '#173a33', 'led');
+  for (let i = 0; i < 4; i++) s.ring(164, 18, -31.7, 1.2 + i * 0.9, '#9aa0a8', 'edge', 24); // floor drain
+
+  /* ---- GROUND FLOOR : slab top z=0, room 0 .. 30 ---------------------------- */
+  s.box(0, 0, -4, W, D, 4, WOOD);                           // ground floor slab
+  s.seam([0, 0, 0], [W, 0, 0], 'x', 0.6);
+  s.faceX(0, 0, D, 0, 30, '#f2e6d0', 'flat');               // back-right wall
+  s.faceY(0, 0, W, 0, 30, '#e7d9bd', 'flat');               // back-left wall
+  // partitions between the three rooms
+  s.faceX(60, 0, D, 0, 30, '#e0d0b2', 'part'); s.box(60, 0, 0, 0.8, D, 30, WALL);
+  s.faceX(116, 0, D, 0, 30, '#e0d0b2', 'part'); s.box(116, 0, 0, 0.8, D, 30, WALL);
+  // back-wall furnishing so the cream planes aren't blank: skirting, a picture, a window, a doorway
+  s.faceY(0.05, 0, W, 0, 1.6, '#d6c7a6', 'flat');                                   // skirting board along the base
+  s.faceY(0.12, 24, 36, 14, 23, '#8a6d45', 'flat'); s.faceY(0.16, 25.2, 34.8, 15, 22, '#2f7d6e', 'flat'); // living-room framed picture
+  s.faceY(0.12, 130, 150, 12, 24, '#c9b58f', 'flat'); s.faceY(0.16, 131.4, 148.6, 13.2, 22.8, '#bfe0d8', 'flat'); // kitchen window
+  s.line([140, 0.18, 13.2], [140, 0.18, 22.8], 'seam-d'); s.line([131.4, 0.18, 18], [148.6, 0.18, 18], 'seam-d'); // muntins
+  s.faceX(60.2, 4, 13, 0, 21, '#cbb98f', 'flat'); s.faceX(60.25, 5, 12, 1, 20, '#b7a37a', 'flat'); // doorway through the living/hall partition
+
+  // soft coloured light-spill on each floor — "the colour of what's playing"
+  s.quad(3, 3, 54, D - 6, 0.05, 'rgba(232,112,58,0.16)', 'flat');   // living: amber
+  s.quad(120, 3, 52, D - 6, 0.05, 'rgba(200,0,40,0.13)', 'flat');   // kitchen: crimson
+
+  // — LIVING ROOM (0..60): armchair + person w/ headphones + phone, rug, cat, plant, mug
+  s.ring(28, 20, 0.04, 15, '#e6c896', 'flat');            // round rug (filled, warm)
+  s.ring(28, 20, 0.05, 9.5, '#e8703a', 'flat');           // inner band
+  s.ring(28, 20, 0.06, 15, 'none', 'edge'); s.ring(28, 20, 0.06, 5, 'none', 'edge'); // borders
+  s.box(10, 12, 0, 18, 18, 6, TEAL);                       // armchair seat
+  s.box(10, 12, 6, 18, 3.4, 12, TEAL2);                    // backrest
+  s.box(7, 12, 0, 3, 18, 12, TEAL2); s.box(28, 12, 0, 3, 18, 12, TEAL2); // arms
+  person(s, 19, 15, 6, { top: '#e2d3b6', left: '#d0bd98', right: '#bda579' }, SKIN, { seated: true });
+  s.box(15.5, 20.5, 15, 3, 5, 0.6, DARK2);                 // phone in hand
+  s.faceX(18.5, 20.6, 25.4, 15.1, 15.4, '#7a4bd6', 'led');
+  s.cyl(44, 8, 0, 2.4, 5, '#e8703a', '#c85a2b'); s.text(44, 8, 5.2, '', 1, 'legend', 'top'); // side-table mug base
+  s.box(40, 5, 0, 10, 10, 3, WOOD2);                       // side table
+  s.cyl(45, 9, 3, 2.2, 3.4, '#f4ead9', '#e8703a');         // mug on table
+  potPlant(s, 52, 26, 0, 3.2, 4);
+  // the cat, curled on the rug
+  s.cyl(30, 24, 0, 3, 2.2, '#3a3330', '#241f1d'); s.raw(`M${s.P(33, 24, 1.6)}Q${s.P(35, 22, 3)} ${s.P(34, 26, 1.2)}`, 'none', 'tail');
+
+  // — HALL / ENTRY (60..116): front door open, figure walking out w/ headphones, bike, coat
+  s.faceX(116.4, 2, 16, 0, 24, '#c9b58f', 'flat');         // door frame in far partition? keep light
+  // open front door leaf swung out on the near (open) side of the hall
+  s.box(96, D - 1, 0, 1.4, 12, 22, WOOD2); s.faceY(D + 11, 96, 97.4, 0, 22, '#c2a674', 'flat');
+  // front stoop — a proper exterior step (two tiers + a cast shadow + doormat) so the
+  // figure reads as stepping OUTSIDE the house, not standing on a plinth mid-room
+  shadow(s, 101, D + 7, 13, 0.62, -0.15);
+  s.box(90, D, -2, 22, 11, 2, WOOD2);                         // lower step
+  s.box(93, D, 0, 15, 8, 2, CREAMH);                          // upper landing
+  s.quad(96, D + 1, 8, 5, 2.06, '#c85a2b', 'flat');           // doormat
+  person(s, 99, D + 1.6, 2, ORANGE, SKIN2, { band: 'hp2' });
+  // a bike leaning against the hall back wall — wheels drawn vertical (x–z plane at fixed y)
+  const bwheel = (cx: number, y: number, z: number, r: number) => {
+    let d = '', rim = '', h = '';
+    for (let i = 0; i <= 24; i++) { const a = (i / 24) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), y, z + r * Math.sin(a)); }
+    for (let i = 0; i <= 24; i++) { const a = (i / 24) * Math.PI * 2; rim += (i ? 'L' : 'M') + s.P(cx + r * 0.72 * Math.cos(a), y, z + r * 0.72 * Math.sin(a)); }
+    for (let i = 0; i <= 16; i++) { const a = (i / 16) * Math.PI * 2; h += (i ? 'L' : 'M') + s.P(cx + r * 0.2 * Math.cos(a), y, z + r * 0.2 * Math.sin(a)); }
+    s.raw(d + 'Z', '#2a2932', 'flat');                                  // tyre
+    s.raw(rim + 'Z', '#e8dcc4', 'flat');                               // rim (cream)
+    for (const a of [0.5, 1.8, 3.1, 4.4, 5.7]) s.raw(`M${s.P(cx, y, z)}L${s.P(cx + r * 0.7 * Math.cos(a), y, z + r * 0.7 * Math.sin(a))}`, 'none', 'antenna-thin'); // spokes
+    s.raw(h + 'Z', '#5a4a2e', 'flat'); s.raw(d + 'Z', 'none', 'edge'); // hub + tyre outline
+  };
+  bwheel(64, 9, 5, 5); bwheel(80, 9, 5, 5);
+  s.raw(`M${s.P(64, 9, 5)}L${s.P(75, 9, 13)}L${s.P(80, 9, 5)}L${s.P(69, 9, 5)}L${s.P(75, 9, 13)}`, 'none', 'frame'); // twin triangles
+  s.raw(`M${s.P(69, 9, 5)}L${s.P(72, 9, 15.5)}`, 'none', 'frame'); s.raw(`M${s.P(70, 9, 15.5)}L${s.P(74.5, 9, 15.5)}`, 'none', 'frame'); // seat tube + saddle
+  s.raw(`M${s.P(80, 9, 5)}L${s.P(82, 9, 15)}`, 'none', 'frame'); s.raw(`M${s.P(80.5, 9, 15)}L${s.P(84.5, 9, 14)}`, 'none', 'frame'); // head tube + handlebar
+  // coat hooks + a hanging coat
+  s.box(66, 1, 20, 8, 0.6, 1, WOOD2);
+  s.box(68, 1.6, 8, 5, 3, 11, TEALDK); s.raw(`M${s.P(70.5, 3, 19)}L${s.P(70.5, 3, 20)}`, 'none', 'frame');
+
+  // — KITCHEN (116..176): counter, propped phone, kettle, small speaker, mug
+  s.box(120, 2, 0, 52, 9, 12, CREAMH);                     // counter run (back)
+  s.seam([120, 2, 12], [172, 2, 12], 'x', 0.5);
+  s.box(120, 2, 12, 52, 9, 0.8, WOOD2);                    // butcher top
+  s.box(150, 2, 0, 12, 9, 20, CREAM);                      // upper cabinet / fridge
+  s.cyl(126, 6, 12.8, 3, 6, '#c9cdd2', '#9aa0a8');         // kettle
+  s.box(136, 5, 12.8, 3.4, 5.4, 6.4, DARKB);               // propped phone (speaker)
+  s.faceX(139.4, 5.1, 10.4, 13, 18.6, '#e0a94e', 'led');
+  s.box(158, 4, 12.8, 6, 5, 4, TEAL); s.ring(161, 6.5, 16.9, 2, '#173a33', 'edge'); // little speaker
+  s.cyl(144, 7, 12.8, 2, 3.2, '#f4ead9', '#c80028');       // red mug
+  potPlant(s, 152, 6, 12.8, 2.4, 3);
+
+  /* ---- UPPER FLOOR : slab top z=34, room 34 .. 62 -------------------------- */
+  s.box(0, 0, 30, W, D, 4, WOOD);                          // upper floor slab
+  s.seam([0, 0, 34], [W, 0, 34], 'x', 0.6);
+  s.faceX(0, 0, D, 34, 62, '#f2e6d0', 'flat');
+  s.faceY(0, 0, W, 34, 62, '#e7d9bd', 'flat');
+  s.faceX(58, 0, D, 34, 62, '#e0d0b2', 'part'); s.box(58, 0, 34, 0.8, D, 28, WALL);
+  s.faceX(118, 0, D, 34, 62, '#e0d0b2', 'part'); s.box(118, 0, 34, 0.8, D, 28, WALL);
+  // back-wall furnishing for the upper storey: skirting, a bedroom window, an office picture
+  s.faceY(0.05, 0, W, 34, 35.6, '#d6c7a6', 'flat');                                 // skirting
+  s.faceY(0.12, 12, 32, 44, 56, '#c9b58f', 'flat'); s.faceY(0.16, 13.4, 30.6, 45.2, 54.8, '#bfe0d8', 'flat'); // bedroom window
+  s.line([22, 0.18, 45.2], [22, 0.18, 54.8], 'seam-d'); s.line([13.4, 0.18, 50], [30.6, 0.18, 50], 'seam-d');
+  s.faceY(0.12, 66, 80, 46, 56, '#8a6d45', 'flat'); s.faceY(0.16, 67.4, 78.6, 47.2, 54.8, '#e8703a', 'flat'); // office print
+  s.quad(3, 3, 52, D - 6, 34.05, 'rgba(122,75,214,0.14)', 'flat');  // bedroom: violet
+  s.quad(62, 3, 52, D - 6, 34.05, 'rgba(47,125,110,0.16)', 'flat'); // office: teal
+
+  // — BEDROOM (0..58): bed, nightstand speaker, plant, laundry basket
+  s.box(6, 8, 34, 30, 22, 6, CREAM);                       // bed base
+  s.box(6, 8, 40, 30, 6, 5, TEAL);                         // pillows block
+  s.quad(6, 14, 30, 16, 40.05, '#2f7d6e', 'flat'); s.quad(6, 14, 30, 16, 40.06, 'none', 'edge'); // duvet
+  s.box(38, 10, 34, 8, 8, 8, WOOD2);                       // nightstand
+  s.box(40, 12, 42, 3.4, 4.4, 4, DARKB); s.faceX(43.4, 12.1, 15.4, 43, 45.6, '#7a4bd6', 'led'); // phone/speaker
+  potPlant(s, 50, 30, 34, 3, 4);
+  s.box(48, 8, 34, 8, 7, 7, ORANG2); s.quad(48, 8, 8, 7, 41, '#f4ead9', 'flat'); // laundry basket + towel
+
+  // — OFFICE (58..118): desk, phone on stand w/ real screenshot handled in HTML, router w/ too many cables
+  s.box(64, 4, 34, 40, 10, 12, WOOD2);                     // desk
+  s.box(64, 4, 34, 3, 10, 12, WOOD); s.box(101, 4, 34, 3, 10, 12, WOOD); // legs blocks
+  s.box(72, 5, 46, 20, 2, 13, DARKB);                      // monitor
+  s.quad(73, 5, 18, 0, 47.6, '#173a33', 'flat'); s.faceY(4.9, 73, 91, 47.6, 58, '#2f7d6e', 'flat');
+  s.box(78, 8, 46, 8, 5, 1, DARK2);                        // keyboard
+  // the router with too many cables
+  s.box(96, 5, 46, 10, 6, 4, TEALDK);
+  for (let i = 0; i < 3; i++) s.raw(`M${s.P(97 + i * 0.7, 5, 50)}L${s.P(97 + i * 0.7, 5, 55 + i)}`, 'none', 'antenna');
+  s.faceX(106, 6, 10, 46.6, 48.4, '#35e08f', 'led');
+
+  // — BATH / LANDING (118..176): tub, small radio, plant
+  s.box(126, 6, 34, 34, 16, 9, CREAMH);                    // tub
+  s.quad(129, 9, 28, 10, 43, '#bfe0d8', 'flat');           // water
+  s.box(150, 6, 43, 6, 4, 4, ORANGE); s.ring(153, 8, 47, 1.6, '#173a33', 'edge'); // shower radio
+  potPlant(s, 158, 8, 34, 2.6, 3.4);
+
+  /* ---- ROOF : a true gable, CUT AWAY on the near slope so the WHOLE top storey is open
+     to camera. We keep ONLY the far slope + a ridge beam, and set a half-gable END WALL
+     (in wall material) under each rake so every roof edge rests ON a wall — never a flap
+     floating over empty background. */
+  const RZ = 62, RID = 94, RY = D / 2, EO = 2;
+  const zf = (y: number) => RZ + (RID - RZ) * (y + EO) / (RY + EO);   // z of the far slope at a given y
+  // half-gable END WALLS (cream) — drawn first so the slope reads as resting ON them
+  s.poly([[0, -EO, RZ], [0, RY, RID], [0, RY, RZ]], '#e7d9bd', 'flat');
+  s.poly([[0, -EO, RZ], [0, RY, RID], [0, RY, RZ]], 'none', 'edge');
+  s.poly([[W, -EO, RZ], [W, RY, RID], [W, RY, RZ]], '#dcccac', 'flat');        // camera-facing right gable
+  s.poly([[W, -EO, RZ], [W, RY, RID], [W, RY, RZ]], 'none', 'edge');
+  s.line([W, RY, RZ], [W, RY, RID], 'seam-d');                                 // corner shade on the right gable
+  // wall plate the back eave lands on
+  s.box(0, -EO, RZ - 2.4, W, EO + 0.8, 2.4, WALLO);
+  // the far/back slope — the one surface kept whole
+  s.poly([[0, -EO, RZ], [W, -EO, RZ], [W, RY, RID], [0, RY, RID]], '#3a9080', 'flat');
+  // verge / barge boards giving the gable rakes a visible roof thickness
+  s.poly([[0, -EO, RZ], [0, RY, RID], [0, RY, RID - 1.8], [0, -EO, RZ - 1.8]], '#296a5e', 'flat');   // left rake
+  s.poly([[W, -EO, RZ], [W, RY, RID], [W, RY, RID - 1.8], [W, -EO, RZ - 1.8]], '#173e37', 'flat');   // right rake
+  // shingle courses on the far slope
+  for (let i = 1; i < 5; i++) { const t = i / 5, yy = -EO + (RY + EO) * t, zz = RZ + (RID - RZ) * t; s.line([0, yy, zz], [W, yy, zz], 'shingle'); }
+  // chimney — masonry stack seated INTO the far slope (base cut by the slope plane, no gap)
+  const cX0 = 22, cX1 = 31, cY0 = 3, cY1 = 11, cZ = 100;
+  s.poly([[cX0 - 2, cY0 - 2, zf(cY0 - 2) + 0.12], [cX1 + 2, cY0 - 2, zf(cY0 - 2) + 0.12], [cX1 + 2, cY1 + 2, zf(cY1 + 2) + 0.12], [cX0 - 2, cY1 + 2, zf(cY1 + 2) + 0.12]], '#7a0018', 'flat'); // flashing on the slope
+  s.poly([[cX0, cY1, zf(cY1)], [cX1, cY1, zf(cY1)], [cX1, cY1, cZ], [cX0, cY1, cZ]], '#c80028', 'flat'); // downhill (front) face
+  s.poly([[cX1, cY0, zf(cY0)], [cX1, cY1, zf(cY1)], [cX1, cY1, cZ], [cX1, cY0, cZ]], '#9c001f', 'flat'); // right face, slope-cut base
+  s.poly([[cX0, cY0, cZ], [cX1, cY0, cZ], [cX1, cY1, cZ], [cX0, cY1, cZ]], '#e01234', 'flat');           // cap
+  s.quad(cX0 + 1.6, cY0 + 1.6, (cX1 - cX0) - 3.2, (cY1 - cY0) - 3.2, cZ + 0.06, '#5a0011', 'flat');      // flue
+  for (let i = 1; i < 3; i++) { const zz = zf(cY1) + (cZ - zf(cY1)) * i / 3; s.line([cX0, cY1, zz], [cX1, cY1, zz], 'seam-d'); } // brick courses
+  // ridge beam — drawn last so it caps the ridge cleanly and reads as a beam
+  s.box(0, RY - 0.9, RID - 1.8, W, 1.8, 1.8, { top: '#2b6f62', left: '#20544b', right: '#173e37' });
+  // roof aerial — a slim mast on a bracket clamped to the ridge (an antenna, not a router)
+  const aX = 132;
+  s.box(aX - 1.4, RY - 1.2, RID - 0.8, 2.8, 2.4, 3, DARK2);                           // bracket on the ridge beam
+  s.raw(`M${s.P(aX, RY, RID + 2)}L${s.P(aX, RY, RID + 18)}`, 'none', 'antenna');       // mast
+  for (const zz of [RID + 8, RID + 11, RID + 14]) s.raw(`M${s.P(aX - 4, RY, zz)}L${s.P(aX + 4, RY, zz)}`, 'none', 'antenna-thin'); // dipole arms
+  for (let i = 1; i <= 3; i++) s.ring(aX, RY, RID + 18, i * 2, 'none', 'wifi');        // signal
+
+  /* ---- THE CABLE RUN — one clean trunk: server switch → wall riser → office router.
+     Both ends plug into a DRAWN port; no stroke ends in the void. (The old room-branch
+     drops ended at tiny occluded devices and read as floating, so they're removed.) */
+  s.box(52, 8.6, -19, 4.4, 3, 1.6, { top: '#3a9384', left: '#2f7d6e', right: '#245f54' }); // patch port on the switch
+  s.faceX(56.02, 9.1, 11.2, -18.4, -17.6, '#173a33', 'led');
+  let trunk = 'M' + s.P(54, 9.4, -17.8);       // leave the switch port
+  trunk += 'L' + s.P(54, 4, -17.8);            // back to the wall
+  trunk += 'L' + s.P(101, 4, -17.8);           // horizontal along the basement back wall
+  trunk += 'L' + s.P(101, 4, 47);              // ONE vertical riser up through both floor slabs
+  trunk += 'L' + s.P(99, 4, 47);               // into the office router's uplink port
+  s.raw(trunk, 'none', 'cable-run');
+  // grommets where the riser penetrates each floor slab (says "through the walls/floors")
+  s.ring(101, 4, 0.1, 1.5, '#2a2932', 'edge'); s.ring(101, 4, 34.1, 1.5, '#2a2932', 'edge');
+  s.box(97, 3, 46, 3, 2.4, 2.4, DARK2);        // uplink port block on the router where the trunk lands
+  s.faceX(100, 3.4, 5, 46.6, 47.8, '#35e08f', 'led');
+}
+
+/* ══ SERVERS — three rack units, the real server logos printed on the fronts ══
+   Stacked so the three front faces share a screen column; the ServerLogo marks
+   are overlaid in HTML, one per unit. */
+const rack = makeScene();
+{
+  const s = rack;
+  grid(s, -18, 60, -14, 44, 16, 12, 0);
+  s.quad(4, 8, 44, 34, -0.2, 'var(--shadow)', 'flat');   // flat parallelogram footprint shadow (matches ledge/house/machines)
+  // rack frame uprights + base
+  s.box(4, 4, 0, 44, 34, 3, DARK2);
+  s.box(4, 4, 3, 3, 34, 46, DARKB); s.box(45, 4, 3, 3, 34, 46, DARKB);
+  s.box(4, 4, 49, 44, 34, 3, DARK2);
+  // three units stacked; fronts on plane x=45 (facing lower-right) — light bay panels
+  const unit = (z0: number, body: any, tag: string) => {
+    s.box(7, 6, z0, 38, 30, 12, body);
+    // FRONT face (plane x=45): light panel — the ServerLogo prints here (foreignObject, locked to the drawing)
+    s.faceX(45, 8, 34, z0 + 1, z0 + 11, '#ece5d5', 'flat');
+    s.faceX(45.02, 8, 34, z0 + 1, z0 + 11, 'none', 'edge');       // panel bezel
+    s.screw(45, 9.6, z0 + 1.9, 0.7); s.screw(45, 32.4, z0 + 1.9, 0.7);
+    s.screw(45, 9.6, z0 + 10.1, 0.7); s.screw(45, 32.4, z0 + 10.1, 0.7);
+    // a drive sled with an activity LED at each end of the panel (clear of the centred logo)
+    s.faceX(45.06, 9, 15, z0 + 3.4, z0 + 8.6, '#d3d8de', 'flat'); s.faceX(45.06, 27, 33, z0 + 3.4, z0 + 8.6, '#d3d8de', 'flat');
+    s.line([45.05, 9, z0 + 6], [45.05, 15, z0 + 6], 'seam-d'); s.line([45.05, 27, z0 + 6], [45.05, 33, z0 + 6], 'seam-d');
+    s.faceX(45.12, 10, 11.6, z0 + 5.3, z0 + 6.7, '#e0a94e', 'led'); s.faceX(45.12, 31, 32.6, z0 + 5.3, z0 + 6.7, '#35e08f', 'led');
+    // LEFT flank (plane y=36): a vent grille so the side isn't a bare slab
+    vents(s, 'y', 36, 11, 43, z0 + 1.4, z0 + 10.6, 7);
+  };
+  // blanking plates fill the gaps so the rack interior is never an empty void
+  const blank = (z0: number, h: number) => {
+    s.box(7, 6, z0, 38, 30, h, DARK2);
+    s.faceX(45, 9, 33, z0 + 0.4, z0 + h - 0.4, '#34343f', 'flat');
+    s.screw(45, 11, z0 + h / 2, 0.6); s.screw(45, 31, z0 + h / 2, 0.6);
+  };
+  blank(16, 2); blank(30, 2);
+  unit(4, TEALDK, 'BAY 1');
+  unit(18, DARK2, 'BAY 2');
+  unit(32, TEALDK, 'BAY 3');
+  blank(44, 5);
+  // a floor PDU / power strip the loose patch cables plug into — no stroke ends in the void
+  s.box(45, 34, 0, 16, 9, 3.4, DARK2);
+  s.faceX(61, 35, 42, 0.7, 2.7, '#26252d', 'flat');                                   // PDU front strip
+  for (let i = 0; i < 5; i++) s.faceX(61.06, 35.6 + i * 1.3, 36.6 + i * 1.3, 1.2, 2.2, i % 2 ? '#e0a94e' : '#35e08f', 'led'); // outlet LEDs
+  // a bundled loom of cable dressed to the right upright
+  for (let i = 0; i < 4; i++) s.raw(`M${s.P(45, 35, 6 + i * 0.6)}L${s.P(45, 35, 48)}`, 'none', i % 2 ? 'cable-o' : 'cable-t');
+  // patch cables looping out the side and DOWN into the PDU
+  for (let i = 0; i < 3; i++) s.raw(`M${s.P(45, 30, 10 + i * 14)}Q${s.P(60, 34, 12 + i * 14)} ${s.P(52, 39, 4)}`, 'none', i === 1 ? 'cable-o' : 'cable-t');
+  s.box(49, 36.5, 3.4, 6, 5, 1.5, STEEL);                                             // plug block capping where the cables terminate
+  for (let i = 0; i < 3; i++) s.screw(50.5 + i * 1.7, 37, 4.9, 0.5);                  // plug screws
+}
+// exact SVG-user-space centre of each bay-front panel (x=45, y=21, z=z0+6),
+// emitted as a foreignObject inside the rack <svg> so the ServerLogo is locked to
+// the drawing itself and can never drift off its bay (the HTML-overlay % maths did).
+const FS = 8.4;
+const rackFronts = [4, 18, 32].map((z0) => {
+  const sx = (45 - 21) * IC;
+  const sy = (45 + 21) * IS - (z0 + 6);
+  return { x: r2(sx - FS / 2), y: r2(sy - FS / 2) };
+});
+
+/* ══ NOW-STAND — a drawn iso nightstand holding the phone (screenshot in HTML) ═ */
+const stand = makeScene();
+{
+  const s = stand;
+  // A low, WIDE media ledge the phone rests on. Broad enough that its whole silhouette
+  // — all four corners and a continuous front edge — reads on both sides of the phone,
+  // with the mug and plant relocated to the far ends so nothing hides behind the phone
+  // (the old plant sat dead-centre and its teal leaf poked out behind the screen).
+  s.quad(0, 7, 64, 28, -0.2, 'var(--shadow)', 'flat');    // flat parallelogram footprint shadow, offset near-front (matches train/house)
+  s.box(0, 2, 0, 64, 28, 7, WOOD);                         // ledge slab — ONE clean top parallelogram, then front + end cap
+  s.faceY(30, 0, 64, 5.2, 7, '#c2a674', 'flat');           // darker rail band, coplanar on the front face (never over the top)
+  s.seam([0, 30, 4.9], [64, 30, 4.9], 'z', 0.35);          // groove line just under the rail band
+  s.box(6, 6, 7, 52, 4, 1.8, WOOD2);                       // shallow back-lip the phone leans on
+  s.cyl(6, 22, 7, 2, 3, '#f4ead9', '#e8703a');             // mug — far left, clear of the phone
+  potPlant(s, 58, 10, 7, 2.4, 3);                          // plant — far right, clear of the phone
+}
+
+/* ══ COMMUTE — the offline story: a train car, the same listener, house switched off ══ */
+const commute = makeScene();
+{
+  const s = commute;
+  grid(s, -14, 156, -20, 60, 20, 12, 0);
+
+  // ── real track. Drawn in RAW screen-space (not via proj) so the rail extent does NOT
+  //    feed the auto-fit viewBox. That lets both ends project far outside the frame, so
+  //    the viewBox itself clips them and no rail can end inside the picture. TX0/TX1 are
+  //    computed to land well past the left and right frame edges at both rail depths. ──
+  const RNEAR = 42, RFAR = 12, TX0 = -120, TX1 = 260;
+  const pp = (x: number, y: number, z: number) => `${r2((x - y) * IC)} ${r2((x + y) * IS - z)}`;
+  s.raw(`M${pp(TX0, RFAR - 3, 0.02)}L${pp(TX1, RFAR - 3, 0.02)}L${pp(TX1, RNEAR + 3, 0.02)}L${pp(TX0, RNEAR + 3, 0.02)}Z`, '#c8bfa6', 'flat'); // ballast bed (masks the grid)
+  for (let x = TX0 + 4; x < TX1; x += 7) s.raw(`M${pp(x, RFAR - 2, 0.12)}L${pp(x, RNEAR + 2, 0.12)}`, 'none', 'tie'); // sleepers
+  s.raw(`M${pp(TX0, RNEAR, 0.24)}L${pp(TX1, RNEAR, 0.24)}`, 'none', 'rail');   // near rail — wheels sit on this
+  s.raw(`M${pp(TX0, RFAR, 0.24)}L${pp(TX1, RFAR, 0.24)}`, 'none', 'rail');     // far rail
+  // flat, hard-edged cast shadow — a parallelogram of the carriage footprint, pushed far
+  // enough in the light direction (+y) that a band of it reads along the carriage's near-front
+  // edge to ground it, instead of hiding entirely underneath the car.
+  s.quad(9, 20, 108, 34, 0.05, 'var(--shadow)', 'flat');
+  // bottom-left: a colour-light signal + a distance-marker post fill the extended track
+  s.quad(-27.2, 49, 3, 5, 0.03, 'var(--shadow)', 'flat');   // signal-post footprint shadow, cast forward in the light dir
+  s.quad(-13.1, 48.4, 2, 3.6, 0.03, 'var(--shadow)', 'flat'); // marker-post footprint shadow
+  s.box(-27, 47, 0, 2.4, 2.4, 20, { top: '#3a424a', left: '#2b3138', right: '#1d2228' }); // signal mast
+  s.box(-28.6, 45.8, 13, 5, 4.6, 8, { top: '#20252b', left: '#191d22', right: '#12161a' }); // signal head
+  s.faceY(50.42, -27.8, -25.6, 18.6, 20.8, '#c80028', 'led');    // red aspect
+  s.faceY(50.42, -27.8, -25.6, 14.6, 16.8, '#2f7d6e', 'led');    // green aspect
+  s.box(-13, 47, 0, 1.6, 1.6, 8, WOOD2);                         // distance-marker post
+  s.faceX(-11.4, 46.4, 48.6, 5, 7.6, '#f4ead9', 'flat'); s.faceX(-11.35, 46.4, 48.6, 5, 7.6, 'none', 'edge'); // marker plate
+
+  // the same house — off to the side, switched off (dark), the home the train is leaving.
+  // Enlarged so the gable callback reads; its labels live in HTML, not as micro-type.
+  {
+    const hx = 114, hy = -24, hw = 22, hd = 14, hZ = 15, hRID = 26;
+    const DK = { top: '#3a4a46', left: '#2f3d3a', right: '#232e2b' };
+    s.quad(hx, hy + 2, hw, hd, -0.15, 'var(--shadow)', 'flat');              // flat parallelogram footprint shadow (matches the train)
+    s.box(hx, hy, 0, hw, hd, hZ, DK);
+    s.poly([[hx, hy, hZ], [hx + hw, hy, hZ], [hx + hw, hy + hd / 2, hRID], [hx, hy + hd / 2, hRID]], '#2a3936', 'flat');
+    s.poly([[hx, hy + hd, hZ], [hx + hw, hy + hd, hZ], [hx + hw, hy + hd / 2, hRID], [hx, hy + hd / 2, hRID]], '#1f2b28', 'flat');
+    s.line([hx, hy + hd / 2, hRID], [hx + hw, hy + hd / 2, hRID], 'seam-d');
+    s.poly([[hx, hy, hZ], [hx, hy + hd / 2, hRID], [hx, hy + hd, hZ]], '#26332f', 'flat');
+    s.box(hx + 3, hy + 4, hZ, 3, 3, 6, '#5a1119');                          // chimney (the callback mark)
+    s.faceX(hx + hw, hy + 3.5, hy + 10.5, 3.5, 10, '#12181a', 'flat');       // dark window (off)
+  }
+
+  // a vertical wheel drawn in the x–z plane at fixed y (rings() are horizontal)
+  const vwheel = (cx: number, y: number, z: number, r: number) => {
+    let d = '';
+    for (let i = 0; i <= 24; i++) { const a = (i / 24) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), y, z + r * Math.sin(a)); }
+    s.raw(d + 'Z', '#20252b', 'flat'); s.raw(d + 'Z', 'none', 'edge');
+    s.ring(cx, y, z, r * 0.34, '#3a424a', 'flat', 10);
+  };
+  // two proper bogies — a frame box under the carriage with wheels seated in it, so the
+  // running gear belongs to the vehicle instead of reading as loose blobs.
+  const bogie = (x0: number) => {
+    s.box(x0, 37.5, 3.6, 20, 6.5, 3.2, { top: '#2b3138', left: '#212730', right: '#161b21' }); // bogie frame
+    s.faceX(x0 + 20, 38.5, 43.5, 3.9, 6.6, '#12171c', 'flat');                                  // frame end cap
+    vwheel(x0 + 4, 42.05, 3.0, 3.0); vwheel(x0 + 16, 42.05, 3.0, 3.0);                          // two seated wheels
+    s.line([x0 + 4, 42.06, 3.0], [x0 + 16, 42.06, 3.0], 'seam-d');                              // axle tie
+  };
+  bogie(12); bogie(80);
+
+  // the train car body — its long flank (y=42) is the visible face, lifted to ride height
+  s.box(6, 8, 7, 100, 34, 30, TEAL);
+  s.box(6, 8, 7, 100, 34, 3, TEALDK);                     // skirt band
+  s.seam([6, 42, 27], [106, 42, 27], 'x', 0.6);           // waistline groove on the flank
+  // a rounded cab nose at the leading end — sloped windscreen so it reads as the front
+  s.poly([[106, 8, 7], [120, 8, 7], [120, 8, 26], [106, 8, 37]], '#2a6d60', 'flat');   // near flank of the nose
+  s.poly([[106, 42, 7], [120, 42, 7], [120, 42, 26], [106, 42, 37]], '#2f7d6e', 'flat'); // far flank (visible)
+  s.poly([[106, 8, 37], [106, 42, 37], [120, 42, 26], [120, 8, 26]], '#245f54', 'flat'); // sloped windscreen roof
+  s.faceX(120, 8, 42, 7, 26, '#1d463e', 'flat');          // blunt nose end
+  s.faceY(42.03, 108, 118, 20, 25, '#cfe6df', 'flat');    // windscreen glass
+  s.faceX(120.04, 15, 27, 12, 15, '#f0d49a', 'led');      // headlight
+
+  // windows along the visible flank
+  const wins = [12, 28, 44, 60, 76, 92];
+  for (const fx of wins) {
+    s.faceY(42.02, fx, fx + 12, 23, 33, '#cfe6df', 'flat');
+    s.faceY(42.03, fx, fx + 12, 23, 33, 'none', 'edge');
+    s.line([fx, 42.04, 23], [fx, 42.04, 33], 'seam-d');
+  }
+  // lit phone-glow / silhouettes in a couple of the other windows (carriage isn't empty)
+  s.faceY(42.05, 62, 70, 24, 28, '#286156', 'flat');      // seated silhouette shoulders (window 4)
+  s.ring(66, 42.06, 29.6, 1.8, '#20544b', 'flat', 18);      // its head
+  s.faceY(42.05, 96, 99, 26, 30, '#f0d49a', 'led');         // phone glow (window 6)
+
+  // the passenger behind window 2 — a readable seated figure: shoulders, head, headphones, glowing phone
+  s.faceY(42.05, 30, 42, 24, 28, '#e07a3e', 'flat');                                   // shoulders (trapezoid-ish)
+  s.faceY(42.06, 32, 40, 27, 28.8, '#d9642f', 'flat');
+  s.ring(36, 42.07, 30.2, 2.3, SKIN.top, 'flat', 20);                                  // head (circle in the flank plane)
+  s.raw(`M${s.P(33.4, 42.08, 30.2)}Q${s.P(36, 42.08, 32.9)} ${s.P(38.6, 42.08, 30.2)}`, 'none', 'hp'); // headphone band
+  s.faceY(42.07, 41, 43.4, 25, 28, '#f0d49a', 'led');                                  // glowing phone in hand
+
+  // (the roof "DOWNLOADED · PLAYS OFFLINE" micro-legend was removed — it rendered under
+  //  the 9px floor; the section heading + the "still yours · powered down" line carry it.)
+}
+
+/* ══ PANEL — the ownership breaker box: four labelled breakers ════════════════ */
+const panel = makeScene();
+{
+  const s = panel;
+  s.quad(4, 10, 52, 36, -0.2, 'var(--shadow)', 'flat');   // flat parallelogram footprint shadow (matches ledge/house/machines)
+  // the enclosure
+  s.box(4, 6, 0, 52, 36, 10, METAL);
+  s.faceX(56, 8, 40, 1, 9, '#8b93a0', 'flat');
+  // the cover, hinged on the back-left edge and standing OPEN — so it reads as an open box
+  s.box(1.4, 6, 10, 2.4, 36, 23, { top: '#c3c9d1', left: '#aeb5bf', right: '#9aa1ab' });
+  s.faceX(4.02, 9, 39, 13.5, 30, '#dfe3e9', 'flat');                                   // inner schedule card
+  for (let i = 0; i < 4; i++) s.line([4.03, 10, 16 + i * 3.2], [4.03, 38, 16 + i * 3.2], 'seam-d'); // schedule rows
+  for (const hyy of [11, 24, 37]) s.box(4, hyy, 9.4, 1.6, 2, 1.4, DARK2);              // hinge knuckles on the edge
+  // inner backplate
+  s.quad(8, 10, 44, 28, 10.05, '#e7d9bd', 'flat');
+  // two banks of breakers — four LIVE (teal, switched on) are the ownership guarantees
+  const breaker = (bx: number, by: number, on: boolean) => {
+    s.box(bx, by, 10.05, 7, 5, 2.4, on ? TEAL : DARK2);
+    s.box(bx + 2.4, by + 1.4, 12.45, 2.2, 2.2, 1.6, on ? { top: '#f4ead9', left: '#e4d8bf', right: '#d0c1a0' } : { top: '#e8703a', left: '#d9642f', right: '#b85326' });
+  };
+  const rowY = [13, 20, 27, 34];
+  rowY.forEach((by) => breaker(14, by, true));
+  rowY.forEach((by) => breaker(40, by, false));
+  // the main disconnect
+  s.box(24, 6.4, 10.05, 8, 4, 3, RED);
+  s.text(28, 8.4, 13.1, 'MAIN', 2.1, 'legend-lite', 'top', 'middle', 'central');
+  // feed bus down the LEFT, stubbing into each live breaker (orthogonal)
+  s.raw('M' + s.P(24, 8.4, 13.1) + 'L' + s.P(11, 8.4, 13.1) + 'L' + s.P(11, 36.5, 13.1), 'none', 'cable-t');
+  rowY.forEach((by) => s.raw('M' + s.P(11, by + 2.5, 13.1) + 'L' + s.P(14, by + 2.5, 12.6), 'none', 'cable-o'));
+  // feed bus down the RIGHT too, so the off breakers are wired (switched off, not dead)
+  s.raw('M' + s.P(32, 8.4, 13.1) + 'L' + s.P(49, 8.4, 13.1) + 'L' + s.P(49, 36.5, 13.1), 'none', 'cable-t');
+  rowY.forEach((by) => s.raw('M' + s.P(49, by + 2.5, 13.1) + 'L' + s.P(47, by + 2.5, 12.6), 'none', 'cable-o'));
+  // number each live breaker (these map to the ownership list set in HTML beside the box)
+  rowY.forEach((by, i) => {
+    s.text(15, by + 2.5, 14.15, `0${i + 1}`, 2.1, 'plate', 'top', 'start', 'central');
+  });
+}
+
+/* ══ PLAN — an architect's plan sheet in the iso plane: six rooms = six features ══ */
+const plan = makeScene();
+{
+  const s = plan;
+  const WALLC = { top: '#6a5f52', left: '#514739', right: '#413a2f' };
+  const T = 1.8, WH = 2.6;
+  // the drawing board / sheet (with thickness) + its face
+  s.box(-8, -8, -1.6, 149, 148, 1.6, { top: '#f3ead6', left: '#e2d6bd', right: '#d3c6aa' });
+  s.quad(-8, -8, 149, 148, 0.01, '#f3ead6', 'flat');
+  // faint construction grid, left un-erased like the reference
+  for (let gx = 0; gx <= 132; gx += 12) s.line([gx, -6, 0.02], [gx, 132, 0.02], 'faint');
+  for (let gy = 0; gy <= 132; gy += 12) s.line([-6, gy, 0.02], [138, gy, 0.02], 'faint');
+
+  // room floor tints — the light-spill idea carried onto the plan
+  const room = (x0: number, y0: number, x1: number, y1: number, tint: string) => s.quad(x0, y0, x1 - x0, y1 - y0, 0.03, tint, 'flat');
+  room(3, 3, 46, 50, 'rgba(232,112,58,0.13)');    // A living — amber
+  room(46, 3, 92, 44, 'rgba(47,125,110,0.14)');   // B — teal
+  room(92, 3, 129, 58, 'rgba(200,0,40,0.10)');    // C — crimson
+  room(3, 50, 46, 93, 'rgba(122,75,214,0.12)');   // D — violet
+  room(46, 44, 92, 93, 'rgba(47,125,110,0.13)');  // E — teal
+  room(92, 58, 129, 93, 'rgba(232,112,58,0.12)'); // F — amber
+
+  // walls with real thickness (low extrusions)
+  const hw = (x0: number, x1: number, y: number) => s.box(x0, y - T / 2, 0, x1 - x0, T, WH, WALLC);
+  const vw = (y0: number, y1: number, x: number) => s.box(x - T / 2, y0, 0, T, y1 - y0, WH, WALLC);
+  hw(3, 129, 3); hw(3, 129, 93); vw(3, 93, 3); vw(3, 93, 129);   // envelope
+  vw(3, 93, 46); vw(3, 93, 92);                                  // interior verticals
+  hw(3, 46, 50); hw(46, 92, 44); hw(92, 129, 58);                // interior horizontals — irregular rooms
+
+  // door swings — a quarter-circle leaf sweep, drawn in the sheet plane
+  const swing = (hx: number, hy: number, r: number, a0: number, a1: number) => {
+    let d = 'M' + s.P(hx, hy, WH + 0.1);
+    for (let i = 0; i <= 10; i++) { const a = a0 + (a1 - a0) * i / 10; d += 'L' + s.P(hx + r * Math.cos(a), hy + r * Math.sin(a), WH + 0.1); }
+    s.raw(d, 'none', 'pl-door');
+  };
+  swing(46, 16, 10, Math.PI, Math.PI * 1.5);      // A ↔ B
+  swing(92, 22, 10, Math.PI, Math.PI * 1.5);      // B ↔ C
+  swing(46, 70, 10, Math.PI * 1.5, Math.PI * 2);  // D ↔ E
+  swing(92, 74, 10, Math.PI * 0.5, Math.PI);      // E ↔ F
+  swing(24, 93, 11, Math.PI, Math.PI * 1.5);      // front door → D
+
+  // room labels — a big letter tag INSIDE each room, in the sheet plane. The
+  // feature *names* are set as real HTML type in the list beside the sheet (they
+  // were unreadable at ~5px baked into the drawing), so the sheet stays legible.
+  const rooms = [
+    { c: [24.5, 26.5], n: 'A' },
+    { c: [69, 23.5], n: 'B' },
+    { c: [110.5, 30.5], n: 'C' },
+    { c: [24.5, 71.5], n: 'D' },
+    { c: [69, 68.5], n: 'E' },
+    { c: [110.5, 75.5], n: 'F' },
+  ];
+  for (const r of rooms) {
+    s.text(r.c[0], r.c[1], 0.1, r.n, 9, 'pl-tag', 'top', 'middle', 'central');
+  }
+
+  // title block: SERVER → WIFI → PHONE → EARS, with the middleman branch drawn broken
+  const ty = 108;
+  const node = (x: number, lab: string, lit: boolean, labY: number) => {
+    s.ring(x, ty, 0.06, 4, lit ? '#c80028' : '#2f7d6e', 'flat'); s.ring(x, ty, 0.07, 4, 'none', 'edge');
+    s.text(x, labY, 0.1, lab, 4.6, 'legend-tick', 'top', 'middle', 'central');
+  };
+  const chain: [number, string][] = [[12, 'SERVER'], [50, 'WIFI'], [88, 'PHONE'], [126, 'EARS']];
+  for (let i = 0; i < chain.length - 1; i++) s.raw('M' + s.P(chain[i][0] + 4, ty, 0.08) + 'L' + s.P(chain[i + 1][0] - 4, ty, 0.08), 'none', 'cable-t');
+  // PHONE's label sits ABOVE its node so it clears the downward dead-branch + X below it
+  chain.forEach(([x, lab], i) => node(x, lab, i === 3, x === 88 ? ty - 9 : ty + 10));
+  // the branch that never happens — a bold dead stub off PHONE, crossed out large,
+  // with its NO MIDDLEMAN caption kept well inside the sheet and clear of EARS + the X
+  s.raw('M' + s.P(88, ty + 4, 0.08) + 'L' + s.P(88, ty + 12, 0.08) + 'L' + s.P(108, ty + 12, 0.08), 'none', 'dead');
+  s.raw('M' + s.P(94, ty + 7, 0.12) + 'L' + s.P(104, ty + 17, 0.12) + 'M' + s.P(104, ty + 7, 0.12) + 'L' + s.P(94, ty + 17, 0.12), 'none', 'wire-x');
+  s.text(62, ty + 16, 0.1, 'NO MIDDLEMAN', 5, 'pl-tag', 'top', 'middle', 'central');
+}
+
+const specFor = (i: number) => STATS[i];
+const roomFor = ['mozz-album-warm', 'mozz-album-red', 'mozz-artist', 'mozz-playlist'];
+---
+
+<Layout
+  title={`${NAME} — the machine in your house`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome, drawn as the place self-hosting actually happens: a cutaway house with the server in the basement, cables in the walls and music in every room."
+  themeColor="#f4ead9"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=bespoke-slab@400,500,700&f[]=general-sans@400,500,600&f[]=khand@500,600,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="hl">
+    <!--
+      THESIS: Streaming has a data centre you'll never see; this has a box in the
+      basement you named yourself. The page is one enormous cutaway house and a
+      few smaller dioramas around it — the server humming downstairs, the cables
+      traced through the walls, the music in every room and walking out the door.
+      OWN-WORLD: warm cream ground, deep teal-green structure, burnt orange for
+      warmth, mozz red for marks. Flat screen-print colour, one value step per
+      face, one line weight, un-erased construction guides, light riso grain.
+      DROP-IN: /hero/homelab.jpg layers over the drawn house; absent, it never paints.
+    -->
+
+    <VariantBar slug="homelab" tone="warm" />
+
+    <!-- HERO ------------------------------------------------------------------ -->
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="lockup">
+          <Mark size={26} decorative />
+          <span class="wordmark">{NAME}</span>
+          <span class="lockup-tick">self-hosted · #homelab</span>
+        </div>
+        <h1>{TAGLINE}</h1>
+        <p class="lede">
+          {SUBLINE} Streaming keeps your music in a data centre you'll never see.
+          Mozz plays from the one in your house — your own Plex, Jellyfin or
+          Navidrome server, humming in the basement.
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source →</a>
+        </div>
+      </div>
+
+      <figure class="stage">
+        <div class="plate" aria-hidden="true"></div>
+        <!-- Optional AI plate drop-in: public/hero/homelab.jpg (absent → the drawing carries it). -->
+        <svg class="art house" viewBox={hero.vb(10)} role="img"
+             aria-label="A giant isometric cutaway of a house with its front walls removed. In the basement a home server rack, a UPS, a network switch and a coil of ethernet; on the ground floor a living room with someone in an armchair wearing headphones, a hallway with the front door open and a figure stepping out, and a kitchen; upstairs a bedroom, an office with a router covered in cables, and a bathroom. A single cable is traced from the basement switch up through the floors to every device, and a teal roof carries a chimney and a broadcasting wifi antenna.">
+          {hero.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {hero.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+    </header>
+
+    <!-- SERVERS --------------------------------------------------------------- -->
+    <section class="scene servers" aria-labelledby="srv-h">
+      <div class="scene-head">
+        <h2 id="srv-h">Point it at a machine you already own.</h2>
+        <p>Three server types, one library — drawn as the three units on your basement shelf. Add more than one and browse them like they were always the same collection.</p>
+      </div>
+      <div class="rack-grid">
+        <figure class="rack-fig">
+          <svg class="art" viewBox={rack.vb(6)} role="img"
+               aria-label="A three-bay home server rack drawn in isometric, its three units patched together with cables, each bay front printed with its server's logo.">
+            {rack.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+            {rack.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+            {SERVERS.map((sv, i) => (
+              <foreignObject x={rackFronts[i].x} y={rackFronts[i].y} width={FS} height={FS} aria-hidden="true">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="bay-logo"><ServerLogo name={sv.name} size={FS} brand /></div>
+              </foreignObject>
+            ))}
+          </svg>
+        </figure>
+        <ul class="server-list" role="list">
+          {SERVERS.map((sv) => (
+            <li>
+              <span class="server-logo-wrap"><ServerLogo name={sv.name} size={28} brand /></span>
+              <div>
+                <h3>{sv.name}</h3>
+                <p>{sv.note}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- FEATURES: the floor plan + wiring diagram ----------------------------- -->
+    <section class="scene plan-sec" aria-labelledby="feat-h">
+      <div class="scene-head">
+        <h2 id="feat-h">Read it like a floor plan.</h2>
+        <p>Six things Mozz does, laid out as the rooms of a house and labelled the way a drawing labels them. The signal starts at the server and reaches your ears; the branch that never happens is drawn broken.</p>
+      </div>
+
+      <figure class="plan-art">
+        <svg class="art" viewBox={plan.vb(5)} role="img"
+             aria-label="An isometric architect's plan sheet with six irregularly-shaped rooms, each labelled with one of the six features and a door swing, and a title-block wiring chain from server to wifi to phone to ears with the middleman branch drawn broken and crossed out.">
+          {plan.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {plan.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+
+      <ol class="parts-list" role="list">
+        {FEATURES.map((ft, i) => (
+          <li>
+            <span class="part-num">{String.fromCharCode(65 + i)}</span>
+            <div>
+              <h3>{ft.title}</h3>
+              <p>{ft.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- NOW PLAYING: drawn nightstand + real screenshot; rooms lit by what plays - -->
+    <section class="scene now" aria-labelledby="now-h">
+      <div class="scene-head">
+        <h2 id="now-h">Every room in the colour of what's playing.</h2>
+        <p>Mozz repaints its whole interface from the artwork of the current record — so the light spilling out of each room takes the colour of whatever it is playing.</p>
+      </div>
+
+      <div class="now-grid">
+        <figure class="stand-fig">
+          <svg class="art stand-art" viewBox={stand.vb(5)} role="presentation" preserveAspectRatio="xMidYMax meet">
+            {stand.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          </svg>
+          <div class="stand-phone">
+            <Phone name="mozz-nowplaying" width={206} priority sizes="206px"
+                   class="hl-phone" alt="The Mozz now-playing screen, its whole interface tinted violet to match the album art." />
+          </div>
+        </figure>
+
+        <div class="rooms">
+          <ul class="room-strip" role="list">
+            {roomFor.map((nm, i) => (
+              <li class="room-lit">
+                <Shot name={nm} sizes="(max-width: 720px) 40vw, 150px"
+                      class="room-shot" ariaHidden={true} />
+                <span class="room-key">Room {i + 1}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="meter">
+            {STATS.map((st) => (
+              <div class="meter-cell">
+                <b>{st.value}</b><span>{st.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFFLINE: the commute ------------------------------------------------- -->
+    <section class="scene commute-sec" aria-labelledby="off-h">
+      <figure class="band-art">
+        <svg class="art" viewBox={commute.vb(6)} role="img"
+             aria-label="A teal commuter train drawn in isometric with the same listener seated at a window wearing headphones, a phone glowing in hand, and the house far away on a hill with its windows dark and its power switched off.">
+          {commute.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {commute.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <div class="scene-head narrow">
+        <h2 id="off-h">Take the house with you.</h2>
+        <p>Downloads were designed in from the first day, not bolted on. Take a record on the train and it behaves exactly like it does at home — the catalog lives on the device, so browsing and search work with the server dark and unreachable.</p>
+        <p class="lockup-tick tick-inline">still yours · powered down</p>
+      </div>
+    </section>
+
+    <!-- OWNERSHIP: the breaker box ------------------------------------------- -->
+    <section class="scene own" aria-labelledby="own-h">
+      <div class="scene-head">
+        <h2 id="own-h">The wiring is yours to the last breaker.</h2>
+        <p>No login, because there is no Mozz server to log into. The four things that are switched on for good — and the ones that were never wired in.</p>
+      </div>
+      <div class="own-grid">
+        <figure class="panel-fig">
+          <svg class="art" viewBox={panel.vb(6)} role="img"
+               aria-label="An open electrical breaker box drawn in isometric with a bank of four teal breakers switched on and a red main disconnect.">
+            {panel.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+            {panel.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+          </svg>
+        </figure>
+        <ul class="own-list" role="list">
+          {OWNERSHIP.map((o, i) => (
+            <li>
+              <span class="own-sw" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div><h3>{o.title}</h3><p>{o.body}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ: the homeowner's manual ------------------------------------------ -->
+    <section class="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">Homeowner's manual</h2>
+      <dl>
+        {FAQS.map((qa) => (
+          <div class="faq-row"><dt>{qa.q}</dt><dd>{qa.a}</dd></div>
+        ))}
+      </dl>
+    </section>
+
+    <!-- FOOTER ---------------------------------------------------------------- -->
+    <div class="foot-band">
+      <footer class="foot">
+        <div class="foot-mark">
+          <Mark size={22} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+        <p class="foot-line">{TAGLINE} {SUBLINE}</p>
+        <p class="foot-meta">
+          Free forever · GPL-3.0 with an App Store Exception · <a href={GITHUB_URL}>source on GitHub</a>
+        </p>
+        <div class="foot-disc" aria-hidden="true">
+          <svg class="art" viewBox={(() => { const c = makeScene(); plateMark(c); return c.vb(3); })()}>
+            {(() => { const c = makeScene(); plateMark(c); return c.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />); })()}
+          </svg>
+        </div>
+      </footer>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .hl {
+    --cream: #f4ead9;
+    --cream-hi: #fbf5ea;
+    --teal: #2f7d6e;
+    --teal-dk: #1f5249;
+    --orange: #e8703a;
+    --red: #c80028;
+    --ink: #26201a;
+    --ink-soft: #6d5c48;
+    --hole: #efe2cd;
+    --shadow: rgba(60, 46, 30, 0.16);
+    --guide: rgba(120, 92, 60, 0.32);
+
+    --hero-plate: url('/hero/homelab.jpg');
+
+    background:
+      radial-gradient(128% 92% at 82% 4%, #fdf7ec 0%, var(--cream) 46%, #ecdec6 100%);
+    color: var(--ink);
+    font-family: 'General Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* riso grain */
+  .hl::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.8;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0.6'/></feComponentTransfer></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 150px 150px;
+  }
+
+  /* one outline weight everywhere */
+  .art { width: 100%; height: auto; overflow: visible; }
+  .art path, .art circle, .art ellipse, .art line, .art rect {
+    vector-effect: non-scaling-stroke;
+    stroke: var(--ink);
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .art .flat { stroke: none; }
+  .art .edge { fill: none; }
+  .art .cd-red { stroke: var(--red); stroke-width: 1.7; fill: none; }
+  .art .cd-orange { stroke: var(--orange); stroke-width: 1.4; fill: none; }
+  .art .part { stroke: none; }
+  .art .guide { stroke: var(--guide); stroke-width: 1; }
+  .art .faint { stroke: rgba(38,32,26,0.26); stroke-width: 1.05; }
+  .art .seam-d { stroke: rgba(10,8,5,0.42); stroke-width: 1.2; }
+  .art .seam-l { stroke: rgba(255,250,240,0.5); stroke-width: 1.2; }
+  .art .screw { stroke: rgba(20,14,8,0.55); stroke-width: 1.1; }
+  .art .vent  { stroke: rgba(10,8,5,0.5); stroke-width: 1.3; }
+  .art .led   { stroke: rgba(10,8,5,0.4); stroke-width: 0.8; }
+  .art .shingle { stroke: rgba(10,30,26,0.28); stroke-width: 1.1; }
+  .art .cable-run { stroke: var(--teal-dk); stroke-width: 3; fill: none; }
+  .art .cable-o { stroke: var(--orange); stroke-width: 2.2; fill: none; }
+  .art .cable-t { stroke: var(--teal); stroke-width: 2.2; fill: none; }
+  .art .antenna { stroke: #26201a; stroke-width: 2.2; fill: none; }
+  .art .antenna-thin { stroke: #26201a; stroke-width: 1.5; fill: none; }
+  .art .wifi { stroke: rgba(47,125,110,0.7); stroke-width: 1.6; fill: none; }
+  .art .wheel { stroke: #26201a; stroke-width: 2.6; fill: none; }
+  .art .frame { stroke: #6d5c48; stroke-width: 2.6; fill: none; }
+  .art .rail { stroke: #8a8579; stroke-width: 2.4; fill: none; }
+  .art .tie  { stroke: rgba(60,46,30,0.4); stroke-width: 2; }
+  .art .leaf { stroke: var(--teal); stroke-width: 2.4; fill: none; }
+  .art .tail { stroke: #241f1d; stroke-width: 3.2; fill: none; }
+  .art .hp   { stroke: #26201a; stroke-width: 3.4; fill: none; }
+  .art .hp2  { stroke: var(--red); stroke-width: 3.4; fill: none; }
+  .art text { fill: var(--ink); font-family: 'Khand', sans-serif; letter-spacing: 0.03em; }
+  .art .lcd { fill: #7fe6c4; font-family: 'Khand', sans-serif; letter-spacing: 0.06em; }
+  .art .legend-lite { fill: #f7efe0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .art .legend-tick { fill: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.09em; }
+  .art .plate { fill: var(--ink); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .art .pl-name { fill: var(--ink); font-family: 'General Sans', sans-serif; font-weight: 600; letter-spacing: 0; }
+  .art .pl-tag { fill: var(--red); font-weight: 700; letter-spacing: 0.02em; }
+  .art .dead { stroke: rgba(200,0,40,0.85); stroke-width: 2.8; stroke-dasharray: 5 4; fill: none; }
+  .art .wire-x { stroke: var(--red); stroke-width: 3.4; fill: none; stroke-linecap: round; }
+  .art .pl-door { stroke: rgba(10,8,5,0.55); stroke-width: 1.6; fill: none; }
+
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+  .hero h1, .scene-head h2 { font-family: 'Bespoke Slab', Georgia, serif; }
+
+  /* ── hero ── */
+  .hero {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3.5vw, 3rem) clamp(1.25rem, 4vw, 3rem) clamp(0.5rem, 2vw, 1.5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  .lockup { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.3rem; }
+  .wordmark { font-weight: 600; font-size: 1.35rem; letter-spacing: -0.03em; font-family: 'Bespoke Slab', Georgia, serif; }
+  .lockup-tick {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.13em;
+    font-size: 0.7rem; color: var(--ink-soft); border-left: 1px solid var(--guide);
+    padding-left: 0.6rem; margin-left: 0.2rem;
+  }
+  .tick-inline { display: inline-block; margin-top: 0.9rem; font-size: 0.78rem; }
+  .hero h1 { font-size: clamp(2.3rem, 5vw, 4rem); max-width: 15ch; margin-bottom: 1rem; }
+  .lede { max-width: 42ch; color: #4c3c2c; font-size: 1.05rem; }
+  .actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.7rem; }
+  .store {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: var(--ink); color: var(--cream-hi);
+    padding: 0.7rem 1.15rem; border-radius: 12px; font-weight: 600;
+    box-shadow: 4px 5px 0 rgba(38, 32, 26, 0.18);
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+  }
+  .store:hover { transform: translate(-1px, -1px); box-shadow: 5px 6px 0 rgba(38, 32, 26, 0.22); }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: flex; flex-direction: column; line-height: 1.05; font-size: 1.02rem; }
+  .store small { font-size: 0.64rem; font-weight: 500; opacity: 0.82; text-transform: uppercase; letter-spacing: 0.06em; }
+  .store.is-pending { background: #e7d6b8; color: var(--ink); box-shadow: 4px 5px 0 rgba(38, 32, 26, 0.14); cursor: default; }
+  .store.is-pending small::after { content: ' · pending'; opacity: 0.7; }
+  .ghost { font-weight: 600; color: var(--teal); border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .ghost:hover { color: var(--orange); }
+
+  .stage { position: relative; margin: 0; min-width: 0; }
+  .stage .plate {
+    position: absolute; inset: 3%; z-index: -1;
+    background-image: var(--hero-plate);
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    border-radius: 24px; opacity: 0.9;
+  }
+  .stage .house { filter: drop-shadow(0 30px 46px rgba(60, 46, 30, 0.18)); }
+
+  /* ── generic scene ── */
+  .scene {
+    max-width: 1180px;
+    margin: clamp(2.5rem, 7vw, 6rem) auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem);
+    display: grid;
+    gap: clamp(1.4rem, 3vw, 2.4rem);
+    align-items: center;
+  }
+  .scene-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.6rem); max-width: 20ch; margin-bottom: 0.7rem; }
+  .scene-head p { max-width: 52ch; color: #4c3c2c; }
+  .scene-head.narrow p { max-width: 56ch; }
+
+  .band-art { margin: 0.5rem 0 0; width: 100%; }
+
+  /* ── servers rack ── */
+  .servers { grid-template-columns: 1fr; }
+  .rack-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .rack-fig { position: relative; margin: 0; max-width: 460px; }
+  .rack-fig .art { filter: drop-shadow(0 18px 30px rgba(60, 46, 30, 0.14)); overflow: visible; }
+  .rack-fig foreignObject { overflow: visible; }
+  .bay-logo { width: 100%; height: 100%; display: grid; place-items: center; }
+  .bay-logo .server-logo { width: 100%; height: 100%; }
+  .server-list { display: grid; gap: 1.1rem; margin: 0; padding: 0; }
+  .server-list li { display: flex; gap: 0.85rem; align-items: flex-start; }
+  .server-logo-wrap {
+    flex: none; width: 44px; height: 44px; border-radius: 10px;
+    display: grid; place-items: center; background: var(--cream-hi);
+    box-shadow: inset 0 0 0 1px rgba(38, 32, 26, 0.12), 3px 3px 0 rgba(38,32,26,0.08);
+  }
+  .server-list h3 { font-size: 1.08rem; margin-bottom: 0.12rem; }
+  .server-list p { font-size: 0.93rem; color: #4c3c2c; }
+
+  /* ── floor plan (isometric plan-sheet scene) ── */
+  .plan-sec { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: start; }
+  .plan-sec .scene-head { grid-column: 1 / -1; }
+  .plan-art { margin: 0; }
+  .plan-art .art { width: 100%; height: auto; filter: drop-shadow(0 18px 30px rgba(60, 46, 30, 0.14)); }
+
+  .parts-list { display: grid; gap: 1rem; margin: 0; padding: 0; }
+  .parts-list li { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; }
+  .part-num {
+    font-family: 'Khand', sans-serif; font-weight: 700; font-size: 1.1rem;
+    width: 30px; height: 30px; border-radius: 8px; flex: none;
+    display: grid; place-items: center; color: var(--cream-hi); background: var(--teal);
+  }
+  .parts-list h3 { font-size: 1.05rem; margin-bottom: 0.1rem; }
+  .parts-list p { font-size: 0.93rem; color: #4c3c2c; max-width: 52ch; }
+
+  /* ── now playing ── */
+  .now { grid-template-columns: 1fr; }
+  .now-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .stand-fig { position: relative; margin: 0; display: grid; place-items: center; min-height: 380px; }
+  .stand-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stand-phone { position: relative; z-index: 2; transform: translateY(-9%); }
+  .hl-phone {
+    --phone-bezel: linear-gradient(#33302b, #1c1915);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(255, 240, 220, 0.2);
+    /* no soft blur under the phone — it rests on the drawn ledge, which carries a flat
+       hard-edged ground shadow like the rest of the page. */
+    --phone-shadow: none;
+  }
+  .rooms { display: grid; gap: 1.4rem; }
+  .room-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.9rem; margin: 0; padding: 0; }
+  .room-lit { position: relative; margin: 0; }
+  .room-lit :global(.room-shot) {
+    display: block; width: 100%; height: auto; border-radius: 12px;
+    box-shadow: 0 12px 22px -10px rgba(38,32,26,0.5), inset 0 0 0 1px rgba(38,32,26,0.1);
+  }
+  .room-key {
+    position: absolute; left: 8px; bottom: 8px;
+    font-family: 'Khand', sans-serif; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--cream-hi); background: rgba(38,32,26,0.62); padding: 0.1rem 0.4rem; border-radius: 5px;
+  }
+  .meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+  .meter-cell {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: 0.7rem 0.85rem; border-radius: 3px; background: var(--cream-hi);
+    box-shadow: inset 0 0 0 1px rgba(38, 32, 26, 0.42);
+  }
+  .meter-cell b { font-family: 'Khand', sans-serif; font-size: 1.55rem; font-weight: 700; color: #b8531f; letter-spacing: -0.01em; }
+  .meter-cell span { font-size: 0.72rem; color: #4c3c2c; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.25; }
+
+  /* ── commute ── */
+  .commute-sec { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); align-items: center; }
+  .commute-sec .band-art { max-width: 760px; }
+
+  /* ── ownership panel ── */
+  .own { grid-template-columns: 1fr; position: relative; }
+  .own::before {
+    content: ''; position: absolute; inset: -2rem calc(50% - 50vw); z-index: -1;
+    background: radial-gradient(80% 70% at 50% 42%, rgba(47,125,110,0.14), rgba(47,125,110,0) 70%);
+  }
+  .own-grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .panel-fig { margin: 0; max-width: 420px; }
+  .panel-fig .art { filter: drop-shadow(0 18px 30px rgba(60, 46, 30, 0.14)); }
+  .own-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem 1.6rem; margin: 0; padding: 0; }
+  .own-list li { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem; padding-top: 0.9rem; border-top: 1px solid var(--guide); }
+  .own-sw { font-family: 'Khand', sans-serif; font-weight: 700; color: var(--teal); font-size: 1.05rem; }
+  .own-list h3 { font-size: 1.02rem; margin-bottom: 0.2rem; }
+  .own-list p { font-size: 0.9rem; color: #4c3c2c; }
+
+  /* ── faq ── */
+  .faq { max-width: 900px; margin: clamp(3rem, 8vw, 6rem) auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+  .faq h2 {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 1.1rem; color: var(--ink-soft); font-weight: 600; margin-bottom: 1.4rem;
+    padding-bottom: 0.7rem; border-bottom: 1px solid var(--guide);
+  }
+  .faq dl { display: grid; gap: 0; }
+  .faq-row { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: 1.5rem; padding: 1.2rem 0; border-bottom: 1px solid var(--guide); }
+  .faq dt { font-weight: 700; font-size: 1.05rem; }
+  .faq dd { margin: 0; color: #4c3c2c; max-width: 62ch; }
+
+  /* ── footer ── */
+  .foot-band {
+    background: var(--teal-dk);
+    color: var(--cream);
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    border-top: 2px solid var(--ink);
+    position: relative;
+    z-index: 1;
+  }
+  .foot { max-width: 1180px; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 4rem; position: relative; }
+  .foot-mark { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+  .foot-band .wordmark { color: var(--cream); }
+  .foot-line { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; max-width: 24ch; font-family: 'Bespoke Slab', Georgia, serif; color: var(--cream); }
+  .foot-meta { margin-top: 0.6rem; color: #e7dcc8; font-size: 0.92rem; }
+  .foot-meta a { color: var(--cream); border-bottom: 1px solid rgba(244, 234, 217, 0.65); }
+  .foot-meta a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .foot-disc { position: absolute; right: clamp(1.25rem, 4vw, 3rem); bottom: 3rem; width: clamp(74px, 12vw, 126px); }
+  .foot-disc svg { width: 100%; height: auto; overflow: visible; }
+
+  /* ── responsive ── */
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; }
+    .rack-grid, .plan-sec, .now-grid, .commute-sec, .own-grid { grid-template-columns: 1fr; }
+    .commute-sec .scene-head { order: 2; }
+    .rack-fig { max-width: 380px; margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    .hl { font-size: 16px; }
+    .own-list, .meter, .room-strip { grid-template-columns: repeat(2, 1fr); }
+    .faq-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    .lockup-tick { display: none; }
+    .foot-disc { position: static; margin-top: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .store { transition: none; } }
+</style>

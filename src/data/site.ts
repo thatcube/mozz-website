@@ -142,6 +142,33 @@ export interface Variant {
 
 export const VARIANTS: Variant[] = [
   {
+    slug: 'homelab',
+    name: 'Homelab',
+    vibe: 'a cutaway house with your server humming in it',
+    blurb:
+      'One enormous isometric cross-section: the machine in the basement, the cables in the walls, the music in every room and out the door. Self-hosting drawn as the place it actually happens.',
+    swatch: ['#f4ead9', '#2f7d6e', '#e8703a'],
+    mood: 'light',
+  },
+  {
+    slug: 'spiral',
+    name: 'Spiral',
+    vibe: 'the groove of a disc, drawn as country you travel',
+    blurb:
+      'A disc holds one continuous spiral from the centre out. Here it becomes an isometric landscape at dusk, and the page is a journey along it.',
+    swatch: ['#1d2233', '#e8a13a', '#5fc9c0'],
+    mood: 'dark',
+  },
+  {
+    slug: 'boxset',
+    name: 'Box Set',
+    vibe: 'everything that came in the box',
+    blurb:
+      'Mozz drawn as a physical product it never was — the box, the manual, the cartridges, the cable. Nothing is sold separately, because there is no paid tier.',
+    swatch: ['#f7ede0', '#c80028', '#2f3e4e'],
+    mood: 'light',
+  },
+  {
     slug: 'silverface',
     name: 'Silverface',
     vibe: 'a 1974 receiver, leaned all the way in',

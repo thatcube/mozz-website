@@ -47,3 +47,8 @@ qa/
 
 # impeccable local hook cache
 .impeccable/hook.cache.json
+
+# throwaway verification renders and one-off scripts
+scratch-*
+scratch_*
+qa/

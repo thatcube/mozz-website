@@ -136,7 +136,7 @@ function makeScene() {
 
   const vb = (pad = 6) => `${r2(minX - pad)} ${r2(minY - pad)} ${r2(maxX - minX + pad * 2)} ${r2(maxY - minY + pad * 2)}`;
 
-  return { parts, texts, poly, box, quad, faceX, faceY, ring, fan, line, seam, screw, cyl, raw, text, vb, P };
+  return { parts, texts, poly, box, quad, faceX, faceY, ring, fan, line, seam, screw, cyl, raw, text, vb, P, bounds: () => ({ minX, minY, maxX, maxY }) };
 }
 
 /* ── flat palettes (small, disciplined) ───────────────────────────────────── */
@@ -146,6 +146,8 @@ const CREAMB = { top: '#fbf3e5', left: '#ecdec7', right: '#dccbad' };
 const ORANGE = { top: '#ef7d47', left: '#d5622f', right: '#b64f24' };
 const STEEL  = { top: '#4a7cb0', left: '#335f8f', right: '#264970' };
 const STEEL2 = { top: '#5b8cc0', left: '#3f6f9e', right: '#2f567f' };
+const STEELB = { top: '#4f83c4', left: '#3b6ea5', right: '#2c5480' };  // hero CD player body — blue, to read distinct from the teal walkman
+const STEELD = { top: '#3b6ea5', left: '#2c5480', right: '#204066' };  // hero lid / darker blue
 const TEAL   = { top: '#41938c', left: '#2f716b', right: '#215048' };
 const WHITEB = { top: '#f5efe4', left: '#e3dbcb', right: '#d3c8b3' };
 const DARKB  = { top: '#34333c', left: '#26252d', right: '#191820' };
@@ -156,6 +158,10 @@ const WOOD   = { top: '#e7d3ad', left: '#d0b98d', right: '#b89f72' };
 const WOOD2  = { top: '#dcc59b', left: '#c3aa7d', right: '#a98f64' };
 const METAL  = { top: '#cdd2d8', left: '#b1b7bf', right: '#969da7' };
 const PAPER  = { top: '#f3ead6', left: '#e2d6bd', right: '#cebf9f' };
+// opaque MiniDisc cartridge shells (closed — no disc showing), one per label
+const SH_JAZZ = { top: '#6bbcae', left: '#4f9d90', right: '#3c7c72' };
+const SH_RARE = { top: '#6f9fd0', left: '#4f7fb0', right: '#3c6390' };
+const SH_MIX  = { top: '#e7a9b0', left: '#cf8a92', right: '#b06d76' };
 
 const FAN_WARM  = ['#e9b25a', '#e8703a', '#f3e2c4', '#d98f34', '#f0d49a', '#e57d3f', '#c99a45'];
 const FAN_COOL  = ['#49a08d', '#3b6ea5', '#e79bb0', '#63b39c', '#8fb2d8', '#cfd9a6', '#4f96b3'];
@@ -191,24 +197,26 @@ const hero = makeScene();
   shadow(s, 96, 20, 14); shadow(s, 92, 66, 12); shadow(s, 20, 86, 15); shadow(s, 118, 78, 12);
 
   // open lid, folded flat behind the base
-  s.box(4, -44, 0, 64, 38, 3, SLATE2);
-  s.quad(10, -39, 52, 28, 3, '#15302d', 'flat');
-  s.ring(34, -25, 3.1, 11, '#0e2422', 'edge'); s.ring(34, -25, 3.1, 3, '#2f5a57', 'edge');
+  s.box(4, -44, 0, 64, 38, 3, STEELD);
+  s.quad(10, -39, 52, 28, 3, '#12314d', 'flat');
+  s.ring(34, -25, 3.1, 11, '#0e2438', 'edge'); s.ring(34, -25, 3.1, 3, '#3b6ea5', 'edge');
   s.text(34, -13, 3.2, 'COMPACT DISC · DIGITAL AUDIO', 1.7, 'legend-tick', 'top', 'middle', 'central');
   s.screw(9, -41, 3); s.screw(63, -41, 3); s.screw(9, -8, 3); s.screw(63, -8, 3);
   // hinge barrels
-  s.cyl(10, -3, 2, 2.2, 4, '#3a6b67', '#1d3a37'); s.cyl(58, -3, 2, 2.2, 4, '#3a6b67', '#1d3a37');
+  s.cyl(10, -3, 2, 2.2, 4, '#5f88b8', '#2c5480'); s.cyl(58, -3, 2, 2.2, 4, '#5f88b8', '#2c5480');
 
   // base body
-  s.box(0, 0, 0, 68, 56, 9, SLATE);
+  s.box(0, 0, 0, 68, 56, 9, STEELB);
   s.seam([0, 0, 4.5], [68, 0, 4.5], 'z', 0.6);
   s.seam([68, 0, 4.5], [68, 56, 4.5], 'z', 0.6);
   // feet
   for (const [fx, fy] of [[3, 3], [63, 3], [3, 51], [63, 51]]) s.box(fx, fy, -1.4, 3, 3, 1.4, DARK2);
 
-  // disc well + the warm diffraction fan
-  s.quad(4, 5, 42, 46, 8.6, '#153230', 'flat');
-  s.fan(25, 28, 8, 20, FAN_WARM, 34, 0.15);
+  // round top-load disc well + spindle + the warm diffraction fan
+  s.quad(4, 5, 42, 46, 8.6, '#123049', 'flat');
+  s.ring(25, 28, 8.55, 21, '#0e2438', 'edge');
+  s.fan(25, 28, 8.6, 20, FAN_WARM, 34, 0.15);
+  s.cyl(25, 28, 8.6, 1.7, 1.3, '#e7ecf2', '#9aa6b6');
 
   // cream control panel (raised)
   s.box(49, 5, 7.4, 16, 46, 2.2, CREAMB);
@@ -227,7 +235,7 @@ const hero = makeScene();
   btn(51, 32); btn(58, 32);
   s.box(52.5, 40, 9.6, 8, 8, 1.6, REDB);
   s.text(56.5, 44, 11.3, 'OPEN', 1.9, 'legend-lite', 'top', 'middle', 'central');
-  s.text(51.5, 22.6, 9.62, 'MODE', 1.5, 'legend-tick', 'top', 'start', 'central');
+  s.text(57, 22.3, 9.62, 'MODE', 1.4, 'legend-tick', 'top', 'middle', 'central');
   // headphone jack on the side
   s.ring(65.4, 30, 4, 1.4, '#14131a', 'edge', 14);
 
@@ -243,7 +251,7 @@ const hero = makeScene();
     s.box(fx + 15.5, fy + 1.5, 0.4, 2.2, 2.2, 1.2, DARK2);       // write-protect tab
   };
   floppy(80, 2, WHITEB, 'WIN95', '');
-  floppy(76, 48, ORANGE, 'MIX 2', '');
+  floppy(102, 4, ORANGE, 'MIX 2', '');
 
   // open jewel case with a disc + booklet
   s.box(100, 26, 0, 24, 20, 1, DARK2);
@@ -262,10 +270,11 @@ const hero = makeScene();
   s.ring(30, 78, 11, 5.2, 'none', 'edge');                       // coffee surface rim
   s.ring(30, 78, 11, 4.2, '#5a3418', 'flat');
 
-  // notebook + marker
+  // notebook + a marker pen resting on it (drawn as a body, not a bare stroke)
   s.box(4, 74, 0, 26, 20, 2.2, PAPER);
   s.line([4, 80, 2.21], [30, 80, 2.21], 'faint'); s.line([4, 85, 2.21], [30, 85, 2.21], 'faint'); s.line([4, 90, 2.21], [30, 90, 2.21], 'faint');
-  s.raw(`M${s.P(8, 96, 2.4)}L${s.P(30, 84, 2.4)}`, 'none', 'marker'); s.ring(30, 84, 2.4, 1.3, '#c80028', 'flat', 10);
+  s.box(6, 87, 2.2, 17, 2.6, 2.1, { top: '#4f83c4', left: '#3b6ea5', right: '#2c5480' });   // barrel
+  s.box(23, 87, 2.2, 3, 2.6, 2.1, REDB);                                                     // red cap
 
   // juice carton + straw
   s.box(96, 78, 0, 12, 10, 22, STEEL);
@@ -314,7 +323,6 @@ const shelf = makeScene();
   vents(s, 'x', 38.02, 12, 26, 9, 20, 6);                  // lower vent slots
   s.faceX(38.02, 12, 15, 36, 39, '#35e08f', 'led');        // power LED
   s.screw(38, 11, 41); s.screw(38, 27, 41); s.screw(38, 11, 7); s.screw(38, 27, 7);
-  s.text(14, 28, 44.05, 'NODE-01', 1.5, 'legend-tick', 'top', 'start', 'central');
 
   // ── machine 2 : two-bay NAS (drive trays on the right face, plane x=82) ──
   s.box(52, 8, 4, 30, 22, 24, DARK2);
@@ -328,27 +336,39 @@ const shelf = makeScene();
   tray(8); tray(16);
   for (let i = 0; i < 3; i++) s.faceX(82.04, 25, 27, 9 + i * 2.6, 10.6 + i * 2.6, i === 0 ? '#35e08f' : '#e0a94e', 'led'); // status LEDs
   s.screw(82, 11, 25); s.screw(82, 27, 25);
-  s.text(54, 28, 28.65, 'NAS-02', 1.5, 'legend-tick', 'top', 'start', 'central');
   s.box(52, 8, 28, 30, 22, 0.6, { top: '#3a3944', left: '#2c2b34', right: '#1e1d25' });
 
   // ── machine 3 : small box (Pi-like) ──
   s.box(98, 10, 4, 20, 16, 11, STEEL);
   s.quad(100, 12, 16, 12, 15, '#335f8f', 'flat');
-  for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) s.box(101.5 + i * 3.2, 13.5 + j * 3.2, 15, 2, 2, 0.5, { top: '#264970', left: '#1f3d5e', right: '#182f49' }); // heatsink grid
+  for (let i = 0; i < 6; i++) s.box(101, 12.5 + i * 2.1, 15, 14, 1.1, 1.8, { top: '#3a6a9c', left: '#264970', right: '#1f3d5e' }); // heatsink fins (reads as a mini server, not a keypad)
   s.faceX(118, 12, 16, 5, 7, '#0e0e12', 'led');            // port on right face
   s.faceX(118, 20, 24, 5, 7, '#35e08f', 'led');            // LED
-  s.text(100, 24, 15.05, 'BOX-03', 1.4, 'legend-tick', 'top', 'start', 'central');
 
-  // ── the switch + three ethernet cables (one library) ──
+  // ── the switch + three ethernet cables (one library, all patched in) ──
   s.box(120, 24, 4, 16, 10, 5, DARK2);
   for (let i = 0; i < 4; i++) s.faceX(136, 25 + i * 2.2, 26.8 + i * 2.2, 5, 8, i < 3 ? '#e0a94e' : '#33323c', 'led');
-  s.text(122, 32, 9.05, 'SWITCH', 1.3, 'legend-tick', 'top', 'start', 'central');
-  const eth = (fromX: number, fromY: number, col: string) => {
-    let d = 'M' + s.P(fromX, fromY, 6);
-    for (let i = 1; i <= 40; i++) { const t = i / 40; const x = fromX + (128 - fromX) * t; const y = fromY + (24 - fromY) * t + Math.sin(t * Math.PI) * 10; d += 'L' + s.P(x, y, 6 + Math.sin(t * Math.PI) * 3); }
+  for (let i = 0; i < 6; i++) s.faceY(34, 121 + i * 2.4, 122.8 + i * 2.4, 5, 7.4, '#14131a', 'flat');            // RJ45 ports on the front edge
+  for (let i = 0; i < 6; i++) s.faceY(33.98, 121.4 + i * 2.4, 122.4 + i * 2.4, 7.6, 8.2, i % 2 ? '#35e08f' : '#e0a94e', 'led'); // link LEDs
+  // each cable: a jack on the source machine → a sagging run → a plug seated in a real switch port
+  const PLUG = { top: '#26252d', left: '#141319', right: '#0e0d12' };
+  const eth = (ox: number, oy: number, oz: number, portI: number, col: string) => {
+    const tx = 121.9 + portI * 2.4, ty = 34, tz = 6.2;                             // centre of switch port `portI`
+    s.faceY(oy, ox - 1.5, ox + 1.5, oz - 1.1, oz + 1.1, '#0e0d12', 'flat');        // recessed jack on the source face
+    s.box(ox - 0.7, oy, oz - 0.8, 1.4, 1.4, 1.6, PLUG);                            // plug body emerging from that jack
+    let d = 'M' + s.P(ox, oy + 1.4, oz);
+    const n = 44;
+    for (let i = 1; i <= n; i++) {
+      const t = i / n;
+      const x = ox + (tx - ox) * t;
+      const y = (oy + 1.4) + (ty - (oy + 1.4)) * t;
+      const z = oz + (tz - oz) * t - Math.sin(t * Math.PI) * 2;                    // gentle downward sag, clears the desk
+      d += 'L' + s.P(x, y, z);
+    }
     s.raw(d, 'none', col);
+    s.box(tx - 0.7, ty - 0.2, tz - 0.9, 1.4, 1.7, 1.8, PLUG);                      // plug seated in the switch port
   };
-  eth(25, 30, 'wire-a'); eth(67, 30, 'wire-b'); eth(108, 26, 'wire-c');
+  eth(28, 30, 9, 0, 'wire-a'); eth(70, 30, 8, 2, 'wire-b'); eth(113, 26, 6, 4, 'wire-c');
 
   // desk charm: mug + a small stack of discs + a sticky note
   s.cyl(10, 30, 4, 6, 9, '#f0e2cb', '#3b6ea5');
@@ -357,6 +377,13 @@ const shelf = makeScene();
   s.box(84, 30, 4, 12, 10, 0.6, { top: '#f4d94e', left: '#e0c53f', right: '#c9af33' }); // sticky note
   s.text(90, 35, 4.65, 'BACKUP!', 1.8, 'legend-tick', 'top', 'middle', 'central');
 }
+// real brand logos, printed upright on each machine's front (left) face — screen-space centres
+const pS = (x: number, y: number, z: number): [number, number] => [r2((x - y) * IC), r2((x + y) * IS - z)];
+const serverBadges = [
+  { name: 'Plex',      p: pS(25, 30, 24),   w: 13,  h: 9.2, s: 7 },
+  { name: 'Jellyfin',  p: pS(67, 30, 16),   w: 13,  h: 9.2, s: 7 },
+  { name: 'Navidrome', p: pS(108, 26, 9.5), w: 7,   h: 4.8, s: 3.3 },
+];
 
 /* ══ OFFLINE — a red disc lifted from an open case toward a packed tote ══════ */
 const offline = makeScene();
@@ -365,37 +392,64 @@ const offline = makeScene();
   grid(s, -14, 118, -12, 74, 16, 12);
   shadow(s, 22, 30, 20); shadow(s, 84, 36, 22); shadow(s, 52, 24, 12);
 
-  // open jewel case with booklet + spine text
+  // open jewel case — now EMPTY (its disc is the one being lifted out), booklet + spine text
   s.box(4, 12, 0, 34, 28, 1.4, DARK2);
   s.quad(7, 15, 28, 22, 1.4, '#1b1a22', 'flat');
-  s.fan(21, 26, 1.45, 11, FAN_SILV, 24, 0.3);
+  s.ring(21, 26, 1.42, 10.5, 'none', 'edge'); s.ring(21, 26, 1.42, 3, '#2a2932', 'edge'); // empty disc bay
   s.box(36, 12, 0, 2, 28, 8, DARK2); s.faceX(38, 12, 40, 0, 8, '#20202a', 'flat');
   s.text(21, 37.5, 1.42, 'DISC 01 · ALBUM', 1.7, 'legend-tick', 'top', 'middle', 'central');
   s.screw(6, 14, 1.45); s.screw(33, 14, 1.45);
 
-  // the disc, mid-lift, red colourway, with its cast shadow offset on the ground
-  shadow(s, 60, 26, 13);
-  s.fan(56, 20, 20, 13, FAN_RED, 28, 0.4);
+  // the record, taken out of the case, lying flat on the ground with a contact shadow
+  shadow(s, 55, 41, 12);
+  s.fan(54, 40, 0.6, 12, FAN_RED, 28, 0.4);
 
-  // packed tote bag
-  s.box(72, 20, 0, 32, 28, 30, WOOD2);
-  s.seam([72, 20, 30], [104, 20, 30], 'y', -0.6);
-  s.quad(76, 24, 24, 20, 30, '#c8b48f', 'flat');
-  s.quad(79, 27, 18, 14, 29.2, '#b39f7c', 'flat');
-  // things poking out of the bag: a disc, a booklet, headphones
-  s.fan(86, 33, 30, 8, FAN_COOL, 20, 1.1);
-  s.box(90, 30, 30, 8, 1.2, 10, PAPER);
-  // handles
-  const handle = (ax: number, ay: number, bx: number, by: number, peak: number) => {
-    s.raw(`M${s.P(ax, ay, 30)}Q${s.P((ax + bx) / 2, (ay + by) / 2, peak)} ${s.P(bx, by, 30)}`, 'none', 'handle');
+  // an open moving carton, packed with upright record sleeves
+  const CARD = { top: '#dcc096', left: '#c3a878', right: '#a98d62' };
+  const cx0 = 74, cy0 = 18, cw = 32, cd = 28, cfz = 1.5, cH = 16, cr = 3;
+  const flap = (pts: number[][], fill: string) => s.poly(pts, fill, 'flat');
+  shadow(s, cx0 + cw / 2, cy0 + cd / 2, 24, 0.9);
+  // floor slab + inner liner + far & left inner walls + their rim tops
+  s.box(cx0, cy0, 0, cw, cd, cfz, CARD);
+  s.quad(cx0 + cr, cy0 + cr, cw - 2 * cr, cd - 2 * cr, cfz + 0.01, '#b89a6c', 'flat');
+  s.faceY(cy0 + cr, cx0 + cr, cx0 + cw - cr, cfz, cH, '#c3a878', 'flat');
+  s.faceX(cx0 + cr, cy0 + cr, cy0 + cd - cr, cfz, cH, '#b0925f', 'flat');
+  s.quad(cx0, cy0, cw, cr, cH, CARD.top, 'flat');
+  s.quad(cx0, cy0, cr, cd, cH, CARD.top, 'flat');
+  // back + left flaps, folded open (behind the contents)
+  flap([[cx0, cy0, cH], [cx0 + cw, cy0, cH], [cx0 + cw, cy0 - 5, cH + 5], [cx0, cy0 - 5, cH + 5]], '#c9ad7f');
+  flap([[cx0, cy0, cH], [cx0, cy0 + cd, cH], [cx0 - 5, cy0 + cd, cH + 5], [cx0 - 5, cy0, cH + 5]], '#b59869');
+  // packed contents: a row of upright record sleeves poking above the rim
+  const SLV = [STEEL, ORANGE, TEAL, GOLDB, { top: '#c04a5e', left: '#a23c4e', right: '#812f3d' }];
+  for (let i = 0; i < 5; i++) {
+    const sx = cx0 + 5 + i * 4.4;
+    s.box(sx, cy0 + 6, cfz, 2.4, 16, 22, SLV[i]);
+    s.line([sx, cy0 + 6.4, cfz + 22.01], [sx + 2.4, cy0 + 6.4, cfz + 22.01], 'faint');
+  }
+  // near rim tops + outer faces (after contents, so they occlude the sleeve fronts)
+  s.quad(cx0 + cw - cr, cy0, cr, cd, cH, CARD.top, 'flat');
+  s.quad(cx0, cy0 + cd - cr, cw, cr, cH, CARD.top, 'flat');
+  s.faceX(cx0 + cw, cy0, cy0 + cd, 0, cH, CARD.right, 'flat');
+  s.faceY(cy0 + cd, cx0, cx0 + cw, 0, cH, CARD.left, 'flat');
+  // front + right flaps, folded open (in front, occluding the lower contents)
+  flap([[cx0, cy0 + cd, cH], [cx0 + cw, cy0 + cd, cH], [cx0 + cw, cy0 + cd + 5, cH + 5], [cx0, cy0 + cd + 5, cH + 5]], '#e0c79c');
+  flap([[cx0 + cw, cy0, cH], [cx0 + cw, cy0 + cd, cH], [cx0 + cw + 5, cy0 + cd, cH + 5], [cx0 + cw + 5, cy0, cH + 5]], '#d2b88c');
+  // shipping label + a strip of packing tape on the front outer face
+  s.faceY(cy0 + cd - 0.02, cx0 + 6, cx0 + 20, 4, 12, '#f2ead9', 'flat');
+  s.line([cx0, cy0 + cd, cH - 4], [cx0 + cw, cy0 + cd, cH - 4], 'seam-d');
+  s.faceY(cy0 + cd - 0.04, cx0 + 8, cx0 + 18, 6.5, 10, '#2f5a57', 'flat');
+
+  // real headphones resting on the ground: two earcups with a band arcing up out of the ground
+  shadow(s, 30, 60, 8, 0.9);
+  const hcup = (cx: number, cy: number) => {
+    s.cyl(cx, cy, 0, 3.2, 3, '#3a726b', '#245852');
+    s.ring(cx, cy, 3.02, 2, '#173a33', 'edge'); s.ring(cx, cy, 3.04, 0.9, '#0e2a25', 'flat');
   };
-  handle(78, 28, 86, 28, 50); handle(92, 24, 100, 24, 50);
-  // stitching + a hang tag
-  s.line([72, 20, 4], [104, 20, 4], 'seam-d'); s.line([72, 48, 4], [104, 48, 4], 'seam-d');
-  s.box(72, 40, 12, 0.4, 6, 5, PAPER); s.text(72.45, 43, 14.5, 'YOURS', 1.5, 'legend-tick', 'right', 'middle', 'central');
+  hcup(26, 58); hcup(34, 62);
+  const hband = (lift: number) => { let d = ''; for (let i = 0; i <= 28; i++) { const t = i / 28; const x = 26 + 8 * t, y = 58 + 4 * t, z = 3 + Math.sin(Math.PI * t) * lift; d += (i ? 'L' : 'M') + s.P(x, y, z); } s.raw(d, 'none', 'band'); };
+  hband(9); hband(8);
 
-  // draped headphones on the ground + keys + a metro card
-  s.ring(30, 60, 0.6, 5, 'none', 'band'); s.ring(24, 58, 0.6, 3.2, '#2f5a57', 'edge'); s.ring(36, 62, 0.6, 3.2, '#2f5a57', 'edge');
+  // a transit card on the ground
   s.box(4, 54, 0, 16, 10, 0.8, { top: '#e8703a', left: '#d5622f', right: '#b64f24' });
   s.text(12, 59, 0.82, 'TRANSIT', 1.7, 'legend-lite', 'top', 'middle', 'central');
 }
@@ -425,20 +479,148 @@ const walkman = makeScene();
   s.box(9, 53, 8, 22, 5, 0.6, { top: '#173a33', left: '#12302a', right: '#0d211d' });
   s.text(10.5, 55.5, 8.62, 'TR 07 · MDLP', 1.8, 'lcd', 'top', 'start', 'central');
 
-  // three translucent cartridges beside it, labelled
-  const cart = (cx: number, cy: number, tint: string, lab: string) => {
-    s.box(cx, cy, 0, 24, 22, 3, { top: tint, left: tint, right: tint }, 'glassy');
-    s.faceY(cy, cx + 2, cx + 22, 0, 3, tint, 'glassy');
-    s.quad(cx + 2, cy + 2, 20, 5, 3.05, '#f6f1ea', 'flat');    // paper label
-    s.text(cx + 12, cy + 4.5, 3.06, lab, 2.0, 'legend-lite', 'top', 'middle', 'central');
-    s.ring(cx + 12, cy + 13, 3.06, 7, 'none', 'edge');          // window
-    s.fan(cx + 12, cy + 13, 3.07, 6.4, FAN_COOL, 20, cx);
-    s.box(cx + 20, cy + 8, 0, 1.2, 6, 3, { top: '#c9cdd2', left: '#b3b8bf', right: '#9aa0a8' }); // shutter
+  // three closed cartridges beside it — shutter across the window, printed spine
+  // label, NO disc (a closed MiniDisc hides its disc; the deck keeps the only fan)
+  const cart = (cx: number, cy: number, shell: any, lab: string) => {
+    let sh = ''; for (let i = 0; i <= 26; i++) { const a = (i / 26) * Math.PI * 2; sh += (i ? 'L' : 'M') + s.P(cx + 13 + 13 * Math.cos(a), cy + 11 + 8 * Math.sin(a), 0.02); }
+    s.raw(sh + 'Z', 'rgba(51,38,28,0.16)', 'flat');            // contact shadow
+    s.box(cx, cy, 0, 24, 22, 3, shell);                        // opaque shell
+    s.quad(cx + 2, cy + 2, 20, 11, 3.01, '#f2ead9', 'flat');   // printed paper label
+    s.line([cx + 2, cy + 6, 3.02], [cx + 22, cy + 6, 3.02], 'faint');
+    s.text(cx + 12, cy + 4, 3.03, lab, 2.4, 'legend-lite', 'top', 'middle', 'central');
+    s.box(cx + 3, cy + 15, 0, 18, 5, 3.2, METAL);              // metal shutter (closed)
+    s.line([cx + 3, cy + 17.5, 3.21], [cx + 21, cy + 17.5, 3.21], 'seam-d');
+    s.screw(cx + 3.4, cy + 3.4, 3.02, 0.8); s.screw(cx + 20.6, cy + 3.4, 3.02, 0.8);
   };
-  cart(74, 6, 'rgba(93,179,160,0.36)', 'JAZZ');
-  cart(80, 34, 'rgba(93,143,205,0.36)', 'RARE');
-  cart(96, 60, 'rgba(231,155,176,0.36)', 'MIX');
+  cart(74, 6, SH_JAZZ, 'JAZZ');
+  cart(80, 34, SH_RARE, 'RARE');
+  cart(96, 60, SH_MIX, 'MIX');
 }
+
+/* ══ FEATURES — an opened desk drawer, packed, fully isometric, part-numbered ═ */
+const drawer = makeScene();
+const DZ0 = 3.5;                       // floor height (props sit here)
+{
+  const s = drawer;
+  const W = 64, D = 52, fz = DZ0, H = 11, rim = 8, z0 = fz;
+  // un-erased construction lines on the ground, extending past the tray
+  grid(s, -12, W + 18, -12, D + 18, 15, 12);
+  shadow(s, W / 2, D / 2, 46, 0.86);
+  // contact shadow for a prop sitting on the drawer floor
+  const csh = (cx: number, cy: number, r: number) => {
+    let d = ''; for (let i = 0; i <= 32; i++) { const a = (i / 32) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * 0.94 * Math.sin(a), z0 + 0.02); }
+    s.raw(d + 'Z', 'rgba(51,38,28,0.15)', 'flat');
+  };
+
+  // floor slab + interior liner
+  s.box(0, 0, 0, W, D, fz, WOOD);
+  s.quad(rim, rim, W - 2 * rim, D - 2 * rim, fz + 0.01, '#efdcb6', 'flat');
+  // far + left inner walls, then their rim tops (behind the props)
+  s.faceY(rim, rim, W - rim, fz, H, '#c9b184', 'flat');
+  s.faceX(rim, rim, D - rim, fz, H, '#bda574', 'flat');
+  s.quad(0, 0, W, rim, H, WOOD.top, 'flat');
+  s.quad(0, 0, rim, D, H, WOOD.top, 'flat');
+  s.line([rim, rim, H], [W - rim, rim, H], 'seam-d');
+  s.line([rim, rim, H], [rim, D - rim, H], 'seam-d');
+
+  // ── prop 1: cassette tape (steel blue) ──
+  csh(17, 14.5, 10);
+  s.box(9, 9, z0, 16, 11, 4, STEEL);
+  s.quad(11, 10.5, 12, 8, z0 + 4.01, '#f3ead6', 'flat');
+  s.quad(13, 12.6, 8, 3.4, z0 + 4.02, '#26252d', 'flat');
+  s.ring(16, 14.3, z0 + 4.03, 1.2, '#f7ede0', 'edge'); s.ring(19.4, 14.3, z0 + 4.03, 1.2, '#f7ede0', 'edge');
+  s.line([11, 11.4, z0 + 4.02], [23, 11.4, z0 + 4.02], 'faint');
+  s.screw(10.4, 10.4, z0 + 4.02, 0.7); s.screw(23.6, 10.4, z0 + 4.02, 0.7); s.screw(10.4, 18.6, z0 + 4.02, 0.7); s.screw(23.6, 18.6, z0 + 4.02, 0.7);
+  s.text(17, 11.2, z0 + 4.04, 'TYPE II', 1.5, 'legend-tick', 'top', 'middle', 'central');
+
+  // ── prop 2: closed MiniDisc (teal) — shutter across, no disc showing ──
+  csh(34.5, 15, 9);
+  s.box(27, 9, z0, 15, 12, 3.5, TEAL);
+  s.quad(29, 10.5, 11, 6, z0 + 3.51, '#f2ead9', 'flat');
+  s.text(34.5, 12, z0 + 3.53, 'MD', 2.1, 'legend-lite', 'top', 'middle', 'central');
+  s.box(28.5, 17, z0, 12, 3.4, 3.7, METAL);
+  s.line([28.5, 18.7, z0 + 3.72], [40.5, 18.7, z0 + 3.72], 'seam-d');
+  s.screw(28.4, 10, z0 + 3.52, 0.6); s.screw(40.6, 10, z0 + 3.52, 0.6);
+
+  // ── prop 3: EQ / mixer module (dark) — real fader slots + caps ──
+  csh(17.5, 33.5, 11);
+  s.box(9, 28, z0, 17, 11, 3, DARKB);
+  for (let i = 0; i < 4; i++) {
+    const fx = 12 + i * 3.4;
+    s.line([fx, 30, z0 + 3.02], [fx, 37, z0 + 3.02], 'seam-d');
+    s.box(fx - 0.8, 31 + (i % 2) * 3.2, z0 + 3, 1.6, 1.5, 1.2, ORANGE);
+  }
+  s.box(20.5, 30, z0 + 3, 5, 7, 1, { top: '#3f3e48', left: '#2f2e36', right: '#201f27' });
+  s.ring(23, 33.5, z0 + 4.02, 1.5, 'none', 'edge'); s.ring(23, 33.5, z0 + 4.03, 0.5, '#e8703a', 'flat');
+  s.text(17.5, 39.2, z0 + 3.03, 'MIX', 1.5, 'legend-tick', 'top', 'middle', 'central');
+
+  // ── prop 4: stopwatch tin (cylinder) — front-right ──
+  csh(49, 34, 7.2);
+  s.cyl(49, 34, z0, 6, 3, '#efe6d3', '#9aa4b0');
+  s.box(48, 26.9, z0 + 1.4, 2, 1.8, 1.6, METAL);
+  s.cyl(49, 26.2, z0 + 3, 1.3, 1, '#dfe4ea', '#b1b7bf');
+  s.ring(49, 34, z0 + 3.02, 5, 'none', 'edge');
+  for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; s.line([49 + 4.2 * Math.cos(a), 34 + 4.2 * Math.sin(a), z0 + 3.03], [49 + 4.9 * Math.cos(a), 34 + 4.9 * Math.sin(a), z0 + 3.03], 'seam-d'); }
+  s.line([49, 34, z0 + 3.04], [49, 29.9, z0 + 3.04], 'seam-d');
+  s.line([49, 34, z0 + 3.04], [52, 35.6, z0 + 3.04], 'seam-d');
+  s.ring(49, 34, z0 + 3.05, 0.7, '#c80028', 'flat');
+
+  // ── prop 5: pocket radio (gold) — grille vents, dial, antenna ──
+  csh(48, 15, 10);
+  s.box(41, 9, z0, 14, 12, 7, GOLDB);
+  vents(s, 'x', 55, 11, 19, z0 + 1, z0 + 6, 5);
+  s.ring(46, 12.5, z0 + 7.02, 2, 'none', 'edge'); s.line([46, 12.5, z0 + 7.03], [46, 10.8, z0 + 7.03], 'seam-d');
+  s.box(50.5, 11, z0 + 7, 3, 5, 0.8, { top: '#173a33', left: '#12302a', right: '#0d211d' });
+  s.text(52, 12, z0 + 7.03, 'FM', 1.4, 'lcd', 'top', 'middle', 'central');
+  s.box(44, 17.5, z0 + 7, 7, 2.2, 0.8, { top: '#3f3e48', left: '#2f2e36', right: '#201f27' });
+  s.box(52, 18, z0 + 7, 2, 2, 1.1, REDB);
+  s.line([54, 10, z0 + 7], [58, 7, z0 + 16], 'cable'); s.ring(58, 7, z0 + 16, 0.9, '#c80028', 'flat');
+
+  // ── prop 6: headphones (iso) — front-centre, lying flat: a C-band with an earcup at each end ──
+  csh(34, 40, 12);
+  const eflat = (cx: number, cy: number) => {
+    s.cyl(cx, cy, z0, 3.4, 2.4, '#3a726b', '#245852');
+    s.ring(cx, cy, z0 + 2.42, 2.1, '#173a33', 'edge');
+    s.ring(cx, cy, z0 + 2.44, 0.95, '#0e2a25', 'flat');
+  };
+  const bandArc = (ry: number) => { let d = ''; for (let i = 0; i <= 28; i++) { const th = Math.PI * (i / 28); d += (i ? 'L' : 'M') + s.P(34 + 6 * Math.cos(th), 40 - ry * Math.sin(th), z0 + 0.2); } s.raw(d, 'none', 'band'); };
+  bandArc(6); bandArc(5);                       // a doubled strap so it reads as a band
+  eflat(28, 40); eflat(40, 40);
+
+  // ── incidental charm: two loose batteries in the open mid-floor ──
+  s.cyl(13, 24, z0, 1.4, 4.4, '#efce8f', '#cf9a42'); s.ring(13, 24, z0 + 4.42, 0.7, '#c9cdd2', 'flat');
+  s.cyl(16.6, 24.5, z0, 1.4, 4.4, '#efce8f', '#cf9a42'); s.ring(16.6, 24.5, z0 + 4.42, 0.7, '#c9cdd2', 'flat');
+
+  // near rim tops + outer faces (drawn last, so they occlude prop fronts)
+  s.quad(W - rim, 0, rim, D, H, WOOD.top, 'flat');
+  s.quad(0, D - rim, W, rim, H, WOOD.top, 'flat');
+  s.faceX(W, 0, D, fz, H, WOOD.right, 'flat');
+  s.faceY(D, 0, W, fz, H, WOOD.left, 'flat');
+  s.line([0, D - rim, H], [W, D - rim, H], 'seam-l');
+  s.line([W - rim, 0, H], [W - rim, D, H], 'seam-l');
+  // a proper drawer pull protruding from the front face
+  s.box(27, D, fz + 2, 2, 1.8, 2, METAL);
+  s.box(37, D, fz + 2, 2, 1.8, 2, METAL);
+  s.box(25, D + 1.6, fz + 2.3, 16, 1.8, 1.7, METAL);
+}
+// six leader callouts, computed in the drawer's projected screen space
+const drawerTags: number[][] = [
+  [17, 14.5, DZ0 + 4], [34.5, 15, DZ0 + 3.5], [17.5, 33.5, DZ0 + 3],
+  [49, 34, DZ0 + 3], [48, 15, DZ0 + 7], [40, 40, DZ0 + 2.4],
+];
+const drawerOffs = [[-16, -12], [0, -18], [-20, 6], [16, 12], [18, -11], [-14, 16]];
+const drawerLeaders = drawerTags.map((t, i) => {
+  const ax = (t[0] - t[1]) * IC, ay = (t[0] + t[1]) * IS - t[2];
+  const dx = ax + drawerOffs[i][0], dy = ay + drawerOffs[i][1];
+  return { ax: r2(ax), ay: r2(ay), dx: r2(dx), dy: r2(dy), n: i + 1 };
+});
+const drawerVB = (() => {
+  const b = drawer.bounds();
+  let x0 = b.minX, y0 = b.minY, x1 = b.maxX, y1 = b.maxY;
+  for (const l of drawerLeaders) { x0 = Math.min(x0, l.dx - 5); y0 = Math.min(y0, l.dy - 5); x1 = Math.max(x1, l.dx + 5); y1 = Math.max(y1, l.dy + 5); }
+  const pad = 5;
+  return `${r2(x0 - pad)} ${r2(y0 - pad)} ${r2(x1 - x0 + pad * 2)} ${r2(y1 - y0 + pad * 2)}`;
+})();
 
 const specFor = (i: number) => STATS[i];
 ---
@@ -524,6 +706,12 @@ const specFor = (i: number) => STATS[i];
              aria-label="A home server rack drawn in isometric on a desk: a tall tower with a fan grille and drive bays, a two-bay NAS with orange drive tabs, and a small steel box, all patched to a network switch by three coloured ethernet cables, with a mug and a stack of discs.">
           {shelf.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
           {shelf.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+          {serverBadges.map((b) => (
+            <g class="logo-badge" transform={`translate(${b.p[0]} ${b.p[1]})`}>
+              <rect x={-b.w / 2} y={-b.h / 2} width={b.w} height={b.h} rx="1" class="logo-plate"/>
+              <g transform={`translate(${-b.s / 2} ${-b.s / 2})`}><ServerLogo name={b.name} size={b.s} brand/></g>
+            </g>
+          ))}
         </svg>
       </figure>
       <ul class="server-list" role="list">
@@ -547,83 +735,14 @@ const specFor = (i: number) => STATS[i];
       </div>
 
       <figure class="drawer-art">
-        <svg class="art" viewBox="0 0 520 380" role="img" aria-label="An opened desk drawer drawn in isometric, packed with retro audio hardware — a cassette, a MiniDisc, an equalizer module, a magnifier, a stopwatch, a radio dish and headphones — six of them tagged with numbered leader lines." preserveAspectRatio="xMidYMid meet">
-          <g class="drawer-body">
-            <path d="M56 150 L316 30 L500 118 L240 238 Z" style="fill:#e7d3ad" class="flat"/>
-            <path d="M56 150 L240 238 L240 320 L56 232 Z" style="fill:#cdb691" class="flat"/>
-            <path d="M240 238 L500 118 L500 200 L240 320 Z" style="fill:#bda67c" class="flat"/>
-            <path d="M86 150 L300 50 L456 124 L242 224 Z" style="fill:#f6ecdb" class="flat"/>
-            <path d="M56 232 L240 320 L240 342 L56 254 Z" style="fill:#d0b98d" class="flat"/>
-            <ellipse cx="148" cy="290" rx="15" ry="7" style="fill:#c2ac86" class="edge"/>
-          </g>
-
-          {/* packed props (drawn in flat colour, value-stepped) */}
-          <g class="props">
-            {/* cassette (1) */}
-            <g transform="translate(150 108) rotate(-16)">
-              <rect x="-26" y="-15" width="52" height="30" rx="3" style="fill:#3b6ea5" class="flat"/>
-              <rect x="-20" y="-9" width="40" height="12" rx="2" style="fill:#f3ead6" class="flat"/>
-              <circle cx="-10" cy="7" r="5" style="fill:#f7ede0" class="edge"/>
-              <circle cx="10" cy="7" r="5" style="fill:#f7ede0" class="edge"/>
-              <line x1="-16" y1="-6" x2="16" y2="-6" class="faint2"/>
-            </g>
-            {/* MiniDisc (2) */}
-            <g transform="translate(232 78) rotate(-22)">
-              <rect x="-22" y="-20" width="44" height="40" rx="4" style="fill:#49a08d" class="flat"/>
-              <rect x="-15" y="-16" width="30" height="9" rx="2" style="fill:#f3ead6" class="flat"/>
-              <circle cx="0" cy="4" r="10" style="fill:#cdd2d8" class="edge"/>
-            </g>
-            {/* EQ module (3) */}
-            <g transform="translate(320 108) rotate(-28)">
-              <rect x="-28" y="-14" width="56" height="28" rx="3" style="fill:#34333c" class="flat"/>
-              {[0,1,2,3,4].map((i)=>(<g><line x1={-20+i*10} y1="-8" x2={-20+i*10} y2="8" class="eq-track"/><rect x={-23+i*10} y={-6+ (i%2)*8} width="6" height="4" rx="1" style="fill:#e8703a" class="flat"/></g>))}
-            </g>
-            {/* magnifier (4) — search */}
-            <g transform="translate(158 150)">
-              <circle cx="0" cy="0" r="15" style="fill:none" class="glass-line"/>
-              <circle cx="0" cy="0" r="15" style="fill:#3b6ea5" opacity="0.14" class="flat"/>
-              <line x1="11" y1="11" x2="26" y2="26" class="glass-line"/>
-            </g>
-            {/* stopwatch (5) — starts instantly */}
-            <g transform="translate(300 150)">
-              <circle cx="0" cy="0" r="15" style="fill:#f5efe4" class="edge"/>
-              <rect x="-4" y="-20" width="8" height="5" rx="1" style="fill:#cdd2d8" class="edge"/>
-              <line x1="0" y1="0" x2="0" y2="-10" class="edge"/>
-              <line x1="0" y1="0" x2="8" y2="3" class="edge"/>
-            </g>
-            {/* radio dish (6) */}
-            <g transform="translate(392 138)">
-              <ellipse cx="0" cy="0" rx="16" ry="12" style="fill:#e8703a" class="edge"/>
-              <ellipse cx="0" cy="0" rx="6" ry="4" style="fill:#f7ede0" class="edge"/>
-              <line x1="0" y1="-4" x2="0" y2="-22" class="edge"/>
-              <circle cx="0" cy="-22" r="2.5" style="fill:#c80028" class="flat"/>
-            </g>
-            {/* headphones filler */}
-            <g transform="translate(232 168)">
-              <path d="M-18 6 A18 18 0 0 1 18 6" style="fill:none" class="glass-line"/>
-              <ellipse cx="-18" cy="10" rx="6" ry="8" style="fill:#2f5a57" class="edge"/>
-              <ellipse cx="18" cy="10" rx="6" ry="8" style="fill:#2f5a57" class="edge"/>
-            </g>
-            {/* incidental charm: batteries + SD card + pick */}
-            <g transform="translate(120 176) rotate(-16)">
-              <rect x="-4" y="-12" width="10" height="24" rx="2" style="fill:#e0a94e" class="edge"/>
-              <rect x="8" y="-12" width="10" height="24" rx="2" style="fill:#e0a94e" class="edge"/>
-              <rect x="-4" y="-14" width="10" height="3" style="fill:#c9cdd2" class="edge"/>
-              <rect x="8" y="-14" width="10" height="3" style="fill:#c9cdd2" class="edge"/>
-            </g>
-            <rect x="352" y="160" width="20" height="16" rx="2" transform="rotate(18 362 168)" style="fill:#c80028" class="edge"/>
-            <path d="M188 196 q6 -12 12 0 z" style="fill:#e8703a" class="edge"/>
-          </g>
-
-          {/* six numbered leader lines */}
-          {[
-            { x: 150, y: 108, lx: 150, ly: 40 }, { x: 232, y: 78, lx: 262, ly: 30 }, { x: 320, y: 108, lx: 360, ly: 52 },
-            { x: 158, y: 150, lx: 96, ly: 196 }, { x: 300, y: 150, lx: 320, ly: 210 }, { x: 392, y: 138, lx: 452, ly: 176 },
-          ].map((o, i) => (
+        <svg class="art" viewBox={drawerVB} role="img" aria-label="An opened desk drawer drawn in isometric, packed with retro audio hardware — a cassette, a closed MiniDisc, an EQ module, a stopwatch tin, a pocket radio and headphones, plus loose batteries — six of them tagged with numbered leader lines." preserveAspectRatio="xMidYMid meet">
+          {drawer.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {drawer.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+          {drawerLeaders.map((l) => (
             <g class="tag">
-              <line x1={o.x} y1={o.y} x2={o.lx} y2={o.ly} class="leader"/>
-              <circle cx={o.lx} cy={o.ly} r="11" class="tag-dot"/>
-              <text x={o.lx} y={o.ly + 4} text-anchor="middle" font-size="12" class="tag-num">{i + 1}</text>
+              <line x1={l.ax} y1={l.ay} x2={l.dx} y2={l.dy} class="leader"/>
+              <circle cx={l.dx} cy={l.dy} r="4" class="tag-dot"/>
+              <text x={l.dx} y={l.dy} text-anchor="middle" dominant-baseline="central" font-size="4.4" class="tag-num">{l.n}</text>
             </g>
           ))}
         </svg>
@@ -651,7 +770,7 @@ const specFor = (i: number) => STATS[i];
 
       <div class="now-grid">
         <figure class="easel">
-          <svg class="art easel-art" viewBox="0 0 300 340" role="img" aria-label="A drawn isometric wooden tray and back-stand holding a phone." preserveAspectRatio="xMidYMax meet">
+          <svg class="art easel-art" viewBox="0 0 300 345" role="img" aria-label="A drawn isometric wooden tray and back-stand holding a phone." preserveAspectRatio="xMidYMax meet">
             <ellipse cx="150" cy="322" rx="118" ry="20" style="fill:var(--shadow)" class="flat"/>
             <path d="M30 262 L172 192 L266 240 L124 310 Z" style="fill:#e7d3ad" class="flat"/>
             <path d="M30 262 L124 310 L124 328 L30 280 Z" style="fill:#cdb691" class="flat"/>
@@ -668,12 +787,18 @@ const specFor = (i: number) => STATS[i];
         <figure class="colourways" aria-label="The stylised disc drawn in five of the colourways the app tints itself.">
           <svg class="art" viewBox={(() => {
             const c = makeScene();
-            [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA].forEach((pal, i) => { shadow(c, i * 34, 0, 15); c.fan(i * 34, 0, 0, 14, pal, 26, i * 0.7); });
+            const CW_PAL = [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA];
+            const CW_EDGE = ['#b07a35', '#8f0a24', '#2f6f78', '#7c8794', '#7a5230'];
+            c.cyl(-26, -8, 0, 12, 1.5, '#e7d3ad', '#cbb387'); c.cyl(-26, -8, 1.5, 12, 1.5, '#efdcb6', '#cbb387'); c.cyl(-26, -8, 3, 1.1, 7, '#dccbad', '#b89f72');
+            CW_PAL.forEach((pal, i) => { shadow(c, i * 34 + 3, 3, 15); c.ring(i * 34, 0, 0, 14, CW_EDGE[i], 'flat'); c.fan(i * 34, 0, 1.6, 14, pal, 26, i * 0.7); });
             return c.vb(5);
           })()} role="presentation">
             {(() => {
               const c = makeScene();
-              [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA].forEach((pal, i) => { shadow(c, i * 34, 0, 15); c.fan(i * 34, 0, 0, 14, pal, 26, i * 0.7); });
+              const CW_PAL = [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA];
+              const CW_EDGE = ['#b07a35', '#8f0a24', '#2f6f78', '#7c8794', '#7a5230'];
+              c.cyl(-26, -8, 0, 12, 1.5, '#e7d3ad', '#cbb387'); c.cyl(-26, -8, 1.5, 12, 1.5, '#efdcb6', '#cbb387'); c.cyl(-26, -8, 3, 1.1, 7, '#dccbad', '#b89f72');
+              CW_PAL.forEach((pal, i) => { shadow(c, i * 34 + 3, 3, 15); c.ring(i * 34, 0, 0, 14, CW_EDGE[i], 'flat'); c.fan(i * 34, 0, 1.6, 14, pal, 26, i * 0.7); });
               return c.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />);
             })()}
           </svg>
@@ -810,8 +935,7 @@ const specFor = (i: number) => STATS[i];
   .art .vent { stroke: rgba(10,8,5,0.5); stroke-width: 1.3; }
   .art .led { stroke: rgba(10,8,5,0.4); stroke-width: 0.8; }
   .art .cable { stroke: #1b1a22; stroke-width: 2.6; fill: none; }
-  .art .straw { stroke: var(--red); stroke-width: 2.8; fill: none; }
-  .art .marker { stroke: #c80028; stroke-width: 2.6; fill: none; }
+  .art .straw { stroke: #e8703a; stroke-width: 2.8; fill: none; }
   .art .handle { stroke: #8f7a58; stroke-width: 2.8; fill: none; }
   .art .handle-mug { stroke: #cf9a42; stroke-width: 3.4; fill: none; }
   .art .band { stroke: #2f5a57; stroke-width: 2.6; fill: none; }
@@ -910,6 +1034,8 @@ const specFor = (i: number) => STATS[i];
   .tag .leader { stroke: rgba(51,38,28,0.55); stroke-width: 1.2; }
   .tag-dot { fill: var(--red); stroke: var(--cream-hi); stroke-width: 2.4; }
   .tag-num { fill: var(--cream-hi); font-family: 'Khand', sans-serif; font-weight: 600; stroke: none; }
+  .logo-plate { fill: #f2e7d1; stroke: var(--ink); stroke-width: 1.7; }
+  .logo-badge .server-logo { overflow: visible; }
   .props .glass-line { stroke: var(--slate); stroke-width: 2.4; fill: none; }
   .props .eq-track { stroke: #6a584a; stroke-width: 1.6; }
   .props .faint2 { stroke: rgba(51,38,28,0.35); stroke-width: 1.2; }
