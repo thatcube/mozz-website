@@ -1,0 +1,1319 @@
+---
+/**
+ * Transport — the page is a CD transport you actually operate.
+ *
+ * The disc's tracks are the content. PLAY / PAUSE / STOP / PREV / NEXT /
+ * OPEN-CLOSE all do real things; the surrounding programme panel changes to the
+ * current track's real content. Everything is present in the DOM as plain
+ * markup, so a visitor who never touches a control — or a crawler, or a screen
+ * reader — still gets the whole page. The transport controls presentation only.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, STATS, FAQS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Press play. Learn what Mozz is by operating it.';
+
+/**
+ * Each track is one subject the site must land. The runtime figures are the
+ * fiction of the disc, not claims about the app; `accent` is the per-track
+ * colour Mozz would tint itself from the cover now playing.
+ */
+const TRACKS = [
+  { no: '01', title: 'What Mozz is',              tag: 'Disc one',      accent: '#c25cff', shot: 'mozz-nowplaying', len: 192 },
+  { no: '02', title: 'Three servers, one library', tag: 'The sources',   accent: '#f2ab24', shot: 'mozz-album-warm', len: 168 },
+  { no: '03', title: 'What it does',              tag: 'Six functions', accent: '#e8425c', shot: 'mozz-album-red',  len: 260 },
+  { no: '04', title: 'Why it is yours',           tag: 'Four promises', accent: '#c07a82', shot: 'mozz-album-dark', len: 216 },
+  { no: '05', title: 'The measurements',          tag: 'Four figures',  accent: '#cdd2d8', shot: 'mozz-playlist',  len: 76 },
+  { no: '06', title: 'Questions',                 tag: 'Five answers',  accent: '#cfa47c', shot: 'mozz-artist',    len: 305 },
+];
+
+const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const totalLen = TRACKS.reduce((a, t) => a + t.len, 0);
+---
+
+<Layout
+  title="Mozz — a disc transport you operate"
+  description="Mozz is a free, open-source music app for your own Plex, Jellyfin or Navidrome server. Operate the transport: press play, skip tracks, open the tray — the product explains itself."
+  themeColor="#17181c"
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f%5B%5D=khand@400,500,600,700&f%5B%5D=satoshi@400,500,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
+  </Fragment>
+
+  <VariantBar slug="transport" tone="neutral" />
+
+  <div class="transport">
+    <!-- HERO ART PLATE: drop AI artwork at /public/hero/transport.jpg and it
+         layers behind the machine via --hero-plate. With no file present the
+         layer is empty and the CSS machined ground shows through — never a
+         broken-image box. -->
+    <div class="hero-plate" aria-hidden="true"></div>
+
+    <!-- ======================= THE MACHINE ======================= -->
+    <header class="deckwrap">
+      <div class="brandline">
+        <a class="lockup" href={GITHUB_URL} aria-label={`${NAME} on GitHub`}>
+          <Mark size={26} />
+          <span>{NAME}</span>
+        </a>
+        <span class="model">MZ&middot;T1 &nbsp;COMPACT DISC TRANSPORT</span>
+      </div>
+
+      <div class="deck" role="group" aria-label="Mozz disc transport">
+        <!-- ambient reachable headline for crawlers / no-JS -->
+        <h1 class="visually-hidden">{HEADLINE}</h1>
+
+        <!-- LEFT: display + programme -->
+        <div class="left">
+          <div class="display" data-role="display">
+            <div class="disp-top">
+              <span class="disc-badge">COMPACT<br />disc</span>
+              <div class="art-stack">
+                {TRACKS.map((t, i) => (
+                  <div class="art" data-art={i} hidden={i !== 0}>
+                    <Shot name={t.shot} sizes="56px" class="art-img" ariaHidden={true} />
+                  </div>
+                ))}
+              </div>
+              <div class="readout">
+                <div class="rline">
+                  <span class="lbl">TRACK</span>
+                  <span class="bignum" data-field="no">01</span>
+                  <span class="of" data-field="total">/ {String(TRACKS.length).padStart(2, '0')}</span>
+                  <span class="state-lamp" data-field="statelamp" aria-hidden="true">PLAY</span>
+                </div>
+                <div class="rline titleline">
+                  <span class="ttl" data-field="title">{TRACKS[0].title}</span>
+                </div>
+                <div class="rline timeline">
+                  <span class="time" data-field="elapsed">0:00</span>
+                  <span class="dash">&mdash;</span>
+                  <span class="time dim" data-field="len">{fmt(TRACKS[0].len)}</span>
+                  <span class="tag" data-field="tag">{TRACKS[0].tag}</span>
+                </div>
+                <div class="bar" role="presentation">
+                  <span class="bar-fill" data-field="bar"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROGRAMME: the current track's real content. All six live in the
+               DOM; the transport reveals one. Without JS every panel shows. -->
+          <div class="programme" data-role="programme">
+            <!-- T1 -->
+            <section class="prog" data-panel={0} aria-labelledby="pt-0" style={`--accent:${TRACKS[0].accent}`}>
+              <h2 class="prog-h" id="pt-0"><i>Track 01</i>{TRACKS[0].title}</h2>
+              <p class="lede">
+                Mozz plays the music already on <b>your own</b> Plex, Jellyfin or
+                Navidrome server. No account to make, nothing to subscribe to,
+                nothing watching what you play.
+              </p>
+              <p class="tagline">{TAGLINE} <span>{SUBLINE}</span></p>
+              <div class="actions">
+                {APP_STORE_URL ? (
+                  <a class="btn btn-primary" href={APP_STORE_URL}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    <span><small>DOWNLOAD ON THE</small>App Store</span>
+                  </a>
+                ) : (
+                  <span class="btn btn-primary is-pending" role="note" aria-label="Coming to the App Store">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    <span><small>COMING TO THE</small>App Store</span>
+                  </span>
+                )}
+                <a class="btn btn-ghost" href={GITHUB_URL}>Read the source</a>
+              </div>
+            </section>
+
+            <!-- T2 servers -->
+            <section class="prog" data-panel={1} aria-labelledby="pt-1" style={`--accent:${TRACKS[1].accent}`} hidden>
+              <h2 class="prog-h" id="pt-1"><i>Track 02</i>{TRACKS[1].title}</h2>
+              <ul class="servers" role="list">
+                {SERVERS.map((s) => (
+                  <li>
+                    <span class="sv-logo"><ServerLogo name={s.name} size={30} brand /></span>
+                    <span class="sv-name">{s.name}</span>
+                    <span class="sv-note">{s.note}</span>
+                  </li>
+                ))}
+              </ul>
+              <p class="foot-note">Point Mozz at more than one and they read like a single collection.</p>
+            </section>
+
+            <!-- T3 features -->
+            <section class="prog" data-panel={2} aria-labelledby="pt-2" style={`--accent:${TRACKS[2].accent}`} hidden>
+              <h2 class="prog-h" id="pt-2"><i>Track 03</i>{TRACKS[2].title}</h2>
+              <ol class="liner" role="list">
+                {FEATURES.map((f, i) => (
+                  <li>
+                    <span class="ix">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="lt">
+                      <b>{f.title}</b>
+                      <span>{f.body}</span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <!-- T4 ownership -->
+            <section class="prog" data-panel={3} aria-labelledby="pt-3" style={`--accent:${TRACKS[3].accent}`} hidden>
+              <h2 class="prog-h" id="pt-3"><i>Track 04</i>{TRACKS[3].title}</h2>
+              <div class="stamps">
+                {OWNERSHIP.map((o) => (
+                  <div class="stamp">
+                    <b>{o.title}</b>
+                    <span>{o.body}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <!-- T5 stats -->
+            <section class="prog" data-panel={4} aria-labelledby="pt-4" style={`--accent:${TRACKS[4].accent}`} hidden>
+              <h2 class="prog-h" id="pt-4"><i>Track 05</i>{TRACKS[4].title}</h2>
+              <dl class="meters">
+                {STATS.map((s) => (
+                  <div class="meter">
+                    <dt>{s.value}</dt>
+                    <dd>{s.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            <!-- T6 faq -->
+            <section class="prog" data-panel={5} aria-labelledby="pt-5" style={`--accent:${TRACKS[5].accent}`} hidden>
+              <h2 class="prog-h" id="pt-5"><i>Track 06</i>{TRACKS[5].title}</h2>
+              <dl class="faq">
+                {FAQS.map((f) => (
+                  <div class="qa">
+                    <dt>{f.q}</dt>
+                    <dd>{f.a}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          </div>
+
+          <div class="tracklist" data-role="tracklist">
+            <div class="tl-head">
+              <span>PROGRAMME</span>
+              <span class="tl-total">TOTAL {fmt(totalLen)}</span>
+            </div>
+            <ol role="list">
+              {TRACKS.map((t, i) => (
+                <li>
+                  <button
+                    type="button"
+                    class="tl-item"
+                    data-track={i}
+                    aria-pressed={i === 0 ? 'true' : 'false'}
+                  >
+                    <span class="tl-no">{t.no}</span>
+                    <span class="tl-title">{t.title}</span>
+                    <span class="tl-len">{fmt(t.len)}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <!-- RIGHT: the disc bay — its own tall column so the disc has room
+             to eject into without colliding with anything. -->
+        <div class="right">
+          <div class="bay" data-role="bay">
+            <div class="tray" data-role="tray">
+              <div class="disc" data-role="disc">
+                <div class="disc-data"></div>
+                <div class="disc-sheen"></div>
+                <div class="disc-label">
+                  <Mark size={44} decorative />
+                </div>
+                <div class="disc-hub"></div>
+              </div>
+            </div>
+            <div class="bay-rim" aria-hidden="true"></div>
+            <div class="bay-glass" data-role="glass" aria-hidden="true"></div>
+            <div class="tray-lip" data-role="lip" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="deck-vents" aria-hidden="true">
+            <div class="vent-rows"><span></span><span></span><span></span><span></span><span></span></div>
+            <p class="vent-tag">MZ&#8209;T1 &middot; SINGLE&#8209;BIT DAC &middot; OPTICAL PICKUP</p>
+          </div>
+        </div>
+
+        <!-- TRANSPORT CONTROLS -->
+        <div class="controls" data-role="controls">
+          <button type="button" class="ctl ctl-eject" data-act="open" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 4 12h16L12 4zM4 16h16v3H4z"/></svg>
+            <em data-field="ejectlabel">Open</em>
+          </button>
+          <button type="button" class="ctl" data-act="prev">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6V5zm3 7 9 7V5l-9 7z"/></svg>
+            <em>Prev</em>
+          </button>
+          <button type="button" class="ctl ctl-play" data-act="play" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7L8 5z"/></svg>
+            <em>Play</em>
+          </button>
+          <button type="button" class="ctl" data-act="pause" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7V5zm6 0h4v14h-4V5z"/></svg>
+            <em>Pause</em>
+          </button>
+          <button type="button" class="ctl" data-act="stop">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
+            <em>Stop</em>
+          </button>
+          <button type="button" class="ctl" data-act="next">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2V5zM6 5l9 7-9 7V5z"/></svg>
+            <em>Next</em>
+          </button>
+          <p class="keys" data-role="keys">
+            <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> skip</span>
+            <span><kbd>Space</kbd> play / pause</span>
+          </p>
+        </div>
+      </div>
+
+      <p class="sr-only" aria-live="polite" data-role="live"></p>
+      <p class="hint" data-role="hint">Press a control. The machine responds.</p>
+    </header>
+
+    <!-- ======================= ANATOMY (scroll) ======================= -->
+    <section class="anatomy" aria-labelledby="anatomy-h">
+      <div class="an-intro">
+        <h2 id="anatomy-h">How a transport reads a disc</h2>
+        <p>
+          A laser tracks one continuous spiral and turns pressed pits into sound.
+          Mozz mirrors your server's whole catalogue into a database on the phone,
+          so browsing and search stay instant whether the server is reachable or
+          not.
+        </p>
+      </div>
+
+      <figure class="fig fig-optics">
+        <svg viewBox="0 0 640 300" role="img" aria-labelledby="optics-t">
+          <title id="optics-t">Cutaway of the optical path: laser diode through lenses to the disc and back to the photodiode</title>
+          <defs>
+            <linearGradient id="lens" x1="0" x2="1"><stop offset="0" stop-color="#e8eef4" stop-opacity=".9"/><stop offset=".5" stop-color="#9aa6b2" stop-opacity=".55"/><stop offset="1" stop-color="#e8eef4" stop-opacity=".9"/></linearGradient>
+            <linearGradient id="subm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9dee5"/><stop offset="1" stop-color="#7f8792"/></linearGradient>
+            <radialGradient id="beamG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff5a6e"/><stop offset="1" stop-color="#c80028" stop-opacity="0"/></radialGradient>
+          </defs>
+
+          <!-- disc substrate, magnified layers, top -->
+          <g>
+            <rect x="70" y="34" width="500" height="9" fill="#c9ccd1"/>
+            <rect x="70" y="43" width="500" height="5" fill="#8b929b"/>
+            <rect x="70" y="48" width="500" height="7" fill="url(#subm)"/>
+            <!-- reflective pit layer -->
+            <g fill="#eef2f6">
+              <rect x="70" y="55" width="500" height="3"/>
+            </g>
+            <g fill="#3a4048">
+              <rect x="110" y="55.5" width="16" height="2"/><rect x="150" y="55.5" width="26" height="2"/>
+              <rect x="196" y="55.5" width="14" height="2"/><rect x="236" y="55.5" width="30" height="2"/>
+              <rect x="286" y="55.5" width="18" height="2"/><rect x="326" y="55.5" width="12" height="2"/>
+              <rect x="360" y="55.5" width="28" height="2"/><rect x="404" y="55.5" width="16" height="2"/>
+              <rect x="440" y="55.5" width="24" height="2"/><rect x="484" y="55.5" width="14" height="2"/>
+              <rect x="512" y="55.5" width="30" height="2"/>
+            </g>
+            <text x="574" y="42" class="anno" text-anchor="start">lacquer</text>
+            <text x="574" y="52" class="anno" text-anchor="start">aluminium</text>
+            <text x="574" y="62" class="anno" text-anchor="start">pits &amp; lands</text>
+          </g>
+
+          <!-- beam up + reflected down -->
+          <g>
+            <polygon points="300,250 296,58 304,58" fill="url(#beamG)" opacity=".85"/>
+            <polygon points="336,250 350,58 358,58" fill="url(#beamG)" opacity=".5"/>
+            <line x1="300" y1="250" x2="300" y2="60" stroke="#ff5a6e" stroke-width="2"/>
+            <circle cx="300" cy="60" r="3.5" fill="#fff"/>
+          </g>
+
+          <!-- objective lens -->
+          <ellipse cx="300" cy="120" rx="42" ry="14" fill="url(#lens)" stroke="#5c6570" stroke-width="1.5"/>
+          <text x="300" y="146" class="anno" text-anchor="middle">objective lens</text>
+
+          <!-- beam splitter -->
+          <rect x="286" y="176" width="28" height="28" transform="rotate(45 300 190)" fill="#aeb6bf" fill-opacity=".35" stroke="#6b7480" stroke-width="1.5"/>
+          <text x="300" y="214" class="anno" text-anchor="middle">beam splitter</text>
+
+          <!-- collimator -->
+          <ellipse cx="300" cy="238" rx="30" ry="10" fill="url(#lens)" stroke="#5c6570" stroke-width="1.2"/>
+
+          <!-- laser diode -->
+          <g>
+            <rect x="286" y="256" width="28" height="20" rx="3" fill="#1f2228" stroke="#c80028" stroke-width="1.5"/>
+            <circle cx="300" cy="266" r="4" fill="#ff5a6e"/>
+            <text x="300" y="290" class="anno" text-anchor="middle">laser diode</text>
+          </g>
+
+          <!-- photodiode on split path -->
+          <line x1="314" y1="190" x2="470" y2="190" stroke="#ff5a6e" stroke-width="1.5" stroke-dasharray="5 4" opacity=".8"/>
+          <g>
+            <rect x="470" y="176" width="46" height="28" rx="3" fill="#1f2228" stroke="#c9ccd1" stroke-width="1.4"/>
+            <g fill="#35e08f" opacity=".9"><rect x="476" y="182" width="7" height="16"/><rect x="486" y="182" width="7" height="16"/><rect x="496" y="182" width="7" height="16"/><rect x="506" y="182" width="7" height="16"/></g>
+            <text x="493" y="220" class="anno" text-anchor="middle">photodiode array</text>
+          </g>
+        </svg>
+        <figcaption>The read head, in cross-section. A laser reads pits pressed into aluminium; Mozz reads a catalogue pressed into your phone.</figcaption>
+      </figure>
+
+      <div class="an-pair">
+        <figure class="fig fig-spiral">
+          <svg viewBox="0 0 300 300" role="img" aria-labelledby="spiral-t">
+            <title id="spiral-t">One continuous data spiral wound from the disc centre outward, magnified to show pits</title>
+            <defs>
+              <radialGradient id="platter" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#20232a"/><stop offset="1" stop-color="#0c0d10"/></radialGradient>
+              <linearGradient id="rainbow" x1="0" x2="1"><stop offset="0" stop-color="#3ad0ff"/><stop offset=".35" stop-color="#8b5cff"/><stop offset=".6" stop-color="#ff5aa6"/><stop offset=".8" stop-color="#ffd24a"/><stop offset="1" stop-color="#5affa6"/></linearGradient>
+            </defs>
+            <circle cx="150" cy="150" r="140" fill="url(#platter)" stroke="#2b2f36" stroke-width="1"/>
+            <g fill="none" stroke="url(#rainbow)" stroke-width="1" opacity=".55">
+              {Array.from({ length: 34 }).map((_, i) => (
+                <circle cx="150" cy="150" r={30 + i * 3.1} />
+              ))}
+            </g>
+            <circle cx="150" cy="150" r="26" fill="#17181c" stroke="#3a3f47" stroke-width="2"/>
+            <circle cx="150" cy="150" r="9" fill="#0c0d10" stroke="#4a5058" stroke-width="1.5"/>
+            <!-- magnifier callout -->
+            <g>
+              <line x1="196" y1="104" x2="250" y2="66" stroke="#c9ccd1" stroke-width="1" stroke-dasharray="3 3"/>
+              <circle cx="250" cy="66" r="8" fill="none" stroke="#c9ccd1" stroke-width="1"/>
+              <g transform="translate(214 12)">
+                <rect x="0" y="0" width="86" height="60" rx="6" fill="#0c0d10" stroke="#c80028" stroke-width="1.5"/>
+                <g fill="#c9ccd1">
+                  <rect x="8" y="14" width="18" height="5"/><rect x="30" y="14" width="9" height="5"/><rect x="43" y="14" width="26" height="5"/>
+                  <rect x="8" y="27" width="10" height="5"/><rect x="22" y="27" width="22" height="5"/><rect x="48" y="27" width="14" height="5"/>
+                  <rect x="8" y="40" width="24" height="5"/><rect x="36" y="40" width="8" height="5"/><rect x="48" y="40" width="20" height="5"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <figcaption>One groove, wound from the centre out — every track on the disc is really the same line.</figcaption>
+        </figure>
+
+        <figure class="fig fig-exploded">
+          <svg viewBox="0 0 300 320" role="img" aria-labelledby="exp-t">
+            <title id="exp-t">Exploded view of the transport mechanism: clamp, disc, spindle motor, laser sled, chassis</title>
+            <defs>
+              <linearGradient id="steelp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d3d8de"/><stop offset="1" stop-color="#8a919b"/></linearGradient>
+            </defs>
+            <g stroke="#5c6570" stroke-dasharray="2 5" stroke-width="1"><line x1="150" y1="30" x2="150" y2="300"/></g>
+            <!-- clamp -->
+            <g transform="translate(150 44)">
+              <ellipse cx="0" cy="0" rx="46" ry="14" fill="url(#steelp)" stroke="#5c6570"/>
+              <ellipse cx="0" cy="-5" rx="14" ry="5" fill="#17181c"/>
+              <text x="70" y="2" class="anno" text-anchor="start">clamp</text>
+            </g>
+            <!-- disc -->
+            <g transform="translate(150 104)">
+              <ellipse cx="0" cy="0" rx="90" ry="26" fill="#15161a" stroke="#2b2f36"/>
+              <ellipse cx="0" cy="0" rx="72" ry="20" fill="none" stroke="#c80028" stroke-opacity=".5"/>
+              <ellipse cx="0" cy="0" rx="16" ry="5" fill="#0c0d10" stroke="#4a5058"/>
+              <text x="110" y="2" class="anno" text-anchor="start">disc</text>
+            </g>
+            <!-- spindle motor -->
+            <g transform="translate(150 168)">
+              <ellipse cx="0" cy="0" rx="34" ry="11" fill="url(#steelp)" stroke="#5c6570"/>
+              <rect x="-10" y="0" width="20" height="26" fill="#20232a" stroke="#4a5058"/>
+              <ellipse cx="0" cy="26" rx="10" ry="4" fill="#20232a" stroke="#4a5058"/>
+              <text x="60" y="2" class="anno" text-anchor="start">spindle motor</text>
+            </g>
+            <!-- laser sled -->
+            <g transform="translate(150 236)">
+              <rect x="-70" y="-10" width="140" height="24" rx="4" fill="#1c1e23" stroke="#4a5058"/>
+              <rect x="-6" y="-18" width="20" height="14" rx="2" fill="#2a2d34" stroke="#c80028"/>
+              <circle cx="4" cy="-11" r="3" fill="#ff5a6e"/>
+              <line x1="-58" y1="14" x2="58" y2="14" stroke="#5c6570" stroke-width="3"/>
+              <text x="86" y="0" class="anno" text-anchor="start">laser sled</text>
+            </g>
+            <!-- chassis -->
+            <g transform="translate(150 296)">
+              <path d="M-96 -14 H96 L84 14 H-84 Z" fill="url(#steelp)" stroke="#5c6570"/>
+              <text x="110" y="0" class="anno" text-anchor="start">chassis</text>
+            </g>
+          </svg>
+          <figcaption>Every part serves one job: spin the disc true, and hold the read head steady. The rest is software.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======================= ADAPTIVE TINT ======================= -->
+    <section class="tint" aria-labelledby="tint-h">
+      <div class="tint-copy">
+        <h2 id="tint-h">The whole app recolours to whatever is playing</h2>
+        <p>
+          Six screens, one app. Mozz pulls its interface from the cover on the
+          platter, so a warm record and a cool one look like different rooms.
+        </p>
+      </div>
+      <div class="tint-show">
+        <div class="tint-phone">
+          <Phone name="mozz-nowplaying" width={252} priority sizes="(max-width:720px) 60vw, 252px" />
+        </div>
+        <ul class="strip" role="list">
+          {['mozz-album-warm', 'mozz-album-red', 'mozz-album-dark', 'mozz-artist', 'mozz-playlist'].map((n) => (
+            <li><Shot name={n} sizes="(max-width:720px) 40vw, 150px" class="strip-img" ariaHidden={true} /></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="foot">
+      <div class="foot-mark">
+        <Mark size={30} />
+        <div>
+          <b>{NAME}</b>
+          <span>{TAGLINE}</span>
+        </div>
+      </div>
+      <p class="foot-lic">Free forever. Open source under <b>GPL-3.0</b> with an App&nbsp;Store Exception.</p>
+      <div class="foot-links">
+        <a href={GITHUB_URL}>GitHub &rarr;</a>
+        {APP_STORE_URL ? (
+          <a href={APP_STORE_URL}>Download</a>
+        ) : (
+          <span class="pending-mini" role="note">App Store — pending</span>
+        )}
+      </div>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .transport {
+    --near-black: #17181c;
+    --black-deep: #0f1013;
+    --panel: #1d1f24;
+    --panel-2: #24272d;
+    --steel: #c9ccd1;
+    --steel-dim: #969ba3;
+    --steel-faint: rgba(201, 204, 209, 0.14);
+    --line: rgba(201, 204, 209, 0.12);
+    --red: #c80028;
+    --red-bright: #e11036;
+    --lcd-bg: #0a0c10;
+    --accent: #c25cff;
+
+    position: relative;
+    min-height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #22242a 0%, var(--near-black) 46%, var(--black-deep) 100%);
+    color: var(--steel);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    overflow-x: clip;
+  }
+
+  .hero-plate {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 100vh;
+    /* Drop-in AI art at /public/hero/transport.jpg — absent by default. */
+    --hero-plate: url('/hero/transport.jpg');
+    background-image: var(--hero-plate);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.14;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .visually-hidden,
+  .sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* ---------- machine shell ---------- */
+  .deckwrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: clamp(1.4rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem) 1.5rem;
+  }
+
+  .brandline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Khand', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    color: var(--steel);
+  }
+  .lockup:hover { color: #fff; }
+  .model {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    color: var(--steel-dim);
+    text-transform: uppercase;
+  }
+
+  .deck {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: clamp(1rem, 2.4vw, 1.6rem);
+    padding: clamp(1.1rem, 2.6vw, 1.9rem);
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, #2a2d33 0%, #202329 8%, #191b20 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+      0 40px 90px -40px rgba(0, 0, 0, 0.85);
+    position: relative;
+  }
+  /* brushed-steel top rail */
+  .deck::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 46%;
+    border-radius: 18px 18px 0 0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 2px, rgba(0,0,0,0.05) 2px 4px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .left { min-width: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .right { display: flex; flex-direction: column; gap: 0.9rem; }
+
+  /* ---------- display ---------- */
+  .display {
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    background:
+      linear-gradient(180deg, #0c0e12, #06080b);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.05),
+      inset 0 2px 16px rgba(0,0,0,0.7),
+      inset 0 0 40px color-mix(in srgb, var(--accent) 22%, transparent);
+    transition: box-shadow 0.5s ease;
+  }
+  .disp-top { display: flex; align-items: center; gap: 0.85rem; }
+
+  .disc-badge {
+    font-family: 'Khand', sans-serif;
+    font-size: 0.5rem;
+    line-height: 0.9;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--steel-dim);
+    text-align: center;
+    flex: none;
+    padding-right: 0.6rem;
+    border-right: 1px solid var(--line);
+  }
+  .disc-badge :global(br) { line-height: 0; }
+
+  .art-stack {
+    position: relative;
+    width: 56px; height: 56px;
+    flex: none;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 24px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .art { position: absolute; inset: 0; }
+  .art :global(.art-img) { width: 100%; height: 100%; object-fit: cover; object-position: center 24%; }
+
+  .readout { flex: 1; min-width: 0; }
+  .rline { display: flex; align-items: baseline; gap: 0.5rem; }
+  .rline .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.22em; color: var(--steel-dim);
+  }
+  .bignum {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 60%, transparent);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+  }
+  .of { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--steel-dim); }
+  .state-lamp {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.18em;
+    color: var(--near-black);
+    background: var(--steel-dim);
+    padding: 0.12rem 0.4rem; border-radius: 3px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .deck[data-state='play'] .state-lamp { background: #35e08f; color: #06210f; }
+  .deck[data-state='pause'] .state-lamp { background: #f2ab24; color: #2a1c00; }
+
+  .titleline { margin-top: 0.35rem; }
+  .ttl {
+    font-family: 'Khand', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+    color: var(--steel);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .timeline { margin-top: 0.15rem; gap: 0.4rem; }
+  .time { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--steel); font-variant-numeric: tabular-nums; }
+  .time.dim, .timeline .dash { color: var(--steel-dim); }
+  .timeline .tag {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--steel-dim);
+  }
+  .bar {
+    margin-top: 0.55rem; height: 4px; border-radius: 3px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .bar-fill {
+    display: block; height: 100%; width: 100%;
+    transform: scaleX(0); transform-origin: left;
+    background: var(--accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 70%, transparent);
+    transition: transform 0.25s linear;
+  }
+
+  /* ---------- programme ---------- */
+  .programme {
+    position: relative;
+    flex: 1;
+    border-radius: 12px;
+    padding: clamp(1.1rem, 2.4vw, 1.7rem);
+    background: linear-gradient(180deg, var(--panel), #191b20);
+    box-shadow: inset 0 0 0 1px var(--line);
+    min-height: 260px;
+  }
+  .prog { max-width: 66ch; }
+  .prog-h {
+    font-family: 'Khand', sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.05rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 0.7rem;
+    display: flex; flex-direction: column; gap: 0.15rem;
+  }
+  .prog-h i {
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .lede { font-size: 1.08rem; color: var(--steel); }
+  .lede b { color: #fff; font-weight: 700; }
+  .tagline {
+    margin-top: 0.8rem;
+    font-family: 'Khand', sans-serif;
+    font-size: 1.25rem; color: var(--steel);
+  }
+  .tagline span { color: var(--red-bright); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.1rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    padding: 0.7rem 1.1rem; border-radius: 10px;
+    font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.05rem;
+    letter-spacing: 0.01em;
+  }
+  .btn svg { width: 22px; height: 22px; fill: currentColor; flex: none; }
+  .btn-primary { background: var(--red); color: #fff; box-shadow: 0 10px 24px -12px var(--red); }
+  .btn-primary:hover { background: var(--red-bright); }
+  .btn-primary span { display: grid; line-height: 1.02; text-align: left; }
+  .btn-primary small { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; letter-spacing: 0.08em; opacity: 0.85; }
+  .btn-primary.is-pending {
+    background: var(--panel-2); color: var(--steel-dim);
+    cursor: default; box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .btn-ghost { background: transparent; color: var(--steel); box-shadow: inset 0 0 0 1px var(--steel-faint); }
+  .btn-ghost:hover { color: #fff; box-shadow: inset 0 0 0 1px var(--steel-dim); }
+
+  /* servers */
+  .servers { display: grid; gap: 0.6rem; margin-top: 0.4rem; }
+  .servers li {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 0.7rem 0.9rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .sv-logo { display: inline-flex; }
+  .sv-name { font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.15rem; color: #fff; }
+  .sv-note { color: var(--steel-dim); font-size: 0.92rem; grid-column: 1 / -1; }
+  @media (min-width: 560px) { .sv-note { grid-column: 3; } }
+  .foot-note { margin-top: 0.8rem; color: var(--steel-dim); font-size: 0.92rem; }
+
+  /* liner (features) */
+  .liner { display: grid; gap: 0.05rem; }
+  .liner li {
+    display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.6rem;
+    padding: 0.7rem 0; border-top: 1px solid var(--line);
+  }
+  .liner li:first-child { border-top: 0; }
+  .liner .ix { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); padding-top: 0.2rem; }
+  .liner .lt { display: grid; gap: 0.15rem; }
+  .liner .lt b { font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.14rem; color: #fff; }
+  .liner .lt span { color: var(--steel-dim); font-size: 0.95rem; }
+
+  /* stamps (ownership) */
+  .stamps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+  .stamp {
+    padding: 0.9rem 1rem; border-radius: 10px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 55%, transparent);
+    background: color-mix(in srgb, var(--red) 8%, transparent);
+  }
+  .stamp b {
+    display: block;
+    font-family: 'Khand', sans-serif; font-weight: 700;
+    font-size: 1.2rem; letter-spacing: 0.02em; text-transform: uppercase;
+    color: #fff;
+  }
+  .stamp span { color: var(--steel-dim); font-size: 0.92rem; }
+
+  /* meters (stats) */
+  .meters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+  .meter {
+    display: flex; flex-direction: column; gap: 0.2rem;
+    padding: 0.85rem 1rem; border-radius: 10px;
+    background: var(--lcd-bg);
+    box-shadow: inset 0 0 0 1px var(--line), inset 0 0 26px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .meter dt {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem); color: var(--accent);
+    text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+  .meter dd { color: var(--steel-dim); font-size: 0.86rem; }
+
+  /* faq */
+  .faq { display: grid; gap: 0.05rem; }
+  .qa { padding: 0.75rem 0; border-top: 1px solid var(--line); }
+  .qa:first-child { border-top: 0; }
+  .qa dt { font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.1rem; color: #fff; margin-bottom: 0.2rem; }
+  .qa dd { color: var(--steel-dim); font-size: 0.95rem; max-width: 62ch; }
+
+  /* ---------- bay / disc / tray ---------- */
+  .bay {
+    position: relative;
+    flex: none;
+    height: 480px;
+    border-radius: 12px;
+    background: radial-gradient(120% 60% at 50% 22%, #0f1115, #08090c);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 4px 24px rgba(0,0,0,0.7);
+    overflow: hidden;
+  }
+  .tray {
+    position: absolute;
+    left: 50%; top: 158px;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    transition: top 0.62s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .disc {
+    position: relative;
+    width: 208px; height: 208px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 38% 32%, #2a2d34 0%, #14151a 40%, #0a0b0e 100%);
+    box-shadow: 0 18px 34px -14px rgba(0,0,0,0.8);
+  }
+  .disc-data {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg,
+      #3ad0ff, #8b5cff, #ff5aa6, #ffd24a, #5affa6, #3ad0ff);
+    -webkit-mask: radial-gradient(circle, transparent 0 30%, #000 31% 96%, transparent 97%);
+    mask: radial-gradient(circle, transparent 0 30%, #000 31% 96%, transparent 97%);
+    opacity: 0.42;
+    mix-blend-mode: screen;
+  }
+  .disc-sheen {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 210deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,0.35) 34deg, rgba(255,255,255,0) 70deg, rgba(255,255,255,0) 250deg, rgba(255,255,255,0.18) 288deg, rgba(255,255,255,0) 320deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 30%, #000 31% 96%, transparent 97%);
+    mask: radial-gradient(circle, transparent 0 30%, #000 31% 96%, transparent 97%);
+    pointer-events: none;
+  }
+  .disc-label {
+    position: absolute; inset: 29%;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 40% 35%, #d6002b, #b00023 55%, #860000 100%);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.18);
+  }
+  .disc-label :global(.mozz-mark) { filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); }
+  .disc-hub {
+    position: absolute; left: 50%; top: 50%;
+    width: 30px; height: 30px; transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, #0a0b0e 0 40%, #1c1e23 42%);
+    box-shadow: inset 0 0 0 2px #3a3f47, 0 0 0 1px rgba(0,0,0,0.6);
+  }
+  .deck[data-spin='1'] .disc { animation: spin 2.4s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* steel bezel ring framing the disc window (disc stays fully visible) */
+  .bay-rim {
+    position: absolute; left: 50%; top: 158px; transform: translate(-50%, -50%);
+    width: 238px; height: 238px; border-radius: 50%;
+    background: transparent;
+    box-shadow:
+      inset 0 0 0 2px rgba(201,204,209,0.22),
+      inset 0 0 22px rgba(0,0,0,0.55),
+      0 0 0 9px #1a1c21,
+      0 0 0 10px rgba(201,204,209,0.13),
+      0 12px 26px -12px rgba(0,0,0,0.7);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .bay-glass {
+    position: absolute;
+    left: 50%; top: 158px; transform: translate(-50%, -50%);
+    width: 214px; height: 214px; border-radius: 50%;
+    background: radial-gradient(circle at 42% 34%, rgba(120,140,160,0.16), rgba(10,12,16,0.5) 70%);
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.55);
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .tray-lip {
+    position: absolute;
+    left: 50%; top: 300px; transform: translate(-50%, 0) scaleY(0.35);
+    transform-origin: top;
+    width: 214px; height: 30px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(180deg, #2a2d33, #16181c);
+    box-shadow: 0 14px 24px -8px rgba(0,0,0,0.78), inset 0 1px 0 rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    opacity: 0; z-index: 1;
+    transition: transform 0.5s ease, opacity 0.4s ease;
+  }
+  .tray-lip span { width: 26px; height: 3px; border-radius: 2px; background: rgba(201,204,209,0.3); }
+
+  /* lower faceplate below the bay — fills tall tracks with a designed vent panel */
+  .deck-vents {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #1c1e23, #141519);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(0,0,0,0.4);
+  }
+  .vent-rows { display: flex; flex-direction: column; gap: 9px; padding-top: 2px; }
+  .vent-rows span {
+    height: 2px; border-radius: 2px;
+    background: repeating-linear-gradient(90deg, rgba(201,204,209,0.14) 0 6px, transparent 6px 12px);
+  }
+  .vent-rows span:nth-child(2) { width: 92%; }
+  .vent-rows span:nth-child(3) { width: 84%; }
+  .vent-rows span:nth-child(4) { width: 92%; }
+  .vent-rows span:nth-child(5) { width: 78%; }
+  .vent-tag {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: rgba(201,204,209,0.42);
+    text-transform: uppercase;
+  }
+
+  /* OPEN state */
+  .deck[data-open='1'] .tray { top: 330px; }
+  .deck[data-open='1'] .bay-glass { opacity: 0; }
+  .deck[data-open='1'] .tray-lip { top: 430px; transform: translate(-50%, 0) scaleY(1); opacity: 1; }
+
+  /* ---------- tracklist ---------- */
+  .tracklist {
+    border-radius: 12px;
+    padding: 0.8rem;
+    background: linear-gradient(180deg, var(--panel), #191b20);
+    box-shadow: inset 0 0 0 1px var(--line);
+    display: flex; flex-direction: column;
+  }
+  .tl-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em;
+    color: var(--steel-dim); padding: 0.2rem 0.4rem 0.55rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .tracklist ol { display: grid; gap: 0.1rem; margin-top: 0.4rem; }
+  .tl-item {
+    width: 100%;
+    display: grid; grid-template-columns: 1.9rem 1fr auto; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.5rem; border-radius: 7px;
+    background: transparent; border: 0; cursor: pointer; text-align: left;
+    color: var(--steel-dim);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tl-item:hover { background: rgba(255,255,255,0.04); color: var(--steel); }
+  .tl-no { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+  .tl-title { font-family: 'Khand', sans-serif; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-len { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+  .tl-item[aria-pressed='true'] {
+    color: #fff;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .tl-item[aria-pressed='true'] .tl-no { color: var(--accent); }
+
+  /* ---------- controls ---------- */
+  .controls {
+    grid-column: 1 / -1;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+    margin-top: 0.2rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #23262c, #17191e);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.5);
+  }
+  .ctl {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    min-width: 66px; padding: 0.55rem 0.7rem;
+    border: 0; border-radius: 10px; cursor: pointer;
+    background: linear-gradient(180deg, #34383f, #23262c);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 3px 0 #0d0e11, 0 5px 10px -4px rgba(0,0,0,0.6);
+    color: var(--steel);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .ctl svg { width: 22px; height: 22px; fill: currentColor; }
+  .ctl em {
+    font-style: normal; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--steel-dim);
+  }
+  .ctl:hover { color: #fff; }
+  .ctl:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 #0d0e11; }
+  .ctl-play svg { fill: var(--red-bright); }
+  .ctl[aria-pressed='true'] {
+    background: linear-gradient(180deg, #3a2024, #2a1418);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 60%, transparent), 0 3px 0 #0d0e11;
+  }
+  .ctl[aria-pressed='true'] em { color: color-mix(in srgb, var(--red-bright) 80%, #fff); }
+  .ctl-play[aria-pressed='true'] svg { fill: #35e08f; }
+
+  .keys {
+    margin-left: auto; display: flex; gap: 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--steel-dim);
+  }
+  .keys span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  kbd {
+    font-family: inherit; font-size: 0.58rem;
+    padding: 0.1rem 0.35rem; border-radius: 4px;
+    background: #0e0f13; box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--steel);
+  }
+
+  .hint {
+    text-align: center; margin-top: 0.9rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.14em; color: var(--steel-dim);
+  }
+
+  /* when JS drives the machine, only one panel shows */
+  .transport.is-live .prog[hidden] { display: none; }
+
+  /* ---------- anatomy ---------- */
+  .anatomy {
+    position: relative; z-index: 1;
+    max-width: 1120px; margin: 0 auto;
+    padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 3vw, 2rem) 2rem;
+  }
+  .an-intro { max-width: 60ch; margin-bottom: 2.4rem; }
+  .an-intro h2 {
+    font-family: 'Khand', sans-serif; font-weight: 600;
+    font-size: clamp(1.8rem, 4.4vw, 3rem); line-height: 1.02;
+    letter-spacing: -0.01em; color: #fff; margin-bottom: 0.7rem;
+  }
+  .an-intro p { color: var(--steel-dim); font-size: 1.05rem; }
+
+  .fig {
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--panel), #14161a);
+    box-shadow: inset 0 0 0 1px var(--line);
+    padding: clamp(1rem, 2.4vw, 1.8rem);
+    margin: 0;
+  }
+  .fig svg { width: 100%; height: auto; }
+  .fig :global(.anno) {
+    font-family: 'JetBrains Mono', monospace; font-size: 8px;
+    letter-spacing: 0.08em; fill: var(--steel-dim); text-transform: uppercase;
+  }
+  .fig figcaption { margin-top: 1rem; color: var(--steel-dim); font-size: 0.95rem; max-width: 60ch; }
+  .fig-optics { margin-bottom: 1.4rem; }
+  .an-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  @media (max-width: 680px) { .an-pair { grid-template-columns: 1fr; } }
+
+  /* ---------- adaptive tint ---------- */
+  .tint {
+    position: relative; z-index: 1;
+    max-width: 1120px; margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 3vw, 2rem);
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .tint-copy h2 {
+    font-family: 'Khand', sans-serif; font-weight: 600;
+    font-size: clamp(1.7rem, 4vw, 2.7rem); line-height: 1.03; color: #fff; margin-bottom: 0.7rem;
+  }
+  .tint-copy p { color: var(--steel-dim); font-size: 1.05rem; max-width: 46ch; }
+  .tint-show { display: flex; align-items: center; gap: 1.2rem; }
+  .tint-phone :global(.phone) {
+    --phone-bezel: linear-gradient(#2a2d33, #131418);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(201, 204, 209, 0.2);
+    --phone-shadow: 0 34px 70px -30px rgba(0,0,0,0.75);
+    flex: none;
+  }
+  .strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; flex: 1; min-width: 0; }
+  .strip li { border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); aspect-ratio: 3 / 4; }
+  .strip :global(.strip-img) { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  @media (max-width: 780px) {
+    .tint { grid-template-columns: 1fr; }
+    .tint-show { flex-direction: column; }
+    .strip { grid-template-columns: repeat(3, 1fr); width: 100%; }
+  }
+
+  /* ---------- footer ---------- */
+  .foot {
+    position: relative; z-index: 1;
+    max-width: 1120px; margin: 0 auto;
+    padding: 2rem clamp(1rem, 3vw, 2rem) 3.5rem;
+    border-top: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem 2rem;
+  }
+  .foot-mark { display: inline-flex; align-items: center; gap: 0.7rem; }
+  .foot-mark div { display: grid; }
+  .foot-mark b { font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.25rem; color: #fff; }
+  .foot-mark span { color: var(--steel-dim); font-size: 0.9rem; }
+  .foot-lic { color: var(--steel-dim); font-size: 0.92rem; max-width: 34ch; }
+  .foot-lic b { color: var(--steel); }
+  .foot-links { margin-left: auto; display: flex; align-items: center; gap: 1.1rem; }
+  .foot-links a { font-family: 'Khand', sans-serif; font-weight: 600; font-size: 1.1rem; color: #fff; }
+  .foot-links a:hover { color: var(--red-bright); }
+  .pending-mini {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.1em;
+    color: var(--steel-dim); padding: 0.35rem 0.6rem; border-radius: 6px;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px) {
+    .deck { grid-template-columns: 1fr; }
+    .bay { min-height: 460px; order: -1; }
+    .disc { width: 196px; height: 196px; }
+    .bay-rim { top: 150px; width: 224px; height: 224px; }
+    .tray { top: 150px; }
+    .bay-glass { top: 150px; width: 202px; height: 202px; }
+    .tray-lip { top: 288px; width: 202px; }
+    .deck[data-open='1'] .tray { top: 314px; }
+    .deck[data-open='1'] .tray-lip { top: 410px; }
+  }
+  @media (max-width: 460px) {
+    .stamps, .meters { grid-template-columns: 1fr; }
+    .keys { width: 100%; margin: 0.3rem 0 0; justify-content: center; }
+    .ctl { min-width: 56px; flex: 1; }
+  }
+</style>
+
+<script>
+  const deck = document.querySelector('[data-role="controls"]')?.closest('.deck');
+  const root = document.querySelector('.transport');
+  if (deck && root) {
+    const q = (s, el = deck) => el.querySelector(s);
+    const qa = (s, el = deck) => Array.from(el.querySelectorAll(s));
+
+    const tracks = qa('.tl-item').map((b) => ({
+      no: b.querySelector('.tl-no').textContent,
+      title: b.querySelector('.tl-title').textContent,
+      len: toSec(b.querySelector('.tl-len').textContent),
+      tag: '',
+    }));
+
+    // pull tag + accent from panels
+    const panels = qa('.prog');
+    const accents = panels.map((p) => p.style.getPropertyValue('--accent').trim());
+    const tags = qa('.timeline .tag'); // unused per-track; read from data
+
+    function toSec(t) { const [m, s] = t.split(':').map(Number); return m * 60 + s; }
+    function fmt(s) { return `${Math.floor(s / 60)}:${String(Math.round(s) % 60).padStart(2, '0')}`; }
+
+    const arts = qa('.art');
+    const tagField = q('[data-field="tag"]');
+    const noField = q('[data-field="no"]');
+    const titleField = q('[data-field="title"]');
+    const elapsedField = q('[data-field="elapsed"]');
+    const lenField = q('[data-field="len"]');
+    const barField = q('[data-field="bar"]');
+    const lamp = q('[data-field="statelamp"]');
+    const live = document.querySelector('[data-role="live"]');
+    const hint = q('[data-role="hint"]', deck.parentElement) || document.querySelector('[data-role="hint"]');
+    const ejectLabel = q('[data-field="ejectlabel"]');
+    const btn = (a) => q(`.ctl[data-act="${a}"]`);
+    const perTag = ['Disc one', 'The sources', 'Six functions', 'Four promises', 'Four figures', 'Five answers'];
+
+    let cur = 0, elapsed = 0, playing = false, paused = false, open = false, timer = null;
+
+    root.classList.add('is-live');
+
+    function showPanel(i) {
+      panels.forEach((p, k) => { p.hidden = k !== i; });
+      arts.forEach((a, k) => { a.hidden = k !== i; });
+      qa('.tl-item').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+      root.style.setProperty('--dummy', '0');
+      const accent = accents[i] || '#c25cff';
+      deck.style.setProperty('--accent', accent);
+      q('.display').style.setProperty('--accent', accent);
+      q('.programme').style.setProperty('--accent', accent);
+    }
+
+    function paint() {
+      const t = tracks[cur];
+      noField.textContent = t.no;
+      titleField.textContent = t.title;
+      tagField.textContent = perTag[cur] || '';
+      lenField.textContent = fmt(t.len);
+      elapsedField.textContent = fmt(elapsed);
+      const pct = t.len ? Math.min(100, (elapsed / t.len) * 100) : 0;
+      barField.style.transform = `scaleX(${pct / 100})`;
+      lamp.textContent = playing ? 'PLAY' : paused ? 'PAUSE' : 'STOP';
+      deck.dataset.state = playing ? 'play' : paused ? 'pause' : 'stop';
+      deck.dataset.spin = playing ? '1' : '0';
+    }
+
+    function announce(extra) {
+      if (!live) return;
+      const t = tracks[cur];
+      live.textContent = `Track ${cur + 1} of ${tracks.length}: ${t.title}. ${extra}`;
+    }
+
+    function select(i, keepPlaying) {
+      cur = (i + tracks.length) % tracks.length;
+      elapsed = 0;
+      showPanel(cur);
+      paint();
+      announce(playing ? 'Playing.' : 'Selected.');
+    }
+
+    function tick() {
+      if (!playing) return;
+      elapsed += 1;
+      if (elapsed >= tracks[cur].len) {
+        if (cur < tracks.length - 1) { select(cur + 1); return; }
+        stop(); announce('End of disc.'); return;
+      }
+      paint();
+    }
+
+    function startTimer() { clearInterval(timer); timer = setInterval(tick, 1000); }
+
+    function play() {
+      if (open) closeTray();
+      playing = true; paused = false;
+      btn('play').setAttribute('aria-pressed', 'true');
+      btn('pause').setAttribute('aria-pressed', 'false');
+      startTimer(); paint(); announce('Playing.');
+      setHint('Playing. The disc is spinning.');
+    }
+    function pause() {
+      if (!playing && !paused) return;
+      if (playing) { playing = false; paused = true; }
+      else { playing = true; paused = false; }
+      clearInterval(timer);
+      if (playing) startTimer();
+      btn('play').setAttribute('aria-pressed', String(playing));
+      btn('pause').setAttribute('aria-pressed', String(paused));
+      paint(); announce(playing ? 'Playing.' : 'Paused.');
+      setHint(playing ? 'Playing.' : 'Paused.');
+    }
+    function stop() {
+      playing = false; paused = false; elapsed = 0; clearInterval(timer);
+      btn('play').setAttribute('aria-pressed', 'false');
+      btn('pause').setAttribute('aria-pressed', 'false');
+      paint(); setHint('Stopped.');
+    }
+    function openTray() {
+      open = true; deck.dataset.open = '1';
+      if (playing || paused) stop();
+      btn('open').setAttribute('aria-pressed', 'true');
+      ejectLabel.textContent = 'Close';
+      announce('Tray open. Disc ejected.');
+      setHint('Tray open — the disc is out. Press Close.');
+    }
+    function closeTray() {
+      open = false; deck.dataset.open = '0';
+      btn('open').setAttribute('aria-pressed', 'false');
+      ejectLabel.textContent = 'Open';
+      announce('Tray closed. Disc loaded.');
+      setHint('Disc loaded. Press Play.');
+    }
+    function toggleTray() { open ? closeTray() : openTray(); }
+    function setHint(s) { if (hint) hint.textContent = s; }
+
+    const actions = { open: toggleTray, prev: () => select(cur - 1), next: () => select(cur + 1), play, pause, stop };
+    qa('.ctl').forEach((b) => b.addEventListener('click', () => actions[b.dataset.act]?.()));
+    qa('.tl-item').forEach((b) => b.addEventListener('click', () => { select(Number(b.dataset.track)); if (playing) play(); }));
+
+    document.addEventListener('keydown', (e) => {
+      const tag = e.target && e.target.tagName;
+      if (e.key === 'ArrowRight') { e.preventDefault(); select(cur + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); select(cur - 1); }
+      else if (e.key === ' ' || e.code === 'Space') {
+        if (tag === 'BUTTON' || tag === 'A') return; // let the focused control act
+        e.preventDefault();
+        playing || paused ? pause() : play();
+      }
+    });
+
+    // initial paint
+    showPanel(0); paint();
+    setHint('Disc loaded. Press Play — or ← → to skip.');
+  }
+</script>

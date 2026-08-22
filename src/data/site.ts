@@ -142,6 +142,60 @@ export interface Variant {
 
 export const VARIANTS: Variant[] = [
   {
+    slug: 'silverface',
+    name: 'Silverface',
+    vibe: 'a 1974 receiver, leaned all the way in',
+    blurb:
+      'Brushed aluminium, walnut end caps, a real VU needle and knurled controls. The Hi-Fi idea taken past restraint into full hardware.',
+    swatch: ['#cdc9c1', '#8a8579', '#c80028'],
+    mood: 'light',
+  },
+  {
+    slug: 'transport',
+    name: 'Transport',
+    vibe: 'the page is the CD player',
+    blurb:
+      'No scrolling brochure. A disc transport you actually operate — load the tray, press play, skip tracks — and the product explains itself as you use it.',
+    swatch: ['#17181c', '#c9ccd1', '#c80028'],
+    mood: 'dark',
+  },
+  {
+    slug: 'deck',
+    name: 'Deck',
+    vibe: 'a 1988 CD deck at 2am',
+    blurb:
+      'Black anodised, green fluorescent readouts, digital typography. The era the disc in the logo actually comes from.',
+    swatch: ['#0a0b0d', '#35e08f', '#c80028'],
+    mood: 'dark',
+  },
+  {
+    slug: 'firstlisten',
+    name: 'First Listen',
+    vibe: 'unfamiliar hardware you cannot stop touching',
+    blurb:
+      'The wildcard. Built for the feeling of being handed a device you have never seen before and working out what it does by pressing things.',
+    swatch: ['#e8ff54', '#16161b', '#ff4d6d'],
+    mood: 'dark',
+  },
+  {
+    slug: 'parlour',
+    name: 'Parlour',
+    vibe: 'a warm editorial listening room',
+    blurb:
+      'Cream and burnt orange, enormous display type, generous photography. Confident and expensive-looking — the most conventionally beautiful of the set.',
+    swatch: ['#f2e9d8', '#e2701f', '#241c14'],
+    mood: 'light',
+  },
+  {
+    slug: 'diorama',
+    name: 'Diorama',
+    vibe: 'a desk drawer of retro tech, drawn',
+    blurb:
+      'Isometric illustrated scenes — disc players, cases, cables, headphones — flat colour and clean line. Charming and entirely hand-drawn.',
+    swatch: ['#f7ede0', '#e8703a', '#3b6ea5'],
+    mood: 'light',
+  },
+  {
     slug: 'vinyl',
     name: 'Vinyl',
     vibe: 'the groove itself',

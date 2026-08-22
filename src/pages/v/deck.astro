@@ -1,0 +1,1035 @@
+---
+/**
+ * VARIANT — DECK
+ *
+ * A 1988 black-face CD deck, and the room it lives in at 2am. The Mozz mark is
+ * an 8-bit compact disc, so this direction places the design in the era the
+ * disc actually comes from (roughly 1982–1995): black anodised aluminium, a
+ * cold green fluorescent display, seven-segment readouts, a track calendar, a
+ * bar-graph, small square rubber buttons and a jog cluster.
+ *
+ * Where the light comes from: the display is the only light source in the room,
+ * so the surfaces nearest the glass carry a soft green cast that falls off with
+ * distance. The VFD glow is built as a genuine layered bloom (an SVG blur on its
+ * own group), never a zero-offset box-shadow standing in for a shadow.
+ *
+ * It COUNTS, where the silver-face variant MEASURES: numbers, indexes, a track
+ * calendar, elapsed and remaining. STATS live on the display as readouts and
+ * FEATURES are a programmed track index, not a card grid.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your library, read straight off the disc.';
+
+// ---- Seven-segment engine -------------------------------------------------
+// Each glyph lights a subset of segments a–g; every readout on the page is
+// drawn from the same primitive, so the digital typography is genuinely
+// digital rather than a font pretending to be.
+const SEGS: Record<string, string> = {
+  '0': 'abcdef', '1': 'bc', '2': 'abdeg', '3': 'abcdg', '4': 'bcfg',
+  '5': 'acdfg', '6': 'acdefg', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg',
+  '-': 'g', ' ': '',
+};
+const W = 26, H = 46, M = 3, TH = 6, GAP = 10, COLON = 16;
+const hbar = (x0: number, x1: number, y: number) => {
+  const h = TH / 2;
+  return `${x0},${y} ${x0 + h},${y - h} ${x1 - h},${y - h} ${x1},${y} ${x1 - h},${y + h} ${x0 + h},${y + h}`;
+};
+const vbar = (x: number, y0: number, y1: number) => {
+  const h = TH / 2;
+  return `${x},${y0} ${x + h},${y0 + h} ${x + h},${y1 - h} ${x},${y1} ${x - h},${y1 - h} ${x - h},${y0 + h}`;
+};
+function cellPolys(ox: number, ch: string) {
+  const on = new Set((SEGS[ch] ?? '').split(''));
+  const x0 = ox + M, x1 = ox + W - M, yA = M, yG = H / 2, yD = H - M;
+  const g: Record<string, string> = {
+    a: hbar(x0, x1, yA), g: hbar(x0, x1, yG), d: hbar(x0, x1, yD),
+    f: vbar(x0, yA, yG), b: vbar(x1, yA, yG), e: vbar(x0, yG, yD), c: vbar(x1, yG, yD),
+  };
+  return Object.entries(g).map(([k, p]) => ({ on: on.has(k), p }));
+}
+let SEG_UID = 0;
+/** Render `text` as a seven-segment readout SVG string. `:` is a two-dot colon. */
+function seg(text: string): string {
+  const uid = `bloom${SEG_UID++}`;
+  let x = 0;
+  const off: string[] = [], lit: string[] = [];
+  for (const ch of text) {
+    if (ch === ':') {
+      const cx = x + COLON / 2;
+      lit.push(`<circle cx="${cx}" cy="${H * 0.33}" r="${TH / 2}"/>`);
+      lit.push(`<circle cx="${cx}" cy="${H * 0.67}" r="${TH / 2}"/>`);
+      x += COLON;
+      continue;
+    }
+    for (const s of cellPolys(x, ch)) {
+      (s.on ? lit : off).push(`<polygon points="${s.p}"/>`);
+    }
+    x += W + GAP;
+  }
+  const w = Math.max(x - GAP, W);
+  return `<svg class="seg" viewBox="0 0 ${w} ${H}" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+    <defs><filter id="${uid}" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.4"/></filter></defs>
+    <g class="seg-off">${off.join('')}</g>
+    <g class="seg-glow" filter="url(#${uid})">${lit.join('')}</g>
+    <g class="seg-on">${lit.join('')}</g>
+  </svg>`;
+}
+
+// STATS split into a segment value + a small silkscreen unit legend.
+const readouts = STATS.map((s) => {
+  const m = s.value.match(/^(\$?)([\d.]+)(\D*)$/);
+  return {
+    prefix: m ? m[1] : '',
+    digits: m ? m[2] : s.value,
+    unit: m ? m[3] : '',
+    label: s.label,
+  };
+});
+
+// Track calendar: 16 positions. The first six are "played" (dark); the rest
+// stay lit — an honest now-on-7-of-16 indicator.
+const calendar = Array.from({ length: 16 }, (_, i) => ({ n: i + 1, played: i < 6 }));
+
+// Fixed VFD legends. Only the ones describing an active mode are lit.
+const legends = [
+  { t: 'REPEAT', on: true }, { t: 'RANDOM', on: false }, { t: 'A→B', on: false },
+  { t: 'INDEX', on: true }, { t: 'EMPHASIS', on: false }, { t: 'GAPLESS', on: true },
+];
+
+// Bar-graph "time remaining": lit head, dim tail.
+const bars = Array.from({ length: 28 }, (_, i) => i < 17);
+
+const featureIndex = FEATURES.map((f, i) => ({ ...f, n: String(i + 1).padStart(2, '0') }));
+const faces = ['mozz-album-warm', 'mozz-album-red', 'mozz-artist', 'mozz-album-dark', 'mozz-playlist'];
+---
+
+<Layout
+  title={`${NAME} — your library, read straight off the disc`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — counted out on a black-face deck, no account, no tracking, no subscription."
+  themeColor="#0a0b0d"
+  noindex
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=khand@400,500,600,700&f[]=satoshi@400,500,700,900&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="dk">
+    <!--
+      THESIS: not a scrolling brochure but a machine and the dark room it sits
+      in. The green fluorescent display is the light source; everything is read
+      off it. The 8-bit disc in the mark belongs to the CD era, so the whole
+      page is dressed as a 1988 black-face deck rather than 1974 silver.
+      OWN-WORLD: #0a0b0d anodised black + black glass, #35e08f fluorescent green
+      as the light, cyan as a secondary readout colour, #c80028 Mozz red as the
+      single of-the-era accent stripe. Khand condensed for silkscreen legends
+      and display type; Satoshi for body. Every depicted control does or shows
+      something — honest skeuomorphism only.
+      STORY: this is my library, on my server, counted out on hardware that is
+      mine — free, open, nothing phoning home.
+    -->
+    <VariantBar slug="deck" tone="neutral" />
+
+    <!--
+      HERO PLATE: optional supplied artwork drops in at public/hero/deck.jpg
+      (served as /hero/deck.jpg) via the --hero-plate custom property on .hero
+      below. Until that file exists the layered CSS "dark room" renders on its
+      own, so a missing file degrades to the CSS art — never a broken image.
+    -->
+    <header class="hero">
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <a class="wordmark" href="/" aria-label={`${NAME} home`}>
+          <Mark size={26} decorative />
+          <span>{NAME}</span>
+        </a>
+
+        <div class="hero-copy">
+          <p class="model" aria-hidden="true">MODEL MZ&middot;88 &middot; COMPACT DISC PLAYER</p>
+          <h1>{HEADLINE}</h1>
+          <p class="lede">
+            Point {NAME} at your own Plex, Jellyfin or Navidrome server and it
+            plays what is already there — no account to make, nothing to
+            subscribe to, nothing listening in. Free forever, open source.
+          </p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <span class="led" aria-hidden="true"></span>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+
+        <!-- The display: the one light in the room. -->
+        <div class="vfd" role="group" aria-label="Deck display">
+          <div class="vfd-glass">
+            <div class="vfd-row vfd-top">
+              <div class="vfd-track">
+                <span class="silk">TRACK</span>
+                <div class="seg-wrap seg-lg" set:html={seg('07')} />
+              </div>
+              <div class="vfd-time">
+                <span class="silk">ELAPSED</span>
+                <div class="seg-wrap" set:html={seg('3:41')} />
+              </div>
+              <div class="vfd-time">
+                <span class="silk">REMAIN</span>
+                <div class="seg-wrap seg-cyan" set:html={seg('-2:18')} />
+              </div>
+            </div>
+
+            <div class="vfd-bar" role="img" aria-label="Time remaining bar graph">
+              {bars.map((b) => <span class={b ? 'on' : ''}></span>)}
+            </div>
+
+            <div class="vfd-calendar" role="img" aria-label="Track calendar, six played">
+              {calendar.map((c) => (
+                <span class={c.played ? 'played' : 'lit'}>{String(c.n).padStart(2, '0')}</span>
+              ))}
+            </div>
+
+            <ul class="vfd-legends" aria-hidden="true">
+              {legends.map((l) => <li class={l.on ? 'on' : ''}>{l.t}</li>)}
+            </ul>
+          </div>
+          <p class="vfd-caption">The display is the light in the room.</p>
+        </div>
+
+        <!-- A phone on the dark desk, lit by the display. -->
+        <div class="desk-phone">
+          <Phone name="mozz-nowplaying" width={198} priority class="dphone" />
+          <span class="desk-line" aria-hidden="true">NOW PLAYING &middot; adaptive tint</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Servers: a rack of separates in the dark, only the displays lit. -->
+    <section class="rack" aria-labelledby="rack-h">
+      <div class="section-head">
+        <h2 id="rack-h">Three servers. One deck reads them all.</h2>
+        <p>Stack your own Plex, Jellyfin or Navidrome and browse them like they
+          were always the same collection.</p>
+      </div>
+      <div class="rack-stack">
+        {SERVERS.map((s, i) => (
+          <article class="unit">
+            <div class="unit-face">
+              <div class="unit-win" style={`--i:${i}`}>
+                <ServerLogo name={s.name} size={30} brand />
+                <span class="unit-name">{s.name}</span>
+                <span class="unit-dot" aria-hidden="true"></span>
+              </div>
+              <p class="unit-note">{s.note}</p>
+              <div class="unit-vents" aria-hidden="true">
+                {Array.from({ length: 7 }).map(() => <span></span>)}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Features: a programmed track index, read off the display. -->
+    <section class="program" aria-labelledby="prog-h">
+      <div class="section-head">
+        <h2 id="prog-h">What it does, programmed in order.</h2>
+        <p>Six functions, indexed like tracks on a disc.</p>
+      </div>
+      <ol class="prog-list">
+        {featureIndex.map((f) => (
+          <li>
+            <span class="prog-n" aria-hidden="true">{f.n}</span>
+            <div class="prog-body">
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </div>
+            <span class="prog-cue" aria-hidden="true"></span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- How it reads: a disc cross-section, laser on pit and land. -->
+    <section class="optics" aria-labelledby="optics-h">
+      <div class="optics-copy">
+        <h2 id="optics-h">Pit, land, and a light that never wears the groove.</h2>
+        <p>
+          A disc is read, not dragged. A laser tracks a spiral of pits and lands
+          and reflects the difference back as ones and zeros. {NAME} works the
+          same way with your files: it reads what you already own and plays it
+          untouched, instead of quietly re-encoding it.
+        </p>
+        <dl class="optics-facts">
+          <div><dt set:html={seg('16')} /><dd><b>ms</b> search across 100,000 tracks</dd></div>
+          <div><dt set:html={seg('75')} /><dd><b>ms</b> from tap to first note</dd></div>
+        </dl>
+      </div>
+      <figure class="optics-fig" aria-hidden="true">
+        <svg viewBox="0 0 420 360" role="img" aria-label="Cross-section of a compact disc being read by a laser">
+          <defs>
+            <linearGradient id="poly" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1a1e24"/>
+              <stop offset="1" stop-color="#0c0e12"/>
+            </linearGradient>
+            <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#35e08f" stop-opacity="0.9"/>
+              <stop offset="1" stop-color="#35e08f" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="beamGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5"/>
+            </filter>
+          </defs>
+
+          <!-- substrate layers -->
+          <rect x="40" y="120" width="340" height="40" fill="url(#poly)"/>
+          <rect x="40" y="112" width="340" height="10" fill="#c9d2cc" opacity="0.72"/>
+          <text x="392" y="150" class="opt-tag" text-anchor="end">POLYCARBONATE</text>
+          <text x="392" y="70" class="opt-tag opt-green" text-anchor="end">ALUMINIUM · REFLECTIVE</text>
+
+          <!-- pit / land profile stamped into the reflective layer -->
+          <g class="pits">
+            {Array.from({ length: 14 }).map((_, i) => {
+              const x = 52 + i * 24;
+              const pit = i % 3 === 0 || i % 5 === 0;
+              return pit
+                ? <path d={`M${x} 112 v-9 h14 v9`} fill="none" stroke="#35e08f" stroke-width="2"/>
+                : <path d={`M${x} 112 h14`} fill="none" stroke="#35e08f" stroke-width="2" opacity="0.5"/>;
+            })}
+          </g>
+
+          <!-- objective lens + reading beam -->
+          <path d="M150 300 L270 300 L232 236 L188 236 Z" fill="url(#beam)" filter="url(#beamGlow)"/>
+          <path d="M150 300 L270 300 L232 236 L188 236 Z" fill="url(#beam)"/>
+          <ellipse cx="210" cy="300" rx="52" ry="14" fill="#12151a" stroke="#3a424a" stroke-width="2"/>
+          <ellipse cx="210" cy="300" rx="52" ry="14" fill="none" stroke="#35e08f" stroke-width="1.5" opacity="0.5"/>
+          <text x="210" y="332" class="opt-tag" text-anchor="middle">OBJECTIVE LENS</text>
+
+          <!-- reflected return -->
+          <path d="M212 232 L228 150" stroke="#46e0d8" stroke-width="2" stroke-dasharray="4 5" opacity="0.8"/>
+          <circle cx="210" cy="112" r="4" fill="#35e08f"/>
+        </svg>
+      </figure>
+    </section>
+
+    <!-- Ownership: guarantees as lit indicator legends on black glass. -->
+    <section class="guards" aria-labelledby="guards-h">
+      <div class="section-head">
+        <h2 id="guards-h">Four indicators that stay lit.</h2>
+        <p>Not features you switch on — the shape of the thing.</p>
+      </div>
+      <ul class="guard-panel">
+        {OWNERSHIP.map((o) => (
+          <li>
+            <span class="guard-led" aria-hidden="true"></span>
+            <span class="guard-name">{o.title.replace(/^No /, 'NO ').toUpperCase()}</span>
+            <p>{o.body}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- The deck front panel: an operable object carrying the numbers. -->
+    <section class="deck-panel" aria-labelledby="panel-h">
+      <h2 id="panel-h" class="visually-hidden">The deck front panel</h2>
+      <div class="panel">
+        <span class="red-stripe" aria-hidden="true"></span>
+
+        <div class="panel-left">
+          <div class="tray" aria-hidden="true">
+            <span class="tray-slot"></span>
+            <span class="tray-disc"></span>
+            <span class="tray-label">DISC IN</span>
+          </div>
+          <div class="phones" aria-hidden="true">
+            <span class="jack"></span>
+            <span class="knob"><i></i></span>
+            <span class="silk">PHONES · LEVEL</span>
+          </div>
+        </div>
+
+        <div class="panel-mid">
+          <div class="mini-readouts">
+            {readouts.map((r) => (
+              <div class="ro">
+                {r.prefix && <span class="ro-prefix" aria-hidden="true">{r.prefix}</span>}
+                <div class="seg-wrap seg-sm" set:html={seg(r.digits)} />
+                <span class="ro-unit">{r.unit || '\u00a0'}</span>
+                <span class="ro-label">{r.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="panel-right">
+          <div class="transport" role="group" aria-label="Transport controls">
+            <button type="button" class="btn" aria-label="Previous track"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6v12M9 12l9 6V6z"/></svg></button>
+            <button type="button" class="btn btn-play" aria-label="Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <button type="button" class="btn" aria-label="Next track"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 6v12M15 12L6 6v12z"/></svg></button>
+            <button type="button" class="btn" aria-label="Stop"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12"/></svg></button>
+          </div>
+          <div class="jog" aria-hidden="true">
+            <span class="jog-ring"></span>
+            <span class="jog-hub"></span>
+            <span class="jog-mark jog-fwd">SKIP ▸</span>
+            <span class="jog-mark jog-rev">◂ SKIP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Six faces: the adaptive tint, each on its own display window. -->
+    <section class="faces" aria-labelledby="faces-h">
+      <div class="section-head">
+        <h2 id="faces-h">One app, recoloured by whatever is playing.</h2>
+        <p>Mozz repaints its whole interface from the current cover, so a night's
+          listening reads as a dozen different rooms.</p>
+      </div>
+      <div class="face-strip">
+        {faces.map((f, i) => (
+          <figure class="face" style={`--i:${i}`}>
+            <Shot name={f} sizes="(max-width: 720px) 40vw, 200px" class="face-img" />
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <!-- FAQ: a service menu of index entries. -->
+    <section class="menu" aria-labelledby="menu-h">
+      <div class="section-head">
+        <h2 id="menu-h">Service menu.</h2>
+        <p>Five entries. Select to expand.</p>
+      </div>
+      <div class="menu-list">
+        {FAQS.map((f, i) => (
+          <details class="entry" open={i === 0}>
+            <summary>
+              <span class="entry-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="entry-q">{f.q}</span>
+              <span class="entry-cue" aria-hidden="true"></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="foot-glass" aria-hidden="true">
+        <span class="foot-power"></span>
+        <span class="foot-seg" set:html={seg('00:00')} />
+      </div>
+      <div class="foot-copy">
+        <a class="wordmark" href="/" aria-label={`${NAME} home`}>
+          <Mark size={22} decorative />
+          <span>{NAME}</span>
+        </a>
+        <p>
+          Free forever and open source under GPL-3.0.
+          <a href={GITHUB_URL}>See it on GitHub</a>.
+        </p>
+        <span class="foot-tag">MOZZ · MZ·88 · mozzmusic.com</span>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .dk {
+    --glass: #0a0b0d;
+    --anod: #101216;
+    --anod-hi: #191c22;
+    --ink: #e2e8e3;
+    --ink-dim: #a7b1ab;
+    --green: #35e08f;
+    --green-deep: #123024;
+    --cyan: #46e0d8;
+    --red: #c80028;
+    --red-bright: #ff2b53;
+    --hair: rgba(53, 224, 143, 0.14);
+    --hair-cool: rgba(200, 214, 208, 0.1);
+
+    background: var(--glass);
+    color: var(--ink);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  .dk :where(h1, h2, h3) {
+    font-family: 'Khand', 'Satoshi', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.02;
+    text-wrap: balance;
+    color: #f2f6f3;
+  }
+
+  .silk {
+    font-family: 'Khand', system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    font-size: 0.66rem;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  .visually-hidden, .dk .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  ::selection { background: var(--green); color: #05100a; }
+
+  .dk a { color: var(--green); text-decoration: none; }
+  .dk a:hover { color: #7bf0b7; }
+
+  .dk :where(a, button, summary):focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* ---- Seven-segment primitive ---- */
+  /* Sized by HEIGHT so a single digit and a four-char clock share one cap
+     height instead of the single digit ballooning to fill a fixed width. */
+  .seg-wrap { line-height: 0; }
+  .dk :global(svg.seg) { height: var(--seg-h, 34px); width: auto; display: block; }
+  .dk :global(svg.seg .seg-off) { fill: var(--seg-off, #0c1c14); }
+  .dk :global(svg.seg .seg-on) { fill: var(--seg, var(--green)); }
+  .dk :global(svg.seg .seg-glow) { fill: var(--seg, var(--green)); opacity: 0.5; }
+  .seg-cyan { --seg: var(--cyan); --seg-off: #0d2422; }
+
+  /* ---- Wordmark ---- */
+  .wordmark {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    color: var(--ink); font-family: 'Khand', system-ui, sans-serif;
+    font-weight: 600; font-size: 1.25rem; letter-spacing: 0.02em;
+  }
+  .wordmark:hover { color: #fff; }
+
+  /* ---- HERO ---- */
+  .hero {
+    --hero-plate: image-set(url('/hero/deck.jpg') 1x);
+    position: relative;
+    isolation: isolate;
+    background-color: var(--glass);
+    background-image:
+      /* legibility scrim over any supplied photo */
+      linear-gradient(180deg, rgba(10,11,13,0.7) 0%, rgba(10,11,13,0.5) 40%, rgba(10,11,13,0.85) 100%),
+      /* supplied artwork, silently absent until the file exists */
+      var(--hero-plate),
+      /* green cast thrown by the display (upper right), falling off */
+      radial-gradient(70% 60% at 78% 30%, rgba(53,224,143,0.16), transparent 60%),
+      /* faint cool room glow */
+      radial-gradient(120% 90% at 20% 0%, rgba(70,224,216,0.05), transparent 55%),
+      /* base */
+      linear-gradient(180deg, #0c0e12 0%, #060708 100%);
+    background-repeat: no-repeat;
+    background-size: cover, cover, cover, cover, cover;
+    background-position: center;
+  }
+  .hero-grain {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    opacity: 0.5;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.014) 0 1px, transparent 1px 3px);
+    mix-blend-mode: screen;
+  }
+
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: 78rem; margin-inline: auto;
+    padding: clamp(1.4rem, 3vw, 2.4rem) 1.5rem clamp(3rem, 6vw, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+    grid-template-areas:
+      'brand brand'
+      'copy  vfd'
+      'copy  phone';
+    grid-template-rows: auto auto auto;
+    column-gap: clamp(1.6rem, 4vw, 3.4rem);
+    row-gap: clamp(1.4rem, 3vw, 2.2rem);
+    align-items: start;
+    min-height: min(94vh, 60rem);
+  }
+  .hero .wordmark { grid-area: brand; align-self: start; }
+
+  .hero-copy { grid-area: copy; align-self: center; max-width: 34ch; }
+  .model {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 500;
+    letter-spacing: 0.26em; font-size: 0.72rem; color: var(--ink-dim);
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 5.4vw, 4.4rem); font-weight: 700;
+    margin-bottom: 1.1rem;
+  }
+  .lede { color: var(--ink); max-width: 46ch; margin-bottom: 1.7rem; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; }
+  .store {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: linear-gradient(180deg, #16191f, #0d0f13);
+    color: var(--ink);
+    border: 1px solid rgba(53,224,143,0.3);
+    padding: 0.62rem 1.05rem; border-radius: 11px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: inline-flex; flex-direction: column; line-height: 1.02;
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600; font-size: 1.06rem; }
+  .store small { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); font-weight: 500; }
+  .store.is-pending { color: var(--ink-dim); border-color: rgba(200,214,208,0.16); }
+  .store .led {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--green);
+    box-shadow: 0 0 0 3px rgba(53,224,143,0.16);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+  .ghost {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    letter-spacing: 0.04em; font-size: 1.02rem; color: var(--green);
+    border-bottom: 1px solid rgba(53,224,143,0.4); padding-bottom: 2px;
+  }
+  .ghost:hover { border-color: var(--green); }
+
+  /* ---- VFD display ---- */
+  .vfd { grid-area: vfd; align-self: center; }
+  .vfd-glass {
+    position: relative;
+    background:
+      radial-gradient(120% 140% at 50% 0%, rgba(53,224,143,0.08), transparent 60%),
+      linear-gradient(180deg, #05070a, #020304);
+    border: 1px solid rgba(53,224,143,0.16);
+    border-radius: 14px;
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 0 60px rgba(53,224,143,0.05);
+    /* the glass throws light onto the panel edge below it */
+    filter: none;
+  }
+  /* real light spilling downward from the glass onto the room */
+  .vfd-glass::after {
+    content: ''; position: absolute; left: 8%; right: 8%; bottom: -26px; height: 40px;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(53,224,143,0.22), transparent 70%);
+    filter: blur(6px); z-index: -1; pointer-events: none;
+  }
+  .vfd-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+  .vfd-top { margin-bottom: 0.9rem; }
+  .vfd-track, .vfd-time { display: flex; flex-direction: column; gap: 0.4rem; }
+  .vfd-track .seg-wrap.seg-lg { --seg-h: clamp(40px, 7vw, 62px); }
+  .vfd-time .seg-wrap { --seg-h: clamp(32px, 5.6vw, 50px); }
+  .vfd-time .silk, .vfd-track .silk { opacity: 0.85; }
+
+  .vfd-bar { display: flex; gap: 3px; height: 20px; margin-bottom: 0.9rem; align-items: stretch; }
+  .vfd-bar span { flex: 1; background: var(--green-deep); border-radius: 1px; }
+  .vfd-bar span.on {
+    background: var(--green);
+    box-shadow: 0 0 6px 1px rgba(53,224,143,0.6);
+  }
+
+  .vfd-calendar {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px 8px;
+    margin-bottom: 1rem;
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    font-variant-numeric: tabular-nums; font-size: 0.82rem; letter-spacing: 0.05em;
+  }
+  .vfd-calendar span { text-align: center; }
+  .vfd-calendar .lit { color: var(--green); text-shadow: 0 0 6px rgba(53,224,143,0.55); }
+  .vfd-calendar .played { color: #16311f; }
+
+  .vfd-legends {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin: 0; padding: 0.7rem 0 0;
+    border-top: 1px solid rgba(53,224,143,0.14); list-style: none;
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    letter-spacing: 0.14em; font-size: 0.66rem;
+  }
+  .vfd-legends li { color: #1c3a29; }
+  .vfd-legends li.on { color: var(--green); text-shadow: 0 0 7px rgba(53,224,143,0.6); }
+
+  .vfd-caption {
+    margin-top: 1.6rem; text-align: center; color: var(--ink-dim);
+    font-family: 'Khand', system-ui, sans-serif; letter-spacing: 0.06em; font-size: 0.9rem;
+  }
+
+  /* ---- Desk phone ---- */
+  .desk-phone {
+    grid-area: phone; justify-self: center; align-self: start;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    position: relative;
+  }
+  .desk-phone::before {
+    content: ''; position: absolute; inset: -18% -12% -30%;
+    background: radial-gradient(60% 55% at 70% 22%, rgba(53,224,143,0.22), transparent 65%);
+    filter: blur(10px); z-index: 0; pointer-events: none;
+  }
+  .dphone {
+    position: relative; z-index: 1;
+    --phone-bezel: linear-gradient(#14171c, #060708);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(53,224,143,0.28);
+    --phone-shadow: 0 30px 60px -26px rgba(0,0,0,0.85);
+  }
+  .desk-line {
+    position: relative; z-index: 1;
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 500;
+    letter-spacing: 0.2em; font-size: 0.64rem; color: var(--green);
+    text-transform: uppercase;
+  }
+
+  /* ---- shared section head ---- */
+  .section-head { max-width: 60rem; margin: 0 auto clamp(1.8rem, 4vw, 2.6rem); }
+  .section-head h2 { font-size: clamp(1.9rem, 3.8vw, 3rem); font-weight: 700; margin-bottom: 0.6rem; }
+  .section-head p { color: var(--ink-dim); max-width: 56ch; }
+
+  section {
+    max-width: 78rem; margin-inline: auto;
+    padding: clamp(3rem, 7vw, 5.5rem) 1.5rem;
+  }
+
+  /* ---- Rack of separates ---- */
+  .rack-stack { display: grid; gap: 12px; max-width: 60rem; margin-inline: auto; }
+  .unit {
+    background: linear-gradient(180deg, var(--anod-hi), var(--anod));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px -22px rgba(0,0,0,0.9);
+  }
+  .unit-face {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: clamp(1rem, 3vw, 2rem); padding: clamp(1rem, 2.4vw, 1.5rem) clamp(1.2rem, 3vw, 2rem);
+    position: relative;
+  }
+  .unit-win {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: #04070a; border: 1px solid rgba(53,224,143,0.18);
+    border-radius: 7px; padding: 0.7rem 1rem; min-width: 12.5rem;
+    position: relative; isolation: isolate;
+  }
+  .unit-win::after {
+    content: ''; position: absolute; left: 10%; right: 10%; bottom: -12px; height: 18px;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(53,224,143,0.18), transparent 70%);
+    filter: blur(5px); z-index: -1;
+  }
+  .unit-name {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    letter-spacing: 0.08em; font-size: 1.05rem; color: var(--ink);
+  }
+  .unit-dot {
+    width: 8px; height: 8px; border-radius: 50%; margin-left: auto;
+    background: var(--green); box-shadow: 0 0 7px 1px rgba(53,224,143,0.7);
+  }
+  .unit-note { color: var(--ink-dim); font-size: 0.98rem; margin: 0; }
+  .unit-vents { display: flex; gap: 4px; }
+  .unit-vents span { width: 3px; height: 26px; background: rgba(255,255,255,0.06); border-radius: 2px; }
+
+  /* ---- Program / features ---- */
+  .prog-list { list-style: none; margin: 0 auto; padding: 0; max-width: 62rem;
+    border-top: 1px solid var(--hair); }
+  .prog-list li {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: baseline;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.2rem, 3vw, 1.7rem) 0.4rem;
+    border-bottom: 1px solid var(--hair);
+    transition: background-color 0.2s ease;
+  }
+  .prog-list li:hover { background: rgba(53,224,143,0.04); }
+  .prog-n {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 700;
+    font-size: clamp(1.6rem, 3.4vw, 2.5rem); color: var(--green);
+    font-variant-numeric: tabular-nums; text-shadow: 0 0 10px rgba(53,224,143,0.4);
+    line-height: 1;
+  }
+  .prog-body h3 { font-size: clamp(1.2rem, 2.4vw, 1.6rem); font-weight: 600; margin-bottom: 0.3rem; }
+  .prog-body p { color: var(--ink-dim); max-width: 62ch; }
+  .prog-cue {
+    align-self: center; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green-deep);
+  }
+  .prog-list li:hover .prog-cue { background: var(--green); box-shadow: 0 0 8px rgba(53,224,143,0.7); }
+
+  /* ---- Optics / cross-section ---- */
+  .optics {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 5vw, 4rem); align-items: center;
+  }
+  .optics-copy h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); font-weight: 700; margin-bottom: 0.9rem; }
+  .optics-copy p { color: var(--ink); max-width: 52ch; margin-bottom: 1.6rem; }
+  .optics-facts { display: flex; gap: clamp(1.4rem, 4vw, 2.6rem); margin: 0; }
+  .optics-facts > div { display: flex; align-items: center; gap: 0.7rem; }
+  .optics-facts dt { line-height: 0; }
+  .optics-facts dt :global(svg.seg) { --seg-h: clamp(30px, 5vw, 42px); }
+  .optics-facts dd { margin: 0; color: var(--ink-dim); font-size: 0.9rem; max-width: 16ch; line-height: 1.25; }
+  .optics-facts dd b { display: block; color: var(--green); font-family: 'Khand', system-ui, sans-serif;
+    font-weight: 600; font-size: 1rem; letter-spacing: 0.04em; }
+
+  .optics-fig {
+    margin: 0; border-radius: 14px;
+    background: radial-gradient(90% 90% at 50% 30%, rgba(53,224,143,0.06), transparent 70%), #060809;
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: clamp(1rem, 3vw, 1.8rem);
+  }
+  .optics-fig svg { width: 100%; height: auto; }
+  .opt-tag {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 500;
+    font-size: 11px; letter-spacing: 0.16em; fill: var(--ink-dim);
+  }
+  .opt-green { fill: var(--green); }
+
+  /* ---- Ownership indicators ---- */
+  .guard-panel {
+    list-style: none; margin: 0 auto; padding: clamp(1.4rem, 3vw, 2rem);
+    max-width: 62rem;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+    background: rgba(53,224,143,0.14);
+    border: 1px solid rgba(53,224,143,0.18); border-radius: 12px;
+    overflow: hidden;
+  }
+  .guard-panel li {
+    background: #05070a; padding: clamp(1.3rem, 3vw, 2rem);
+    display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 0.9rem; align-items: center;
+  }
+  .guard-led {
+    width: 12px; height: 12px; border-radius: 50%; grid-row: 1 / span 1;
+    background: var(--green); box-shadow: 0 0 10px 2px rgba(53,224,143,0.55);
+  }
+  .guard-name {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    letter-spacing: 0.14em; font-size: 1.1rem; color: var(--green);
+  }
+  .guard-panel p { grid-column: 1 / -1; margin: 0; color: var(--ink-dim); font-size: 0.98rem; }
+
+  /* ---- Deck front panel ---- */
+  .deck-panel { padding-top: 0; }
+  .panel {
+    position: relative;
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: clamp(1.4rem, 4vw, 3rem); align-items: center;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.014) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, var(--anod-hi), #0b0d10);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+    padding: clamp(1.6rem, 4vw, 2.6rem);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 24px 60px -34px rgba(0,0,0,0.9);
+    overflow: hidden;
+  }
+  .red-stripe {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: linear-gradient(180deg, var(--red-bright), var(--red));
+    box-shadow: 0 0 14px 1px rgba(200,0,40,0.5);
+  }
+
+  .panel-left { display: flex; flex-direction: column; gap: 1.2rem; }
+  .tray { position: relative; width: clamp(8rem, 20vw, 11rem); }
+  .tray-slot {
+    display: block; height: 12px; border-radius: 6px;
+    background: linear-gradient(180deg, #04060a, #0b0e12);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+  }
+  .tray-disc {
+    display: block; width: 34px; height: 34px; border-radius: 50%; margin: 0.8rem 0 0.4rem;
+    background:
+      radial-gradient(circle at 50% 50%, #0a0b0d 0 6px, transparent 6px),
+      conic-gradient(from 0deg, #35e08f, #46e0d8, #c80028, #35e08f);
+    opacity: 0.85;
+    box-shadow: 0 0 12px rgba(53,224,143,0.3);
+  }
+  .tray-label {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 500;
+    letter-spacing: 0.2em; font-size: 0.6rem; color: var(--green);
+  }
+  .phones { display: flex; align-items: center; gap: 0.55rem; }
+  .jack {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #2a2e34, #05070a 70%);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06);
+  }
+  .knob {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #23272d, #0a0c10 72%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); position: relative;
+  }
+  .knob i { position: absolute; left: 50%; top: 3px; width: 2px; height: 8px; background: var(--green); transform: translateX(-50%); border-radius: 1px; }
+
+  .panel-mid .mini-readouts {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem 1.4rem;
+    background: #04070a; border: 1px solid rgba(53,224,143,0.16);
+    border-radius: 10px; padding: clamp(1rem, 2.6vw, 1.4rem);
+    position: relative; isolation: isolate;
+  }
+  .mini-readouts::after {
+    content: ''; position: absolute; left: 12%; right: 12%; bottom: -14px; height: 20px;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(53,224,143,0.16), transparent 70%);
+    filter: blur(6px); z-index: -1;
+  }
+  .ro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0 0.35rem; }
+  .ro .seg-wrap.seg-sm { --seg-h: clamp(30px, 5vw, 42px); }
+  .ro-prefix {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600; color: var(--green);
+    font-size: 1.2rem; align-self: flex-start; padding-top: 2px;
+    text-shadow: 0 0 6px rgba(53,224,143,0.5);
+  }
+  .ro-unit {
+    align-self: flex-end; font-family: 'Khand', system-ui, sans-serif;
+    font-weight: 600; color: var(--green); font-size: 0.85rem; letter-spacing: 0.02em;
+    text-shadow: 0 0 6px rgba(53,224,143,0.5); padding-bottom: 3px;
+  }
+  .ro-label { flex-basis: 100%; color: var(--ink-dim); font-size: 0.72rem; margin-top: 0.35rem; }
+
+  .panel-right { display: flex; flex-direction: column; gap: 1.2rem; align-items: center; }
+  .transport { display: flex; gap: 0.5rem; }
+  .btn {
+    width: 42px; height: 42px; border-radius: 8px; cursor: pointer;
+    background: linear-gradient(180deg, #1b1e24, #0c0e12);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 3px 6px rgba(0,0,0,0.5);
+    display: grid; place-items: center;
+    transition: transform 0.08s ease, box-shadow 0.12s ease;
+  }
+  .btn svg { width: 20px; height: 20px; fill: var(--ink); stroke: var(--ink); stroke-width: 0; }
+  .btn:hover { box-shadow: inset 0 0 0 1px rgba(53,224,143,0.4), 0 3px 8px rgba(0,0,0,0.5); }
+  .btn:active { transform: translateY(1px); box-shadow: inset 0 2px 5px rgba(0,0,0,0.7); }
+  .btn-play svg { fill: var(--green); filter: drop-shadow(0 0 4px rgba(53,224,143,0.5)); }
+
+  .jog { position: relative; width: 92px; height: 92px; }
+  .jog-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    background:
+      conic-gradient(from 0deg, #1c2026, #0a0c10 25%, #1c2026 50%, #0a0c10 75%, #1c2026);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 6px 12px rgba(0,0,0,0.6);
+  }
+  .jog-hub {
+    position: absolute; inset: 30%; border-radius: 50%;
+    background: radial-gradient(circle at 40% 34%, #23272d, #05070a 72%);
+    box-shadow: inset 0 0 0 1px rgba(53,224,143,0.25);
+  }
+  .jog-mark {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 600;
+    letter-spacing: 0.1em; font-size: 0.56rem; color: var(--green);
+  }
+  .jog-fwd { right: -30px; }
+  .jog-rev { left: -30px; }
+
+  /* ---- Faces strip ---- */
+  .face-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: clamp(0.6rem, 1.6vw, 1rem); max-width: 66rem; margin-inline: auto;
+  }
+  .face {
+    margin: 0; border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(53,224,143,0.16);
+    background: #04070a; position: relative; isolation: isolate;
+    transform: translateY(calc(var(--i) * -0.001px));
+  }
+  .face::after {
+    content: ''; position: absolute; left: 15%; right: 15%; bottom: -10px; height: 16px;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(53,224,143,0.14), transparent 70%);
+    filter: blur(5px); z-index: -1;
+  }
+  .face :global(img.face-img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ---- Service menu / FAQ ---- */
+  .menu-list { max-width: 62rem; margin-inline: auto; border-top: 1px solid var(--hair); }
+  .entry { border-bottom: 1px solid var(--hair); }
+  .entry summary {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: clamp(0.8rem, 2.4vw, 1.6rem);
+    padding: 1.15rem 0.4rem; cursor: pointer; list-style: none;
+  }
+  .entry summary::-webkit-details-marker { display: none; }
+  .entry-n {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 700;
+    font-variant-numeric: tabular-nums; color: var(--green);
+    font-size: 1.15rem; text-shadow: 0 0 8px rgba(53,224,143,0.4);
+  }
+  .entry-q { font-family: 'Khand', system-ui, sans-serif; font-weight: 600; font-size: 1.2rem; color: #eef3ef; }
+  .entry-cue {
+    width: 26px; height: 26px; border-radius: 6px; position: relative;
+    background: #0c0f13; border: 1px solid rgba(53,224,143,0.24);
+  }
+  .entry-cue::before, .entry-cue::after {
+    content: ''; position: absolute; left: 50%; top: 50%; background: var(--green);
+    transform: translate(-50%, -50%); box-shadow: 0 0 5px rgba(53,224,143,0.6);
+  }
+  .entry-cue::before { width: 12px; height: 2px; }
+  .entry-cue::after { width: 2px; height: 12px; transition: transform 0.2s ease; }
+  .entry[open] .entry-cue::after { transform: translate(-50%, -50%) scaleY(0); }
+  .entry p { margin: 0 0.4rem 1.3rem; padding-left: clamp(2rem, 5vw, 3.2rem); color: var(--ink-dim); max-width: 68ch; }
+
+  /* ---- Footer ---- */
+  .foot {
+    max-width: none; margin: 0; padding: clamp(2.4rem, 5vw, 3.6rem) 1.5rem;
+    border-top: 1px solid rgba(53,224,143,0.16);
+    background: linear-gradient(180deg, #08090c, #050607);
+    display: grid; grid-template-columns: auto 1fr; gap: clamp(1.4rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .foot-glass {
+    display: inline-flex; align-items: center; gap: 0.9rem;
+    background: #04070a; border: 1px solid rgba(53,224,143,0.18); border-radius: 10px;
+    padding: 0.7rem 1rem;
+  }
+  .foot-power {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--red-bright);
+    box-shadow: 0 0 8px 1px rgba(255,43,83,0.6);
+  }
+  .foot-seg { --seg-h: 26px; line-height: 0; }
+  .foot-copy { display: grid; gap: 0.35rem; justify-items: start; }
+  .foot-copy p { color: var(--ink-dim); margin: 0; }
+  .foot-tag {
+    font-family: 'Khand', system-ui, sans-serif; font-weight: 500;
+    letter-spacing: 0.18em; font-size: 0.66rem; color: #2e5a41;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 60rem) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'brand' 'copy' 'vfd' 'phone';
+      row-gap: clamp(1.8rem, 5vw, 2.6rem);
+    }
+    .hero-copy { max-width: none; }
+    .optics { grid-template-columns: 1fr; }
+    .guard-panel { grid-template-columns: 1fr; }
+    .panel { grid-template-columns: 1fr; justify-items: center; text-align: left; }
+    .panel-mid { width: 100%; }
+    .face-strip { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 40rem) {
+    .vfd-row { flex-wrap: wrap; gap: 0.8rem 1.2rem; }
+    .prog-list li { grid-template-columns: auto 1fr; }
+    .prog-cue { display: none; }
+    .face-strip { grid-template-columns: repeat(2, 1fr); }
+    .foot { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .store .led { animation: none; opacity: 1; }
+    .btn { transition: none; }
+  }
+</style>

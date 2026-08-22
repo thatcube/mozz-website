@@ -1,0 +1,1005 @@
+---
+/**
+ * VARIANT — DIORAMA
+ * See the design contract in the HTML comment at the top of <main>.
+ *
+ * Illustration-led. Every object is hand-authored isometric SVG, composed from a
+ * single true-axonometric projection (makeScene → P). A shared non-scaling stroke
+ * keeps one line weight everywhere; boxes carry one hard value step per face
+ * (top light → left mid → right dark). Detail primitives — screws, seams, vents,
+ * cylinders — let each scene get dense the way the reference drawings are dense.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const R6 = Math.PI / 6;
+const IC = Math.cos(R6);
+const IS = Math.sin(R6);
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+type Part = { d: string; fill: string; cls?: string };
+type Txt = { tr: string; s: string; size: number; cls: string; anchor: string; base: string };
+
+function makeScene() {
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  const parts: Part[] = [];
+  const texts: Txt[] = [];
+
+  const proj = (x: number, y: number, z: number): [number, number] => {
+    const sx = (x - y) * IC;
+    const sy = (x + y) * IS - z;
+    if (sx < minX) minX = sx; if (sx > maxX) maxX = sx;
+    if (sy < minY) minY = sy; if (sy > maxY) maxY = sy;
+    return [sx, sy];
+  };
+  const P = (x: number, y: number, z: number) => {
+    const [sx, sy] = proj(x, y, z);
+    return `${r2(sx)} ${r2(sy)}`;
+  };
+  const path = (pts: number[][]) => pts.map((p, i) => `${i ? 'L' : 'M'}${P(p[0], p[1], p[2])}`).join('') + 'Z';
+  const poly = (pts: number[][], fill: string, cls?: string) => parts.push({ d: path(pts), fill, cls });
+
+  // cuboid, three shaded faces
+  const box = (x: number, y: number, z: number, w: number, d: number, h: number,
+    c: { top: string; left: string; right: string }, cls?: string) => {
+    poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], c.top, cls);
+    poly([[x, y + d, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x, y + d, z]], c.left, cls);
+    poly([[x + w, y, z + h], [x + w, y + d, z + h], [x + w, y + d, z], [x + w, y, z]], c.right, cls);
+  };
+  // horizontal panel on a plane z
+  const quad = (x: number, y: number, w: number, d: number, z: number, fill: string, cls?: string) =>
+    poly([[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z]], fill, cls);
+  // vertical rectangle on plane x=const (a right-facing face)
+  const faceX = (x: number, y0: number, y1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x, y0, z0], [x, y1, z0], [x, y1, z1], [x, y0, z1]], fill, cls);
+  // vertical rectangle on plane y=const (a left-facing face)
+  const faceY = (y: number, x0: number, x1: number, z0: number, z1: number, fill: string, cls?: string) =>
+    poly([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], fill, cls);
+
+  const ring = (cx: number, cy: number, z: number, r: number, fill: string, cls?: string, n = 48) => {
+    let d = '';
+    for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2; d += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z); }
+    parts.push({ d: d + 'Z', fill, cls });
+  };
+
+  // the stylised diffraction disc — a fan of hard flat wedges
+  const fan = (cx: number, cy: number, z: number, r: number, palette: string[], seg = 32, spin = 0) => {
+    const c = P(cx, cy, z);
+    for (let i = 0; i < seg; i++) {
+      const a0 = spin + (i / seg) * Math.PI * 2, a1 = spin + ((i + 1) / seg) * Math.PI * 2;
+      const pa = P(cx + r * Math.cos(a0), cy + r * Math.sin(a0), z);
+      const pb = P(cx + r * Math.cos(a1), cy + r * Math.sin(a1), z);
+      parts.push({ d: `M${c}L${pa}L${pb}Z`, fill: palette[i % palette.length], cls: 'flat' });
+    }
+    ring(cx, cy, z, r, 'none', 'edge');
+    ring(cx, cy, z, r * 0.30, '#f7ede0', 'edge');
+    ring(cx, cy, z, r * 0.18, 'rgba(0,0,0,0.06)', 'flat');
+    ring(cx, cy, z, r * 0.11, 'var(--hole)', 'edge');
+  };
+
+  const line = (a: number[], b: number[], cls = 'guide') =>
+    parts.push({ d: `M${P(a[0], a[1], a[2])}L${P(b[0], b[1], b[2])}`, fill: 'none', cls });
+
+  // a panel seam: a groove plus a highlight offset along one axis
+  const seam = (a: number[], b: number[], dir: 'z' | 'x' | 'y' = 'z', off = 0.5) => {
+    line(a, b, 'seam-d');
+    const o = dir === 'z' ? [0, 0, off] : dir === 'x' ? [off, 0, 0] : [0, off, 0];
+    line([a[0] + o[0], a[1] + o[1], a[2] + o[2]], [b[0] + o[0], b[1] + o[1], b[2] + o[2]], 'seam-l');
+  };
+
+  // countersunk screw on a plane at height z
+  const screw = (cx: number, cy: number, z: number, r = 1.1) => {
+    ring(cx, cy, z, r, 'rgba(0,0,0,0.10)', 'flat', 12);
+    ring(cx, cy, z, r, 'none', 'screw', 12);
+    line([cx - r * 0.6, cy - r * 0.6, z], [cx + r * 0.6, cy + r * 0.6, z], 'screw');
+  };
+
+  // upright cylinder (mug, can, hinge) with a light top and mid body
+  const cyl = (cx: number, cy: number, z: number, r: number, h: number, cTop: string, cBody: string, cls?: string) => {
+    const aL = 3 * Math.PI / 4, aR = -Math.PI / 4, step = Math.PI / 20;
+    let d = 'M' + P(cx + r * Math.cos(aL), cy + r * Math.sin(aL), z + h);
+    for (let a = aL; a >= aR - 1e-6; a -= step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h);
+    d += 'L' + P(cx + r * Math.cos(aR), cy + r * Math.sin(aR), z);
+    for (let a = aR; a <= aL + 1e-6; a += step) d += 'L' + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z);
+    parts.push({ d: d + 'Z', fill: cBody, cls });
+    let t = '';
+    for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; t += (i ? 'L' : 'M') + P(cx + r * Math.cos(a), cy + r * Math.sin(a), z + h); }
+    parts.push({ d: t + 'Z', fill: cTop, cls });
+  };
+
+  const raw = (d: string, fill: string, cls?: string) => parts.push({ d, fill, cls });
+
+  // Legend printed flat on a face: text is skewed into that face's isometric
+  // plane via a matrix, so it lies on the surface and never reads as floating.
+  //   plane 'top'  → lies on a horizontal (z=const) face, reads toward +x
+  //   plane 'topL' → horizontal face, reads toward +y (lower-left)
+  //   plane 'left' → vertical y=const face (faces lower-left), upright
+  //   plane 'right'→ vertical x=const face (faces lower-right), upright
+  const text = (x: number, y: number, z: number, s: string, size: number,
+    cls = 'legend', plane: 'top' | 'topL' | 'left' | 'right' = 'top',
+    anchor = 'middle', base = 'auto') => {
+    const [sx, sy] = proj(x, y, z);
+    let a = IC, b = IS, c = -IC, d = IS;
+    if (plane === 'topL') { a = -IC; b = IS; c = IC; d = IS; }
+    else if (plane === 'left') { a = IC; b = IS; c = 0; d = 1; }
+    else if (plane === 'right') { a = -IC; b = IS; c = 0; d = 1; }
+    const tr = `matrix(${r2(a)} ${r2(b)} ${r2(c)} ${r2(d)} ${r2(sx)} ${r2(sy)})`;
+    texts.push({ tr, s, size, cls, anchor, base });
+  };
+
+  const vb = (pad = 6) => `${r2(minX - pad)} ${r2(minY - pad)} ${r2(maxX - minX + pad * 2)} ${r2(maxY - minY + pad * 2)}`;
+
+  return { parts, texts, poly, box, quad, faceX, faceY, ring, fan, line, seam, screw, cyl, raw, text, vb, P };
+}
+
+/* ── flat palettes (small, disciplined) ───────────────────────────────────── */
+const SLATE  = { top: '#2f5a57', left: '#234643', right: '#1a3230' };
+const SLATE2 = { top: '#274c49', left: '#1d3c39', right: '#152b29' };
+const CREAMB = { top: '#fbf3e5', left: '#ecdec7', right: '#dccbad' };
+const ORANGE = { top: '#ef7d47', left: '#d5622f', right: '#b64f24' };
+const STEEL  = { top: '#4a7cb0', left: '#335f8f', right: '#264970' };
+const STEEL2 = { top: '#5b8cc0', left: '#3f6f9e', right: '#2f567f' };
+const TEAL   = { top: '#41938c', left: '#2f716b', right: '#215048' };
+const WHITEB = { top: '#f5efe4', left: '#e3dbcb', right: '#d3c8b3' };
+const DARKB  = { top: '#34333c', left: '#26252d', right: '#191820' };
+const DARK2  = { top: '#2a2932', left: '#201f27', right: '#14131a' };
+const GOLDB  = { top: '#e7b45c', left: '#cf9a42', right: '#b17f31' };
+const REDB   = { top: '#d6002b', left: '#ad0021', right: '#800016' };
+const WOOD   = { top: '#e7d3ad', left: '#d0b98d', right: '#b89f72' };
+const WOOD2  = { top: '#dcc59b', left: '#c3aa7d', right: '#a98f64' };
+const METAL  = { top: '#cdd2d8', left: '#b1b7bf', right: '#969da7' };
+const PAPER  = { top: '#f3ead6', left: '#e2d6bd', right: '#cebf9f' };
+
+const FAN_WARM  = ['#e9b25a', '#e8703a', '#f3e2c4', '#d98f34', '#f0d49a', '#e57d3f', '#c99a45'];
+const FAN_COOL  = ['#49a08d', '#3b6ea5', '#e79bb0', '#63b39c', '#8fb2d8', '#cfd9a6', '#4f96b3'];
+const FAN_RED   = ['#c80028', '#e8703a', '#f3e2c4', '#a30220', '#e0a94e', '#d6486a'];
+const FAN_SILV  = ['#c6ccd4', '#9aa4b0', '#e7ebef', '#aeb7c2', '#dfe4ea', '#8b96a4'];
+const FAN_SEPIA = ['#c98b4e', '#9c6233', '#e7c79a', '#b5793f', '#dcb583', '#8a5a30'];
+
+/* helpers used inside scenes */
+const grid = (s: any, x0: number, x1: number, y0: number, y1: number, stepX: number, stepY: number, z = 0) => {
+  for (let y = y0; y <= y1 + 1e-6; y += stepY) s.line([x0, y, z], [x1, y, z]);
+  for (let x = x0; x <= x1 + 1e-6; x += stepX) s.line([x, y0, z], [x, y1, z]);
+};
+const shadow = (s: any, cx: number, cy: number, r: number, ry = 1) => {
+  let d = '';
+  for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * ry * Math.sin(a), -0.2); }
+  s.raw(d + 'Z', 'var(--shadow)', 'flat');
+};
+const vents = (s: any, plane: 'x' | 'y', c: number, a0: number, a1: number, z0: number, z1: number, n: number) => {
+  for (let i = 0; i < n; i++) {
+    const z = z0 + ((i + 0.5) / n) * (z1 - z0);
+    if (plane === 'y') s.line([a0, c, z], [a1, c, z], 'vent');
+    else s.line([c, a0, z], [c, a1, z], 'vent');
+  }
+};
+
+/* ══ HERO — a full, open portable CD player on a busy desk ═══════════════════ */
+const hero = makeScene();
+{
+  const s = hero;
+  grid(s, -26, 118, -30, 96, 16, 12);
+
+  shadow(s, 34, 30, 46, 0.9);
+  shadow(s, 96, 20, 14); shadow(s, 92, 66, 12); shadow(s, 20, 86, 15); shadow(s, 118, 78, 12);
+
+  // open lid, folded flat behind the base
+  s.box(4, -44, 0, 64, 38, 3, SLATE2);
+  s.quad(10, -39, 52, 28, 3, '#15302d', 'flat');
+  s.ring(34, -25, 3.1, 11, '#0e2422', 'edge'); s.ring(34, -25, 3.1, 3, '#2f5a57', 'edge');
+  s.text(34, -13, 3.2, 'COMPACT DISC · DIGITAL AUDIO', 1.7, 'legend-tick', 'top', 'middle', 'central');
+  s.screw(9, -41, 3); s.screw(63, -41, 3); s.screw(9, -8, 3); s.screw(63, -8, 3);
+  // hinge barrels
+  s.cyl(10, -3, 2, 2.2, 4, '#3a6b67', '#1d3a37'); s.cyl(58, -3, 2, 2.2, 4, '#3a6b67', '#1d3a37');
+
+  // base body
+  s.box(0, 0, 0, 68, 56, 9, SLATE);
+  s.seam([0, 0, 4.5], [68, 0, 4.5], 'z', 0.6);
+  s.seam([68, 0, 4.5], [68, 56, 4.5], 'z', 0.6);
+  // feet
+  for (const [fx, fy] of [[3, 3], [63, 3], [3, 51], [63, 51]]) s.box(fx, fy, -1.4, 3, 3, 1.4, DARK2);
+
+  // disc well + the warm diffraction fan
+  s.quad(4, 5, 42, 46, 8.6, '#153230', 'flat');
+  s.fan(25, 28, 8, 20, FAN_WARM, 34, 0.15);
+
+  // cream control panel (raised)
+  s.box(49, 5, 7.4, 16, 46, 2.2, CREAMB);
+  s.screw(51, 7, 9.6); s.screw(63, 7, 9.6); s.screw(51, 49, 9.6); s.screw(63, 49, 9.6);
+  // LCD — three readouts laid out flat inside the panel, along the +y axis
+  s.box(51, 8, 9.6, 12, 12, 0.8, { top: '#173a33', left: '#12302a', right: '#0d211d' });
+  s.text(52, 10.6, 10.42, 'TRACK 06', 1.9, 'lcd', 'top', 'start', 'central');
+  s.text(52, 14, 10.42, '03:42', 2.7, 'lcd', 'top', 'start', 'central');
+  s.text(52, 17.4, 10.42, 'REM 47:18', 1.6, 'lcd', 'top', 'start', 'central');
+  // buttons in a grid, each with a lighter cap
+  const btn = (bx: number, by: number) => {
+    s.box(bx, by, 9.6, 5, 5, 1.3, { top: '#f0e2cb', left: '#dccbad', right: '#cbb894' });
+    s.quad(bx + 0.8, by + 0.8, 3.4, 3.4, 10.9, '#fbf3e5', 'flat');
+  };
+  btn(51, 25); btn(58, 25);
+  btn(51, 32); btn(58, 32);
+  s.box(52.5, 40, 9.6, 8, 8, 1.6, REDB);
+  s.text(56.5, 44, 11.3, 'OPEN', 1.9, 'legend-lite', 'top', 'middle', 'central');
+  s.text(51.5, 22.6, 9.62, 'MODE', 1.5, 'legend-tick', 'top', 'start', 'central');
+  // headphone jack on the side
+  s.ring(65.4, 30, 4, 1.4, '#14131a', 'edge', 14);
+
+  // ── incidental desk objects ──
+  // two floppies, WIN95
+  const floppy = (fx: number, fy: number, c: any, l1: string, l2: string) => {
+    s.box(fx, fy, 0, 20, 20, 1.6, c);
+    s.quad(fx + 3, fy + 8, 14, 9.5, 1.6, '#f6f1ea', 'flat');      // label
+    s.line([fx + 3, fy + 11, 1.61], [fx + 17, fy + 11, 1.61], 'faint');
+    s.line([fx + 3, fy + 13.5, 1.61], [fx + 17, fy + 13.5, 1.61], 'faint');
+    s.text(fx + 10, fy + 12, 1.62, l1, 2.2, 'legend-lite', 'top', 'middle', 'central');
+    s.box(fx + 5.5, fy - 0.0, 1.6, 9, 5, 0.5, METAL);            // shutter
+    s.box(fx + 15.5, fy + 1.5, 0.4, 2.2, 2.2, 1.2, DARK2);       // write-protect tab
+  };
+  floppy(80, 2, WHITEB, 'WIN95', '');
+  floppy(76, 48, ORANGE, 'MIX 2', '');
+
+  // open jewel case with a disc + booklet
+  s.box(100, 26, 0, 24, 20, 1, DARK2);
+  s.quad(102, 28, 20, 16, 1, '#1b1a22', 'flat');
+  s.fan(112, 36, 1.05, 8, FAN_SILV, 22, 0.6);
+  s.box(122, 26, 0, 2, 20, 7, DARK2);                            // upright lid
+  s.faceX(124, 26, 46, 0, 7, '#20202a', 'flat');
+
+  // stack of three CD cases
+  for (let i = 0; i < 3; i++) s.box(96 + i * 0.6, 56 - i * 0.6, i * 1.4, 20, 17, 1.3, i % 2 ? STEEL2 : DARKB);
+  s.text(107, 63, 4.15, 'B-SIDES', 1.7, 'legend-tick', 'top', 'middle', 'central');
+
+  // coffee mug
+  s.cyl(30, 78, 0, 7, 11, '#f0e2cb', '#e8703a');
+  s.raw(`M${s.P(37, 74, 8)}Q${s.P(45, 74, 5)} ${s.P(37, 74, 2)}`, 'none', 'handle-mug');
+  s.ring(30, 78, 11, 5.2, 'none', 'edge');                       // coffee surface rim
+  s.ring(30, 78, 11, 4.2, '#5a3418', 'flat');
+
+  // notebook + marker
+  s.box(4, 74, 0, 26, 20, 2.2, PAPER);
+  s.line([4, 80, 2.21], [30, 80, 2.21], 'faint'); s.line([4, 85, 2.21], [30, 85, 2.21], 'faint'); s.line([4, 90, 2.21], [30, 90, 2.21], 'faint');
+  s.raw(`M${s.P(8, 96, 2.4)}L${s.P(30, 84, 2.4)}`, 'none', 'marker'); s.ring(30, 84, 2.4, 1.3, '#c80028', 'flat', 10);
+
+  // juice carton + straw
+  s.box(96, 78, 0, 12, 10, 22, STEEL);
+  s.faceY(88, 97, 107, 3, 19, '#5b8cc0', 'flat');
+  s.text(102, 88.05, 11, 'JUICE', 2.3, 'legend-lite', 'left', 'middle', 'central');
+  s.raw(`M${s.P(104, 81, 22)}L${s.P(108, 79, 34)}`, 'none', 'straw');
+  s.raw(`M${s.P(108, 79, 34)}L${s.P(110, 80, 36)}`, 'none', 'straw');
+
+  // wired earbuds — a coiled cable from the jack to the buds, tied off
+  let cab = 'M' + s.P(65.4, 30, 4);
+  for (let i = 1; i <= 80; i++) {
+    const t = i / 80;
+    const x = 66 + t * 46 + Math.sin(t * 13) * 5;
+    const y = 32 + t * 40 + Math.cos(t * 9) * 7;
+    cab += 'L' + s.P(x, y, 0.5);
+  }
+  s.raw(cab, 'none', 'cable');
+  s.box(88, 62, 0.4, 2.4, 2.4, 1.4, DARK2);                      // cable tie
+  s.ring(112, 72, 0.6, 2.4, '#1b1a22', 'edge'); s.ring(112, 72, 0.6, 1, '#3b6ea5', 'flat');
+  s.ring(118, 78, 0.6, 2.4, '#1b1a22', 'edge'); s.ring(118, 78, 0.6, 1, '#3b6ea5', 'flat');
+}
+
+/* ══ SERVERS — a home rack on a desk, cables tying three machines together ═══ */
+const shelf = makeScene();
+{
+  const s = shelf;
+  grid(s, -20, 150, -14, 64, 18, 12);
+
+  // desk plank
+  s.box(0, 0, 0, 138, 42, 4, WOOD);
+  s.seam([0, 0, 2], [138, 0, 2], 'z', 0.5);
+
+  shadow(s, 26, 22, 18); shadow(s, 66, 22, 20); shadow(s, 104, 22, 14); shadow(s, 128, 30, 9);
+
+  // ── machine 1 : tower (detail on the visible right face, plane x=38) ──
+  s.box(12, 8, 4, 26, 22, 40, DARKB);
+  for (const [fx, fy] of [[12, 8], [12, 29], [37, 8], [37, 29]]) s.box(fx, fy, 3, 1.4, 1.4, 1, DARK2); // feet
+  // top fan grille
+  s.quad(15, 11, 20, 16, 44, '#26252d', 'flat');
+  s.ring(25, 19, 44.1, 6.5, '#3b6ea5', 'edge'); s.ring(25, 19, 44.1, 3.5, '#3b6ea5', 'edge'); s.ring(25, 19, 44.1, 1, '#3b6ea5', 'edge');
+  // recessed faceplate + two drive bays + vent slots on the right face
+  s.faceX(38, 10, 28, 6, 42, '#2a2932', 'flat');
+  s.faceX(38.02, 12, 26, 30, 34, '#191820', 'flat');       // drive bay 1
+  s.faceX(38.02, 12, 26, 24, 28, '#191820', 'flat');       // drive bay 2
+  s.faceX(38.02, 20, 24, 30, 34, '#e0a94e', 'led');        // bay LED
+  vents(s, 'x', 38.02, 12, 26, 9, 20, 6);                  // lower vent slots
+  s.faceX(38.02, 12, 15, 36, 39, '#35e08f', 'led');        // power LED
+  s.screw(38, 11, 41); s.screw(38, 27, 41); s.screw(38, 11, 7); s.screw(38, 27, 7);
+  s.text(14, 28, 44.05, 'NODE-01', 1.5, 'legend-tick', 'top', 'start', 'central');
+
+  // ── machine 2 : two-bay NAS (drive trays on the right face, plane x=82) ──
+  s.box(52, 8, 4, 30, 22, 24, DARK2);
+  for (const [fx, fy] of [[52, 8], [52, 29], [81, 8], [81, 29]]) s.box(fx, fy, 3, 1.4, 1.4, 1, DARK2);
+  s.faceX(82, 10, 28, 6, 26, '#3a3944', 'flat');           // faceplate
+  const tray = (z0: number) => {
+    s.faceX(82.02, 11, 27, z0, z0 + 7, '#46454f', 'flat');
+    s.faceX(82.04, 11, 15, z0 + 1, z0 + 6, '#e8703a', 'led'); // orange pull tab
+    s.line([82.02, 8, z0 + 3.5], [82.02, 28, z0 + 3.5], 'seam-d');
+  };
+  tray(8); tray(16);
+  for (let i = 0; i < 3; i++) s.faceX(82.04, 25, 27, 9 + i * 2.6, 10.6 + i * 2.6, i === 0 ? '#35e08f' : '#e0a94e', 'led'); // status LEDs
+  s.screw(82, 11, 25); s.screw(82, 27, 25);
+  s.text(54, 28, 28.65, 'NAS-02', 1.5, 'legend-tick', 'top', 'start', 'central');
+  s.box(52, 8, 28, 30, 22, 0.6, { top: '#3a3944', left: '#2c2b34', right: '#1e1d25' });
+
+  // ── machine 3 : small box (Pi-like) ──
+  s.box(98, 10, 4, 20, 16, 11, STEEL);
+  s.quad(100, 12, 16, 12, 15, '#335f8f', 'flat');
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) s.box(101.5 + i * 3.2, 13.5 + j * 3.2, 15, 2, 2, 0.5, { top: '#264970', left: '#1f3d5e', right: '#182f49' }); // heatsink grid
+  s.faceX(118, 12, 16, 5, 7, '#0e0e12', 'led');            // port on right face
+  s.faceX(118, 20, 24, 5, 7, '#35e08f', 'led');            // LED
+  s.text(100, 24, 15.05, 'BOX-03', 1.4, 'legend-tick', 'top', 'start', 'central');
+
+  // ── the switch + three ethernet cables (one library) ──
+  s.box(120, 24, 4, 16, 10, 5, DARK2);
+  for (let i = 0; i < 4; i++) s.faceX(136, 25 + i * 2.2, 26.8 + i * 2.2, 5, 8, i < 3 ? '#e0a94e' : '#33323c', 'led');
+  s.text(122, 32, 9.05, 'SWITCH', 1.3, 'legend-tick', 'top', 'start', 'central');
+  const eth = (fromX: number, fromY: number, col: string) => {
+    let d = 'M' + s.P(fromX, fromY, 6);
+    for (let i = 1; i <= 40; i++) { const t = i / 40; const x = fromX + (128 - fromX) * t; const y = fromY + (24 - fromY) * t + Math.sin(t * Math.PI) * 10; d += 'L' + s.P(x, y, 6 + Math.sin(t * Math.PI) * 3); }
+    s.raw(d, 'none', col);
+  };
+  eth(25, 30, 'wire-a'); eth(67, 30, 'wire-b'); eth(108, 26, 'wire-c');
+
+  // desk charm: mug + a small stack of discs + a sticky note
+  s.cyl(10, 30, 4, 6, 9, '#f0e2cb', '#3b6ea5');
+  s.raw(`M${s.P(16, 27, 11)}Q${s.P(23, 27, 8.5)} ${s.P(16, 27, 6)}`, 'none', 'handle-mug');
+  for (let i = 0; i < 4; i++) s.ring(128, 12, 4 + i * 0.7, 7, i % 2 ? '#e8703a' : '#d0b98d', 'edge', 30);
+  s.box(84, 30, 4, 12, 10, 0.6, { top: '#f4d94e', left: '#e0c53f', right: '#c9af33' }); // sticky note
+  s.text(90, 35, 4.65, 'BACKUP!', 1.8, 'legend-tick', 'top', 'middle', 'central');
+}
+
+/* ══ OFFLINE — a red disc lifted from an open case toward a packed tote ══════ */
+const offline = makeScene();
+{
+  const s = offline;
+  grid(s, -14, 118, -12, 74, 16, 12);
+  shadow(s, 22, 30, 20); shadow(s, 84, 36, 22); shadow(s, 52, 24, 12);
+
+  // open jewel case with booklet + spine text
+  s.box(4, 12, 0, 34, 28, 1.4, DARK2);
+  s.quad(7, 15, 28, 22, 1.4, '#1b1a22', 'flat');
+  s.fan(21, 26, 1.45, 11, FAN_SILV, 24, 0.3);
+  s.box(36, 12, 0, 2, 28, 8, DARK2); s.faceX(38, 12, 40, 0, 8, '#20202a', 'flat');
+  s.text(21, 37.5, 1.42, 'DISC 01 · ALBUM', 1.7, 'legend-tick', 'top', 'middle', 'central');
+  s.screw(6, 14, 1.45); s.screw(33, 14, 1.45);
+
+  // the disc, mid-lift, red colourway, with its cast shadow offset on the ground
+  shadow(s, 60, 26, 13);
+  s.fan(56, 20, 20, 13, FAN_RED, 28, 0.4);
+
+  // packed tote bag
+  s.box(72, 20, 0, 32, 28, 30, WOOD2);
+  s.seam([72, 20, 30], [104, 20, 30], 'y', -0.6);
+  s.quad(76, 24, 24, 20, 30, '#c8b48f', 'flat');
+  s.quad(79, 27, 18, 14, 29.2, '#b39f7c', 'flat');
+  // things poking out of the bag: a disc, a booklet, headphones
+  s.fan(86, 33, 30, 8, FAN_COOL, 20, 1.1);
+  s.box(90, 30, 30, 8, 1.2, 10, PAPER);
+  // handles
+  const handle = (ax: number, ay: number, bx: number, by: number, peak: number) => {
+    s.raw(`M${s.P(ax, ay, 30)}Q${s.P((ax + bx) / 2, (ay + by) / 2, peak)} ${s.P(bx, by, 30)}`, 'none', 'handle');
+  };
+  handle(78, 28, 86, 28, 50); handle(92, 24, 100, 24, 50);
+  // stitching + a hang tag
+  s.line([72, 20, 4], [104, 20, 4], 'seam-d'); s.line([72, 48, 4], [104, 48, 4], 'seam-d');
+  s.box(72, 40, 12, 0.4, 6, 5, PAPER); s.text(72.45, 43, 14.5, 'YOURS', 1.5, 'legend-tick', 'right', 'middle', 'central');
+
+  // draped headphones on the ground + keys + a metro card
+  s.ring(30, 60, 0.6, 5, 'none', 'band'); s.ring(24, 58, 0.6, 3.2, '#2f5a57', 'edge'); s.ring(36, 62, 0.6, 3.2, '#2f5a57', 'edge');
+  s.box(4, 54, 0, 16, 10, 0.8, { top: '#e8703a', left: '#d5622f', right: '#b64f24' });
+  s.text(12, 59, 0.82, 'TRANSIT', 1.7, 'legend-lite', 'top', 'middle', 'central');
+}
+
+/* ══ OWNERSHIP — a MiniDisc Walkman with translucent cartridges ═════════════ */
+const walkman = makeScene();
+{
+  const s = walkman;
+  grid(s, -16, 122, -14, 78, 18, 13);
+  shadow(s, 36, 32, 30, 0.92);
+
+  // body — teal, with a lid seam, screws and a battery bump
+  s.box(6, 8, 0, 58, 50, 8, TEAL);
+  s.seam([6, 8, 4.4], [64, 8, 4.4], 'z', 0.6);
+  s.seam([64, 8, 4.4], [64, 58, 4.4], 'z', 0.6);
+  for (const [sx2, sy2] of [[9, 11], [61, 11], [9, 55], [61, 55]]) s.screw(sx2, sy2, 8);
+  // feet
+  for (const [fx, fy] of [[9, 11], [61, 11], [9, 55], [61, 55]]) s.box(fx - 1, fy - 1, -1.2, 2, 2, 1.2, SLATE2);
+  // shutter recess + disc under clear window
+  s.quad(9, 12, 40, 40, 8, '#1f4a45', 'flat');
+  s.fan(29, 32, 7.6, 18, FAN_COOL, 30, 0.2);
+  // jog dial + hold switch + record button + legends
+  s.cyl(56, 20, 8, 5, 2.4, '#57a89f', '#2f716b'); s.text(56, 27.5, 8.05, 'VOL', 1.5, 'legend-tick', 'top', 'middle', 'central');
+  s.box(53, 34, 8, 8, 3.5, 1.5, { top: '#2f716b', left: '#245852', right: '#1a413c' }); s.text(57, 35.7, 9.55, 'HOLD', 1.4, 'legend-tick', 'top', 'middle', 'central');
+  s.box(53, 42, 8, 6, 6, 1.6, REDB); s.text(56, 45, 9.65, 'REC', 1.6, 'legend-lite', 'top', 'middle', 'central');
+  // LCD strip
+  s.box(9, 53, 8, 22, 5, 0.6, { top: '#173a33', left: '#12302a', right: '#0d211d' });
+  s.text(10.5, 55.5, 8.62, 'TR 07 · MDLP', 1.8, 'lcd', 'top', 'start', 'central');
+
+  // three translucent cartridges beside it, labelled
+  const cart = (cx: number, cy: number, tint: string, lab: string) => {
+    s.box(cx, cy, 0, 24, 22, 3, { top: tint, left: tint, right: tint }, 'glassy');
+    s.faceY(cy, cx + 2, cx + 22, 0, 3, tint, 'glassy');
+    s.quad(cx + 2, cy + 2, 20, 5, 3.05, '#f6f1ea', 'flat');    // paper label
+    s.text(cx + 12, cy + 4.5, 3.06, lab, 2.0, 'legend-lite', 'top', 'middle', 'central');
+    s.ring(cx + 12, cy + 13, 3.06, 7, 'none', 'edge');          // window
+    s.fan(cx + 12, cy + 13, 3.07, 6.4, FAN_COOL, 20, cx);
+    s.box(cx + 20, cy + 8, 0, 1.2, 6, 3, { top: '#c9cdd2', left: '#b3b8bf', right: '#9aa0a8' }); // shutter
+  };
+  cart(74, 6, 'rgba(93,179,160,0.36)', 'JAZZ');
+  cart(80, 34, 'rgba(93,143,205,0.36)', 'RARE');
+  cart(96, 60, 'rgba(231,155,176,0.36)', 'MIX');
+}
+
+const specFor = (i: number) => STATS[i];
+---
+
+<Layout
+  title={`${NAME} — a drawer of retro tech, drawn`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — drawn as a desk of the machines that used to hold your music."
+  themeColor="#f7ede0"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=khand@500,600,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="dio">
+    <!--
+      THESIS: A desk drawer of retro tech, drawn. The page is a series of large,
+      dense true-isometric scenes; the drawn objects ARE the content — a CD player,
+      a home rack, a jewel case, a MiniDisc Walkman — packed with real detail and
+      incidental charm.
+      OWN-WORLD: Warm cream tile with faint un-erased construction lines, flat
+      screen-print colour, one hard value step per face, a clean single outline
+      weight and a light riso grain. Burnt orange + steel blue over cream, brand
+      red for the marks. The diffraction disc — a fan of flat wedges — recurs in
+      every colourway the app tints itself.
+      FIRST VIEWPORT: the open CD-player desk, wordmark + headline beside it.
+    -->
+
+    <VariantBar slug="diorama" tone="cool" />
+
+    <!-- HERO ---------------------------------------------------------------- -->
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="lockup">
+          <Mark size={26} decorative />
+          <span class="wordmark">{NAME}</span>
+          <span class="lockup-tick">est. your library</span>
+        </div>
+        <h1>{TAGLINE}</h1>
+        <p class="lede">
+          {SUBLINE} Mozz plays what is already on your own Plex, Jellyfin or
+          Navidrome server — drawn here as the desk of machines that used to hold
+          your records.
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source →</a>
+        </div>
+      </div>
+
+      <!-- Hero plate layers over the drawing; absent /hero/diorama.jpg never paints. -->
+      <figure class="stage">
+        <div class="plate" aria-hidden="true"></div>
+        <svg class="art" viewBox={hero.vb(8)} role="img"
+             aria-label="An open portable CD player drawn in isometric on a cream tiled floor, its disc a fan of gold and orange wedges, surrounded by floppy disks, an open CD case, a coffee mug, a notebook, a juice carton and coiled earbuds.">
+          {hero.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {hero.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+    </header>
+
+    <!-- SERVERS ------------------------------------------------------------- -->
+    <section class="scene servers" aria-labelledby="srv-h">
+      <div class="scene-head">
+        <h2 id="srv-h">Point it at a machine you already own.</h2>
+        <p>Three server types, one library — drawn as your own rack, patched together on the desk. Add more than one and browse them like they were always the same shelf.</p>
+      </div>
+      <figure class="band-art">
+        <svg class="art" viewBox={shelf.vb(6)} role="img"
+             aria-label="A home server rack drawn in isometric on a desk: a tall tower with a fan grille and drive bays, a two-bay NAS with orange drive tabs, and a small steel box, all patched to a network switch by three coloured ethernet cables, with a mug and a stack of discs.">
+          {shelf.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {shelf.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <ul class="server-list" role="list">
+        {SERVERS.map((sv) => (
+          <li>
+            <span class="server-logo-wrap"><ServerLogo name={sv.name} size={30} brand /></span>
+            <div>
+              <h3>{sv.name}</h3>
+              <p>{sv.note}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- FEATURES: opened drawer, technical parts list ----------------------- -->
+    <section class="scene drawer-sec" aria-labelledby="feat-h">
+      <div class="scene-head">
+        <h2 id="feat-h">Everything, in the one drawer.</h2>
+        <p>Six things Mozz does, labelled the way a technical drawing labels its parts.</p>
+      </div>
+
+      <figure class="drawer-art">
+        <svg class="art" viewBox="0 0 520 380" role="img" aria-label="An opened desk drawer drawn in isometric, packed with retro audio hardware — a cassette, a MiniDisc, an equalizer module, a magnifier, a stopwatch, a radio dish and headphones — six of them tagged with numbered leader lines." preserveAspectRatio="xMidYMid meet">
+          <g class="drawer-body">
+            <path d="M56 150 L316 30 L500 118 L240 238 Z" style="fill:#e7d3ad" class="flat"/>
+            <path d="M56 150 L240 238 L240 320 L56 232 Z" style="fill:#cdb691" class="flat"/>
+            <path d="M240 238 L500 118 L500 200 L240 320 Z" style="fill:#bda67c" class="flat"/>
+            <path d="M86 150 L300 50 L456 124 L242 224 Z" style="fill:#f6ecdb" class="flat"/>
+            <path d="M56 232 L240 320 L240 342 L56 254 Z" style="fill:#d0b98d" class="flat"/>
+            <ellipse cx="148" cy="290" rx="15" ry="7" style="fill:#c2ac86" class="edge"/>
+          </g>
+
+          {/* packed props (drawn in flat colour, value-stepped) */}
+          <g class="props">
+            {/* cassette (1) */}
+            <g transform="translate(150 108) rotate(-16)">
+              <rect x="-26" y="-15" width="52" height="30" rx="3" style="fill:#3b6ea5" class="flat"/>
+              <rect x="-20" y="-9" width="40" height="12" rx="2" style="fill:#f3ead6" class="flat"/>
+              <circle cx="-10" cy="7" r="5" style="fill:#f7ede0" class="edge"/>
+              <circle cx="10" cy="7" r="5" style="fill:#f7ede0" class="edge"/>
+              <line x1="-16" y1="-6" x2="16" y2="-6" class="faint2"/>
+            </g>
+            {/* MiniDisc (2) */}
+            <g transform="translate(232 78) rotate(-22)">
+              <rect x="-22" y="-20" width="44" height="40" rx="4" style="fill:#49a08d" class="flat"/>
+              <rect x="-15" y="-16" width="30" height="9" rx="2" style="fill:#f3ead6" class="flat"/>
+              <circle cx="0" cy="4" r="10" style="fill:#cdd2d8" class="edge"/>
+            </g>
+            {/* EQ module (3) */}
+            <g transform="translate(320 108) rotate(-28)">
+              <rect x="-28" y="-14" width="56" height="28" rx="3" style="fill:#34333c" class="flat"/>
+              {[0,1,2,3,4].map((i)=>(<g><line x1={-20+i*10} y1="-8" x2={-20+i*10} y2="8" class="eq-track"/><rect x={-23+i*10} y={-6+ (i%2)*8} width="6" height="4" rx="1" style="fill:#e8703a" class="flat"/></g>))}
+            </g>
+            {/* magnifier (4) — search */}
+            <g transform="translate(158 150)">
+              <circle cx="0" cy="0" r="15" style="fill:none" class="glass-line"/>
+              <circle cx="0" cy="0" r="15" style="fill:#3b6ea5" opacity="0.14" class="flat"/>
+              <line x1="11" y1="11" x2="26" y2="26" class="glass-line"/>
+            </g>
+            {/* stopwatch (5) — starts instantly */}
+            <g transform="translate(300 150)">
+              <circle cx="0" cy="0" r="15" style="fill:#f5efe4" class="edge"/>
+              <rect x="-4" y="-20" width="8" height="5" rx="1" style="fill:#cdd2d8" class="edge"/>
+              <line x1="0" y1="0" x2="0" y2="-10" class="edge"/>
+              <line x1="0" y1="0" x2="8" y2="3" class="edge"/>
+            </g>
+            {/* radio dish (6) */}
+            <g transform="translate(392 138)">
+              <ellipse cx="0" cy="0" rx="16" ry="12" style="fill:#e8703a" class="edge"/>
+              <ellipse cx="0" cy="0" rx="6" ry="4" style="fill:#f7ede0" class="edge"/>
+              <line x1="0" y1="-4" x2="0" y2="-22" class="edge"/>
+              <circle cx="0" cy="-22" r="2.5" style="fill:#c80028" class="flat"/>
+            </g>
+            {/* headphones filler */}
+            <g transform="translate(232 168)">
+              <path d="M-18 6 A18 18 0 0 1 18 6" style="fill:none" class="glass-line"/>
+              <ellipse cx="-18" cy="10" rx="6" ry="8" style="fill:#2f5a57" class="edge"/>
+              <ellipse cx="18" cy="10" rx="6" ry="8" style="fill:#2f5a57" class="edge"/>
+            </g>
+            {/* incidental charm: batteries + SD card + pick */}
+            <g transform="translate(120 176) rotate(-16)">
+              <rect x="-4" y="-12" width="10" height="24" rx="2" style="fill:#e0a94e" class="edge"/>
+              <rect x="8" y="-12" width="10" height="24" rx="2" style="fill:#e0a94e" class="edge"/>
+              <rect x="-4" y="-14" width="10" height="3" style="fill:#c9cdd2" class="edge"/>
+              <rect x="8" y="-14" width="10" height="3" style="fill:#c9cdd2" class="edge"/>
+            </g>
+            <rect x="352" y="160" width="20" height="16" rx="2" transform="rotate(18 362 168)" style="fill:#c80028" class="edge"/>
+            <path d="M188 196 q6 -12 12 0 z" style="fill:#e8703a" class="edge"/>
+          </g>
+
+          {/* six numbered leader lines */}
+          {[
+            { x: 150, y: 108, lx: 150, ly: 40 }, { x: 232, y: 78, lx: 262, ly: 30 }, { x: 320, y: 108, lx: 360, ly: 52 },
+            { x: 158, y: 150, lx: 96, ly: 196 }, { x: 300, y: 150, lx: 320, ly: 210 }, { x: 392, y: 138, lx: 452, ly: 176 },
+          ].map((o, i) => (
+            <g class="tag">
+              <line x1={o.x} y1={o.y} x2={o.lx} y2={o.ly} class="leader"/>
+              <circle cx={o.lx} cy={o.ly} r="11" class="tag-dot"/>
+              <text x={o.lx} y={o.ly + 4} text-anchor="middle" font-size="12" class="tag-num">{i + 1}</text>
+            </g>
+          ))}
+        </svg>
+      </figure>
+
+      <ol class="parts-list" role="list">
+        {FEATURES.map((ft, i) => (
+          <li>
+            <span class="part-num">{i + 1}</span>
+            <div>
+              <h3>{ft.title}</h3>
+              <p>{ft.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- COLLISION: drawn iso easel holding a REAL screenshot ----------------- -->
+    <section class="scene now" aria-labelledby="now-h">
+      <div class="scene-head">
+        <h2 id="now-h">The disc, in whatever colour is playing.</h2>
+        <p>Mozz repaints its whole interface from the artwork of the current record — the same trick the diffraction disc plays, six ways.</p>
+      </div>
+
+      <div class="now-grid">
+        <figure class="easel">
+          <svg class="art easel-art" viewBox="0 0 300 340" role="img" aria-label="A drawn isometric wooden tray and back-stand holding a phone." preserveAspectRatio="xMidYMax meet">
+            <ellipse cx="150" cy="322" rx="118" ry="20" style="fill:var(--shadow)" class="flat"/>
+            <path d="M30 262 L172 192 L266 240 L124 310 Z" style="fill:#e7d3ad" class="flat"/>
+            <path d="M30 262 L124 310 L124 328 L30 280 Z" style="fill:#cdb691" class="flat"/>
+            <path d="M124 310 L266 240 L266 258 L124 328 Z" style="fill:#bda67c" class="flat"/>
+            <path d="M172 192 L186 185 L158 62 L144 69 Z" style="fill:#d0b98d" class="flat"/>
+            <path d="M150 300 L96 272 L96 286 L150 314 Z" style="fill:#c3aa7d" class="flat"/>
+          </svg>
+          <div class="easel-phone">
+            <Phone name="mozz-nowplaying" width={228} priority sizes="228px"
+                   class="dio-phone" alt="The Mozz now-playing screen, its interface tinted violet to match the album art." />
+          </div>
+        </figure>
+
+        <figure class="colourways" aria-label="The stylised disc drawn in five of the colourways the app tints itself.">
+          <svg class="art" viewBox={(() => {
+            const c = makeScene();
+            [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA].forEach((pal, i) => { shadow(c, i * 34, 0, 15); c.fan(i * 34, 0, 0, 14, pal, 26, i * 0.7); });
+            return c.vb(5);
+          })()} role="presentation">
+            {(() => {
+              const c = makeScene();
+              [FAN_WARM, FAN_RED, FAN_COOL, FAN_SILV, FAN_SEPIA].forEach((pal, i) => { shadow(c, i * 34, 0, 15); c.fan(i * 34, 0, 0, 14, pal, 26, i * 0.7); });
+              return c.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />);
+            })()}
+          </svg>
+          <div class="spec-plates">
+            <div class="plate-chip"><b>{specFor(0).value}</b><span>{specFor(0).label}</span></div>
+            <div class="plate-chip"><b>{specFor(1).value}</b><span>{specFor(1).label}</span></div>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- OFFLINE -------------------------------------------------------------- -->
+    <section class="scene offline-sec" aria-labelledby="off-h">
+      <figure class="band-art">
+        <svg class="art" viewBox={offline.vb(6)} role="img"
+             aria-label="A red-tinted disc drawn in isometric being lifted out of an open jewel case toward a packed canvas tote bag, with headphones and a transit card on the floor.">
+          {offline.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {offline.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <div class="scene-head narrow">
+        <h2 id="off-h">Lift a record into your bag.</h2>
+        <p>Downloads were designed in from the first day, not bolted on. Take an album on the subway and it behaves exactly like it does at home — the catalog lives on the device, so browsing and search work with the server unreachable.</p>
+      </div>
+    </section>
+
+    <!-- OWNERSHIP: the MiniDisc Walkman -------------------------------------- -->
+    <section class="scene own" aria-labelledby="own-h">
+      <div class="scene-head">
+        <h2 id="own-h">This one is actually yours.</h2>
+        <p>No login, because there is no Mozz server to log into. Like the cartridge you could pop out and pocket.</p>
+      </div>
+      <figure class="band-art">
+        <svg class="art" viewBox={walkman.vb(6)} role="img"
+             aria-label="A teal MiniDisc Walkman drawn in isometric with screws, a jog dial, a red record button and a green-blue diffraction disc under its shutter, beside three labelled translucent cartridges.">
+          {walkman.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />)}
+          {walkman.texts.map((t) => <text transform={t.tr} font-size={t.size} text-anchor={t.anchor} dominant-baseline={t.base} class={t.cls}>{t.s}</text>)}
+        </svg>
+      </figure>
+      <ul class="own-list" role="list">
+        {OWNERSHIP.map((o) => (<li><h3>{o.title}</h3><p>{o.body}</p></li>))}
+      </ul>
+    </section>
+
+    <!-- FAQ ------------------------------------------------------------------ -->
+    <section class="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">The label on the sleeve</h2>
+      <dl>
+        {FAQS.map((qa) => (
+          <div class="faq-row"><dt>{qa.q}</dt><dd>{qa.a}</dd></div>
+        ))}
+      </dl>
+    </section>
+
+    <!-- FOOTER --------------------------------------------------------------- -->
+    <footer class="foot">
+      <div class="foot-mark">
+        <Mark size={22} decorative />
+        <span class="wordmark">{NAME}</span>
+      </div>
+      <p class="foot-line">{TAGLINE} {SUBLINE}</p>
+      <p class="foot-meta">
+        Free forever · GPL-3.0 with an App Store Exception · <a href={GITHUB_URL}>source on GitHub</a>
+      </p>
+      <div class="foot-disc" aria-hidden="true">
+        <svg viewBox={(() => { const c = makeScene(); c.fan(0, 0, 0, 12, FAN_RED, 26, 0.3); return c.vb(3); })()}>
+          {(() => { const c = makeScene(); c.fan(0, 0, 0, 12, FAN_RED, 26, 0.3); return c.parts.map((p) => <path d={p.d} style={`fill:${p.fill}`} class={p.cls} />); })()}
+        </svg>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .dio {
+    --cream: #f7ede0;
+    --cream-hi: #fdf7ee;
+    --orange: #e8703a;
+    --steel: #3b6ea5;
+    --slate: #2f5a57;
+    --gold: #e0a94e;
+    --pink: #e7b3aa;
+    --red: #c80028;
+    --ink: #33261c;
+    --ink-soft: #6a584a;
+    --hole: #efe2cd;
+    --shadow: rgba(70, 52, 34, 0.15);
+    --guide: rgba(120, 92, 60, 0.34);
+
+    --hero-plate: url('/hero/diorama.jpg');
+
+    background:
+      radial-gradient(130% 90% at 84% 6%, #fef8ee 0%, var(--cream) 44%, #efe1cd 100%);
+    color: var(--ink);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* riso grain — present enough to read at full size */
+  .dio::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0.62'/></feComponentTransfer></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 150px 150px;
+  }
+
+  /* one outline weight everywhere, in screen pixels, at every scale */
+  .art { width: 100%; height: auto; overflow: visible; }
+  .art path, .art circle, .art ellipse, .art line, .art rect {
+    vector-effect: non-scaling-stroke;
+    stroke: var(--ink);
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .art .flat { stroke: none; }
+  .art .edge { fill: none; }
+  .art .glassy { stroke: var(--ink); }
+  .art .guide { stroke: var(--guide); stroke-width: 1; }
+  .art .faint { stroke: rgba(51,38,28,0.28); stroke-width: 1.1; }
+  .art .faint2 { stroke: rgba(51,38,28,0.35); stroke-width: 1.1; }
+  .art .seam-d { stroke: rgba(10,8,5,0.45); stroke-width: 1.2; }
+  .art .seam-l { stroke: rgba(255,250,240,0.55); stroke-width: 1.2; }
+  .art .screw { stroke: rgba(20,14,8,0.6); stroke-width: 1.1; }
+  .art .vent { stroke: rgba(10,8,5,0.5); stroke-width: 1.3; }
+  .art .led { stroke: rgba(10,8,5,0.4); stroke-width: 0.8; }
+  .art .cable { stroke: #1b1a22; stroke-width: 2.6; fill: none; }
+  .art .straw { stroke: var(--red); stroke-width: 2.8; fill: none; }
+  .art .marker { stroke: #c80028; stroke-width: 2.6; fill: none; }
+  .art .handle { stroke: #8f7a58; stroke-width: 2.8; fill: none; }
+  .art .handle-mug { stroke: #cf9a42; stroke-width: 3.4; fill: none; }
+  .art .band { stroke: #2f5a57; stroke-width: 2.6; fill: none; }
+  .art .wire-a { stroke: #e8703a; stroke-width: 2.4; fill: none; }
+  .art .wire-b { stroke: #3b6ea5; stroke-width: 2.4; fill: none; }
+  .art .wire-c { stroke: #49a08d; stroke-width: 2.4; fill: none; }
+  .art text { fill: var(--ink); font-family: 'Khand', sans-serif; letter-spacing: 0.03em; }
+  .art .lcd { fill: #7fe6c4; font-family: 'Khand', sans-serif; letter-spacing: 0.07em; }
+  .art .legend { text-transform: uppercase; }
+  .art .legend-lite { fill: #33261c; text-transform: uppercase; letter-spacing: 0.04em; }
+  .art .legend-tick { fill: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.09em; }
+
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+
+  /* ── hero ── */
+  .hero {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem) clamp(1rem, 2vw, 2rem);
+    display: grid;
+    grid-template-columns: minmax(0, 0.74fr) minmax(0, 1.26fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  .lockup { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem; }
+  .wordmark { font-weight: 900; font-size: 1.35rem; letter-spacing: -0.03em; }
+  .lockup-tick {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.14em;
+    font-size: 0.7rem; color: var(--ink-soft); border-left: 1px solid var(--guide);
+    padding-left: 0.6rem; margin-left: 0.2rem;
+  }
+  .hero h1 { font-size: clamp(2.4rem, 5.4vw, 4.2rem); max-width: 15ch; margin-bottom: 1rem; }
+  .lede { max-width: 40ch; color: #4a3a2c; font-size: 1.06rem; }
+  .actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.8rem; }
+  .store {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: var(--ink); color: var(--cream-hi);
+    padding: 0.7rem 1.15rem; border-radius: 12px; font-weight: 600;
+    box-shadow: 4px 5px 0 rgba(51, 38, 28, 0.18);
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+  }
+  .store:hover { transform: translate(-1px, -1px); box-shadow: 5px 6px 0 rgba(51, 38, 28, 0.22); }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: flex; flex-direction: column; line-height: 1.05; font-size: 1.02rem; }
+  .store small { font-size: 0.64rem; font-weight: 500; opacity: 0.82; text-transform: uppercase; letter-spacing: 0.06em; }
+  .store.is-pending { background: #e7d3ad; color: var(--ink); box-shadow: 4px 5px 0 rgba(51, 38, 28, 0.14); cursor: default; }
+  .store.is-pending small::after { content: ' · pending'; opacity: 0.7; }
+  .ghost { font-weight: 600; color: var(--slate); border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .ghost:hover { color: var(--orange); }
+
+  .stage { position: relative; margin: 0; min-width: 0; }
+  .stage .plate {
+    position: absolute; inset: 2%; z-index: -1;
+    background-image: var(--hero-plate);
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    border-radius: 24px; opacity: 0.9;
+  }
+  .stage .art { filter: drop-shadow(0 26px 40px rgba(70, 52, 34, 0.16)); }
+
+  /* ── generic scene ── */
+  .scene {
+    max-width: 1180px;
+    margin: clamp(2.5rem, 7vw, 6rem) auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem);
+    display: grid;
+    gap: clamp(1.4rem, 3vw, 2.4rem);
+    align-items: center;
+  }
+  .scene-head h2 { font-size: clamp(1.8rem, 3.6vw, 2.8rem); max-width: 18ch; margin-bottom: 0.7rem; }
+  .scene-head p { max-width: 48ch; color: #4a3a2c; }
+  .scene-head.narrow p { max-width: 54ch; }
+
+  /* full-bleed illustration bands (bigger, edge-to-edge) */
+  .band-art {
+    margin: 0.5rem 0 0;
+    width: 100%;
+  }
+  .band-art .art { filter: drop-shadow(0 20px 32px rgba(70, 52, 34, 0.13)); }
+
+  .servers { grid-template-columns: 1fr; }
+  .servers .band-art { max-width: 1100px; margin-inline: auto; }
+  .server-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin: 0; padding: 0; }
+  .server-list li { display: flex; gap: 0.8rem; align-items: flex-start; }
+  .server-logo-wrap {
+    flex: none; width: 46px; height: 46px; border-radius: 10px;
+    display: grid; place-items: center; background: var(--cream-hi);
+    box-shadow: inset 0 0 0 1px rgba(51, 38, 28, 0.12), 3px 3px 0 rgba(51,38,28,0.08);
+  }
+  .server-list h3 { font-size: 1.08rem; margin-bottom: 0.15rem; }
+  .server-list p { font-size: 0.92rem; color: #4a3a2c; }
+
+  /* ── features drawer ── */
+  .drawer-sec { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); align-items: center; }
+  .drawer-sec .scene-head { grid-column: 1 / -1; }
+  .drawer-art { margin: 0; }
+  .tag .leader { stroke: rgba(51,38,28,0.55); stroke-width: 1.2; }
+  .tag-dot { fill: var(--red); stroke: var(--cream-hi); stroke-width: 2.4; }
+  .tag-num { fill: var(--cream-hi); font-family: 'Khand', sans-serif; font-weight: 600; stroke: none; }
+  .props .glass-line { stroke: var(--slate); stroke-width: 2.4; fill: none; }
+  .props .eq-track { stroke: #6a584a; stroke-width: 1.6; }
+  .props .faint2 { stroke: rgba(51,38,28,0.35); stroke-width: 1.2; }
+
+  .parts-list { display: grid; gap: 1.05rem; margin: 0; padding: 0; }
+  .parts-list li { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; }
+  .part-num {
+    font-family: 'Khand', sans-serif; font-weight: 700; font-size: 1.1rem;
+    width: 30px; height: 30px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; color: var(--cream-hi); background: var(--ink);
+  }
+  .parts-list h3 { font-size: 1.06rem; margin-bottom: 0.1rem; }
+  .parts-list p { font-size: 0.94rem; color: #4a3a2c; max-width: 52ch; }
+
+  /* ── collision / now-playing ── */
+  .now { grid-template-columns: 1fr; }
+  .now-grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .easel { position: relative; margin: 0; display: grid; place-items: center; min-height: 360px; }
+  .easel-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .easel-phone { position: relative; z-index: 2; transform: translateY(-7%); }
+  .dio-phone {
+    --phone-bezel: linear-gradient(#403a33, #241f19);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(255, 240, 220, 0.2);
+    --phone-shadow: 0 26px 44px -22px rgba(51, 38, 28, 0.55);
+  }
+  .colourways { margin: 0; }
+  .colourways .art { max-width: 560px; }
+  .spec-plates { display: flex; gap: 1rem; margin-top: 1.4rem; flex-wrap: wrap; }
+  .plate-chip {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: 0.7rem 1rem; border-radius: 12px; background: var(--cream-hi);
+    box-shadow: inset 0 0 0 1px rgba(51, 38, 28, 0.12), 3px 3px 0 rgba(51,38,28,0.08);
+  }
+  .plate-chip b { font-family: 'Khand', sans-serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; color: #b8531f; }
+  .plate-chip span { font-size: 0.82rem; color: #4a3a2c; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── offline ── */
+  .offline-sec { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: center; }
+  .offline-sec .band-art { max-width: 720px; }
+
+  /* ── ownership ── */
+  .own { grid-template-columns: 1fr; position: relative; }
+  .own::before {
+    content: ''; position: absolute; inset: -2rem calc(50% - 50vw); z-index: -1;
+    background: radial-gradient(80% 70% at 50% 40%, rgba(231, 179, 170, 0.4), rgba(231, 179, 170, 0) 70%);
+  }
+  .own .band-art { max-width: 900px; margin-inline: auto; }
+  .own-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin: 0; padding: 0; }
+  .own-list li { padding-top: 0.9rem; border-top: 1px solid var(--guide); }
+  .own-list h3 { font-size: 1.02rem; margin-bottom: 0.25rem; }
+  .own-list p { font-size: 0.9rem; color: #4a3a2c; }
+
+  /* ── faq ── */
+  .faq { max-width: 900px; margin: clamp(3rem, 8vw, 6rem) auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+  .faq h2 {
+    font-family: 'Khand', sans-serif; text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 1.1rem; color: var(--ink-soft); font-weight: 600; margin-bottom: 1.4rem;
+    padding-bottom: 0.7rem; border-bottom: 1px solid var(--guide);
+  }
+  .faq dl { display: grid; gap: 0; }
+  .faq-row { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: 1.5rem; padding: 1.2rem 0; border-bottom: 1px solid var(--guide); }
+  .faq dt { font-weight: 700; font-size: 1.05rem; }
+  .faq dd { margin: 0; color: #4a3a2c; max-width: 62ch; }
+
+  /* ── footer ── */
+  .foot { max-width: 1180px; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 4rem; position: relative; }
+  .foot-mark { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+  .foot-line { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; max-width: 24ch; }
+  .foot-meta { margin-top: 0.6rem; color: var(--ink-soft); font-size: 0.92rem; }
+  .foot-meta a { color: var(--slate); border-bottom: 1px solid currentColor; }
+  .foot-meta a:hover { color: var(--orange); }
+  .foot-disc { position: absolute; right: clamp(1.25rem, 4vw, 3rem); bottom: 3rem; width: clamp(70px, 12vw, 120px); }
+  .foot-disc svg { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 8px 12px rgba(70,52,34,0.16)); }
+
+  /* ── responsive ── */
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; }
+    .drawer-sec, .offline-sec { grid-template-columns: 1fr; }
+    .now-grid { grid-template-columns: 1fr; }
+    .server-list, .own-list { grid-template-columns: repeat(2, 1fr); }
+    .offline-sec .scene-head { order: 2; }
+  }
+  @media (max-width: 560px) {
+    .dio { font-size: 16px; }
+    .server-list, .own-list { grid-template-columns: 1fr; }
+    .faq-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    .spec-plates { width: 100%; }
+    .lockup-tick { display: none; }
+    .foot-disc { position: static; margin-top: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .store { transition: none; } }
+</style>

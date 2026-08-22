@@ -1,0 +1,872 @@
+---
+/**
+ * VARIANT — FIRST LISTEN  (the wildcard)
+ *
+ * The page is built around ONE artifact you operate: THE MOZZETTE — a giant
+ * translucent acid-plastic cartridge. Opening it is how the product reveals
+ * itself. Streaming is the sealed box; the music you self-host is the one whose
+ * shell you can see through and whose lid you can lift.
+ *
+ * The material is the world: candy-coloured semi-transparent plastic, layered so
+ * overlaps get denser, coloured (not grey) shadows, visible internals through
+ * the shell, bright edge caustics on moulded corners, a seam and a sprue mark.
+ * The palette is structural — whole fields of #e8ff54 acid and #ff4d6d pink.
+ *
+ * ACCESS CONTRACT: every word is in the DOM at all times; the lid and shutter
+ * are translucent, so nothing is gated behind a mechanism. Controls are real
+ * <button>s with aria-pressed, keyboard-operable; JS only enhances. Reduced
+ * motion snaps instead of sliding. Screen readers and crawlers get everything.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, STATS, FAQS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = "The one you're allowed to open.";
+
+// Invented part-names — labels for the world, in FEATURES order.
+const PARTS = [
+  { n: 1, tag: 'the manifold',      gloss: 'where three feeds meet' },
+  { n: 2, tag: 'the reserve cell',  gloss: 'what you took offline' },
+  { n: 3, tag: 'the index core',    gloss: 'the catalogue, on device' },
+  { n: 4, tag: 'the quick spindle', gloss: 'spins up in a blink' },
+  { n: 5, tag: 'the taste coil',    gloss: 'listens for what rhymes' },
+  { n: 6, tag: 'the tone stage',    gloss: 'bends to your ears' },
+];
+const SPEC = FEATURES.map((f, i) => ({ ...f, ...PARTS[i] }));
+
+// Server "cartridges" you seat into the connector. Real logos, invented slot ids.
+const CARTS = SERVERS.map((s, i) => ({ ...s, slot: ['A', 'B', 'C'][i] }));
+
+// The same app on five discs — the adaptive tint, read as swappable cartridges.
+const DISCS = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlist', 'mozz-album-dark'];
+---
+
+<Layout
+  title={`${NAME} — the one you're allowed to open`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files. No account, no tracking, no subscription."
+  themeColor="#16161b"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <VariantBar slug="firstlisten" tone="neutral" />
+
+  <main class="fl">
+    <!--
+    THESIS: discovery, not nostalgia. An unfamiliar translucent machine you open
+    with your hands — the sealed box is streaming, the openable one is the music
+    you own. Curiosity before comprehension: touch first, understand second, and
+    poking rewards you more than once.
+    OWN-WORLD: candy translucent plastic (layered density, coloured caustics,
+    visible internals, seam + sprue), whole fields of acid #e8ff54 and pink
+    #ff4d6d, a machine with a face. Mozz red #c80028 lives in the mark.
+    ACCESS: lid + shutter are translucent; all copy is always in the DOM; the
+    controls are real buttons; reduced-motion snaps.
+    -->
+
+    <!-- ============================ MASTHEAD ============================ -->
+    <header class="masthead">
+      <a class="lockup" href="/" aria-label="Mozz — all vibes">
+        <Mark size={26} />
+        <span class="wordmark">Mozz</span>
+      </a>
+      <p class="plate-id" aria-hidden="true">MODEL <b>MOZZETTE</b> · UNIT&nbsp;01</p>
+    </header>
+
+    <!-- ============================== HERO ============================== -->
+    <section class="hero" aria-labelledby="fl-title">
+      <!-- Optional AI art plate: drop /hero/firstlisten.jpg (~1600×1200) and it
+           screens over the CSS scene via --hero-plate. Absent → CSS only, no box. -->
+      <div class="hero-plate" aria-hidden="true"></div>
+
+      <div class="hero-copy">
+        <h1 id="fl-title">{HEADLINE}</h1>
+        <p class="lede">
+          A little machine for the music you already keep. Feed it your own
+          <b>Plex</b>, <b>Jellyfin</b> or <b>Navidrome</b> — then lift the lid.
+          No box to unseal, nothing sealed <i>you</i> out.
+        </p>
+        <p class="tagline">
+          <span class="tl-1">{TAGLINE}</span>
+          <span class="tl-2">{SUBLINE}</span>
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="btn primary" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App&nbsp;Store</span>
+            </a>
+          ) : (
+            <span class="btn primary pending" role="note" aria-label="Coming to the App Store — not yet released">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App&nbsp;Store</span>
+            </span>
+          )}
+          <a class="btn ghost" href={GITHUB_URL}>Read the source</a>
+        </div>
+      </div>
+
+      <!-- ================= THE MOZZETTE — the artifact ================= -->
+      <figure class="rig">
+        <div class="slab" aria-hidden="true"></div>
+
+        <div class="case" id="case" data-open="false" data-shutter="false">
+          <!-- internals, seen through the translucent shell -->
+          <svg class="internals" viewBox="0 0 360 300" aria-hidden="true">
+            <defs>
+              <radialGradient id="fl-core" cx="50%" cy="50%" r="60%">
+                <stop offset="0" stop-color="#ff4d6d" stop-opacity="0.55"/>
+                <stop offset="70%" stop-color="#ff4d6d" stop-opacity="0.10"/>
+                <stop offset="100%" stop-color="#ff4d6d" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect x="0" y="0" width="360" height="300" fill="url(#fl-core)"/>
+            <!-- ribbon path between reels -->
+            <path d="M96 120 C 180 86, 180 86, 264 120" fill="none" stroke="#16161b" stroke-opacity="0.5" stroke-width="14"/>
+            <path d="M96 120 C 180 86, 180 86, 264 120" fill="none" stroke="#e8ff54" stroke-opacity="0.4" stroke-width="4"/>
+            <!-- reels -->
+            <g class="reel reel-a">
+              <circle cx="96" cy="126" r="40" fill="#16161b" fill-opacity="0.5" stroke="#16161b" stroke-opacity="0.6" stroke-width="3"/>
+              <circle cx="96" cy="126" r="15" fill="none" stroke="#16161b" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="5 8"/>
+              <circle cx="96" cy="126" r="5" fill="#ff4d6d"/>
+            </g>
+            <g class="reel reel-b">
+              <circle cx="264" cy="126" r="40" fill="#16161b" fill-opacity="0.5" stroke="#16161b" stroke-opacity="0.6" stroke-width="3"/>
+              <circle cx="264" cy="126" r="15" fill="none" stroke="#16161b" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="5 8"/>
+              <circle cx="264" cy="126" r="5" fill="#ff4d6d"/>
+            </g>
+            <!-- circuit + sprue channel -->
+            <g stroke="#16161b" stroke-opacity="0.45" stroke-width="3" fill="none">
+              <path d="M40 250 h70 v-24 h50"/>
+              <path d="M320 250 h-70 v-24 h-50"/>
+              <path d="M180 268 v-26"/>
+            </g>
+            <g fill="#16161b" fill-opacity="0.6">
+              <rect x="104" y="244" width="12" height="12"/>
+              <rect x="244" y="244" width="12" height="12"/>
+              <rect x="174" y="238" width="12" height="12"/>
+            </g>
+          </svg>
+
+          <!-- the SCREEN WELL: the living heart, revealed when the lid lifts -->
+          <div class="well">
+            <p class="plate">
+              <span class="plate-t">First&nbsp;Listen</span>
+              <span class="plate-s">insert · press · hear</span>
+            </p>
+            <div class="screen">
+              <Phone name="mozz-nowplaying" width={188} priority
+                sizes="(max-width: 62rem) 44vw, 188px" class="case-phone" />
+            </div>
+          </div>
+
+          <!-- the SHUTTER window over the reels; slides aside -->
+          <div class="window" aria-hidden="true">
+            <div class="shutter">
+              <span class="s-ridge"></span><span class="s-ridge"></span><span class="s-ridge"></span>
+            </div>
+          </div>
+
+          <!-- the LID — hinged, frosted acid; carries the face; lifts to reveal the well -->
+          <div class="lid" aria-hidden="true">
+            <span class="seam"></span>
+            <span class="sprue"></span>
+            <span class="boss tl"></span><span class="boss tr"></span>
+            <span class="boss bl"></span><span class="boss br"></span>
+            <svg class="face" viewBox="0 0 160 60">
+              <g fill="#16161b">
+                <rect x="14" y="8"  width="26" height="6"/>
+                <rect x="30" y="14" width="6" height="6"/>
+                <rect x="24" y="20" width="6" height="6"/>
+                <rect x="18" y="26" width="6" height="6"/>
+                <rect x="14" y="32" width="26" height="6"/>
+                <rect x="120" y="8"  width="26" height="6"/>
+                <rect x="136" y="14" width="6" height="6"/>
+                <rect x="130" y="20" width="6" height="6"/>
+                <rect x="124" y="26" width="6" height="6"/>
+                <rect x="120" y="32" width="26" height="6"/>
+              </g>
+              <path d="M52 42 q28 22 56 0" fill="none" stroke="#ff4d6d" stroke-width="7" stroke-linecap="round"/>
+            </svg>
+            <span class="lid-word">MOZZETTE</span>
+          </div>
+
+          <!-- chassis readouts — the measured numbers, as gauges on the case -->
+          <dl class="readouts" aria-label="Measured performance">
+            {STATS.map((s, i) => (
+              <div class={`gauge g${i}`}>
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <!-- gold edge connector at the base -->
+          <div class="edge" aria-hidden="true">
+            {Array.from({ length: 16 }).map(() => <i></i>)}
+          </div>
+        </div>
+
+        <div class="controls" role="group" aria-label="Operate the Mozzette">
+          <button type="button" class="op op-open" aria-pressed="false" data-act="open">
+            <span class="op-dot" aria-hidden="true"></span>
+            <span class="op-l"><b class="w-open">Lift the lid</b><b class="w-close">Close it</b></span>
+          </button>
+          <button type="button" class="op op-shutter" aria-pressed="false" data-act="shutter">
+            <span class="op-dot" aria-hidden="true"></span>
+            <span class="op-l"><b class="w-open">Slide the shutter</b><b class="w-close">Slide it back</b></span>
+          </button>
+        </div>
+        <figcaption>Poke it. It does more than one thing — and the record glows through the plastic even shut.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============================ THE PORTS =========================== -->
+    <!-- Servers, as three cartridges you seat into the connector. Pink field. -->
+    <section class="ports" aria-labelledby="ports-h">
+      <div class="ports-inner">
+        <div class="section-head on-pink">
+          <h2 id="ports-h">Feed it any of three</h2>
+          <p>It doesn't care whose disc it is. Seat the server you already run —
+            add more than one and they read as a single shelf. Mozz is the
+            player; your server is the library.</p>
+        </div>
+
+        <ul class="rack" role="list">
+          {CARTS.map((c) => (
+            <li class="port">
+              <div class="port-mouth" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="cart">
+                <span class="cart-slot" aria-hidden="true">SLOT&nbsp;{c.slot}</span>
+                <span class="cart-logo"><ServerLogo name={c.name} size={40} brand /></span>
+                <h3>{c.name}</h3>
+                <p>{c.note}</p>
+                <span class="cart-teeth" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <!-- swap the disc, the colour follows -->
+        <figure class="discs" aria-labelledby="discs-cap">
+          <p class="discs-lead on-pink" id="discs-cap">Swap the disc and the whole
+            app takes its colour — five records, five machines, one app.</p>
+          <div class="disc-row">
+            {DISCS.map((n, i) => (
+              <span class={`disc-chip d${i}`}>
+                <Shot name={n} sizes="(max-width: 62rem) 28vw, 140px" ariaHidden={true} />
+              </span>
+            ))}
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- =========================== THE CUTAWAY ========================== -->
+    <!-- FEATURES on the exploded insides. Enlarged. All copy present. -->
+    <section class="cutaway" aria-labelledby="cut-h">
+      <div class="section-head">
+        <h2 id="cut-h">Open it right up</h2>
+        <p>Six parts do the work. Hover one and it lights on the diagram — or just
+          read the plate; nothing here hides.</p>
+      </div>
+
+      <div class="cut-grid">
+        <figure class="exploded" aria-hidden="true">
+          <svg viewBox="0 0 360 760" role="presentation">
+            <defs>
+              <linearGradient id="pl-y" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e8ff54" stop-opacity="0.42"/>
+                <stop offset="1" stop-color="#e8ff54" stop-opacity="0.12"/>
+              </linearGradient>
+              <linearGradient id="pl-p" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ff4d6d" stop-opacity="0.42"/>
+                <stop offset="1" stop-color="#ff4d6d" stop-opacity="0.12"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 1 · manifold -->
+            <g class="layer" data-part="1">
+              <path d="M64 44 l232 0 30 28 -232 0 z" fill="url(#pl-y)" stroke="#e8ff54" stroke-opacity="0.8" stroke-width="2"/>
+              <path d="M94 72 l232 0 0 34 -232 0 z" fill="#16161b" fill-opacity="0.5" stroke="#e8ff54" stroke-opacity="0.55" stroke-width="2"/>
+              <g stroke="#e8ff54" stroke-opacity="0.85" stroke-width="3" fill="none">
+                <path d="M140 72 v-18 M210 72 v-18 M280 72 v-18"/>
+                <path d="M140 54 h140"/>
+              </g>
+            </g>
+            <!-- 2 · reserve cell -->
+            <g class="layer" data-part="2">
+              <path d="M74 160 l210 0 30 26 -210 0 z" fill="url(#pl-p)" stroke="#ff4d6d" stroke-opacity="0.8" stroke-width="2"/>
+              <rect x="104" y="186" width="210" height="40" fill="#16161b" fill-opacity="0.55" stroke="#ff4d6d" stroke-opacity="0.55" stroke-width="2"/>
+              <g fill="#ff4d6d" fill-opacity="0.85">
+                <rect x="116" y="196" width="30" height="20"/>
+                <rect x="154" y="196" width="30" height="20"/>
+                <rect x="192" y="196" width="30" height="20"/>
+              </g>
+            </g>
+            <!-- 3 · index core -->
+            <g class="layer" data-part="3">
+              <path d="M66 274 l226 0 30 26 -226 0 z" fill="url(#pl-y)" stroke="#e8ff54" stroke-opacity="0.8" stroke-width="2"/>
+              <rect x="96" y="300" width="226" height="48" fill="#16161b" fill-opacity="0.55" stroke="#e8ff54" stroke-opacity="0.55" stroke-width="2"/>
+              <g fill="#e8ff54" fill-opacity="0.8">
+                {Array.from({ length: 26 }).map((_, k) => (
+                  <rect x={106 + (k % 13) * 16} y={k < 13 ? 308 : 328} width="10" height="10" />
+                ))}
+              </g>
+            </g>
+            <!-- 4 · quick spindle -->
+            <g class="layer" data-part="4">
+              <path d="M76 388 l206 0 30 26 -206 0 z" fill="url(#pl-p)" stroke="#ff4d6d" stroke-opacity="0.8" stroke-width="2"/>
+              <circle cx="180" cy="438" r="32" fill="#16161b" fill-opacity="0.55" stroke="#ff4d6d" stroke-opacity="0.65" stroke-width="2"/>
+              <circle cx="180" cy="438" r="12" fill="none" stroke="#ff4d6d" stroke-opacity="0.75" stroke-width="6" stroke-dasharray="5 6"/>
+              <circle cx="180" cy="438" r="4" fill="#e8ff54"/>
+            </g>
+            <!-- 5 · taste coil -->
+            <g class="layer" data-part="5">
+              <path d="M68 502 l222 0 30 26 -222 0 z" fill="url(#pl-y)" stroke="#e8ff54" stroke-opacity="0.8" stroke-width="2"/>
+              <g transform="translate(180 552)" fill="none" stroke="#e8ff54" stroke-opacity="0.8" stroke-width="3">
+                <path d="M0 0 m-5 0 a5 5 0 1 1 10 0 a10 10 0 1 1 -20 0 a15 15 0 1 1 30 0 a20 20 0 1 1 -40 0"/>
+              </g>
+            </g>
+            <!-- 6 · tone stage -->
+            <g class="layer" data-part="6">
+              <path d="M78 616 l202 0 30 26 -202 0 z" fill="url(#pl-p)" stroke="#ff4d6d" stroke-opacity="0.8" stroke-width="2"/>
+              <rect x="108" y="642" width="202" height="52" fill="#16161b" fill-opacity="0.55" stroke="#ff4d6d" stroke-opacity="0.55" stroke-width="2"/>
+              <g stroke="#ff4d6d" stroke-opacity="0.35" stroke-width="1.2">
+                <path d="M122 668 h176 M122 656 h176 M122 680 h176"/>
+              </g>
+              <g fill="#e8ff54">
+                <rect x="130" y="658" width="12" height="8"/>
+                <rect x="162" y="648" width="12" height="8"/>
+                <rect x="194" y="672" width="12" height="8"/>
+                <rect x="226" y="652" width="12" height="8"/>
+                <rect x="258" y="664" width="12" height="8"/>
+              </g>
+            </g>
+          </svg>
+        </figure>
+
+        <ol class="spec" role="list">
+          {SPEC.map((f) => (
+            <li class="spec-row" data-part={String(f.n)} tabindex="0">
+              <span class="spec-n" aria-hidden="true">{f.n}</span>
+              <div class="spec-body">
+                <h3>{f.title}</h3>
+                <p class="spec-tag">{f.tag} <span>— {f.gloss}</span></p>
+                <p class="spec-copy">{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========================== TURN IT OVER ========================== -->
+    <!-- OWNERSHIP as the moulded back panel. Full acid field, black ink. -->
+    <section class="back" aria-labelledby="back-h">
+      <div class="back-inner">
+        <div class="section-head on-acid">
+          <h2 id="back-h">Turn it over</h2>
+          <p>The back of a machine is where you learn what it really costs you.
+            This one's switches are all thrown your way — because there's nothing
+            on the other side to throw them to.</p>
+        </div>
+
+        <ul class="switches" role="list">
+          {OWNERSHIP.map((o) => (
+            <li class="switch">
+              <span class="dip" aria-hidden="true"><span class="lever"></span></span>
+              <div>
+                <h3>{o.title}</h3>
+                <p>{o.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p class="mould" aria-hidden="true">MOULDED IN ONE PIECE · NO ACCOUNT · NO SERVER OF OURS · GPL-3.0</p>
+      </div>
+    </section>
+
+    <!-- ============================ THE MANUAL ========================== -->
+    <section class="manual" aria-labelledby="manual-h">
+      <div class="section-head">
+        <h2 id="manual-h">The little folded card</h2>
+        <p>The one that comes in the box, that you read once and never again.</p>
+      </div>
+      <div class="leaflet">
+        {FAQS.map((f, i) => (
+          <details class="fold" open={i === 0}>
+            <summary>
+              <span class="fold-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="fold-q">{f.q}</span>
+              <span class="fold-mark" aria-hidden="true"></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============================ BASE PLATE ========================== -->
+    <footer class="baseplate">
+      <div class="bp-mark"><Mark size={22} /><span>Mozz</span></div>
+      <p class="bp-line"><b>Free forever.</b> Open source under <b>GPL-3.0</b>.
+        No account, no server of ours, nothing phoning home.</p>
+      <div class="bp-links"><a href={GITHUB_URL}>View on GitHub ↗</a></div>
+      <p class="bp-etch" aria-hidden="true">MOZZ · FIRST LISTEN · MODEL MOZZETTE · MADE TO BE OPENED</p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  // Enhancement only. All content is in the DOM at all times and the lid/shutter
+  // are translucent, so nothing here is required to read the page.
+  (() => {
+    const caseEl = document.getElementById('case');
+    if (caseEl) {
+      const buttons = document.querySelectorAll<HTMLButtonElement>('.op');
+      const attrFor = (a: string) => (a === 'open' ? 'data-open' : 'data-shutter');
+      buttons.forEach((b) => {
+        b.addEventListener('click', () => {
+          const act = b.getAttribute('data-act')!;
+          const attr = attrFor(act);
+          const next = caseEl.getAttribute(attr) !== 'true';
+          caseEl.setAttribute(attr, String(next));
+          b.setAttribute('aria-pressed', String(next));
+        });
+      });
+      // Poking the case itself lifts the lid too — reward the instinct to touch.
+      const well = caseEl.querySelector('.lid');
+      well?.addEventListener('click', () => (buttons[0] as HTMLButtonElement)?.click());
+    }
+
+    // Cutaway: hovering a spec row lights the matching internal part.
+    const fig = document.querySelector('.exploded');
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('.spec-row'));
+    if (fig) {
+      const set = (part: string | null) => {
+        fig.querySelectorAll('.layer').forEach((l) =>
+          l.classList.toggle('lit', l.getAttribute('data-part') === part));
+        rows.forEach((r) =>
+          r.classList.toggle('lit', part != null && r.getAttribute('data-part') === part));
+      };
+      rows.forEach((r) => {
+        const p = r.getAttribute('data-part');
+        r.addEventListener('mouseenter', () => set(p));
+        r.addEventListener('focusin', () => set(p));
+        r.addEventListener('mouseleave', () => set(null));
+        r.addEventListener('focusout', () => set(null));
+      });
+    }
+  })();
+</script>
+
+<style>
+  .fl {
+    --void: #16161b;
+    --void-2: #0f0f13;
+    --acid: #e8ff54;
+    --acid-2: #c7e02c;
+    --pink: #ff4d6d;
+    --pink-2: #e12a4d;
+    --red: #c80028;
+    --chalk: #f4f2ec;
+    --mist: #c7c7d1;
+    --dim: #8f8f9c;
+    --ink: #14140f;
+
+    background: var(--void);
+    color: var(--chalk);
+    font-family: 'General Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Clash Display', 'General Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+  }
+
+  section { padding-block: clamp(3.5rem, 8vw, 7.5rem); }
+  .masthead, .hero, .cutaway, .manual, .baseplate { padding-inline: clamp(1.15rem, 5vw, 5.5rem); }
+
+  .section-head { max-width: 48rem; margin: 0 0 clamp(2rem, 4vw, 3.5rem); }
+  .section-head h2 { font-size: clamp(2.2rem, 1.2rem + 4.6vw, 4.75rem); margin-bottom: 0.6rem; }
+  .section-head p { color: var(--mist); max-width: 60ch; font-size: 1.08rem; }
+  .section-head.on-pink, .section-head.on-acid { color: var(--ink); }
+  .section-head.on-pink p, .section-head.on-acid p { color: rgba(20, 20, 15, 0.82); }
+
+  /* ============================ MASTHEAD ============================ */
+  .masthead {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding-top: clamp(1.1rem, 2.2vw, 1.6rem); padding-bottom: 0.3rem;
+  }
+  .lockup { display: inline-flex; align-items: center; gap: 0.55rem; }
+  .wordmark { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .plate-id { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.16em; color: var(--dim); text-transform: uppercase; }
+  .plate-id b { color: var(--acid); font-weight: 800; }
+
+  /* ============================== HERO ============================== */
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
+    isolation: isolate;
+  }
+  .hero-plate {
+    position: absolute; inset: -8% -6% auto auto; width: 62%; height: 118%;
+    --hero-plate: url('/hero/firstlisten.jpg');
+    background-image: var(--hero-plate);
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    opacity: 0.16; mix-blend-mode: screen; z-index: -1; pointer-events: none;
+  }
+  h1#fl-title { font-size: clamp(2.7rem, 1.2rem + 6vw, 5.75rem); max-width: 15ch; margin-bottom: 1.3rem; }
+  .lede { font-size: clamp(1.08rem, 1rem + 0.55vw, 1.32rem); color: var(--mist); max-width: 44ch; margin-bottom: 1.6rem; }
+  .lede b { color: var(--acid); font-weight: 600; }
+  .lede i { color: var(--pink); font-style: normal; font-weight: 600; }
+  .tagline { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 2rem; }
+  .tl-1 { font-family: 'Clash Display', sans-serif; font-size: 1.18rem; font-weight: 500; }
+  .tl-2 { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pink); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 0.6rem; border-radius: 12px; font-weight: 600; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .btn svg { width: 22px; height: 22px; fill: currentColor; }
+  .btn.primary { background: var(--acid); color: var(--void); padding: 0.66rem 1.2rem; box-shadow: 0 14px 30px -14px rgba(232,255,84,0.75); }
+  .btn.primary span { display: flex; flex-direction: column; line-height: 1.05; }
+  .btn.primary small { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.72; }
+  .btn.primary span > :not(small) { font-size: 1.05rem; font-weight: 700; }
+  .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px -14px rgba(232,255,84,0.9); }
+  .btn.primary.pending { background: repeating-linear-gradient(-45deg, #24242c 0 10px, #1b1b22 10px 20px); color: var(--mist); box-shadow: inset 0 0 0 1px rgba(232,255,84,0.24); cursor: default; }
+  .btn.ghost { color: var(--chalk); padding: 0.66rem 1.15rem; box-shadow: inset 0 0 0 1px rgba(244,242,236,0.26); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--acid); color: var(--acid); }
+
+  /* ----------------------------- THE RIG ----------------------------- */
+  .rig {
+    position: relative;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    perspective: 1500px;
+  }
+  /* big acid worktop the case sits on — a structural field of the palette */
+  .slab {
+    position: absolute;
+    z-index: 0;
+    width: 116%;
+    height: 74%;
+    left: -8%;
+    top: 12%;
+    background:
+      linear-gradient(120deg, var(--acid), var(--acid-2));
+    border-radius: 26px;
+    transform: rotate(-3deg);
+    box-shadow: 0 50px 90px -40px rgba(232,255,84,0.5), inset 0 2px 0 rgba(255,255,255,0.6);
+  }
+  .slab::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit;
+    background: radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,0.5), transparent 55%);
+    mix-blend-mode: screen;
+  }
+
+  .case {
+    position: relative;
+    z-index: 2;
+    width: min(360px, 84vw);
+    aspect-ratio: 30 / 41;
+    transform-style: preserve-3d;
+    transform: rotateX(4deg);
+  }
+
+  /* the translucent shell — layered plastic so overlaps densen, coloured caustics */
+  .case::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 30px 30px 22px 22px;
+    background:
+      linear-gradient(155deg, rgba(255,255,255,0.42), transparent 22%),
+      linear-gradient(150deg, rgba(232,255,84,0.30), rgba(232,255,84,0.10) 46%, rgba(255,77,109,0.20)),
+      rgba(24, 24, 30, 0.55);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.55),
+      inset 0 0 0 2px rgba(232,255,84,0.55),
+      inset 0 -30px 60px -26px rgba(255,77,109,0.5),
+      inset 0 40px 60px -40px rgba(255,255,255,0.4),
+      0 44px 80px -30px rgba(232,255,84,0.42),
+      0 70px 100px -50px rgba(255,77,109,0.55);
+    backdrop-filter: blur(1.5px);
+    z-index: 1;
+  }
+  /* bright caustic on the top-left moulded corner */
+  .case::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 55%; height: 42%;
+    background: linear-gradient(150deg, rgba(255,255,255,0.6), transparent 60%);
+    border-radius: 30px 0 60% 0;
+    mix-blend-mode: screen; pointer-events: none; z-index: 6;
+  }
+
+  .internals { position: absolute; inset: 8% 6% auto 6%; width: 88%; height: auto; z-index: 2; opacity: 0.95; }
+
+  /* the screen well — sits behind the lid, always in the DOM */
+  .well {
+    position: absolute;
+    inset: 5% 8% 30% 8%;
+    z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    padding-top: 0.6rem;
+  }
+  .plate { text-align: center; line-height: 1; }
+  .plate-t { display: block; font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: clamp(0.9rem, 2.4vw, 1.15rem); color: var(--ink); }
+  .plate-s { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.56rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(20,20,15,0.6); margin-top: 3px; }
+  .screen { width: min(188px, 62%); filter: drop-shadow(0 16px 26px rgba(0,0,0,0.5)); }
+  .case-phone { --phone-bezel: linear-gradient(#2a2a30, #131317); --phone-bezel-w: 0.03; --phone-rim: rgba(232,255,84,0.3); --phone-shadow: none; }
+  .case[data-open="true"] .screen { filter: drop-shadow(0 0 28px rgba(255,77,109,0.5)) drop-shadow(0 16px 26px rgba(0,0,0,0.5)); }
+
+  /* the reel window + sliding shutter (lower zone) */
+  .window {
+    position: absolute; left: 12%; right: 12%; bottom: 15%; height: 24%;
+    border-radius: 12px;
+    background: rgba(15,15,19,0.35);
+    box-shadow: inset 0 0 0 2px rgba(255,77,109,0.4);
+    overflow: hidden;
+    z-index: 3;
+  }
+  .shutter {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,77,109,0.9), rgba(225,42,77,0.82));
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), inset 0 -8px 16px -6px rgba(0,0,0,0.4);
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .s-ridge { width: 4px; height: 46%; border-radius: 3px; background: rgba(20,20,15,0.4); }
+  .case[data-shutter="true"] .window .shutter { transform: translateX(101%); }
+
+  /* the hinged lid — frosted acid, carries the face, lifts to reveal the well */
+  .lid {
+    position: absolute; inset: 3% 3% 26% 3%;
+    z-index: 5;
+    border-radius: 26px 26px 14px 14px;
+    transform-origin: 50% 0%;
+    transform: rotateX(0deg);
+    transition: transform 0.62s cubic-bezier(0.2,0.85,0.25,1);
+    cursor: pointer;
+    /* frosted, so the screen glows through even when shut */
+    background:
+      linear-gradient(158deg, rgba(255,255,255,0.5), transparent 24%),
+      linear-gradient(150deg, rgba(232,255,84,0.72), rgba(232,255,84,0.5) 60%, rgba(255,77,109,0.35));
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), inset 0 0 0 1.5px rgba(255,255,255,0.35), 0 20px 34px -18px rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px) saturate(1.2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.7rem;
+  }
+  .case[data-open="true"] .lid { transform: rotateX(-116deg); }
+  .seam { position: absolute; left: 8%; right: 8%; top: 50%; height: 2px; background: rgba(20,20,15,0.18); box-shadow: 0 1px 0 rgba(255,255,255,0.4); }
+  .sprue { position: absolute; top: 12px; left: 50%; width: 9px; height: 9px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(199,224,44,0.9)); box-shadow: inset 0 0 0 1px rgba(20,20,15,0.35); }
+  .boss { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 34% 34%, rgba(255,255,255,0.85), rgba(199,224,44,0.7)); box-shadow: inset 0 0 0 1.5px rgba(20,20,15,0.35); }
+  .boss.tl { top: 12px; left: 12px; } .boss.tr { top: 12px; right: 12px; }
+  .boss.bl { bottom: 12px; left: 12px; } .boss.br { bottom: 12px; right: 12px; }
+  .face { width: 52%; height: auto; }
+  .lid-word { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.34em; color: rgba(20,20,15,0.7); text-indent: 0.34em; }
+
+  /* chassis gauges — the STATS, on the case face beneath the lid */
+  .readouts { position: absolute; left: 8%; right: 8%; bottom: 3.5%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.35rem; margin: 0; z-index: 4; }
+  .gauge { background: rgba(15,15,19,0.55); border-radius: 8px; padding: 0.34rem 0.5rem; box-shadow: inset 0 0 0 1px rgba(232,255,84,0.24); }
+  .gauge dt { font-size: 0.52rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--dim); line-height: 1.2; }
+  .gauge dd { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1rem; color: var(--acid); line-height: 1.1; }
+  .gauge.g1 dd, .gauge.g3 dd { color: var(--pink); }
+
+  .edge { position: absolute; left: 16%; right: 16%; bottom: -2.5%; height: 5%; display: flex; gap: 3px; z-index: 4; }
+  .edge i { flex: 1; border-radius: 1px 1px 0 0; background: linear-gradient(180deg, #f2d98a, #b8922f); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+
+  /* the controls — real buttons */
+  .controls { position: relative; z-index: 3; display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; }
+  .op {
+    display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer;
+    padding: 0.6rem 1.15rem 0.6rem 0.7rem; border-radius: 999px;
+    background: var(--void-2); color: var(--chalk);
+    box-shadow: inset 0 0 0 1.5px rgba(255,77,109,0.4);
+    font-weight: 600; letter-spacing: 0.01em;
+    transition: box-shadow 0.15s ease, transform 0.12s ease;
+  }
+  .op:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1.5px var(--pink); }
+  .op:active { transform: translateY(1px) scale(0.99); }
+  .op-dot { width: 22px; height: 22px; flex: none; border-radius: 50%; background: radial-gradient(circle at 34% 30%, #ffe7ec, var(--pink) 58%, #b0002f); box-shadow: 0 3px 8px -2px rgba(255,77,109,0.8); transition: background 0.2s ease; }
+  .op-open .op-dot { background: radial-gradient(circle at 34% 30%, #f6ffcf, var(--acid) 58%, #a9c400); }
+  .op-l b { font-weight: 700; }
+  .w-close { display: none; }
+  .op[aria-pressed="true"] .w-open { display: none; }
+  .op[aria-pressed="true"] .w-close { display: inline; }
+  .op[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--acid); }
+  .op[aria-pressed="true"] .op-dot { box-shadow: 0 0 0 3px rgba(232,255,84,0.28), 0 3px 8px -2px rgba(232,255,84,0.7); }
+  .rig figcaption { position: relative; z-index: 3; font-size: 0.84rem; color: var(--dim); text-align: center; max-width: 34ch; }
+
+  /* ============================ THE PORTS =========================== */
+  .ports {
+    background: linear-gradient(180deg, var(--pink), var(--pink-2));
+    padding-inline: clamp(1.15rem, 5vw, 5.5rem);
+  }
+  .ports-inner { max-width: 82rem; margin-inline: auto; }
+  .rack { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 3vw, 2.5rem); align-items: end; margin: 0 0 clamp(2.5rem, 5vw, 4rem); }
+  .port { display: flex; flex-direction: column; }
+  .port:nth-child(2) { margin-bottom: 1.6rem; }
+  .port-mouth {
+    display: flex; gap: 6px; justify-content: center;
+    padding: 0.5rem 0.5rem 0; border-radius: 12px 12px 0 0;
+    background: linear-gradient(180deg, #0f0f13, #1c1c22);
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.55);
+  }
+  .port-mouth i { width: 10px; height: 20px; border-radius: 0 0 2px 2px; background: linear-gradient(180deg, #f2d98a, #b8922f); }
+  .cart {
+    position: relative;
+    margin-top: -4px;
+    padding: 1.3rem 1.3rem 1.5rem;
+    border-radius: 4px 4px 18px 18px;
+    background:
+      linear-gradient(158deg, rgba(255,255,255,0.4), transparent 20%),
+      linear-gradient(160deg, rgba(232,255,84,0.34), rgba(20,20,26,0.72) 70%);
+    color: var(--chalk);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), inset 0 0 0 2px rgba(232,255,84,0.4), 0 30px 46px -28px rgba(0,0,0,0.6);
+    transition: transform 0.18s ease;
+  }
+  .port:nth-child(2) .cart { background: linear-gradient(158deg, rgba(255,255,255,0.4), transparent 20%), linear-gradient(160deg, rgba(255,255,255,0.28), rgba(20,20,26,0.72) 70%); box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), inset 0 0 0 2px rgba(255,255,255,0.5), 0 30px 46px -28px rgba(0,0,0,0.6); }
+  .port:hover .cart { transform: translateY(-6px); }
+  .cart-slot { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; color: var(--acid); }
+  .cart-logo { display: block; color: var(--chalk); margin: 0.6rem 0 0.7rem; }
+  .cart h3 { font-size: 1.5rem; margin-bottom: 0.35rem; }
+  .cart p { color: var(--mist); font-size: 0.98rem; }
+  .cart-teeth { position: absolute; left: 1.3rem; right: 1.3rem; bottom: 0.6rem; display: flex; gap: 5px; }
+  .cart-teeth i { flex: 1; height: 7px; border-radius: 1px; background: rgba(232,255,84,0.5); }
+  .port:nth-child(2) .cart-teeth i { background: rgba(255,255,255,0.55); }
+
+  .discs { margin: 0; }
+  .discs-lead { max-width: 52ch; font-size: 1.05rem; font-weight: 500; margin-bottom: 1rem; }
+  .disc-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(0.5rem, 1.6vw, 1rem); }
+  .disc-chip { display: block; aspect-ratio: 3 / 5; border-radius: 4px 4px 12px 12px; overflow: hidden; box-shadow: inset 0 0 0 2px rgba(20,20,15,0.35), 0 20px 34px -22px rgba(0,0,0,0.7); }
+  .disc-chip :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .disc-chip:nth-child(even) { transform: translateY(10px); }
+  .disc-chip:hover { transform: translateY(-4px) scale(1.02); transition: transform 0.16s ease; }
+
+  /* =========================== THE CUTAWAY ========================== */
+  .cut-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .exploded { margin: 0; position: sticky; top: 2.5rem; filter: drop-shadow(0 50px 70px rgba(0,0,0,0.55)); }
+  .exploded svg { width: 100%; height: auto; }
+  .layer { transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0.74; }
+  .layer.lit { opacity: 1; transform: translateX(10px) scale(1.04); }
+
+  .spec { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; }
+  .spec-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 1rem;
+    padding: 1.2rem 1.3rem; border-radius: 14px;
+    background: rgba(22,22,28,0.55);
+    box-shadow: inset 0 0 0 1px rgba(232,255,84,0.14);
+    transition: box-shadow 0.2s ease, background-color 0.2s ease, transform 0.2s ease; outline: none;
+  }
+  .spec-row:hover, .spec-row.lit, .spec-row:focus-visible { background: rgba(26,26,32,0.85); box-shadow: inset 0 0 0 1px var(--acid), 0 22px 40px -30px rgba(232,255,84,0.5); transform: translateX(-4px); }
+  .spec-n { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1.1rem; color: var(--void); background: var(--acid); width: 2.1rem; height: 2.1rem; border-radius: 8px; display: grid; place-items: center; flex: none; align-self: start; }
+  .spec-row:nth-child(even) .spec-n { background: var(--pink); }
+  .spec h3 { font-size: 1.34rem; margin-bottom: 0.2rem; }
+  .spec-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acid); margin-bottom: 0.5rem; }
+  .spec-row:nth-child(even) .spec-tag { color: var(--pink); }
+  .spec-tag span { color: var(--dim); }
+  .spec-copy { color: var(--mist); font-size: 0.98rem; max-width: 56ch; }
+
+  /* ========================== TURN IT OVER ========================== */
+  .back {
+    background: linear-gradient(180deg, var(--acid), var(--acid-2));
+    padding-inline: clamp(1.15rem, 5vw, 5.5rem);
+    position: relative;
+  }
+  .back::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(20,20,15,0.05) 0 2px, transparent 2px 30px);
+    pointer-events: none;
+  }
+  .back-inner { position: relative; max-width: 82rem; margin-inline: auto; }
+  .switches { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1rem, 2.6vw, 2rem); margin: 0 0 clamp(2rem, 4vw, 3rem); }
+  .switch { display: grid; grid-template-columns: auto 1fr; gap: 1.15rem; align-items: start; padding: 1.5rem 1.6rem; border-radius: 16px; background: rgba(20,20,15,0.9); color: var(--chalk); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
+  .dip { width: 58px; height: 32px; flex: none; margin-top: 0.15rem; border-radius: 999px; background: linear-gradient(180deg, #0c0c0f, #1c1c22); box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), inset 0 0 0 1.5px rgba(232,255,84,0.45); position: relative; }
+  .dip .lever { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 34% 30%, #f6ffcf, var(--acid) 60%, #a9c400); box-shadow: 0 3px 8px -2px rgba(232,255,84,0.8); transform: translateX(26px); }
+  .switch:nth-child(even) .dip { box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), inset 0 0 0 1.5px rgba(255,77,109,0.5); }
+  .switch:nth-child(even) .lever { background: radial-gradient(circle at 34% 30%, #ffe7ec, var(--pink) 60%, #b0002f); box-shadow: 0 3px 8px -2px rgba(255,77,109,0.8); }
+  .switch h3 { font-size: 1.32rem; margin-bottom: 0.3rem; }
+  .switch p { color: var(--mist); font-size: 0.98rem; max-width: 40ch; }
+  .mould { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(20,20,15,0.55); text-transform: uppercase; }
+
+  /* ============================ THE MANUAL ========================== */
+  .leaflet { max-width: 52rem; border-radius: 18px; overflow: hidden; background: rgba(22,22,28,0.55); box-shadow: inset 0 0 0 1px rgba(232,255,84,0.16); }
+  .fold { border-bottom: 1px dashed rgba(232,255,84,0.22); }
+  .fold:last-child { border-bottom: 0; }
+  .fold summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: 1.3rem 1.6rem; cursor: pointer; list-style: none; transition: background-color 0.15s ease; }
+  .fold summary::-webkit-details-marker { display: none; }
+  .fold summary:hover { background: rgba(232,255,84,0.05); }
+  .fold-n { font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--pink); font-size: 0.9rem; }
+  .fold-q { font-family: 'Clash Display', sans-serif; font-weight: 500; font-size: 1.2rem; letter-spacing: -0.01em; }
+  .fold-mark { position: relative; width: 16px; height: 16px; flex: none; }
+  .fold-mark::before, .fold-mark::after { content: ''; position: absolute; background: var(--acid); border-radius: 2px; }
+  .fold-mark::before { top: 7px; left: 0; width: 16px; height: 2px; }
+  .fold-mark::after { top: 0; left: 7px; width: 2px; height: 16px; transition: transform 0.2s ease; }
+  .fold[open] .fold-mark::after { transform: rotate(90deg) scaleX(0); }
+  .fold p { padding: 0 1.6rem 1.5rem 4.1rem; color: var(--mist); max-width: 70ch; }
+
+  /* ============================ BASE PLATE ========================== */
+  .baseplate { padding-block: clamp(2.5rem, 5vw, 4rem); display: grid; gap: 0.85rem; border-top: 1px solid rgba(255,77,109,0.28); background: var(--void-2); }
+  .bp-mark { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.22rem; }
+  .bp-line { color: var(--mist); max-width: 60ch; } .bp-line b { color: var(--chalk); }
+  .bp-links a { color: var(--acid); font-weight: 600; } .bp-links a:hover { color: var(--pink); }
+  .bp-etch { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.24em; color: var(--dim); text-transform: uppercase; margin-top: 0.5rem; }
+
+  /* reel idle spin — reduced-motion kills it via the shared reset */
+  .reel { transform-box: fill-box; transform-origin: center; animation: fl-spin 8s linear infinite; }
+  .reel-b { animation-duration: 10s; animation-direction: reverse; }
+  .case[data-shutter="true"] .reel { animation-duration: 2.4s; }
+  @keyframes fl-spin { to { transform: rotate(360deg); } }
+
+  /* ============================ RESPONSIVE ========================== */
+  @media (max-width: 62rem) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-copy { order: 1; }
+    .rig { order: 2; margin-top: 1rem; }
+    .rack { grid-template-columns: 1fr; align-items: stretch; }
+    .port:nth-child(2) { margin-bottom: 0; }
+    .cut-grid { grid-template-columns: 1fr; }
+    .exploded { position: static; max-width: 22rem; margin-inline: auto; }
+    .switches { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 40rem) {
+    .plate-id { display: none; }
+    .disc-row { grid-template-columns: repeat(3, 1fr); }
+    .disc-chip:nth-child(even) { transform: translateY(0); }
+    .fold p { padding-left: 1.6rem; }
+    .fold summary { padding-inline: 1.15rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reel { animation: none; }
+    .lid, .shutter, .op-dot, .layer, .cart, .disc-chip, .spec-row, .btn { transition: none; }
+  }
+</style>

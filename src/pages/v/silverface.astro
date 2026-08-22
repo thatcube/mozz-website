@@ -1,0 +1,1419 @@
+---
+/**
+ * VARIANT — SILVERFACE
+ * See the design contract in the HTML comment at the top of <main>.
+ *
+ * The "hifi" variant is the polite version of this idea; this one leans all the
+ * way in, past restraint into unmistakable 1970s hardware. The page is a
+ * silver-face receiver sitting in a walnut case: a full front panel with a
+ * backlit slide-rule tuning dial, a knurled volume knob, source pushbuttons and
+ * a power rocker — and every control does a real job. Turn the source selector
+ * and the dial needle actually tunes to that station; throw the power rocker and
+ * the dial goes dark. Geometry that must stay exact — the dial ticks, the
+ * exploded service diagram, the schematic — is computed here at build time so
+ * the SVG can never drift out of alignment.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your music. Your machine.';
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+/* ---- Slide-rule tuning dial ----
+   A linear frequency scale, drawn in a 0..1000 viewBox. Major ticks every 2
+   units carry a numeral; minor ticks every 0.5. The three servers sit at fixed
+   "stations" on the scale, and picking a source tunes the needle to it. */
+const DIAL_LO = 88, DIAL_HI = 108;
+const dialX = (v: number) => 40 + ((v - DIAL_LO) / (DIAL_HI - DIAL_LO)) * 920;
+const majors = Array.from({ length: (DIAL_HI - DIAL_LO) / 2 + 1 }, (_, i) => {
+  const v = DIAL_LO + i * 2;
+  return { v, x: +dialX(v).toFixed(2) };
+});
+const minors = Array.from({ length: (DIAL_HI - DIAL_LO) / 0.5 + 1 }, (_, i) => {
+  const v = DIAL_LO + i * 0.5;
+  return { v, x: +dialX(v).toFixed(2), major: Number.isInteger(v / 2) };
+}).filter((t) => !t.major);
+
+/* The stations, in scale order, one per server. Selecting one tunes here. */
+const STATIONS = [
+  { name: 'Plex', freq: 91.5 },
+  { name: 'Jellyfin', freq: 98.7 },
+  { name: 'Navidrome', freq: 104.9 },
+].map((s) => ({ ...s, key: slug(s.name), x: +dialX(s.freq).toFixed(2) }));
+const servers = SERVERS.map((s) => {
+  const st = STATIONS.find((t) => t.name === s.name)!;
+  return { ...s, key: st.key, freq: st.freq, x: st.x };
+});
+
+/* ---- Adaptive-tint preset windows ----
+   The same app tinted by whatever record is playing. Six sleeves, six colours,
+   presented as illuminated tuner presets. */
+const presets = [
+  { name: 'mozz-nowplaying', label: 'Violet' },
+  { name: 'mozz-album-red', label: 'Crimson' },
+  { name: 'mozz-album-warm', label: 'Amber' },
+  { name: 'mozz-artist', label: 'Sepia' },
+  { name: 'mozz-playlist', label: 'Silver' },
+  { name: 'mozz-album-dark', label: 'Maroon' },
+];
+
+/* ---- Exploded service-manual diagram (FIG. 1) ----
+   Isometric boxes, computed once at a local origin, then placed with translate.
+   Each callout gets a part number; two carry the measured stats. */
+const COS = Math.cos(Math.PI / 6), SIN = Math.sin(Math.PI / 6);
+function isoBox(w: number, d: number, h: number) {
+  const p = (x: number, y: number, z: number): [number, number] =>
+    [+((x - y) * COS).toFixed(2), +((x + y) * SIN - z).toFixed(2)];
+  const A = p(0, 0, h), B = p(w, 0, h), C = p(w, d, h), D = p(0, d, h);
+  const B0 = p(w, 0, 0), C0 = p(w, d, 0), D0 = p(0, d, 0), A0 = p(0, 0, 0);
+  const s = (pts: [number, number][]) => pts.map((q) => q.join(',')).join(' ');
+  return {
+    top: s([A, B, C, D]),
+    right: s([B, B0, C0, C]),
+    front: s([D, D0, C0, C]),
+    center: p(w / 2, d / 2, h),   // top-face centre, for the alignment pin
+    A, B, C, D, A0, D0,
+  };
+}
+const MOD = isoBox(300, 168, 40);
+/* Five stacked modules of the signal path, top of the stack to the bottom.
+   yStep is the exploded gap between module top-face centres on screen. */
+const stack = [
+  { n: 1, title: 'YOUR SERVER', sub: 'Plex · Jellyfin · Navidrome', tone: 'alu' },
+  { n: 2, title: 'ON-DEVICE INDEX', sub: 'search 100,000 in 16 ms', tone: 'red', stat: '16ms' },
+  { n: 3, title: 'GAPLESS TRANSPORT', sub: 'tap to first note · 75 ms', tone: 'red', stat: '75ms' },
+  { n: 4, title: 'YOUR EARS', sub: 'the file you actually own', tone: 'alu' },
+];
+const Y0 = 70, YSTEP = 118, ORX = 300;
+const modules = stack.map((m, i) => ({ ...m, ox: ORX, oy: Y0 + i * YSTEP }));
+---
+
+<Layout
+  title={`${NAME} — your music, your machine`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — a silver-face receiver for the music you own."
+  themeColor="#cdc9c1"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62.5..125,400..900&family=Saira+Condensed:wght@300;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="sf">
+    <!--
+      THESIS: A 1974 silver-face receiver, leaned all the way in. Not a landing
+      page dressed as hardware — an actual front panel in a walnut case, where
+      every control does a real job. Honest skeuomorphism: the source selector
+      tunes the dial because it selects an input; the power rocker dims the dial
+      because it is the power. A self-hoster owns music the way this owns its
+      panel — machined parts they chose, nothing behind a paywall.
+      OWN-WORLD: Daylit brushed aluminium (#cdc9c1) with real directional grain
+      and a raking sheen; darker machined grey (#8a8579); walnut end caps with
+      figure. Brand red (#c80028) is a power/indicator colour only — the lamp,
+      the peak zone, the "engaged" LED — never a wash.
+      STORY: Power on. Tune your source. Read the specs engraved on the plate.
+      Nothing is switched off behind a subscription; it is all yours.
+      FIRST VIEWPORT: A receiver faceplate — wordmark silkscreened left, a large
+      backlit slide-rule dial and the Now-Playing phone in a display bay right, a
+      row of illuminated source buttons and a knurled volume knob along the base.
+      FORM: 1970s integrated receiver as real hardware; walnut-cased panels carry
+      the structure.
+    -->
+
+    <VariantBar slug="silverface" tone="cool" />
+
+    <div class="case">
+      <div class="cheek cheek-l" aria-hidden="true"></div>
+      <div class="cheek cheek-r" aria-hidden="true"></div>
+
+      <div class="rack">
+        <!-- ===================== HERO / RECEIVER FACEPLATE ===================== -->
+        <section class="panel plate hero" aria-labelledby="sf-h1">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <!-- Power rocker: default ON. Throwing it off dims the dial backlight.
+               It controls illumination, the way a real power switch would. -->
+          <input class="sr-only power-in" type="checkbox" id="sf-power" checked />
+
+          <div class="plate-top">
+            <div class="brand">
+              <Mark size={30} decorative />
+              <span class="wordmark">{NAME}</span>
+              <span class="model">Stereo Receiver · Model MZ‑74</span>
+            </div>
+            <div class="top-controls">
+              <label class="rocker" for="sf-power" title="Power">
+                <span class="rocker-body" aria-hidden="true"><span class="rocker-face"></span></span>
+                <span class="silk xs">Power</span>
+              </label>
+              <span class="jack" aria-hidden="true" title="Phones">
+                <span class="jack-ring"></span><span class="jack-hole"></span>
+              </span>
+              <span class="silk xs jack-cap" aria-hidden="true">Phones</span>
+            </div>
+          </div>
+
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h1 id="sf-h1" class="headline">{HEADLINE}</h1>
+              <p class="lede">
+                Mozz plays the records already sitting on your own Plex, Jellyfin
+                or Navidrome server. No account, no subscription, nothing logging
+                what you play — every feature in the free, open-source app.
+              </p>
+
+              <div class="actions">
+                {APP_STORE_URL ? (
+                  <a class="btn btn-primary" href={APP_STORE_URL}>
+                    <span class="led is-on" aria-hidden="true"></span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    <span class="btn-txt"><small>Download on the</small>App Store</span>
+                  </a>
+                ) : (
+                  <span class="btn btn-primary is-pending" aria-disabled="true">
+                    <span class="led" aria-hidden="true"></span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    <span class="btn-txt"><small>Coming to the</small>App Store</span>
+                  </span>
+                )}
+                <a class="btn btn-ghost" href={GITHUB_URL}>Read the source</a>
+              </div>
+            </div>
+
+            <!--
+              Hero display bay. Drop a portrait photo at /hero/silverface.jpg
+              (about 1200×1500) and it layers on top of the CSS-composed dial glow
+              via --hero-plate. With no file present the url() layer paints
+              nothing, so the bay degrades silently to the warm CSS backdrop —
+              never a broken-image box.
+            -->
+            <div class="hero-bay">
+              <div class="tuner" role="group" aria-label="Tuning dial">
+                <div class="dial-window">
+                  <div class="dial-plate">
+                    <svg class="dial" viewBox="0 0 1000 150" role="img"
+                      aria-label="A backlit slide-rule tuning dial with three stations marked — Plex, Jellyfin and Navidrome. The pointer sits at whichever source is selected.">
+                      <g class="scale" stroke="#3a352c">
+                        {minors.map((t) => (
+                          <line x1={t.x} y1="34" x2={t.x} y2="52" stroke-width="1.4" opacity="0.7" />
+                        ))}
+                        {majors.map((t) => (
+                          <line x1={t.x} y1="30" x2={t.x} y2="60" stroke-width="2.6" />
+                        ))}
+                      </g>
+                      <g class="scale-num" fill="#2c281f" text-anchor="middle">
+                        {majors.map((t) => (
+                          <text x={t.x} y="86">{t.v}</text>
+                        ))}
+                      </g>
+                      {STATIONS.map((s) => (
+                        <g class={`station station-${s.key}`}>
+                          <line x1={s.x} y1="24" x2={s.x} y2="66" stroke="#c80028" stroke-width="2.4" />
+                          <circle cx={s.x} cy="24" r="4" fill="#c80028" />
+                          <text x={s.x} y="116" text-anchor="middle" class="station-label">{s.name}</text>
+                        </g>
+                      ))}
+                    </svg>
+                    <span class="needle" aria-hidden="true"></span>
+                    <span class="dial-lamp" aria-hidden="true"></span>
+                  </div>
+                  <div class="dial-foot" aria-hidden="true">
+                    <span class="silk xs">Signal</span>
+                    <span class="signal-bars"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="silk xs stereo">Stereo</span>
+                  </div>
+                </div>
+
+                <div class="bay-phone">
+                  <Phone
+                    name="mozz-nowplaying"
+                    width={188}
+                    priority
+                    class="hero-phone"
+                    sizes="(max-width: 900px) 44vw, 188px"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control rail: source pushbuttons (the interactive control), a
+               knurled volume knob, and the selected input's note. -->
+          <fieldset class="rail">
+            <legend class="sr-only">Choose your source</legend>
+            <span class="rail-label silk">Source</span>
+            <div class="source-buttons">
+              {servers.map((s, i) => (
+                <label class="src-btn" for={`src-${s.key}`}>
+                  <input type="radio" name="sf-source" id={`src-${s.key}`} checked={i === 0} />
+                  <span class="src-led" aria-hidden="true"></span>
+                  <ServerLogo name={s.name} size={18} class="src-logo" />
+                  <span class="src-name">{s.name}</span>
+                </label>
+              ))}
+            </div>
+
+            <div class="rail-note" aria-live="polite">
+              {servers.map((s) => (
+                <p class={`note note-${s.key}`}>
+                  <span class="note-srv">{s.name}</span> — {s.note}
+                </p>
+              ))}
+            </div>
+
+            <span class="vol" aria-hidden="true" title="Volume">
+              <span class="vol-knob"><span class="vol-ptr"></span></span>
+              <span class="silk xs">Volume</span>
+            </span>
+          </fieldset>
+        </section>
+
+        <!-- ===================== PRESET BANK / ADAPTIVE COLOUR ===================== -->
+        <section class="panel plate presets-panel" aria-labelledby="sf-presets">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="head">
+            <h2 id="sf-presets">The backlight follows the record</h2>
+            <p class="sub">Mozz recolours its whole interface from the artwork that’s
+              playing — the same app, a new illumination for every sleeve.</p>
+          </div>
+
+          <ol class="preset-bank" role="list">
+            {presets.map((p, i) => (
+              <li class="preset">
+                <span class="preset-window">
+                  <Shot name={p.name} sizes="(max-width: 60rem) 30vw, 180px" class="preset-img" />
+                  <span class="preset-glass" aria-hidden="true"></span>
+                </span>
+                <span class="preset-cap">
+                  <span class="preset-no" aria-hidden="true">{i + 1}</span>
+                  <span class="silk xs">{p.label}</span>
+                  <span class="led is-on tiny" aria-hidden="true"></span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <!-- ===================== FIG.1 — SIGNAL FLOW (exploded diagram) ===================== -->
+        <section class="panel plate fig-panel" aria-labelledby="sf-fig">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="fig-split">
+            <div class="fig-copy">
+              <h2 id="sf-fig">How the signal flows</h2>
+              <p>Mozz mirrors your server’s whole catalogue into a database on the
+                device, so browsing, search and offline playback stay instant —
+                with the server reachable or not.</p>
+              <p>The loop is closed and short: your server, an on-device index, the
+                transport, your ears. Nothing routes through us, because there is
+                no <em>us</em> in the circuit.</p>
+              <ul class="fig-legend" role="list">
+                {stack.map((m) => (
+                  <li>
+                    <span class="fig-no" aria-hidden="true">{m.n}</span>
+                    <span class="fig-name">{m.title}</span>
+                    <span class="fig-sub">{m.sub}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <figure class="fig-fig">
+              <svg class="exploded" viewBox="0 0 700 640" role="img"
+                aria-label="An exploded service-manual diagram of the signal path: four modules stacked and separated — your server, the on-device index that searches a hundred thousand tracks in sixteen milliseconds, the gapless transport that reaches first audio in seventy-five milliseconds, and your ears — joined by a dashed alignment pin.">
+                <defs>
+                  <linearGradient id="sf-alu-top" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#eceae4" />
+                    <stop offset="1" stop-color="#cdc9c1" />
+                  </linearGradient>
+                  <linearGradient id="sf-alu-r" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#b7b3aa" />
+                    <stop offset="1" stop-color="#8f8b81" />
+                  </linearGradient>
+                  <linearGradient id="sf-alu-f" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#a7a39a" />
+                    <stop offset="1" stop-color="#7d796f" />
+                  </linearGradient>
+                  <linearGradient id="sf-red-top" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#e23a55" />
+                    <stop offset="1" stop-color="#c80028" />
+                  </linearGradient>
+                  <linearGradient id="sf-red-r" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#a4001f" />
+                    <stop offset="1" stop-color="#7c0016" />
+                  </linearGradient>
+                  <linearGradient id="sf-red-f" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#920019" />
+                    <stop offset="1" stop-color="#6a0013" />
+                  </linearGradient>
+                </defs>
+
+                <!-- alignment pin, drawn first so modules sit over it -->
+                <line
+                  x1={modules[0].ox + MOD.center[0]} y1={modules[0].oy + MOD.center[1] - 44}
+                  x2={modules[modules.length - 1].ox + MOD.center[0]} y2={modules[modules.length - 1].oy + MOD.center[1] + 60}
+                  stroke="#6f6b61" stroke-width="1.6" stroke-dasharray="3 6" />
+
+                {modules.map((m) => (
+                  <g transform={`translate(${m.ox} ${m.oy})`}>
+                    <polygon points={MOD.top} fill={m.tone === 'red' ? 'url(#sf-red-top)' : 'url(#sf-alu-top)'} stroke={m.tone === 'red' ? '#7c0016' : '#8a8579'} stroke-width="1" />
+                    <polygon points={MOD.right} fill={m.tone === 'red' ? 'url(#sf-red-r)' : 'url(#sf-alu-r)'} stroke={m.tone === 'red' ? '#5c0010' : '#6f6b61'} stroke-width="1" />
+                    <polygon points={MOD.front} fill={m.tone === 'red' ? 'url(#sf-red-f)' : 'url(#sf-alu-f)'} stroke={m.tone === 'red' ? '#5c0010' : '#6f6b61'} stroke-width="1" />
+                    <line x1={MOD.A[0]} y1={MOD.A[1]} x2={MOD.A0[0]} y2={MOD.A0[1]} stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                    <text x={MOD.D[0] + 14} y={MOD.D[1] + 4} class="fig-face-num" fill={m.tone === 'red' ? '#ffd6dc' : '#2c281f'}>{m.n}</text>
+                    {m.stat && (
+                      <text x={MOD.B[0] - 16} y={MOD.B[1] + 26} text-anchor="end" class="fig-face-stat" fill="#fff">{m.stat}</text>
+                    )}
+                  </g>
+                ))}
+
+                <!-- callout leaders + numbered tags on the right margin -->
+                {modules.map((m) => (
+                  <g class="callout">
+                    <line
+                      x1={m.ox + MOD.B[0] - 6} y1={m.oy + MOD.B[1] + 10}
+                      x2="628" y2={m.oy + MOD.center[1] - 10}
+                      stroke="#6f6b61" stroke-width="1.2" />
+                    <circle cx="648" cy={m.oy + MOD.center[1] - 10} r="15" fill="#cdc9c1" stroke="#6f6b61" stroke-width="1.4" />
+                    <text x="648" y={m.oy + MOD.center[1] - 4} text-anchor="middle" class="fig-tag">{m.n}</text>
+                  </g>
+                ))}
+
+                <g class="fig-titleblock">
+                  <rect x="34" y="556" width="300" height="58" fill="none" stroke="#6f6b61" stroke-width="1.4" />
+                  <line x1="34" y1="584" x2="334" y2="584" stroke="#6f6b61" stroke-width="1" />
+                  <line x1="214" y1="556" x2="214" y2="614" stroke="#6f6b61" stroke-width="1" />
+                  <text x="46" y="576" class="tb-key">DWG.</text>
+                  <text x="120" y="576" class="tb-val">SIGNAL FLOW</text>
+                  <text x="226" y="576" class="tb-key">FIG.</text>
+                  <text x="300" y="576" class="tb-val">1</text>
+                  <text x="46" y="604" class="tb-key">SCALE</text>
+                  <text x="120" y="604" class="tb-val">NONE</text>
+                  <text x="226" y="604" class="tb-key">SHEET</text>
+                  <text x="290" y="604" class="tb-val">1 / 1</text>
+                </g>
+              </svg>
+              <figcaption class="sr-only">
+                Exploded view of the signal path. Four modules — your server, the
+                on-device index (100,000 tracks searched in 16 ms), the gapless
+                transport (75 ms to first audio) and your ears — separated on a
+                single alignment pin, with numbered callouts.
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- ===================== FUNCTION BANK / FEATURES ===================== -->
+        <section class="panel plate fn-panel" aria-labelledby="sf-fn">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="head">
+            <h2 id="sf-fn">Function bank</h2>
+            <p class="sub">Every button is latched in. There is no dim, locked row waiting behind a paid tier.</p>
+          </div>
+
+          <ol class="fn-rows" role="list">
+            {FEATURES.map((f) => (
+              <li class="fn-row">
+                <span class="fn-btn is-engaged" aria-hidden="true">
+                  <span class="fn-btn-face"></span>
+                  <span class="fn-btn-led"></span>
+                </span>
+                <div class="fn-copy">
+                  <h3>{f.title}</h3>
+                  <p>{f.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <!-- ===================== OWNERSHIP / SCHEMATIC ===================== -->
+        <section class="panel plate own-panel" aria-labelledby="sf-own">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="own-split">
+            <figure class="sch-fig">
+              <svg class="schematic" viewBox="0 0 560 460" role="img"
+                aria-label="A wiring schematic. Your server feeds the amplifier which drives your headphones in one closed loop. A branch toward trackers, ads and accounts passes through an open knife switch to ground — the switch is open, so nothing leaves.">
+                <g class="sch" fill="none" stroke="#2c281f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- main loop wires: a closed rectangle, V1(left) → A1(top) → R1(right) → LS1(bottom) -->
+                  <path d="M70 120 H150" />        <!-- top-left corner into the amp input -->
+                  <path d="M300 120 H470" />       <!-- amp output out to the top-right corner -->
+                  <path d="M470 120 V190" />       <!-- down to the resistor -->
+                  <path d="M470 254 V300" />       <!-- resistor out to the bottom-right corner -->
+                  <path d="M470 300 H70" />        <!-- bottom rail, through the load -->
+                  <path d="M70 300 V120" />        <!-- left rail, up through the source -->
+
+                  <!-- source: a battery / library cell (the server) -->
+                  <g class="sym-source">
+                    <line x1="54" y1="132" x2="86" y2="132" />
+                    <line x1="62" y1="146" x2="78" y2="146" />
+                    <line x1="54" y1="160" x2="86" y2="160" />
+                    <line x1="62" y1="174" x2="78" y2="174" />
+                  </g>
+
+                  <!-- amplifier triangle (the app) -->
+                  <path d="M150 78 V162 L300 120 Z" fill="#cdc9c1" />
+                  <circle cx="196" cy="120" r="3" fill="#2c281f" stroke="none" />
+
+                  <!-- resistor on the return leg (R1) -->
+                  <path d="M470 190 l0 6 l14 8 l-28 12 l28 12 l-28 12 l14 8 l0 6" />
+
+                  <!-- headphone / speaker load on the bottom rail (your ears) -->
+                  <path d="M392 300 h20 l0 -20 h28 l0 60 h-28 l0 -20 h-20 Z" fill="#cdc9c1" />
+                  <path d="M440 288 l22 -14 M440 300 l26 0 M440 312 l22 14" />
+
+                  <!-- the OPEN branch off the output node to the outside world -->
+                  <path d="M385 120 V64" stroke-dasharray="2 8" stroke="#c80028" />
+                  <!-- open knife switch: pivot, lifted blade, floating contact -->
+                  <circle cx="385" cy="64" r="4" fill="#c80028" stroke="none" />
+                  <line x1="385" y1="64" x2="426" y2="40" stroke="#c80028" stroke-width="3" />
+                  <circle cx="385" cy="40" r="4" fill="none" stroke="#c80028" stroke-width="2" />
+                  <path d="M385 40 V28" stroke="#c80028" />
+                  <!-- ground symbol at the dead end -->
+                  <g stroke="#c80028">
+                    <line x1="385" y1="28" x2="385" y2="20" />
+                    <line x1="367" y1="20" x2="403" y2="20" />
+                    <line x1="373" y1="13" x2="397" y2="13" />
+                    <line x1="379" y1="6" x2="391" y2="6" />
+                  </g>
+
+                  <!-- junction dot where the branch leaves the output node -->
+                  <circle cx="385" cy="120" r="3.4" fill="#2c281f" stroke="none" />
+                </g>
+
+                <g class="sch-ref" fill="#2c281f">
+                  <text x="78" y="214">V1 · SERVER</text>
+                  <text x="225" y="188" text-anchor="middle">A1 · MOZZ</text>
+                  <text x="452" y="176" text-anchor="end">R1</text>
+                  <text x="416" y="362" text-anchor="middle">LS1 · EARS</text>
+                </g>
+                <g class="sch-ref danger" fill="#c80028">
+                  <text x="342" y="30" text-anchor="end">TO TRACKERS · ADS · ACCOUNTS</text>
+                  <text x="432" y="52" text-anchor="start">SW1 · N.C. OPEN</text>
+                </g>
+              </svg>
+              <figcaption class="sr-only">
+                The signal loops from your server through the app to your ears and
+                back. The only branch out — to trackers, ads and accounts — runs
+                through an open switch to ground and carries nothing.
+              </figcaption>
+            </figure>
+
+            <div class="own-copy">
+              <h2 id="sf-own">Wired so it stays yours</h2>
+              <ol class="own-rows" role="list">
+                {OWNERSHIP.map((o) => (
+                  <li class="own-row">
+                    <span class="own-led is-on" aria-hidden="true"></span>
+                    <div>
+                      <h3>{o.title}</h3>
+                      <p>{o.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== SPECIFICATIONS / STATS ===================== -->
+        <section class="panel plate spec-panel" aria-labelledby="sf-spec">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <h2 id="sf-spec" class="spec-title silk">Specifications</h2>
+          <div class="spec-plate">
+            <dl class="specs">
+              {STATS.map((s) => (
+                <div class="spec">
+                  <dt class="spec-val">{s.value}</dt>
+                  <dd class="spec-lab">{s.label}</dd>
+                </div>
+              ))}
+            </dl>
+            <span class="spec-serial" aria-hidden="true">Bench-measured · ARCHITECTURE §8</span>
+          </div>
+        </section>
+
+        <!-- ===================== SERVICE NOTES / FAQ ===================== -->
+        <section class="panel plate faq-panel" aria-labelledby="sf-faq">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="head">
+            <h2 id="sf-faq">Owner’s notes</h2>
+          </div>
+
+          <div class="faq">
+            {FAQS.map((f) => (
+              <details>
+                <summary>
+                  <span class="q-led" aria-hidden="true"></span>
+                  <span class="q-txt">{f.q}</span>
+                  <span class="q-mark" aria-hidden="true"></span>
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <!-- ===================== FOOTER / BACK PANEL ===================== -->
+        <footer class="panel plate backplate">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <div class="back-grid">
+            <div class="back-brand">
+              <Mark size={26} decorative />
+              <p>
+                {NAME} is free forever and open source under GPL‑3.0.
+                <a href={GITHUB_URL}>See it on GitHub</a>.
+              </p>
+            </div>
+            <span class="rating" aria-hidden="true">
+              <span class="silk xs">Rated</span>
+              <span class="rating-val">$0 · ∞</span>
+              <span class="silk xs">Free · Forever</span>
+            </span>
+          </div>
+          <span class="serial" aria-hidden="true">SER. No. MZ74‑0000 · MADE FOR THE MUSIC YOU OWN</span>
+        </footer>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .sf {
+    /* Palette — daylit brushed aluminium, machined grey, walnut, one red lamp. */
+    --alu: #cdc9c1;
+    --alu-hi: #edeae3;
+    --alu-lo: #a7a39a;
+    --mach: #8a8579;
+    --ink: #23211c;         /* body ink on aluminium — ~9:1 */
+    --ink-dim: #4b473e;     /* secondary — ~5.4:1 */
+    --walnut: #5a3a22;
+    --walnut-hi: #7a4f30;
+    --walnut-lo: #3c2414;
+    --red: #c80028;
+    --red-hot: #ff3b52;
+    --line-hi: rgba(255, 255, 255, 0.6);
+    --line-lo: rgba(0, 0, 0, 0.28);
+
+    /* AI art slot: drop /hero/silverface.jpg to layer a photo into the bay. */
+    --hero-plate: url('/hero/silverface.jpg');
+
+    color: var(--ink);
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    min-height: 100vh;
+    /* A daylit studio: warm light falling on a wooden shelf. */
+    background:
+      radial-gradient(140% 100% at 50% -20%, #f3efe6, transparent 55%),
+      linear-gradient(180deg, #e7e1d4, #d8d0c0 60%, #cdc4b2);
+    overflow-x: clip;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- walnut case around the whole rack ---------- */
+
+  .case {
+    position: relative;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: clamp(1rem, 3.5vw, 2.75rem);
+  }
+
+  .cheek {
+    position: absolute;
+    top: clamp(0.6rem, 2vw, 1.4rem);
+    bottom: clamp(0.6rem, 2vw, 1.4rem);
+    width: clamp(0.7rem, 2.2vw, 1.9rem);
+    border-radius: 4px;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.14), rgba(0,0,0,0) 30%, rgba(0,0,0,0.35)),
+      repeating-linear-gradient(178deg,
+        var(--walnut-lo) 0 2px, var(--walnut) 2px 5px, var(--walnut-hi) 5px 7px, var(--walnut) 7px 11px),
+      linear-gradient(180deg, #6b452a, #472c17);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      0 10px 22px rgba(40, 24, 12, 0.4);
+  }
+  .cheek-l { left: clamp(-0.2rem, 0.4vw, 0.6rem); }
+  .cheek-r { right: clamp(-0.2rem, 0.4vw, 0.6rem); }
+
+  @media (max-width: 46rem) {
+    .cheek { display: none; }
+  }
+
+  .rack {
+    position: relative;
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.5rem);
+    margin-inline: clamp(0rem, 2.6vw, 2.2rem);
+    z-index: 1;
+  }
+
+  /* ---------- shared material: brushed aluminium plate ---------- */
+
+  .plate {
+    background-color: var(--alu);
+    background-image:
+      /* raking sheen sweeping across the plate */
+      linear-gradient(100deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.42) 43%, rgba(255,255,255,0.05) 55%, rgba(255,255,255,0) 72%),
+      /* top-lit vertical shade */
+      linear-gradient(180deg, rgba(255,255,255,0.4), rgba(0,0,0,0.05) 52%, rgba(0,0,0,0.16)),
+      /* fine directional grain, two frequencies */
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.055) 0 1px, rgba(0,0,0,0.05) 1px 2px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0 3px, rgba(255,255,255,0.02) 3px 7px);
+  }
+
+  .panel {
+    position: relative;
+    border-radius: 5px;
+    /* machined chamfer: light top edge, shadowed bottom edge */
+    border: 1px solid rgba(0, 0, 0, 0.32);
+    padding: clamp(1.3rem, 3vw, 2.5rem);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.7),
+      inset 2px 0 0 rgba(255, 255, 255, 0.24),
+      inset -2px 0 0 rgba(0, 0, 0, 0.14),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.2),
+      0 14px 30px rgba(40, 30, 18, 0.28),
+      0 2px 5px rgba(40, 30, 18, 0.22);
+  }
+
+  /* ---------- corner screws in countersunk wells ---------- */
+
+  .screw {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 38% 32%, #f2efe9, #cdc9c1 42%, #97938a 74%, #726f68);
+    box-shadow:
+      /* the countersunk well: dark ring pressed into the plate */
+      0 0 0 2px rgba(0,0,0,0.14),
+      inset 0 1px 1px rgba(255, 255, 255, 0.7),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.42),
+      0 1px 2px rgba(0, 0, 0, 0.4);
+    rotate: 22deg;
+  }
+  .screw::before,
+  .screw::after {
+    content: "";
+    position: absolute;
+    inset: 0; margin: auto;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 1px;
+  }
+  .screw::before { width: 64%; height: 1.7px; }
+  .screw::after { width: 1.7px; height: 64%; }
+  .s-tl { top: 12px; left: 12px; }
+  .s-tr { top: 12px; right: 12px; rotate: -12deg; }
+  .s-bl { bottom: 12px; left: 12px; rotate: 40deg; }
+  .s-br { bottom: 12px; right: 12px; rotate: 8deg; }
+
+  /* ---------- silkscreen labels ---------- */
+
+  .silk {
+    font-weight: 800;
+    font-stretch: 74%;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+  .silk.xs { font-size: 0.6rem; letter-spacing: 0.13em; }
+
+  h1, h2, h3 { font-weight: 800; letter-spacing: -0.01em; }
+
+  .head { margin-bottom: clamp(1rem, 2.4vw, 1.6rem); }
+  .head h2, .fig-copy h2, .own-copy h2 {
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    font-stretch: 82%;
+    line-height: 1.04;
+    margin: 0;
+  }
+  .head .sub, .fig-copy p, .own-copy p {
+    color: var(--ink-dim);
+    max-width: 62ch;
+    margin: 0.5rem 0 0;
+  }
+  .head .sub { font-size: 0.98rem; }
+
+  /* =====================================================================
+     HERO
+  ===================================================================== */
+
+  .hero { overflow: hidden; }
+
+  .plate-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: clamp(1rem, 2.4vw, 1.6rem);
+    margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
+    /* panel seam: two lines, one light one dark */
+    border-bottom: 1px solid var(--line-lo);
+    box-shadow: 0 1px 0 var(--line-hi);
+  }
+
+  .brand { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
+  .wordmark {
+    font-weight: 900;
+    font-stretch: 70%;
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .model {
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding-left: 0.65rem;
+    border-left: 1px solid var(--line-lo);
+  }
+
+  .top-controls { display: flex; align-items: center; gap: 1.1rem; }
+
+  /* the interactive power rocker */
+  .rocker { display: inline-flex; flex-direction: column; align-items: center; gap: 0.34rem; cursor: pointer; }
+  .rocker-body {
+    width: 46px; height: 26px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #6f6b61, #56534b);
+    box-shadow: inset 0 2px 3px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.4);
+    padding: 3px;
+    display: block;
+  }
+  .rocker-face {
+    display: block;
+    width: 50%; height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--alu-hi), var(--alu-lo));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.7);
+    transition: transform 0.16s ease;
+  }
+  .power-in:checked ~ .plate-top .rocker-face { transform: translateX(100%); }
+  .power-in:checked ~ .plate-top .rocker-body { box-shadow: inset 0 2px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,0,40,0.35); }
+
+  .jack { position: relative; width: 30px; height: 30px; display: grid; place-items: center; }
+  .jack-ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 34%, #b6b2a9, #8a8579 60%, #5f5c54);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -2px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.35);
+  }
+  .jack-hole {
+    position: relative; width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle at 42% 38%, #2a2723, #050505 80%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+  }
+  .jack-cap { align-self: center; }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    align-items: center;
+  }
+
+  .headline {
+    font-size: clamp(2.3rem, 6vw, 4.1rem);
+    font-stretch: 68%;
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .lede {
+    margin: 1.1rem 0 0;
+    font-size: 1.06rem;
+    color: var(--ink-dim);
+    max-width: 46ch;
+  }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.72rem 1.15rem;
+    border-radius: 4px;
+    font-weight: 800; font-stretch: 82%;
+    letter-spacing: 0.01em;
+    border: 1px solid var(--line-lo);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, #2f2c27, #1c1a16);
+    color: #f1ede4;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 3px 8px rgba(0,0,0,0.3);
+  }
+  .btn-primary svg { width: 20px; height: 20px; fill: currentColor; }
+  .btn-txt { display: inline-flex; flex-direction: column; line-height: 1.02; font-size: 1.02rem; }
+  .btn-txt small { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; opacity: 0.72; text-transform: uppercase; }
+  .btn-primary.is-pending { opacity: 0.9; cursor: default; }
+  .btn-primary:not(.is-pending):hover { transform: translateY(-1px); }
+  .btn-ghost {
+    background: linear-gradient(180deg, var(--alu-hi), var(--alu-lo));
+    color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 3px rgba(0,0,0,0.16), 0 2px 5px rgba(0,0,0,0.18);
+  }
+  .btn-ghost:hover { transform: translateY(-1px); }
+
+  .led {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #6b6b6b, #3a3a3a);
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.6);
+    flex: none;
+  }
+  .led.is-on {
+    background: radial-gradient(circle at 38% 34%, var(--red-hot), var(--red) 60%, #7c0016);
+    box-shadow: 0 0 6px rgba(200, 0, 40, 0.7), inset 0 0 1px rgba(255,255,255,0.6);
+  }
+  .led.tiny { width: 6px; height: 6px; }
+
+  /* ---- the tuner display bay ---- */
+  .hero-bay { min-width: 0; }
+  .tuner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(0.8rem, 2vw, 1.4rem);
+    align-items: center;
+  }
+
+  .dial-window {
+    position: relative;
+    border-radius: 6px;
+    padding: 0.5rem;
+    background: linear-gradient(180deg, #2a2723, #16140f);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.06), 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .dial-plate {
+    position: relative;
+    border-radius: 3px;
+    padding: 0.4rem 0.5rem 0.2rem;
+    overflow: hidden;
+    /* backlit amber glass; layers the optional hero photo faintly on top */
+    background-image:
+      var(--hero-plate),
+      radial-gradient(120% 160% at 50% 0%, #ffe6b0, #f0c96e 45%, #d8a63f 78%, #b8892c);
+    background-size: cover, auto;
+    background-position: center, center;
+    background-blend-mode: soft-light, normal;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+  /* power OFF: the dial goes dark */
+  .power-in:not(:checked) ~ .hero-grid .dial-plate { filter: brightness(0.34) saturate(0.5); }
+  .power-in:not(:checked) ~ .hero-grid .dial-lamp,
+  .power-in:not(:checked) ~ .hero-grid .signal-bars i { opacity: 0.18; }
+
+  .dial { width: 100%; height: auto; display: block; }
+  .dial .scale line { }
+  .scale-num text { font-family: 'Saira Condensed', sans-serif; font-weight: 700; font-size: 22px; }
+  .station-label {
+    font-family: 'Archivo', sans-serif; font-weight: 800; font-stretch: 74%;
+    font-size: 15px; letter-spacing: 0.06em; fill: #7c0016; text-transform: uppercase;
+  }
+
+  .needle {
+    position: absolute;
+    top: 0.4rem; bottom: 1.55rem;
+    left: calc(var(--needle-x, 20%));
+    width: 2px;
+    background: linear-gradient(180deg, #ff2c48, #c80028);
+    box-shadow: 0 0 7px rgba(200,0,40,0.9);
+    transform: translateX(-50%);
+    transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .needle::after {
+    content: ""; position: absolute; top: -3px; left: 50%;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 34%, #ff5c72, #c80028);
+    transform: translateX(-50%);
+    box-shadow: 0 0 7px rgba(200,0,40,0.9);
+  }
+  .dial-lamp {
+    position: absolute; top: 6px; right: 8px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 34%, var(--red-hot), var(--red));
+    box-shadow: 0 0 7px rgba(200,0,40,0.8);
+  }
+
+  /* stations map to needle positions (fractions of the dial's 40..960 range) */
+  .rack:has(#src-plex:checked) .needle { --needle-x: 20.4%; }
+  .rack:has(#src-jellyfin:checked) .needle { --needle-x: 55.1%; }
+  .rack:has(#src-navidrome:checked) .needle { --needle-x: 84.9%; }
+
+  .dial-foot {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.35rem 0.2rem 0.1rem;
+  }
+  .dial-foot .silk { color: #6a5326; }
+  .signal-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .signal-bars i {
+    width: 3px; border-radius: 1px;
+    background: linear-gradient(180deg, var(--red-hot), var(--red));
+    box-shadow: 0 0 4px rgba(200,0,40,0.6);
+  }
+  .signal-bars i:nth-child(1) { height: 30%; }
+  .signal-bars i:nth-child(2) { height: 50%; }
+  .signal-bars i:nth-child(3) { height: 70%; }
+  .signal-bars i:nth-child(4) { height: 88%; }
+  .signal-bars i:nth-child(5) { height: 100%; }
+  .stereo { margin-left: auto; }
+
+  .bay-phone {
+    padding: 0.5rem;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #26241f, #131109);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .hero-phone {
+    --phone-bezel: linear-gradient(#2b2a27, #131210);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(255, 255, 255, 0.16);
+    --phone-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ---- control rail: source selector + volume knob ---- */
+  .rail {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "label buttons vol" "note note vol";
+    align-items: center;
+    gap: 0.6rem 1.1rem;
+    margin: clamp(1.1rem, 2.6vw, 1.7rem) 0 0;
+    padding: clamp(0.9rem, 2vw, 1.3rem) clamp(0.9rem, 2vw, 1.4rem);
+    border: 0;
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(0,0,0,0.06));
+    box-shadow: inset 0 1px 0 var(--line-hi), inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  .rail-label { grid-area: label; align-self: center; }
+  .source-buttons { grid-area: buttons; display: flex; flex-wrap: wrap; gap: 0.55rem; }
+
+  .src-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--ink-dim);
+    background: linear-gradient(180deg, var(--alu-hi), var(--alu-lo));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 3px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.1s ease, box-shadow 0.12s ease, color 0.12s ease;
+    user-select: none;
+  }
+  .src-btn input { position: absolute; opacity: 0; pointer-events: none; }
+  .src-led {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #7a766c, #4c4942);
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.6);
+  }
+  .src-logo { color: var(--ink-dim); }
+  .src-name { font-weight: 800; font-stretch: 78%; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.82rem; }
+  .src-btn:hover { transform: translateY(-1px); }
+  /* engaged: pressed in, lamp lit */
+  .src-btn:has(input:checked) {
+    color: var(--ink);
+    background: linear-gradient(180deg, #bdb9b0, #d3cfc6);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.32), inset 0 0 0 1px rgba(0,0,0,0.12);
+    transform: translateY(1px);
+  }
+  .src-btn:has(input:checked) .src-led {
+    background: radial-gradient(circle at 38% 34%, var(--red-hot), var(--red) 60%, #7c0016);
+    box-shadow: 0 0 7px rgba(200,0,40,0.75), inset 0 0 1px rgba(255,255,255,0.6);
+  }
+  .src-btn:has(input:checked) .src-logo,
+  .src-btn:has(input:checked) .src-name { color: var(--ink); }
+  .src-btn:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .rail-note { grid-area: note; position: relative; min-height: 2.6em; }
+  .note {
+    position: absolute; inset: 0;
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--ink-dim);
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    max-width: 60ch;
+  }
+  .note-srv { font-weight: 800; color: var(--ink); }
+  .rack:has(#src-plex:checked) .note-plex,
+  .rack:has(#src-jellyfin:checked) .note-jellyfin,
+  .rack:has(#src-navidrome:checked) .note-navidrome { opacity: 1; transform: none; }
+
+  .vol { grid-area: vol; display: inline-flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+  .vol-knob {
+    position: relative;
+    width: 62px; height: 62px; border-radius: 50%;
+    background:
+      repeating-conic-gradient(from 0deg, #b7b3aa 0 4deg, #97938a 4deg 8deg),
+      radial-gradient(circle at 40% 34%, #d9d5cc, #97938a);
+    box-shadow:
+      inset 0 2px 3px rgba(255,255,255,0.6),
+      inset 0 -3px 6px rgba(0,0,0,0.4),
+      0 3px 7px rgba(0,0,0,0.35);
+    display: grid; place-items: center;
+  }
+  .vol-knob::before {
+    content: ""; width: 62%; height: 62%; border-radius: 50%;
+    background: radial-gradient(circle at 40% 34%, #e6e2d9, #a7a39a);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.32);
+  }
+  .vol-ptr {
+    position: absolute; top: 6px; left: 50%;
+    width: 3px; height: 14px; border-radius: 2px;
+    background: var(--red);
+    transform: translateX(-50%);
+    box-shadow: 0 0 4px rgba(200,0,40,0.5);
+  }
+
+  /* =====================================================================
+     PRESET BANK
+  ===================================================================== */
+
+  .preset-bank {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(0.5rem, 1.4vw, 0.9rem);
+    margin: 0;
+  }
+  .preset { display: grid; gap: 0.5rem; }
+  .preset-window {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    background: #14120e;
+    padding: 4px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .preset-img { width: 100%; height: 100%; object-fit: cover; object-position: top center; border-radius: 2px; }
+  .preset-window :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top center; border-radius: 2px; }
+  .preset-glass {
+    position: absolute; inset: 4px;
+    border-radius: 2px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 42%);
+    pointer-events: none;
+  }
+  .preset-cap { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .preset-no {
+    font-family: 'Saira Condensed', sans-serif; font-weight: 700;
+    font-size: 0.9rem; color: var(--ink-dim);
+    width: 1.15rem; height: 1.15rem; display: grid; place-items: center;
+    border: 1px solid var(--line-lo); border-radius: 3px;
+    box-shadow: inset 0 1px 0 var(--line-hi);
+  }
+  .preset-cap .silk { margin-right: auto; }
+
+  @media (max-width: 52rem) {
+    .preset-bank { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  /* =====================================================================
+     FIG.1 — EXPLODED DIAGRAM
+  ===================================================================== */
+
+  .fig-split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(1.2rem, 3vw, 2.6rem);
+    align-items: center;
+  }
+  .fig-legend { display: grid; gap: 0.55rem; margin: 1.3rem 0 0; }
+  .fig-legend li {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--line-lo);
+    box-shadow: 0 1px 0 var(--line-hi);
+  }
+  .fig-no {
+    font-family: 'Saira Condensed', sans-serif; font-weight: 700;
+    width: 1.5rem; height: 1.5rem; display: grid; place-items: center;
+    border-radius: 50%; border: 1.4px solid var(--mach); color: var(--ink);
+    font-size: 0.9rem;
+  }
+  .fig-name { font-weight: 800; font-stretch: 78%; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.9rem; }
+  .fig-sub { color: var(--ink-dim); font-size: 0.86rem; }
+
+  .fig-fig { margin: 0; }
+  .exploded { width: 100%; height: auto; filter: drop-shadow(0 12px 18px rgba(40,30,18,0.18)); }
+  .fig-face-num { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 26px; }
+  .fig-face-stat { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.02em; }
+  .fig-tag { font-family: 'Saira Condensed', sans-serif; font-weight: 700; font-size: 17px; fill: var(--ink); }
+  .tb-key { font-family: 'Archivo', sans-serif; font-weight: 800; font-stretch: 74%; font-size: 11px; letter-spacing: 0.1em; fill: var(--ink-dim); }
+  .tb-val { font-family: 'Saira Condensed', sans-serif; font-weight: 700; font-size: 15px; fill: var(--ink); }
+
+  /* =====================================================================
+     FUNCTION BANK
+  ===================================================================== */
+
+  .fn-rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.7rem, 1.8vw, 1.1rem);
+    margin: 0;
+  }
+  .fn-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.9rem;
+    align-items: start;
+    padding: clamp(0.9rem, 2vw, 1.2rem);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(0,0,0,0.05));
+    box-shadow: inset 0 1px 0 var(--line-hi), inset 0 -2px 4px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  .fn-btn {
+    position: relative;
+    width: 40px; height: 40px;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #56534b, #3a3833);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.35);
+    display: grid; place-items: center;
+    flex: none;
+  }
+  .fn-btn-face {
+    width: 26px; height: 26px; border-radius: 3px;
+    background: linear-gradient(180deg, var(--alu-hi), var(--alu-lo));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 3px rgba(0,0,0,0.28);
+  }
+  .fn-btn.is-engaged .fn-btn-face {
+    background: linear-gradient(180deg, #bdb9b0, #d6d2c9);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.32);
+  }
+  .fn-btn-led {
+    position: absolute; top: 5px; right: 5px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, var(--red-hot), var(--red));
+    box-shadow: 0 0 5px rgba(200,0,40,0.8);
+  }
+  .fn-copy h3 { font-size: 1.02rem; font-stretch: 82%; margin: 0 0 0.15rem; }
+  .fn-copy p { margin: 0; color: var(--ink-dim); font-size: 0.92rem; }
+
+  @media (max-width: 46rem) {
+    .fn-rows { grid-template-columns: 1fr; }
+  }
+
+  /* =====================================================================
+     OWNERSHIP / SCHEMATIC
+  ===================================================================== */
+
+  .own-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    align-items: center;
+  }
+  .sch-fig { margin: 0; }
+  .schematic { width: 100%; height: auto; }
+  .sch-ref text {
+    font-family: 'Archivo', sans-serif; font-weight: 800; font-stretch: 74%;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  .own-rows { display: grid; gap: 0.7rem; margin: 1.2rem 0 0; }
+  .own-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: start;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--line-lo);
+    box-shadow: 0 1px 0 var(--line-hi);
+  }
+  .own-led {
+    width: 9px; height: 9px; border-radius: 50%; margin-top: 0.4rem;
+    background: radial-gradient(circle at 38% 34%, var(--red-hot), var(--red) 60%, #7c0016);
+    box-shadow: 0 0 6px rgba(200,0,40,0.7);
+    flex: none;
+  }
+  .own-row h3 { font-size: 1rem; font-stretch: 82%; margin: 0 0 0.1rem; }
+  .own-row p { margin: 0; color: var(--ink-dim); font-size: 0.92rem; }
+
+  @media (max-width: 52rem) {
+    .own-split { grid-template-columns: 1fr; }
+  }
+
+  /* =====================================================================
+     SPECIFICATIONS
+  ===================================================================== */
+
+  .spec-title { display: block; margin-bottom: 0.9rem; }
+  .spec-plate {
+    border-radius: 5px;
+    padding: clamp(1rem, 2.4vw, 1.5rem);
+    /* engraved dark rating plate, the kind riveted to the back of a receiver */
+    background: linear-gradient(180deg, #33302a, #201e19);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 2px 10px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.4);
+    color: #e8e4da;
+  }
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.8rem, 2vw, 1.6rem);
+    margin: 0;
+  }
+  .spec { display: grid; gap: 0.3rem; padding-right: 1rem; border-right: 1px solid rgba(255,255,255,0.1); }
+  .spec:last-child { border-right: 0; }
+  .spec-val {
+    font-family: 'Saira Condensed', sans-serif; font-weight: 900;
+    font-size: clamp(1.8rem, 4.5vw, 2.9rem);
+    line-height: 0.9; letter-spacing: -0.02em;
+    /* engraved: light top bevel over dark */
+    color: #f2eee4;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.7), 0 -1px 0 rgba(255,255,255,0.12);
+  }
+  .spec-lab { margin: 0; font-size: 0.82rem; color: #b7b2a6; }
+  .spec-serial {
+    display: block; margin-top: 1rem;
+    font-weight: 700; font-stretch: 74%; letter-spacing: 0.16em; text-transform: uppercase;
+    font-size: 0.62rem; color: #8f8b80;
+  }
+
+  @media (max-width: 46rem) {
+    .specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .spec:nth-child(2) { border-right: 0; }
+  }
+
+  /* =====================================================================
+     FAQ
+  ===================================================================== */
+
+  .faq { display: grid; gap: 0.55rem; }
+  .faq details {
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(0,0,0,0.05));
+    box-shadow: inset 0 1px 0 var(--line-hi), inset 0 0 0 1px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .faq summary {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.95rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700; font-stretch: 84%;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .q-led {
+    width: 8px; height: 8px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 38% 34%, #7a766c, #4c4942);
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.6);
+  }
+  .faq details[open] .q-led {
+    background: radial-gradient(circle at 38% 34%, var(--red-hot), var(--red));
+    box-shadow: 0 0 6px rgba(200,0,40,0.7);
+  }
+  .q-txt { flex: 1; }
+  .q-mark {
+    position: relative; width: 14px; height: 14px; flex: none;
+  }
+  .q-mark::before, .q-mark::after {
+    content: ""; position: absolute; inset: 0; margin: auto;
+    background: var(--ink-dim); border-radius: 1px;
+  }
+  .q-mark::before { width: 14px; height: 2px; }
+  .q-mark::after { width: 2px; height: 14px; transition: transform 0.2s ease; }
+  .faq details[open] .q-mark::after { transform: scaleY(0); }
+  .faq p { margin: 0; padding: 0 1.1rem 1.1rem 2.5rem; color: var(--ink-dim); max-width: 70ch; }
+
+  /* =====================================================================
+     FOOTER / BACK PANEL
+  ===================================================================== */
+
+  .backplate { }
+  .back-grid {
+    display: flex; align-items: center; justify-content: space-between; gap: 1.2rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.1rem; margin-bottom: 1.1rem;
+    border-bottom: 1px solid var(--line-lo);
+    box-shadow: 0 1px 0 var(--line-hi);
+  }
+  .back-brand { display: flex; align-items: center; gap: 0.75rem; }
+  .back-brand p { margin: 0; color: var(--ink-dim); max-width: 48ch; font-size: 0.94rem; }
+  .back-brand a { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .rating { display: inline-grid; justify-items: center; gap: 0.15rem; text-align: center; }
+  .rating-val {
+    font-family: 'Saira Condensed', sans-serif; font-weight: 900;
+    font-size: 1.5rem; letter-spacing: 0.02em; color: var(--ink);
+  }
+  .serial {
+    display: block;
+    font-weight: 700; font-stretch: 74%; letter-spacing: 0.16em; text-transform: uppercase;
+    font-size: 0.6rem; color: var(--mach);
+  }
+
+  /* =====================================================================
+     RESPONSIVE
+  ===================================================================== */
+
+  @media (max-width: 60rem) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .tuner { grid-template-columns: 1fr; justify-items: center; }
+    .bay-phone { justify-self: center; }
+  }
+
+  @media (max-width: 40rem) {
+    .plate-top { flex-wrap: wrap; }
+    .rail {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "label vol" "buttons vol" "note note";
+    }
+    .fig-split, .own-split { grid-template-columns: 1fr; }
+    .model { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .needle, .rocker-face, .btn, .src-btn, .note, .dial-plate, .q-mark::after { transition: none; }
+  }
+</style>

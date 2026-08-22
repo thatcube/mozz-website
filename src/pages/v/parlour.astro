@@ -1,0 +1,963 @@
+---
+/**
+ * VARIANT — PARLOUR
+ * A warm editorial listening room. Cream, burnt orange, dark warm brown, one
+ * true-red spark. The extreme display-to-body type ratio is the instrument.
+ * See the design contract in the HTML comment at the top of <main>.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, DONATE_URL, APP_STORE_URL,
+} from '../../data/site';
+
+/** A small pixel disc, drawn from the mark's own 8-bit language — used as a
+    quiet print device beside a rule, never as an eyebrow above a heading. */
+const pixDisc = `<svg viewBox="0 0 9 9" width="18" height="18" aria-hidden="true" class="pd">
+  <g fill="currentColor">
+    <rect x="3" y="0" width="3" height="1"/><rect x="2" y="1" width="5" height="1"/>
+    <rect x="1" y="2" width="2" height="1"/><rect x="6" y="2" width="2" height="1"/>
+    <rect x="1" y="3" width="1" height="3"/><rect x="7" y="3" width="1" height="3"/>
+    <rect x="1" y="6" width="2" height="1"/><rect x="6" y="6" width="2" height="1"/>
+    <rect x="2" y="7" width="5" height="1"/><rect x="3" y="8" width="3" height="1"/>
+  </g>
+  <rect x="4" y="4" width="1" height="1" fill="#f2e9d8"/>
+</svg>`;
+
+/** The five screens, framed as printed plates in the adaptive-tint section. */
+const PLATES = [
+  { name: 'mozz-album-red',   note: 'crimson sleeve' },
+  { name: 'mozz-album-warm',  note: 'amber cover' },
+  { name: 'mozz-artist',      note: 'sepia portrait' },
+  { name: 'mozz-playlist',    note: 'cool silver' },
+  { name: 'mozz-album-dark',  note: 'dark maroon' },
+];
+---
+
+<Layout
+  title={`${NAME} — your music, wherever it lives`}
+  description="A free, open-source music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — no account, no tracking, no subscription."
+  themeColor="#f2e9d8"
+  noindex
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700,800,900&f[]=satoshi@400,500,700,900&display=swap"
+    />
+  </Fragment>
+
+  <!--
+    THESIS: The page is an editorial listening room. An enormous, high-contrast
+    chunky display serif (Zodiak) carries every idea in two- or three-word
+    lines; body copy is tiny, quiet Satoshi set diagonally opposite. The extreme
+    type ratio IS the design — everything else is paper, object and photograph.
+    OWN-WORLD: Warm cream paper ground, burnt orange, dark warm brown ink, and
+    Mozz red kept as a deliberate spark held in tension against the orange.
+    Print devices — hairline rules, corner registration marks, a pixel disc
+    drawn from the mark — replace eyebrows and pill tags. One dark full-bleed
+    section near the end for contrast.
+    STORY: Your music, wherever it lives. Plays off your own server, no account,
+    no tracking, free forever — and it takes the colour of whatever is playing.
+    FIRST VIEWPORT: Wordmark top-left; the tagline set huge; a dressed phone and
+    a hand-drawn die-cut sleeve with a CD collaged to the right; store + source
+    actions; a small measured specimen line low-left.
+    FORM: The conventionally beautiful one — art-directed, expensive, calm.
+  -->
+
+  <VariantBar slug="parlour" tone="warm" />
+
+  <!-- Paper grain + registration marks, authored once here and reused. -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <filter id="par-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </svg>
+
+  <div class="page">
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="top">
+      <a class="wordmark" href="/" aria-label="Mozz home">
+        <Mark size={30} />
+        <span>Mozz</span>
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        <a href="#servers">Servers</a>
+        <a href="#craft">What it does</a>
+        <a href="#yours">Why it's yours</a>
+        <a class="src" href={GITHUB_URL}>Source</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ============================ HERO ============================ -->
+      <section class="hero" aria-labelledby="hero-h">
+        <div class="hero-copy">
+          <p class="hero-lede">
+            A record player for the music you already own. Point it at your Plex,
+            Jellyfin or Navidrome server and press play.
+          </p>
+          <h1 id="hero-h" class="display">
+            <span>Your music,</span>
+            <span class="em">wherever</span>
+            <span>it lives.</span>
+          </h1>
+
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+
+          <dl class="specimen" aria-label="Measured facts">
+            {STATS.map((s) => (
+              <div>
+                <dt>{s.value}</dt>
+                <dd>{s.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <!--
+          The stage: a dressed phone and a hand-drawn die-cut sleeve with a CD.
+          A hero plate layers on top of the composed art — drop AI artwork at
+          /public/hero/parlour.jpg and it enriches the scene. With no file the
+          layer paints nothing (an expected 404, never a broken box) and the
+          composed hero stands entirely on its own.
+        -->
+        <div class="stage">
+          <div class="plate" aria-hidden="true"></div>
+
+          <!-- Illustration 1 — a printed, die-cut album sleeve with a CD -->
+          <figure class="sleeve" aria-hidden="true">
+            <svg viewBox="0 0 300 300" role="presentation">
+              <defs>
+                <radialGradient id="cd-sheen" cx="42%" cy="38%" r="72%">
+                  <stop offset="0%" stop-color="#fff6e6"/>
+                  <stop offset="26%" stop-color="#f4c98a"/>
+                  <stop offset="46%" stop-color="#e2701f"/>
+                  <stop offset="62%" stop-color="#c85a14"/>
+                  <stop offset="78%" stop-color="#c80028"/>
+                  <stop offset="100%" stop-color="#7a3410"/>
+                </radialGradient>
+                <clipPath id="diecut"><circle cx="150" cy="158" r="96"/></clipPath>
+              </defs>
+
+              <!-- sleeve board -->
+              <rect x="14" y="14" width="272" height="272" rx="4" fill="#efe3cb"/>
+              <rect x="14" y="14" width="272" height="272" rx="4" fill="none" stroke="#241c14" stroke-width="1.5"/>
+              <!-- printed header block -->
+              <rect x="30" y="30" width="240" height="30" fill="#241c14"/>
+              <text x="40" y="50" fill="#f2e9d8" font-family="Zodiak, Georgia, serif" font-weight="800" font-size="17" letter-spacing="0.5">MOZZ · CATALOGUE</text>
+              <!-- small printed index rules under header -->
+              <line x1="30" y1="66" x2="270" y2="66" stroke="#241c14" stroke-width="0.75"/>
+              <text x="30" y="280" fill="#5a4a34" font-family="Satoshi, sans-serif" font-size="9" letter-spacing="1.5">SIDE A · YOUR LIBRARY · NO ACCOUNT</text>
+
+              <!-- the CD behind the die-cut window -->
+              <g clip-path="url(#diecut)">
+                <rect x="40" y="60" width="220" height="200" fill="#241c14"/>
+                <circle cx="150" cy="158" r="92" fill="url(#cd-sheen)"/>
+                <!-- fine data rings (a CD surface, not a vinyl groove) -->
+                <g fill="none" stroke="#241c14" stroke-opacity="0.10" stroke-width="0.8">
+                  <circle cx="150" cy="158" r="84"/><circle cx="150" cy="158" r="76"/>
+                  <circle cx="150" cy="158" r="68"/><circle cx="150" cy="158" r="60"/>
+                  <circle cx="150" cy="158" r="52"/><circle cx="150" cy="158" r="44"/>
+                </g>
+                <!-- specular streak -->
+                <path d="M96 108 A92 92 0 0 1 208 108 L198 120 A76 76 0 0 0 106 120 Z" fill="#fff6e6" opacity="0.42"/>
+                <!-- CD hub: wide clear ring + clamp ring + centre hole -->
+                <circle cx="150" cy="158" r="34" fill="#efe3cb"/>
+                <circle cx="150" cy="158" r="34" fill="none" stroke="#241c14" stroke-width="1"/>
+                <circle cx="150" cy="158" r="26" fill="none" stroke="#c85a14" stroke-width="1.5"/>
+                <circle cx="150" cy="158" r="12" fill="#efe3cb" stroke="#241c14" stroke-width="1"/>
+              </g>
+              <!-- the die-cut edge itself -->
+              <circle cx="150" cy="158" r="96" fill="none" stroke="#241c14" stroke-width="1.5"/>
+              <circle cx="150" cy="158" r="100" fill="none" stroke="#241c14" stroke-width="0.5" stroke-dasharray="2 4"/>
+            </svg>
+          </figure>
+
+          <div class="hero-phone-wrap">
+            <Phone name="mozz-nowplaying" width={252} priority class="hero-phone" alt="Mozz now playing, its interface tinted violet to match the album art." />
+          </div>
+
+          <!-- corner registration marks, the print device of the whole page -->
+          <span class="reg tl" aria-hidden="true"></span>
+          <span class="reg br" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <!-- ========================= SERVERS ========================= -->
+      <section id="servers" class="servers" aria-labelledby="srv-h">
+        <div class="rule"><span class="mark" set:html={pixDisc}></span></div>
+        <div class="srv-grid">
+          <div class="srv-head">
+            <h2 id="srv-h" class="display">
+              <span>Point it at</span>
+              <span class="em">your own</span>
+              <span>shelf.</span>
+            </h2>
+            <p class="body">
+              Mozz is the player; your server is the library. Add more than one
+              and browse them as if they had always been the same collection.
+            </p>
+          </div>
+          <ul class="srv-list" role="list">
+            {SERVERS.map((s) => (
+              <li>
+                <ServerLogo name={s.name} size={34} brand />
+                <div>
+                  <h3>{s.name}</h3>
+                  <p>{s.note}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- ======================= WHAT IT DOES ======================= -->
+      <section id="craft" class="craft" aria-labelledby="craft-h">
+        <div class="rule"><span class="mark" set:html={pixDisc}></span></div>
+        <header class="craft-head">
+          <h2 id="craft-h" class="display">
+            <span>What it does,</span>
+            <span class="em">quietly.</span>
+          </h2>
+          <p class="body">
+            Six things it gets right, printed like an index. No pro tier holding
+            any of them hostage — every one is in the free app.
+          </p>
+        </header>
+
+        <ol class="spread" role="list">
+          {FEATURES.map((f) => (
+            <li class="entry">
+              <span class="entry-mark" set:html={pixDisc}></span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- ==================== ADAPTIVE TINT PLATES ==================== -->
+      <section class="tint" aria-labelledby="tint-h">
+        <div class="rule"><span class="mark" set:html={pixDisc}></span></div>
+        <div class="tint-head">
+          <h2 id="tint-h" class="display">
+            <span>It takes the</span>
+            <span class="em">colour</span>
+            <span>of the record.</span>
+          </h2>
+          <p class="body">
+            One app. Every screen draws its palette from the artwork that is
+            playing, so the interface is never louder than the music.
+          </p>
+        </div>
+
+        <div class="contact" role="list" aria-label="Screens, each tinted by its artwork">
+          {PLATES.map((p, i) => (
+            <figure class={`shell shell-${i}`} role="listitem">
+              <Shot
+                name={p.name}
+                sizes="(max-width: 720px) 40vw, 220px"
+                class="tint-shot"
+              />
+              <figcaption>{p.note}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <!-- ================= OWNERSHIP — DARK SECTION ================= -->
+      <section id="yours" class="yours" aria-labelledby="yours-h">
+        <div class="yours-inner">
+          <div class="yours-lead">
+            <span class="mark dark" set:html={pixDisc}></span>
+            <h2 id="yours-h" class="display">
+              <span>It's yours.</span>
+              <span class="em">Actually</span>
+              <span>yours.</span>
+            </h2>
+            <p class="body">
+              These are people who decided not to rent their music. Mozz is built
+              the same way: it talks to your server and nobody else.
+            </p>
+
+            <!-- Illustration 2 — a hand-drawn elevation of where music lives -->
+            <figure class="elevation" aria-hidden="true">
+              <svg viewBox="0 0 360 220" role="presentation">
+                <!-- floor + shelf carcass, drawn as an ink elevation -->
+                <g fill="none" stroke="#f2e9d8" stroke-width="1.4" stroke-linejoin="round">
+                  <rect x="12" y="24" width="196" height="164"/>
+                  <line x1="12" y1="80" x2="208" y2="80"/>
+                  <line x1="12" y1="136" x2="208" y2="136"/>
+                  <line x1="110" y1="136" x2="110" y2="188"/>
+                  <line x1="6" y1="188" x2="352" y2="188"/>
+                </g>
+
+                <!-- top shelf: books / record spines -->
+                <g>
+                  <rect x="24" y="40" width="9" height="34" fill="#e2701f"/>
+                  <rect x="35" y="36" width="9" height="38" fill="#c80028"/>
+                  <rect x="46" y="42" width="7" height="32" fill="#efe3cb"/>
+                  <rect x="55" y="38" width="10" height="36" fill="#e2701f" opacity="0.6"/>
+                  <rect x="67" y="40" width="8" height="34" fill="#efe3cb"/>
+                  <!-- a small plant on the right of the top shelf -->
+                  <path d="M186 74 q-10 -20 -2 -34 M186 74 q10 -18 3 -30 M186 74 q0 -22 0 -30" stroke="#7fae7a" stroke-width="1.4" fill="none"/>
+                  <path d="M176 74 h20 l-3 -8 h-14 z" fill="#c85a14"/>
+                </g>
+
+                <!-- middle shelf: the home server (a NAS with drive lights) -->
+                <g>
+                  <rect x="26" y="92" width="86" height="36" rx="2" fill="#241c14" stroke="#f2e9d8" stroke-width="1.2"/>
+                  <g fill="#efe3cb"><rect x="34" y="98" width="6" height="24"/><rect x="44" y="98" width="6" height="24"/><rect x="54" y="98" width="6" height="24"/><rect x="64" y="98" width="6" height="24"/></g>
+                  <circle cx="100" cy="102" r="2.6" fill="#35e08f"/>
+                  <circle cx="100" cy="110" r="2.6" fill="#e2701f"/>
+                  <text x="30" y="150" fill="#b8a988" font-family="Satoshi, sans-serif" font-size="8" letter-spacing="1">YOUR SERVER</text>
+                  <!-- a router beside it -->
+                  <rect x="128" y="104" width="60" height="24" rx="2" fill="none" stroke="#f2e9d8" stroke-width="1.2"/>
+                  <line x1="142" y1="104" x2="136" y2="88" stroke="#f2e9d8" stroke-width="1.2"/>
+                  <line x1="164" y1="104" x2="172" y2="86" stroke="#f2e9d8" stroke-width="1.2"/>
+                  <circle cx="140" cy="116" r="1.8" fill="#35e08f"/>
+                </g>
+
+                <!-- bottom shelf: crates of files -->
+                <g stroke="#f2e9d8" stroke-width="1.2" fill="none">
+                  <rect x="24" y="150" width="70" height="30"/>
+                  <line x1="30" y1="150" x2="30" y2="180"/><line x1="40" y1="150" x2="40" y2="180"/>
+                  <line x1="50" y1="150" x2="50" y2="180"/><line x1="60" y1="150" x2="60" y2="180"/>
+                  <line x1="70" y1="150" x2="70" y2="180"/><line x1="80" y1="150" x2="80" y2="180"/>
+                </g>
+
+                <!-- the dotted signal path to a phone in hand -->
+                <path d="M188 116 C240 116 250 96 286 96" fill="none" stroke="#e2701f" stroke-width="1.6" stroke-dasharray="2 6" stroke-linecap="round"/>
+                <g>
+                  <rect x="286" y="52" width="52" height="96" rx="10" fill="#efe3cb" stroke="#241c14" stroke-width="1.4"/>
+                  <rect x="292" y="60" width="40" height="72" rx="4" fill="#c80028"/>
+                  <circle cx="312" cy="88" r="12" fill="#f2c14e"/>
+                  <rect x="298" y="108" width="28" height="3" rx="1.5" fill="#f2e9d8" opacity="0.85"/>
+                  <rect x="298" y="115" width="20" height="3" rx="1.5" fill="#f2e9d8" opacity="0.6"/>
+                  <text x="286" y="164" fill="#b8a988" font-family="Satoshi, sans-serif" font-size="8" letter-spacing="1">YOUR PHONE</text>
+                </g>
+              </svg>
+            </figure>
+          </div>
+
+          <div class="yours-body">
+            <ul class="own-list" role="list">
+              {OWNERSHIP.map((o) => (
+                <li>
+                  <h3>{o.title}</h3>
+                  <p>{o.body}</p>
+                </li>
+              ))}
+            </ul>
+
+            <dl class="specsheet" aria-label="Measured facts">
+              {STATS.map((s) => (
+                <div>
+                  <dt>{s.value}</dt>
+                  <dd>{s.label}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================== FAQ =========================== -->
+      <section class="faq" aria-labelledby="faq-h">
+        <div class="rule"><span class="mark" set:html={pixDisc}></span></div>
+        <h2 id="faq-h" class="display">
+          <span>Still</span>
+          <span class="em">wondering.</span>
+        </h2>
+        <dl class="qa">
+          {FAQS.map((f) => (
+            <div class="qa-row">
+              <dt>{f.q}</dt>
+              <dd>{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <!-- ========================= FOOTER ========================= -->
+      <footer class="foot" aria-labelledby="foot-h">
+        <div class="foot-big">
+          <h2 id="foot-h" class="display">
+            <span>Free</span>
+            <span class="em">forever.</span>
+          </h2>
+          <p class="body">{TAGLINE} {SUBLINE}</p>
+        </div>
+        <div class="foot-meta">
+          <a class="wordmark" href="/" aria-label="Mozz home">
+            <Mark size={26} />
+            <span>Mozz</span>
+          </a>
+          <nav aria-label="Footer">
+            <a href={GITHUB_URL}>GitHub</a>
+            <a href={DONATE_URL}>Sponsor</a>
+            <a href="#servers">Servers</a>
+          </nav>
+          <p class="license">Open source under GPL-3.0, with an App Store Exception. No account, no tracking.</p>
+        </div>
+      </footer>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  /* ------------------------------------------------------------------ */
+  /*  PARLOUR — warm editorial listening room                            */
+  /* ------------------------------------------------------------------ */
+  .page {
+    --cream: #f2e9d8;
+    --paper: #f6efe1;
+    --panel: #eadfc8;
+    --panel-deep: #e4d6ba;
+    --orange: #e2701f;
+    --orange-deep: #b8570f;
+    --ink: #241c14;
+    --ink-soft: #4a3d2b;
+    --ink-faint: #6a5a42;
+    --red: #c80028;
+    --dark: #1c150d;
+    --dark-2: #2a2013;
+    --line: rgba(36, 28, 20, 0.24);
+    --line-soft: rgba(36, 28, 20, 0.12);
+
+    --serif: 'Zodiak', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+    --sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+    position: relative;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    overflow: clip;
+  }
+
+  /* subtle authored paper grain — never a muddy overlay */
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    filter: url(#par-grain);
+    /* the filter needs a painted box to work on */
+    background: #000;
+  }
+
+  main { position: relative; z-index: 2; }
+
+  .display {
+    font-family: var(--serif);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .display span { display: block; }
+  .display .em { color: var(--orange-deep); font-style: italic; font-weight: 900; }
+
+  .body {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: clamp(0.98rem, 1.05vw, 1.08rem);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 34ch;
+  }
+
+  /* ---- shared page frame ---- */
+  .top, .hero, .servers, .craft, .tint, .faq, .foot {
+    padding-inline: clamp(1.25rem, 5vw, 5.5rem);
+  }
+
+  /* ============================ HEADER ============================ */
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1rem;
+    background: color-mix(in srgb, var(--cream) 86%, transparent);
+    border-bottom: 1px solid var(--line-soft);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+  .topnav { display: flex; align-items: center; gap: clamp(0.9rem, 2vw, 1.75rem); }
+  .topnav a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .topnav a:hover { color: var(--orange-deep); }
+  .topnav .src { color: var(--red); font-weight: 700; }
+  @media (max-width: 46rem) { .topnav a:not(.src) { display: none; } }
+
+  /* ============================= HERO ============================= */
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+  }
+  .hero-lede {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 30ch;
+    margin: 0 0 1.6rem;
+    padding-left: 1.1rem;
+    border-left: 1px solid var(--orange);
+  }
+  .hero .display {
+    font-size: clamp(3.1rem, 9vw, 6rem);
+  }
+  .hero .display .em { position: relative; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 2rem;
+  }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.72rem 1.15rem;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--cream);
+    text-decoration: none;
+    box-shadow: 0 14px 26px -18px rgba(36, 28, 20, 0.8);
+  }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: flex; flex-direction: column; line-height: 1.05; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+  .store small { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+  .store.is-pending {
+    background: var(--panel-deep);
+    color: var(--ink-faint);
+    box-shadow: inset 0 0 0 1px var(--line);
+    cursor: default;
+  }
+  .store.is-pending svg { opacity: 0.7; }
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ghost:hover { background: var(--panel); }
+
+  .specimen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 clamp(1rem, 2.6vw, 2.2rem);
+    margin: 2.75rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-soft);
+  }
+  .specimen div { display: flex; align-items: baseline; gap: 0.5rem; }
+  .specimen dt {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--red);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .specimen dd {
+    margin: 0;
+    font-size: 0.68rem;
+    line-height: 1.3;
+    color: var(--ink-faint);
+    max-width: 14ch;
+  }
+
+  /* --- hero stage: phone + sleeve collage --- */
+  .stage {
+    position: relative;
+    min-height: 30rem;
+    display: grid;
+    place-items: center;
+  }
+  .plate {
+    position: absolute;
+    inset: 4% 2% 4% 6%;
+    border-radius: 6px;
+    /* AI hero art drops in here and layers over the composed warm ground. With
+       /hero/parlour.jpg absent this is an expected 404 and simply paints the
+       warm wash below — never a broken image. */
+    background:
+      var(--hero-plate),
+      radial-gradient(120% 90% at 72% 22%, rgba(226, 112, 31, 0.16), transparent 60%),
+      radial-gradient(90% 80% at 30% 80%, rgba(200, 0, 40, 0.08), transparent 62%),
+      linear-gradient(160deg, var(--paper), var(--panel));
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 0 1px var(--line-soft);
+  }
+  .hero { --hero-plate: url('/hero/parlour.jpg'); }
+
+  .sleeve {
+    position: absolute;
+    left: 2%;
+    top: 8%;
+    width: min(60%, 17rem);
+    margin: 0;
+    transform: rotate(-5deg);
+    filter: drop-shadow(0 26px 34px rgba(36, 28, 20, 0.34));
+  }
+  .sleeve svg { width: 100%; height: auto; display: block; }
+
+  .hero-phone-wrap {
+    position: relative;
+    justify-self: end;
+    align-self: center;
+    margin-right: 4%;
+    transform: rotate(3deg);
+  }
+  .hero-phone {
+    --phone-bezel: linear-gradient(160deg, #efe3cb, #d8c39c);
+    --phone-bezel-w: 0.05;
+    --phone-rim: rgba(36, 28, 20, 0.3);
+    --phone-shadow: 0 40px 70px -30px rgba(36, 28, 20, 0.62);
+  }
+
+  .reg {
+    position: absolute;
+    width: 20px; height: 20px;
+    pointer-events: none;
+  }
+  .reg::before, .reg::after {
+    content: '';
+    position: absolute;
+    background: var(--ink);
+  }
+  .reg::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-0.5px); }
+  .reg::after { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-0.5px); }
+  .reg.tl { top: 0; left: 0; opacity: 0.55; }
+  .reg.br { bottom: 0; right: 0; opacity: 0.55; }
+
+  /* ---- section rule + pixel mark ---- */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .mark { color: var(--red); line-height: 0; }
+  .mark :global(svg) { display: block; }
+  .mark.dark { color: var(--orange); }
+
+  /* ============================ SERVERS ============================ */
+  .servers { padding-bottom: clamp(2rem, 5vw, 4rem); }
+  .srv-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+  .srv-head .display { font-size: clamp(2.4rem, 5.6vw, 4.2rem); }
+  .srv-head .body { margin-top: 1.25rem; }
+  .srv-list { display: flex; flex-direction: column; gap: 0; margin: 0; }
+  .srv-list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.1rem;
+    align-items: center;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .srv-list li:last-child { border-bottom: 1px solid var(--line-soft); }
+  .srv-list h3 { font-family: var(--serif); font-weight: 700; font-size: 1.5rem; margin: 0 0 0.15rem; letter-spacing: -0.02em; }
+  .srv-list p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); line-height: 1.45; }
+
+  /* ========================= WHAT IT DOES ========================= */
+  .craft { padding-bottom: clamp(2.5rem, 6vw, 5rem); }
+  .craft-head {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .craft-head .display { font-size: clamp(2.6rem, 6.4vw, 5rem); }
+  .craft-head .body { justify-self: start; }
+
+  .spread {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+  .entry {
+    position: relative;
+    padding: 1.6rem 1.6rem 2rem 0;
+    border-bottom: 1px solid var(--line-soft);
+    border-right: 1px solid var(--line-soft);
+  }
+  .entry:nth-child(3n) { border-right: none; padding-right: 0; }
+  .entry .entry-mark {
+    display: inline-block;
+    color: var(--orange-deep);
+    line-height: 0;
+  }
+  .entry .entry-mark :global(svg) { display: block; }
+  .entry h3 {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0.7rem 0 0.6rem;
+    max-width: 14ch;
+  }
+  .entry p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft); max-width: 34ch; }
+
+  /* ====================== ADAPTIVE TINT PLATES ====================== */
+  .tint {
+    background: var(--panel);
+    border-block: 1px solid var(--line-soft);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .tint-head {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .tint-head .display { font-size: clamp(2.4rem, 6vw, 4.6rem); }
+
+  .contact {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(0.75rem, 1.6vw, 1.4rem);
+    align-items: end;
+  }
+  .shell {
+    margin: 0;
+    padding: 0.55rem 0.55rem 0.4rem;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 18px 30px -24px rgba(36, 28, 20, 0.5);
+  }
+  .shell :global(.tint-shot) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 19.5;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 3px;
+    background: var(--ink);
+  }
+  .shell figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  /* stagger the plates like a laid-out contact sheet */
+  .shell-0 { transform: translateY(1.6rem) rotate(-1.4deg); }
+  .shell-1 { transform: translateY(0) rotate(0.8deg); }
+  .shell-2 { transform: translateY(2.2rem) rotate(-0.6deg); }
+  .shell-3 { transform: translateY(0.4rem) rotate(1.2deg); }
+  .shell-4 { transform: translateY(2rem) rotate(-1deg); }
+
+  /* ===================== OWNERSHIP — DARK ===================== */
+  .yours {
+    background: var(--dark);
+    color: var(--cream);
+    margin-top: clamp(2rem, 5vw, 4rem);
+  }
+  .yours-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 5vw, 5.5rem);
+  }
+  .yours .display { color: var(--cream); font-size: clamp(2.6rem, 6.5vw, 5rem); }
+  .yours .display .em { color: var(--orange); }
+  .yours .body { color: #d8cbb2; margin-top: 1.25rem; }
+  .yours .mark.dark { display: inline-block; margin-bottom: 1.25rem; }
+
+  .elevation {
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    max-width: 30rem;
+  }
+  .elevation svg { width: 100%; height: auto; display: block; }
+
+  .own-list { margin: 0; }
+  .own-list li {
+    padding: 1.35rem 0;
+    border-top: 1px solid rgba(242, 233, 216, 0.16);
+  }
+  .own-list li:first-child { border-top: none; padding-top: 0; }
+  .own-list h3 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.3rem;
+    color: var(--cream);
+  }
+  .own-list p { margin: 0; font-size: 0.92rem; line-height: 1.55; color: #c9bda3; max-width: 40ch; }
+
+  .specsheet {
+    margin: 2.25rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--orange);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem 1.5rem;
+  }
+  .specsheet div { display: flex; align-items: baseline; gap: 0.6rem; }
+  .specsheet dt {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--orange);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    min-width: 3.2ch;
+  }
+  .specsheet dd { margin: 0; font-size: 0.68rem; line-height: 1.3; color: #b8a988; }
+
+  /* ============================= FAQ ============================= */
+  .faq { padding-block: clamp(3rem, 6vw, 5rem); }
+  .faq .display { font-size: clamp(2.4rem, 6vw, 4.6rem); margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+  .qa { margin: 0; border-top: 1px solid var(--line); }
+  .qa-row {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(1rem, 3vw, 3rem);
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: start;
+  }
+  .qa-row dt {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .qa-row dd { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--ink-soft); max-width: 62ch; }
+
+  /* ============================ FOOTER ============================ */
+  .foot {
+    background: var(--dark);
+    color: var(--cream);
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .foot-big { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .foot .display { color: var(--cream); font-size: clamp(3rem, 9vw, 6rem); }
+  .foot .display .em { color: #d6002b; }
+  .foot .body { color: #d8cbb2; margin-top: 1rem; max-width: 48ch; }
+  .foot-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(242, 233, 216, 0.16);
+  }
+  .foot-meta .wordmark { color: var(--cream); font-size: 1.15rem; }
+  .foot-meta nav { display: flex; gap: 1.25rem; }
+  .foot-meta nav a { color: #d8cbb2; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+  .foot-meta nav a:hover { color: var(--orange); }
+  .foot-meta .license { margin: 0; margin-left: auto; font-size: 0.72rem; color: #a99a7f; max-width: 40ch; line-height: 1.5; }
+
+  /* ============================ RESPONSIVE ============================ */
+  @media (max-width: 60rem) {
+    .hero { grid-template-columns: 1fr; }
+    .stage { min-height: 26rem; order: 2; }
+    .srv-grid, .craft-head, .tint-head, .yours-inner, .qa-row { grid-template-columns: 1fr; }
+    .spread { grid-template-columns: repeat(2, 1fr); }
+    .entry:nth-child(3n) { border-right: 1px solid var(--line-soft); padding-right: 1.6rem; }
+    .entry:nth-child(2n) { border-right: none; padding-right: 0; }
+    .contact { grid-template-columns: repeat(3, 1fr); }
+    .shell-3, .shell-4 { transform: none; }
+  }
+  @media (max-width: 40rem) {
+    .hero .display { font-size: clamp(2.8rem, 13vw, 4rem); }
+    .stage { min-height: 22rem; }
+    .sleeve { width: 62%; left: 0; }
+    .hero-phone-wrap { margin-right: 0; }
+    .spread { grid-template-columns: 1fr; }
+    .entry, .entry:nth-child(3n) { border-right: none; padding-right: 0; }
+    .contact { grid-template-columns: repeat(2, 1fr); }
+    .shell { transform: none !important; }
+    .specsheet { grid-template-columns: 1fr; }
+    .foot-meta .license { margin-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto; }
+  }
+</style>
