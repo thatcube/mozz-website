@@ -174,10 +174,22 @@ const grid = (s: any, x0: number, x1: number, y0: number, y1: number, stepX: num
   for (let y = y0; y <= y1 + 1e-6; y += stepY) s.line([x0, y, z], [x1, y, z]);
   for (let x = x0; x <= x1 + 1e-6; x += stepX) s.line([x, y0, z], [x, y1, z]);
 };
+// light comes from the upper-right, so every cast shadow is a flat, hard-edged
+// footprint pushed down and slightly left — one --shadow tone, no blur, no ramp.
+const LSX = 1.0, LSY = 1.8;
+// offset magnitude scales with object size (clamped) so the light *direction*
+// stays fixed but big objects push their footprint far enough to show a sliver.
+const lmag = (size: number) => Math.min(Math.max(size * 0.05, 1.2), 3.5);
 const shadow = (s: any, cx: number, cy: number, r: number, ry = 1) => {
+  const m = lmag(r);
   let d = '';
-  for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * ry * Math.sin(a), -0.2); }
+  for (let i = 0; i <= 40; i++) { const a = (i / 40) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + LSX * m + r * Math.cos(a), cy + LSY * m + r * ry * Math.sin(a), -0.2); }
   s.raw(d + 'Z', 'var(--shadow)', 'flat');
+};
+// flat parallelogram footprint that traces a boxy object's base (x,y,w,d) on plane z
+const foot = (s: any, x: number, y: number, w: number, d: number, z = -0.18) => {
+  const m = lmag(Math.max(w, d));
+  return s.quad(x + LSX * m, y + LSY * m, w, d, z, 'var(--shadow)', 'flat');
 };
 const vents = (s: any, plane: 'x' | 'y', c: number, a0: number, a1: number, z0: number, z1: number, n: number) => {
   for (let i = 0; i < n; i++) {
@@ -193,8 +205,15 @@ const hero = makeScene();
   const s = hero;
   grid(s, -26, 118, -30, 96, 16, 12);
 
-  shadow(s, 34, 30, 46, 0.9);
-  shadow(s, 96, 20, 14); shadow(s, 92, 66, 12); shadow(s, 20, 86, 15); shadow(s, 118, 78, 12);
+  foot(s, 0, 0, 68, 56);                             // player base
+  foot(s, 4, -44, 64, 38);                           // open lid, folded flat behind
+  foot(s, 80, 2, 20, 20); foot(s, 102, 4, 20, 20);   // two floppies
+  foot(s, 100, 26, 24, 20);                          // open jewel case
+  foot(s, 96, 56, 21, 18);                           // stack of CD cases
+  foot(s, 96, 78, 12, 10);                           // juice carton
+  foot(s, 4, 74, 26, 20);                            // notebook
+  shadow(s, 30, 78, 8);                              // coffee mug (round)
+  shadow(s, 113, 75, 8, 0.7);                        // coiled earbuds (round)
 
   // open lid, folded flat behind the base
   s.box(4, -44, 0, 64, 38, 3, STEELD);
@@ -304,10 +323,17 @@ const shelf = makeScene();
   grid(s, -20, 150, -14, 64, 18, 12);
 
   // desk plank
+  foot(s, 0, 0, 138, 42, -0.18);     // plank's own footprint on the ground grid
   s.box(0, 0, 0, 138, 42, 4, WOOD);
   s.seam([0, 0, 2], [138, 0, 2], 'z', 0.5);
 
-  shadow(s, 26, 22, 18); shadow(s, 66, 22, 20); shadow(s, 104, 22, 14); shadow(s, 128, 30, 9);
+  foot(s, 12, 8, 26, 22, 4.03);      // tower
+  foot(s, 52, 8, 30, 22, 4.03);      // two-bay NAS
+  foot(s, 98, 10, 20, 16, 4.03);     // small box
+  foot(s, 120, 24, 16, 10, 4.03);    // switch
+  foot(s, 4, 24, 12, 12, 4.03);      // mug
+  foot(s, 84, 30, 12, 10, 4.03);     // sticky note
+  foot(s, 121, 5, 14, 14, 4.03);     // stack of discs
 
   // ── machine 1 : tower (detail on the visible right face, plane x=38) ──
   s.box(12, 8, 4, 26, 22, 40, DARKB);
@@ -390,7 +416,8 @@ const offline = makeScene();
 {
   const s = offline;
   grid(s, -14, 118, -12, 74, 16, 12);
-  shadow(s, 22, 30, 20); shadow(s, 84, 36, 22); shadow(s, 52, 24, 12);
+  foot(s, 4, 12, 34, 28);      // open jewel case
+  foot(s, 4, 54, 16, 10);      // transit card
 
   // open jewel case — now EMPTY (its disc is the one being lifted out), booklet + spine text
   s.box(4, 12, 0, 34, 28, 1.4, DARK2);
@@ -408,7 +435,7 @@ const offline = makeScene();
   const CARD = { top: '#dcc096', left: '#c3a878', right: '#a98d62' };
   const cx0 = 74, cy0 = 18, cw = 32, cd = 28, cfz = 1.5, cH = 16, cr = 3;
   const flap = (pts: number[][], fill: string) => s.poly(pts, fill, 'flat');
-  shadow(s, cx0 + cw / 2, cy0 + cd / 2, 24, 0.9);
+  foot(s, cx0, cy0, cw, cd);   // moving carton footprint
   // floor slab + inner liner + far & left inner walls + their rim tops
   s.box(cx0, cy0, 0, cw, cd, cfz, CARD);
   s.quad(cx0 + cr, cy0 + cr, cw - 2 * cr, cd - 2 * cr, cfz + 0.01, '#b89a6c', 'flat');
@@ -459,7 +486,15 @@ const walkman = makeScene();
 {
   const s = walkman;
   grid(s, -16, 122, -14, 78, 18, 13);
-  shadow(s, 36, 32, 30, 0.92);
+
+  // a short stack of two spare cartridges, back-left — drawn first because it
+  // sits farther from the viewer than the deck and must be occluded by it
+  foot(s, -16, -2, 20, 18, -0.1);
+  s.box(-16, -2, 0, 20, 18, 2.6, SH_RARE);
+  s.box(-15, -1, 2.6, 18, 16, 2.6, SH_JAZZ);
+  s.quad(-13, 1, 14, 4, 5.22, '#f2ead9', 'flat');
+
+  foot(s, 6, 8, 58, 50);   // deck footprint
 
   // body — teal, with a lid seam, screws and a battery bump
   s.box(6, 8, 0, 58, 50, 8, TEAL);
@@ -482,8 +517,7 @@ const walkman = makeScene();
   // three closed cartridges beside it — shutter across the window, printed spine
   // label, NO disc (a closed MiniDisc hides its disc; the deck keeps the only fan)
   const cart = (cx: number, cy: number, shell: any, lab: string) => {
-    let sh = ''; for (let i = 0; i <= 26; i++) { const a = (i / 26) * Math.PI * 2; sh += (i ? 'L' : 'M') + s.P(cx + 13 + 13 * Math.cos(a), cy + 11 + 8 * Math.sin(a), 0.02); }
-    s.raw(sh + 'Z', 'rgba(51,38,28,0.16)', 'flat');            // contact shadow
+    foot(s, cx, cy, 24, 22, -0.1);                             // flat contact footprint
     s.box(cx, cy, 0, 24, 22, 3, shell);                        // opaque shell
     s.quad(cx + 2, cy + 2, 20, 11, 3.01, '#f2ead9', 'flat');   // printed paper label
     s.line([cx + 2, cy + 6, 3.02], [cx + 22, cy + 6, 3.02], 'faint');
@@ -495,6 +529,20 @@ const walkman = makeScene();
   cart(74, 6, SH_JAZZ, 'JAZZ');
   cart(80, 34, SH_RARE, 'RARE');
   cart(96, 60, SH_MIX, 'MIX');
+
+  // ── incidental charm filling the empty left & front of the bench ──
+  // a small cleaning brush (front-left)
+  foot(s, -14, 66, 24, 9, -0.1);
+  s.box(-14, 67, 0, 8, 7, 3, CREAMB);                                    // bristle head
+  s.box(-6, 68, 0, 3, 5, 2.6, METAL);                                    // ferrule
+  s.box(-3, 68, 0, 11, 5, 2.4, WOOD2);                                   // wooden handle
+  s.line([-13, 68.6, 3.02], [-7, 68.6, 3.02], 'faint'); s.line([-13, 70.4, 3.02], [-7, 70.4, 3.02], 'faint');
+  // a loosely coiled cable (front-centre)
+  shadow(s, 44, 70, 8, 0.6);
+  let cc = 'M' + s.P(52, 72, 0.5);
+  for (let i = 1; i <= 96; i++) { const t = i / 96; const ang = t * Math.PI * 5.2; const rr = 9 - t * 3.5; const x = 44 + Math.cos(ang) * rr; const y = 70 + Math.sin(ang) * rr * 0.66; cc += 'L' + s.P(x, y, 0.5); }
+  s.raw(cc, 'none', 'cable');
+  s.box(51, 71, 0, 2.2, 2.2, 1.4, DARK2);                                // jack at the loose end
 }
 
 /* ══ FEATURES — an opened desk drawer, packed, fully isometric, part-numbered ═ */
@@ -505,7 +553,7 @@ const DZ0 = 3.5;                       // floor height (props sit here)
   const W = 64, D = 52, fz = DZ0, H = 11, rim = 8, z0 = fz;
   // un-erased construction lines on the ground, extending past the tray
   grid(s, -12, W + 18, -12, D + 18, 15, 12);
-  shadow(s, W / 2, D / 2, 46, 0.86);
+  foot(s, 0, 0, W, D);   // flat drawer footprint (replaces the old oversized oval)
   // contact shadow for a prop sitting on the drawer floor
   const csh = (cx: number, cy: number, r: number) => {
     let d = ''; for (let i = 0; i <= 32; i++) { const a = (i / 32) * Math.PI * 2; d += (i ? 'L' : 'M') + s.P(cx + r * Math.cos(a), cy + r * 0.94 * Math.sin(a), z0 + 0.02); }
@@ -771,7 +819,7 @@ const specFor = (i: number) => STATS[i];
       <div class="now-grid">
         <figure class="easel">
           <svg class="art easel-art" viewBox="0 0 300 345" role="img" aria-label="A drawn isometric wooden tray and back-stand holding a phone." preserveAspectRatio="xMidYMax meet">
-            <ellipse cx="150" cy="322" rx="118" ry="20" style="fill:var(--shadow)" class="flat"/>
+            <path d="M25 289 L119 337 L261 267 L167 219 Z" style="fill:var(--shadow)" class="flat"/>
             <path d="M30 262 L172 192 L266 240 L124 310 Z" style="fill:#e7d3ad" class="flat"/>
             <path d="M30 262 L124 310 L124 328 L30 280 Z" style="fill:#cdb691" class="flat"/>
             <path d="M124 310 L266 240 L266 258 L124 328 Z" style="fill:#bda67c" class="flat"/>
@@ -993,7 +1041,7 @@ const specFor = (i: number) => STATS[i];
     background-size: cover; background-position: center; background-repeat: no-repeat;
     border-radius: 24px; opacity: 0.9;
   }
-  .stage .art { filter: drop-shadow(0 26px 40px rgba(70, 52, 34, 0.16)); }
+  /* shadows are drawn as flat per-object footprints inside each scene — no whole-svg blur */
 
   /* ── generic scene ── */
   .scene {
@@ -1013,7 +1061,7 @@ const specFor = (i: number) => STATS[i];
     margin: 0.5rem 0 0;
     width: 100%;
   }
-  .band-art .art { filter: drop-shadow(0 20px 32px rgba(70, 52, 34, 0.13)); }
+  .band-art .art { /* footprints drawn per-object in the scene; no whole-svg blur */ }
 
   .servers { grid-template-columns: 1fr; }
   .servers .band-art { max-width: 1100px; margin-inline: auto; }
@@ -1109,7 +1157,7 @@ const specFor = (i: number) => STATS[i];
   .foot-meta a { color: var(--slate); border-bottom: 1px solid currentColor; }
   .foot-meta a:hover { color: var(--orange); }
   .foot-disc { position: absolute; right: clamp(1.25rem, 4vw, 3rem); bottom: 3rem; width: clamp(70px, 12vw, 120px); }
-  .foot-disc svg { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 8px 12px rgba(70,52,34,0.16)); }
+  .foot-disc svg { width: 100%; height: auto; overflow: visible; }
 
   /* ── responsive ── */
   @media (max-width: 960px) {
