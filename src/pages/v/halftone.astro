@@ -392,6 +392,68 @@ const WALL = [
           </div>
         </div>
       </div>
+
+      <!--
+        New with the Siri work: the app reaches past the phone. Kept to the
+        claim — one handler behind the Siri button, CarPlay and Shortcuts, and
+        a HomePod that has no apps and hands the request back to the iPhone.
+      -->
+      <div class="shell">
+        <div class="beyond">
+          <div class="beyond-head">
+            <h3>And it reaches past the phone.</h3>
+            <p>
+              Siri plays a song, album, artist, playlist, genre, liked songs or a mix
+              straight from your own library. Plays you start in the app are donated, so
+              asking plainly for music learns to reach it.
+            </p>
+          </div>
+
+          <ul class="beyond-list" role="list">
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <path d="M30 8V3M21.5 10.4 19 6M38.5 10.4 41 6" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round"></path>
+                <rect x="19" y="13" width="22" height="37" rx="11" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <ellipse cx="30" cy="19.5" rx="7.5" ry="3" fill="var(--red)"></ellipse>
+                <g stroke="currentColor" stroke-width="1.5" opacity="0.42">
+                  <path d="M22.5 31h15M22.5 39h15"></path>
+                </g>
+              </svg>
+              <h4>HomePod</h4>
+              <p>
+                It has no apps of its own, so it hands the request to your iPhone, which
+                plays it and AirPlays it back.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="6" y="15" width="48" height="29" rx="4" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <rect x="11" y="20" width="15" height="19" rx="2" fill="var(--red)"></rect>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5">
+                  <path d="M31 24h18M31 30h18M31 36h11"></path>
+                </g>
+                <path d="M17 50h26" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.35"></path>
+              </svg>
+              <h4>CarPlay</h4>
+              <p>
+                Behind the same intent handler as the Siri button, so asking in the car
+                reaches the same library.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="13" y="10" width="34" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <path d="M32 17 21 33h8l-1.5 11L39 28h-8.5L32 17Z" fill="var(--red)"></path>
+              </svg>
+              <h4>Shortcuts</h4>
+              <p>
+                The same handler again, so a shortcut can start a song, album, artist,
+                playlist, genre or a mix.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <!-- ================================================================ --
@@ -402,7 +464,7 @@ const WALL = [
         <div class="head">
           <div>
             <p class="kicker"><span class="tick"></span>The app</p>
-            <h2 id="ht-does">Seven things it does, at full resolution.</h2>
+            <h2 id="ht-does">Everything it does, at full resolution.</h2>
           </div>
           <p class="lede">
             None of this is aspirational and none of it sits behind a paid tier, because
@@ -1386,6 +1448,80 @@ const WALL = [
     to { transform: none; opacity: 1; }
   }
 
+
+  /* --- reaching past the phone ------------------------------------------ */
+
+  .beyond {
+    margin-top: clamp(46px, 7vh, 92px);
+    padding-top: clamp(24px, 3.4vh, 44px);
+    border-top: 1px solid var(--hair);
+  }
+
+  .beyond-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(18px, 4vw, 68px);
+    align-items: end;
+  }
+
+  .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Instrument Sans', system-ui;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 {
+    max-width: 14ch;
+    font-size: clamp(21px, 2.2vw, 30px);
+    line-height: 1.08;
+  }
+
+  .beyond-head p {
+    max-width: 46ch;
+    color: var(--dim);
+    font-size: clamp(14px, 1vw, 15.5px);
+  }
+
+  .beyond-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(22px, 3vw, 46px);
+    margin-top: clamp(26px, 4vh, 46px);
+  }
+
+  .beyond-art {
+    width: clamp(54px, 5vw, 70px);
+    height: auto;
+    margin-bottom: 0.9rem;
+    color: currentColor;
+    opacity: 0.9;
+  }
+
+  .beyond-list h4 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.2;
+  }
+
+  .beyond-list p {
+    color: var(--dim);
+    font-size: 14.2px;
+  }
+
+  @media (max-width: 1000px) {
+    .beyond-head { grid-template-columns: 1fr; }
+    .beyond-head p { margin-top: 0.9rem; }
+    .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Instrument Sans', system-ui;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 { max-width: 20ch; }
+  }
+
   /* --- what it does -------------------------------------------------------- */
 
   .does-list {
@@ -1568,11 +1704,11 @@ const WALL = [
   /* ============================ narrow ========================================= */
 
   @media (max-width: 1000px) {
-    .ht { --fx: 50%; --fy: 70%; }
+    .ht { --fx: 50%; --fy: 74%; }
 
     .hero {
       grid-template-rows: auto auto;
-      padding-bottom: clamp(250px, 48vh, 400px);
+      padding-bottom: clamp(120px, 20vh, 200px);
     }
 
     .say {
@@ -1586,7 +1722,15 @@ const WALL = [
     .head .lede { margin-top: 1rem; padding-bottom: 0; }
     .head h2 { max-width: 20ch; }
 
-    .hero-phone { --pw: clamp(168px, 40vw, 240px); }
+    /* In flow under the copy rather than pinned to the focus point, which
+       overlaps the buttons once the column is narrow. */
+    .hero-phone {
+      position: static;
+      transform: none;
+      margin: clamp(26px, 4vh, 46px) auto 0;
+      --pw: clamp(168px, 42vw, 240px);
+    }
+
     .word span { font-size: 40vw; }
 
     .rows li {
@@ -1615,9 +1759,9 @@ const WALL = [
   }
 
   @media (max-width: 620px) {
-    .ht { --fy: 72%; }
+    .ht { --fy: 76%; }
 
-    .hero { padding-bottom: clamp(240px, 46vh, 330px); }
+    .hero { padding-bottom: clamp(110px, 18vh, 170px); }
     .word span { font-size: 46vw; }
     .word.open span { background-size: 11px 11px; }
     .word.mid span { background-size: 8px 8px; }

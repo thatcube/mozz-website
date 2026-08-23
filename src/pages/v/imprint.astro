@@ -393,6 +393,68 @@ const WALL = [
           </div>
         </div>
       </div>
+
+      <!--
+        New with the Siri work: the app reaches past the phone. Kept to the
+        claim — one handler behind the Siri button, CarPlay and Shortcuts, and
+        a HomePod that has no apps and hands the request back to the iPhone.
+      -->
+      <div class="shell">
+        <div class="beyond">
+          <div class="beyond-head">
+            <h3>And it reaches past the phone.</h3>
+            <p>
+              Siri plays a song, album, artist, playlist, genre, liked songs or a mix
+              straight from your own library. Plays you start in the app are donated, so
+              asking plainly for music learns to reach it.
+            </p>
+          </div>
+
+          <ul class="beyond-list" role="list">
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <path d="M30 8V3M21.5 10.4 19 6M38.5 10.4 41 6" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round"></path>
+                <rect x="19" y="13" width="22" height="37" rx="11" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <ellipse cx="30" cy="19.5" rx="7.5" ry="3" fill="var(--red)"></ellipse>
+                <g stroke="currentColor" stroke-width="1.5" opacity="0.42">
+                  <path d="M22.5 31h15M22.5 39h15"></path>
+                </g>
+              </svg>
+              <h4>HomePod</h4>
+              <p>
+                It has no apps of its own, so it hands the request to your iPhone, which
+                plays it and AirPlays it back.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="6" y="15" width="48" height="29" rx="4" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <rect x="11" y="20" width="15" height="19" rx="2" fill="var(--red)"></rect>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5">
+                  <path d="M31 24h18M31 30h18M31 36h11"></path>
+                </g>
+                <path d="M17 50h26" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.35"></path>
+              </svg>
+              <h4>CarPlay</h4>
+              <p>
+                Behind the same intent handler as the Siri button, so asking in the car
+                reaches the same library.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="13" y="10" width="34" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <path d="M32 17 21 33h8l-1.5 11L39 28h-8.5L32 17Z" fill="var(--red)"></path>
+              </svg>
+              <h4>Shortcuts</h4>
+              <p>
+                The same handler again, so a shortcut can start a song, album, artist,
+                playlist, genre or a mix.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <!-- ================================================================ --
@@ -403,7 +465,7 @@ const WALL = [
         <div class="head">
           <div>
             <p class="kicker"><span class="tick"></span>The app</p>
-            <h2 id="im-does">Seven things it does, set plainly.</h2>
+            <h2 id="im-does">Everything it does, set plainly.</h2>
           </div>
           <p class="lede">
             No feature here is aspirational and none of it is held behind a tier, because
@@ -1457,6 +1519,80 @@ const WALL = [
     to { transform: none; opacity: 1; }
   }
 
+
+  /* --- reaching past the phone ------------------------------------------ */
+
+  .beyond {
+    margin-top: clamp(46px, 7vh, 92px);
+    padding-top: clamp(24px, 3.4vh, 44px);
+    border-top: 1px solid var(--hair);
+  }
+
+  .beyond-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(18px, 4vw, 68px);
+    align-items: end;
+  }
+
+  .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Archivo', system-ui;
+    font-variation-settings: 'wdth' 100, 'wght' 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 {
+    max-width: 14ch;
+    font-size: clamp(21px, 2.2vw, 30px);
+    line-height: 1.08;
+  }
+
+  .beyond-head p {
+    max-width: 46ch;
+    color: var(--dim);
+    font-size: clamp(14px, 1vw, 15.5px);
+  }
+
+  .beyond-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(22px, 3vw, 46px);
+    margin-top: clamp(26px, 4vh, 46px);
+  }
+
+  .beyond-art {
+    width: clamp(54px, 5vw, 70px);
+    height: auto;
+    margin-bottom: 0.9rem;
+    color: currentColor;
+    opacity: 0.9;
+  }
+
+  .beyond-list h4 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.2;
+  }
+
+  .beyond-list p {
+    color: var(--dim);
+    font-size: 14.2px;
+  }
+
+  @media (max-width: 1000px) {
+    .beyond-head { grid-template-columns: 1fr; }
+    .beyond-head p { margin-top: 0.9rem; }
+    .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Archivo', system-ui;
+    font-variation-settings: 'wdth' 100, 'wght' 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 { max-width: 20ch; }
+  }
+
   /* --- what it does ---------------------------------------------------- */
 
   .does-list {
@@ -1681,7 +1817,21 @@ const WALL = [
   /* ============================ narrow ================================== */
 
   @media (max-width: 1000px) {
-    .im { --slab-x: 44%; --slab-w: 52%; }
+    /*
+     * Narrow, the ink is laid as a band across the foot instead of a column
+     * down the middle: the knockout still happens where the word crosses into
+     * it, but no running copy ends up printed on red.
+     */
+    .slab {
+      top: auto;
+      left: 0;
+      width: 100%;
+      height: var(--slab-h, 46%);
+    }
+
+    .word.knock {
+      clip-path: inset(calc(100% - var(--slab-h, 46%)) 0 0 0);
+    }
 
     .hero {
       grid-template-rows: auto auto;
@@ -1719,7 +1869,7 @@ const WALL = [
   }
 
   @media (max-width: 620px) {
-    .im { --slab-x: 34%; --slab-w: 66%; }
+    .im { --slab-h: 42%; }
 
     .hero { padding-bottom: clamp(240px, 46vh, 330px); }
     .word span { font-size: 44vw; }
