@@ -1,0 +1,1035 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+type Cover = [string, string, string, string, string?];
+
+const covers: Cover[] = [
+  ['orbit', '#ff5c35', '#2d1642', '#f4c64f', 'Morrowglass'],
+  ['cut', '#0b6e75', '#f2b84b', '#e84368'],
+  ['bloom', '#ef476f', '#241147', '#79d8c8', 'Velvet Current'],
+  ['lines', '#16324f', '#f7e16b', '#e0513e'],
+  ['moon', '#14213d', '#fca311', '#e5e5e5', 'Night Index'],
+  ['type', '#e44720', '#f2d9a0', '#1b365d', 'SLOW/FAST'],
+  ['steps', '#6b2d5c', '#f7b267', '#70c1b3'],
+  ['eye', '#002a32', '#f87060', '#c8f05c', 'Parallax'],
+  ['arch', '#463f3a', '#f4f3ee', '#d64045'],
+  ['comet', '#272640', '#e56b6f', '#6dffb8'],
+  ['bars', '#073b4c', '#ffd166', '#ef476f', 'Hush Signal'],
+  ['rings', '#301934', '#f29e4c', '#61c9a8'],
+  ['type', '#22333b', '#eae0d5', '#c80028', 'NOON'],
+  ['bloom', '#1d3557', '#e63946', '#f1fa8c'],
+  ['cut', '#622b74', '#f5c542', '#16a085', 'Soft Geometry'],
+  ['moon', '#4a1942', '#f06543', '#f7cb15'],
+  ['lines', '#0b3954', '#bfd7ea', '#ff6663', 'Undertone'],
+  ['orbit', '#7400b8', '#48bfe3', '#80ffdb'],
+  ['arch', '#3d405b', '#f4f1de', '#e07a5f'],
+  ['steps', '#541388', '#d90368', '#ffd400', 'Side B'],
+  ['eye', '#1b4332', '#95d5b2', '#ff9f1c'],
+  ['comet', '#012a4a', '#2c7da0', '#f9c74f', 'Long Return'],
+  ['bars', '#370617', '#dc2f02', '#ffba08'],
+  ['rings', '#264653', '#2a9d8f', '#e9c46a'],
+  ['bloom', '#5f0f40', '#fb8b24', '#9aefea', 'Cloud Logic'],
+  ['type', '#001219', '#94d2bd', '#ee9b00', 'MZ 24'],
+  ['orbit', '#3a0ca3', '#f72585', '#4cc9f0'],
+  ['cut', '#2b2d42', '#ef233c', '#edf2f4', 'Afterlight'],
+  ['moon', '#006d77', '#e29578', '#ffddd2'],
+  ['lines', '#2d1e2f', '#f7b32b', '#63d2ff'],
+  ['steps', '#283618', '#dda15e', '#fefae0', 'Field Notes'],
+  ['arch', '#480ca8', '#b5179e', '#4cc9f0'],
+  ['eye', '#03071e', '#ffba08', '#d00000'],
+  ['bars', '#114b5f', '#88d498', '#f3e9d2', 'Parallel Air'],
+  ['comet', '#351431', '#9b5de5', '#fee440'],
+  ['rings', '#023047', '#219ebc', '#ffb703'],
+  ['cut', '#590d22', '#ffccd5', '#a4133c', 'Late Bloom'],
+  ['bloom', '#10451d', '#6ede8a', '#f7f052'],
+  ['type', '#22223b', '#f2e9e4', '#c9ada7', 'QUIET'],
+  ['orbit', '#5a189a', '#ff7900', '#ffea00'],
+  ['lines', '#003049', '#fcbf49', '#d62828', 'Wide Awake'],
+  ['moon', '#372549', '#774c60', '#eacdc2'],
+  ['arch', '#132a13', '#90a955', '#ecf39e'],
+  ['steps', '#001d3d', '#ffc300', '#e63946', 'Open Channel'],
+  ['comet', '#03045e', '#00b4d8', '#caf0f8'],
+  ['eye', '#2d00f7', '#f20089', '#ffbe0b'],
+  ['rings', '#3c096c', '#c77dff', '#e0aaff', 'Inner Weather'],
+  ['bars', '#081c15', '#52b788', '#d8f3dc'],
+  ['bloom', '#2b193d', '#ff6b6b', '#4ecdc4'],
+  ['cut', '#432818', '#bb9457', '#ffe6a7', 'Paper Sun'],
+  ['type', '#0d1b2a', '#e0e1dd', '#778da9', 'ALMANAC'],
+  ['moon', '#3d348b', '#f7b801', '#f35b04'],
+  ['orbit', '#004b23', '#38b000', '#ffdd00', 'New Growth'],
+  ['lines', '#5c164e', '#f06543', '#f5ee9e'],
+  ['arch', '#14213d', '#e5e5e5', '#fca311'],
+  ['comet', '#240046', '#9d4edd', '#ff9e00', 'Faint Engines'],
+  ['steps', '#3a5a40', '#dad7cd', '#a3b18a'],
+  ['eye', '#4f000b', '#ce4257', '#ff7f51'],
+  ['bars', '#1a535c', '#4ecdc4', '#ffe66d', 'Coastline'],
+  ['rings', '#10002b', '#e0aaff', '#ff6d00'],
+];
+
+const artSvg = (art: string) => art;
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz plays music from your own Plex, Jellyfin or Navidrome server on iPhone and iPad. Stream anywhere or download albums for offline listening. Free forever and open source."
+  themeColor="#141317"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@90,500;90,650;100,750&family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@400;550;650;750&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="wall" />
+
+  <main class="hero">
+    <div class="wall" aria-hidden="true">
+      {covers.map(([art, a, b, c, label], index) => (
+        <div
+          class={`cover art-${art}`}
+          style={`--a:${a};--b:${b};--c:${c};--delay:${(index % 12) * -0.17}s`}
+        >
+          {artSvg(art) === 'orbit' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="29" />
+              <circle cx="50" cy="50" r="6" />
+              <path d="M9 58c20-25 60-35 84-13" />
+            </svg>
+          )}
+          {artSvg(art) === 'cut' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M0 18 58 0 31 100H0Z" />
+              <path d="m100 13-55 42 55 25Z" />
+              <circle cx="58" cy="66" r="13" />
+            </svg>
+          )}
+          {artSvg(art) === 'bloom' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="27" r="21" />
+              <circle cx="73" cy="57" r="21" />
+              <circle cx="27" cy="57" r="21" />
+              <circle cx="50" cy="68" r="21" />
+            </svg>
+          )}
+          {artSvg(art) === 'lines' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M-8 25C14 4 28 52 50 30S85 5 109 33" />
+              <path d="M-8 46c22-21 36 27 58 5s35-25 59 3" />
+              <path d="M-8 67c22-21 36 27 58 5s35-25 59 3" />
+            </svg>
+          )}
+          {artSvg(art) === 'moon' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="52" cy="42" r="33" />
+              <circle class="knockout" cx="67" cy="30" r="30" />
+              <path d="M8 80h84" />
+            </svg>
+          )}
+          {artSvg(art) === 'steps' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M0 100V76h24V52h25V27h25V4h26v96Z" />
+              <circle cx="23" cy="22" r="13" />
+            </svg>
+          )}
+          {artSvg(art) === 'eye' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M5 50Q50 7 95 50Q50 93 5 50Z" />
+              <circle cx="50" cy="50" r="18" />
+              <circle cx="50" cy="50" r="6" />
+            </svg>
+          )}
+          {artSvg(art) === 'arch' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M15 100V48a35 35 0 0 1 70 0v52Z" />
+              <path class="knockout" d="M35 100V50a15 15 0 0 1 30 0v50Z" />
+            </svg>
+          )}
+          {artSvg(art) === 'comet' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M-8 96 65 22" />
+              <path d="M13 102 73 31" />
+              <circle cx="73" cy="24" r="17" />
+            </svg>
+          )}
+          {artSvg(art) === 'bars' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M8 83V47h13v36zm23 0V19h13v64zm23 0V35h13v48zm23 0V8h13v75z" />
+            </svg>
+          )}
+          {artSvg(art) === 'rings' && (
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="37" />
+              <circle cx="50" cy="50" r="25" />
+              <circle cx="50" cy="50" r="13" />
+            </svg>
+          )}
+          {label && <span>{label}</span>}
+        </div>
+      ))}
+    </div>
+
+    <div class="scrim" aria-hidden="true"></div>
+
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="Mozz home">
+        <Mark size={27} decorative />
+        <span>{NAME}</span>
+      </a>
+      <div class="compatibility" aria-label="Works with Plex, Jellyfin, Navidrome and Subsonic">
+        <span>Works with</span>
+        <ServerLogo name="Plex" size={20} brand />
+        <ServerLogo name="Jellyfin" size={20} brand />
+        <ServerLogo name="Navidrome" size={20} brand />
+        <b>Subsonic</b>
+      </div>
+    </header>
+
+    <section class="pitch" aria-labelledby="wall-title">
+      <p class="eyebrow">A self-hosted music player for iPhone and iPad</p>
+      <h1 id="wall-title">This is your collection.<br /><em>Mozz plays it.</em></h1>
+      <p class="lede">
+        Free music playback from your own server. Stream from home or download
+        albums for offline listening.
+      </p>
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source</a>
+      </div>
+    </section>
+
+    <section class="player" aria-label="Mozz now playing">
+      <div class="player-top">
+        <div class="app-id">
+          <Mark size={20} decorative />
+          <strong>Mozz</strong>
+        </div>
+        <p><i></i> Playing from your library</p>
+        <span class="offline">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10 2v9m0 0 3-3m-3 3L7 8M4 14v2h12v-2" />
+          </svg>
+          Available offline
+        </span>
+      </div>
+
+      <div class="player-body">
+        <div class="now-art" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="30" />
+            <circle cx="50" cy="50" r="7" />
+            <path d="M5 63c24-29 62-36 94-16" />
+          </svg>
+          <span>LUNAR STATIC</span>
+        </div>
+
+        <div class="now-meta">
+          <p class="context">Lunar Static · North Circuit</p>
+          <h2>Weather station</h2>
+          <div class="timeline" aria-label="1 minute 42 seconds of 4 minutes 8 seconds">
+            <span class="elapsed"></span>
+          </div>
+          <div class="times" aria-hidden="true"><span>1:42</span><span>−2:26</span></div>
+          <div class="controls" role="img" aria-label="Previous, pause and next track controls">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14M19 6 9 12l10 6Z" /></svg>
+            <span class="pause">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z" /></svg>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5v14M5 6l10 6-10 6Z" /></svg>
+          </div>
+        </div>
+
+        <aside class="queue" aria-label="Up next">
+          <p>Up next</p>
+          <ol>
+            <li><span>02</span><b>Glass radio</b><time>3:18</time></li>
+            <li><span>03</span><b>Borrowed light</b><time>4:02</time></li>
+            <li><span>04</span><b>Southbound tone</b><time>2:51</time></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :global(html),
+  :global(body) {
+    min-width: 0;
+    overflow: hidden;
+    background: #141317;
+  }
+
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    min-height: 660px;
+    overflow: hidden;
+    color: #efe7d8;
+    background: #141317;
+    font-family: 'Manrope', Arial;
+  }
+
+  .wall {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0c0b0e;
+  }
+
+  .cover {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: var(--b);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+
+  .cover::before,
+  .cover::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .cover::after {
+    inset: 0;
+    z-index: 3;
+    background:
+      linear-gradient(115deg, rgb(255 255 255 / 0.11), transparent 22%),
+      linear-gradient(0deg, rgb(0 0 0 / 0.22), transparent 42%);
+    mix-blend-mode: soft-light;
+  }
+
+  .cover svg {
+    position: absolute;
+    z-index: 1;
+    width: 82%;
+    height: 82%;
+    overflow: visible;
+    fill: var(--c);
+    stroke: var(--a);
+    stroke-width: 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .cover > span {
+    position: absolute;
+    right: 8%;
+    bottom: 7%;
+    left: 8%;
+    z-index: 4;
+    overflow: hidden;
+    color: var(--c);
+    font: 600 clamp(5px, 0.57vw, 10px)/1.1 'IBM Plex Mono', monospace;
+    letter-spacing: 0.13em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .art-orbit {
+    background:
+      radial-gradient(circle at 76% 18%, var(--c) 0 7%, transparent 7.5%),
+      linear-gradient(145deg, var(--b) 0 46%, var(--a) 46%);
+  }
+  .art-orbit svg { inset: 5% 8% auto auto; transform: rotate(-13deg); fill: none; }
+  .art-orbit svg circle:nth-child(2) { fill: var(--c); stroke: none; }
+
+  .art-cut { background: linear-gradient(25deg, var(--b), color-mix(in srgb, var(--b), #000 28%)); }
+  .art-cut svg { inset: 4% auto auto 4%; }
+  .art-cut svg path:first-child { fill: var(--a); stroke: none; }
+  .art-cut svg path:nth-child(2) { fill: var(--c); stroke: none; }
+  .art-cut svg circle { fill: var(--b); stroke: var(--a); }
+
+  .art-bloom {
+    background:
+      repeating-linear-gradient(0deg, transparent 0 8px, rgb(255 255 255 / 0.08) 8px 9px),
+      var(--b);
+  }
+  .art-bloom svg { inset: 6% 9%; transform: rotate(19deg); }
+  .art-bloom svg circle { fill: var(--a); stroke: var(--c); stroke-width: 2; mix-blend-mode: screen; }
+
+  .art-lines { background: linear-gradient(160deg, var(--a), var(--b) 55%); }
+  .art-lines svg { inset: 7% 6%; width: 96%; height: 88%; fill: none; stroke: var(--c); stroke-width: 5; }
+
+  .art-moon {
+    background:
+      radial-gradient(circle at 12% 85%, var(--c) 0 5%, transparent 5.5%),
+      var(--b);
+  }
+  .art-moon svg { inset: 3% 8%; fill: var(--a); stroke: var(--c); stroke-width: 2; }
+  .art-moon .knockout { fill: var(--b); stroke: none; }
+
+  .art-type {
+    background:
+      linear-gradient(90deg, transparent 0 49%, rgb(255 255 255 / 0.16) 49% 51%, transparent 51%),
+      linear-gradient(0deg, var(--a) 0 48%, var(--b) 48%);
+  }
+  .art-type::before {
+    inset: 16% 14%;
+    border: clamp(2px, 0.35vw, 5px) solid var(--c);
+    transform: rotate(-8deg);
+  }
+  .art-type > span {
+    inset: 42% 5% auto;
+    color: var(--c);
+    font: 750 clamp(8px, 1.1vw, 18px)/0.82 'Anybody', Arial;
+    letter-spacing: -0.03em;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .art-steps { background: linear-gradient(135deg, var(--b), var(--a)); }
+  .art-steps svg { inset: 4% 5%; fill: var(--c); stroke: none; }
+  .art-steps svg circle { fill: var(--a); }
+
+  .art-eye {
+    background:
+      repeating-radial-gradient(circle at 50% 50%, transparent 0 8%, rgb(255 255 255 / 0.08) 8.5% 10%),
+      var(--b);
+  }
+  .art-eye svg { inset: 9%; fill: var(--c); stroke: var(--a); stroke-width: 2; }
+  .art-eye svg circle:first-of-type { fill: var(--a); }
+  .art-eye svg circle:last-of-type { fill: var(--b); stroke: none; }
+
+  .art-arch {
+    background: linear-gradient(153deg, var(--b) 0 56%, var(--c) 56% 63%, var(--b) 63%);
+  }
+  .art-arch svg { inset: 2% 9%; fill: var(--a); stroke: var(--c); stroke-width: 2; }
+  .art-arch .knockout { fill: var(--b); }
+
+  .art-comet {
+    background: radial-gradient(circle at 74% 24%, var(--c), var(--a) 15%, transparent 16%), var(--b);
+  }
+  .art-comet svg { inset: 3% 5%; fill: var(--c); stroke: var(--a); stroke-width: 5; }
+  .art-comet svg circle { fill: var(--c); stroke: var(--b); stroke-width: 3; }
+
+  .art-bars {
+    background:
+      linear-gradient(35deg, transparent 0 67%, rgb(255 255 255 / 0.12) 67%),
+      var(--b);
+  }
+  .art-bars svg { inset: 6% 9%; fill: var(--a); stroke: var(--c); stroke-width: 1.5; }
+
+  .art-rings {
+    background:
+      conic-gradient(from 90deg at 50% 50%, var(--b), var(--a), var(--b), var(--c), var(--b));
+  }
+  .art-rings svg { inset: 8% 9%; fill: none; stroke: var(--c); stroke-width: 5; }
+  .art-rings svg circle:nth-child(2) { stroke: var(--b); }
+  .art-rings svg circle:nth-child(3) { fill: var(--a); stroke: none; }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse 60% 48% at 50% 35%, rgb(8 7 10 / 0.42), rgb(8 7 10 / 0.72)),
+      linear-gradient(180deg, rgb(10 9 12 / 0.48) 0%, rgb(10 9 12 / 0.32) 38%, rgb(10 9 12 / 0.78) 100%);
+    box-shadow: inset 0 0 160px rgb(0 0 0 / 0.44);
+  }
+
+  .masthead {
+    position: absolute;
+    inset: 59px clamp(18px, 3.5vw, 54px) auto;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fffaf1;
+    font: 650 21px/1 'Anybody', Arial;
+    letter-spacing: -0.04em;
+    text-shadow: 0 2px 15px #000;
+  }
+
+  .compatibility {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    color: rgb(255 255 255 / 0.86);
+    background: rgb(18 17 20 / 0.78);
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+    backdrop-filter: blur(16px);
+  }
+
+  .compatibility > span {
+    color: rgb(255 255 255 / 0.55);
+    font: 600 9px/1 'IBM Plex Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .compatibility b {
+    font: 650 10px/1 'Manrope', Arial;
+  }
+
+  .pitch {
+    position: absolute;
+    top: clamp(122px, 15vh, 150px);
+    left: 50%;
+    z-index: 2;
+    width: min(920px, calc(100% - 40px));
+    text-align: center;
+    transform: translateX(-50%);
+  }
+
+  .eyebrow {
+    margin-bottom: 13px;
+    color: rgb(255 255 255 / 0.72);
+    font: 600 clamp(9px, 0.75vw, 11px)/1.2 'IBM Plex Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    color: #fffaf1;
+    font: 650 clamp(48px, 5.3vw, 82px)/0.92 'Anybody', Arial;
+    font-stretch: 90%;
+    letter-spacing: -0.055em;
+    text-wrap: balance;
+    text-shadow: 0 3px 30px rgb(0 0 0 / 0.88);
+  }
+
+  h1 em {
+    color: #f4c9d1;
+    font-style: normal;
+  }
+
+  .lede {
+    width: min(660px, 100%);
+    margin: 18px auto 0;
+    color: rgb(255 250 241 / 0.82);
+    font: 550 clamp(14px, 1.15vw, 17px)/1.55 'Manrope', Arial;
+    text-shadow: 0 2px 14px #000;
+    text-wrap: balance;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 21px;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 19px;
+    border-radius: 999px;
+    font: 650 12px/1 'Manrope', Arial;
+  }
+
+  .store {
+    color: #141317;
+    background: #efe7d8;
+    box-shadow: 0 9px 25px rgb(0 0 0 / 0.3);
+  }
+
+  .store.is-pending {
+    cursor: default;
+  }
+
+  .source {
+    color: #fffaf1;
+    background: rgb(19 18 22 / 0.7);
+    border: 1px solid rgb(255 255 255 / 0.26);
+    backdrop-filter: blur(12px);
+  }
+
+  .source:hover {
+    background: rgb(200 0 40 / 0.92);
+    border-color: #c80028;
+  }
+
+  .wordmark:focus-visible,
+  .source:focus-visible,
+  .store:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+  }
+
+  .player {
+    position: absolute;
+    right: clamp(18px, 4vw, 62px);
+    bottom: clamp(18px, 3vh, 32px);
+    left: clamp(18px, 4vw, 62px);
+    z-index: 3;
+    max-width: 1080px;
+    min-height: 224px;
+    margin: 0 auto;
+    overflow: hidden;
+    color: #f7f2e9;
+    background:
+      linear-gradient(135deg, rgb(42 39 45 / 0.97), rgb(17 16 20 / 0.96)),
+      #211f24;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 22px;
+    box-shadow:
+      0 30px 75px rgb(0 0 0 / 0.62),
+      0 3px 12px rgb(0 0 0 / 0.7),
+      inset 0 1px 0 rgb(255 255 255 / 0.12);
+    backdrop-filter: blur(24px) saturate(1.2);
+  }
+
+  .player-top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    min-height: 45px;
+    padding: 0 18px;
+    color: rgb(255 255 255 / 0.72);
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+    font: 600 9px/1 'IBM Plex Mono', monospace;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .app-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    justify-self: start;
+  }
+
+  .app-id strong {
+    color: #fff;
+    font: 650 13px/1 'Anybody', Arial;
+    letter-spacing: -0.03em;
+    text-transform: none;
+  }
+
+  .player-top > p {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .player-top > p i {
+    width: 6px;
+    height: 6px;
+    background: #ff315a;
+    border-radius: 50%;
+    box-shadow: 0 0 9px #c80028;
+  }
+
+  .offline {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-self: end;
+  }
+
+  .offline svg {
+    width: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+  }
+
+  .player-body {
+    display: grid;
+    grid-template-columns: 145px minmax(300px, 1fr) minmax(250px, 0.82fr);
+    gap: 22px;
+    align-items: center;
+    padding: 17px 20px 19px;
+  }
+
+  .now-art {
+    position: relative;
+    width: 145px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: linear-gradient(145deg, #2d1642 0 46%, #ff5c35 46%);
+    border-radius: 9px;
+    box-shadow: 0 12px 28px rgb(0 0 0 / 0.48);
+  }
+
+  .now-art svg {
+    position: absolute;
+    inset: 3%;
+    width: 91%;
+    fill: none;
+    stroke: #f4c64f;
+    stroke-width: 4;
+    transform: rotate(-13deg);
+  }
+
+  .now-art svg circle:nth-child(2) {
+    fill: #f4c64f;
+    stroke: none;
+  }
+
+  .now-art > span {
+    position: absolute;
+    right: 10px;
+    bottom: 9px;
+    color: #f4c64f;
+    font: 600 8px/1 'IBM Plex Mono', monospace;
+    letter-spacing: 0.12em;
+  }
+
+  .now-meta {
+    min-width: 0;
+  }
+
+  .context,
+  .queue > p {
+    color: rgb(255 255 255 / 0.48);
+    font: 600 9px/1.2 'IBM Plex Mono', monospace;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .now-meta h2 {
+    margin-top: 7px;
+    overflow: hidden;
+    color: #fff;
+    font: 650 clamp(21px, 2vw, 28px)/1.05 'Anybody', Arial;
+    letter-spacing: -0.035em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .timeline {
+    position: relative;
+    height: 4px;
+    margin-top: 17px;
+    overflow: hidden;
+    background: rgb(255 255 255 / 0.14);
+    border-radius: 9px;
+  }
+
+  .elapsed {
+    display: block;
+    width: 41%;
+    height: 100%;
+    background: #c80028;
+    border-radius: inherit;
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    color: rgb(255 255 255 / 0.4);
+    font: 500 8px/1 'IBM Plex Mono', monospace;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-top: 6px;
+  }
+
+  .controls > svg,
+  .pause svg {
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+  }
+
+  .pause {
+    display: grid;
+    width: 39px;
+    height: 39px;
+    place-items: center;
+    color: #171519;
+    background: #efe7d8;
+    border-radius: 50%;
+    box-shadow: 0 5px 16px rgb(0 0 0 / 0.35);
+  }
+
+  .queue {
+    min-width: 0;
+    padding-left: 20px;
+    border-left: 1px solid rgb(255 255 255 / 0.11);
+  }
+
+  .queue ol {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .queue li {
+    display: grid;
+    grid-template-columns: 23px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    min-height: 34px;
+    border-top: 1px solid rgb(255 255 255 / 0.07);
+  }
+
+  .queue li > span,
+  .queue time {
+    color: rgb(255 255 255 / 0.36);
+    font: 500 8px/1 'IBM Plex Mono', monospace;
+  }
+
+  .queue b {
+    overflow: hidden;
+    font: 550 11px/1.1 'Manrope', Arial;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-height: 760px) and (min-width: 700px) {
+    .pitch { top: 103px; }
+    h1 { font-size: clamp(43px, 4.7vw, 66px); }
+    .lede { margin-top: 12px; }
+    .actions { margin-top: 14px; }
+    .player { min-height: 194px; }
+    .player-body {
+      grid-template-columns: 116px minmax(260px, 1fr) minmax(220px, 0.75fr);
+      padding-block: 12px;
+    }
+    .now-art { width: 116px; }
+  }
+
+  @media (max-width: 699px) {
+    .hero {
+      min-height: 620px;
+    }
+
+    .wall {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(12, minmax(0, 1fr));
+      gap: 2px;
+    }
+
+    .cover > span {
+      font-size: 4px;
+    }
+
+    .scrim {
+      background:
+        radial-gradient(ellipse 94% 42% at 50% 27%, rgb(8 7 10 / 0.43), rgb(8 7 10 / 0.73)),
+        linear-gradient(180deg, rgb(10 9 12 / 0.55), rgb(10 9 12 / 0.34) 46%, rgb(10 9 12 / 0.82));
+      box-shadow: inset 0 0 80px rgb(0 0 0 / 0.42);
+    }
+
+    .masthead {
+      inset: 55px 14px auto;
+    }
+
+    .compatibility {
+      gap: 7px;
+      padding: 6px 8px;
+    }
+
+    .compatibility > span,
+    .compatibility b {
+      display: none;
+    }
+
+    .pitch {
+      top: 103px;
+      width: calc(100% - 26px);
+    }
+
+    .eyebrow {
+      margin-bottom: 9px;
+      font-size: 7.5px;
+      letter-spacing: 0.1em;
+    }
+
+    h1 {
+      font-size: clamp(39px, 11.5vw, 50px);
+      line-height: 0.94;
+    }
+
+    .lede {
+      width: 342px;
+      max-width: 100%;
+      margin-top: 13px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .actions {
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .store,
+    .source {
+      min-height: 38px;
+      padding: 0 14px;
+      font-size: 10.5px;
+    }
+
+    .player {
+      right: 10px;
+      bottom: 10px;
+      left: 10px;
+      min-height: 250px;
+      border-radius: 19px;
+    }
+
+    .player-top {
+      grid-template-columns: 1fr auto;
+      min-height: 39px;
+      padding: 0 13px;
+    }
+
+    .player-top > p {
+      display: none;
+    }
+
+    .offline {
+      font-size: 7px;
+    }
+
+    .player-body {
+      grid-template-columns: 94px minmax(0, 1fr);
+      gap: 13px;
+      align-items: start;
+      padding: 13px;
+    }
+
+    .now-art {
+      width: 94px;
+      border-radius: 7px;
+    }
+
+    .now-art > span {
+      right: 6px;
+      bottom: 6px;
+      font-size: 5px;
+    }
+
+    .now-meta {
+      padding-top: 2px;
+    }
+
+    .context {
+      overflow: hidden;
+      font-size: 7px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .now-meta h2 {
+      margin-top: 6px;
+      font-size: 20px;
+    }
+
+    .timeline {
+      margin-top: 13px;
+    }
+
+    .controls {
+      gap: 17px;
+      margin-top: 5px;
+    }
+
+    .controls > svg {
+      width: 16px;
+    }
+
+    .pause {
+      width: 34px;
+      height: 34px;
+    }
+
+    .queue {
+      grid-column: 1 / -1;
+      padding: 9px 0 0;
+      border-top: 1px solid rgb(255 255 255 / 0.1);
+      border-left: 0;
+    }
+
+    .queue > p {
+      display: none;
+    }
+
+    .queue ol {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin: 0;
+    }
+
+    .queue li {
+      display: block;
+      min-width: 0;
+      min-height: 0;
+      padding: 0 7px;
+      border-top: 0;
+      border-left: 1px solid rgb(255 255 255 / 0.09);
+    }
+
+    .queue li:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .queue li > span {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .queue b {
+      display: block;
+      font-size: 9px;
+    }
+
+    .queue time {
+      display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .store,
+    .source {
+      padding-inline: 11px;
+      font-size: 9.5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cover,
+    .player,
+    .source {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>

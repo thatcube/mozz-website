@@ -1,0 +1,1057 @@
+---
+/**
+ * HERO STUDY — BLOOM
+ *
+ * The now playing screen, with the record's own colour spreading out behind it
+ * until it becomes the page. One invented sleeve is drawn once and painted
+ * three times: full size inside the phone, blurred behind the glass as the
+ * app's own backdrop, and enormous and out of focus across the whole viewport.
+ *
+ * The composition is a poster, not two columns: type across the top, the device
+ * rising up the middle and cropped by the bottom edge, copy sitting in the
+ * colour either side of it.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+/**
+ * The sleeve. Invented — there is no such record, artist or label.
+ * Parameterised by an id prefix so the three instances never share an id.
+ */
+const cover = (p: string) => `
+  <defs>
+    <linearGradient id="${p}-sky" x1="0" y1="0" x2="0.28" y2="1">
+      <stop offset="0" stop-color="#2b1140" />
+      <stop offset="0.42" stop-color="#6a1f52" />
+      <stop offset="0.76" stop-color="#c2402f" />
+      <stop offset="1" stop-color="#e0543c" />
+    </linearGradient>
+    <radialGradient id="${p}-sun" cx="0.5" cy="0.4" r="0.62">
+      <stop offset="0" stop-color="#fff2cd" />
+      <stop offset="0.36" stop-color="#f4c95d" />
+      <stop offset="0.8" stop-color="#ef8a3c" />
+      <stop offset="1" stop-color="#e0543c" />
+    </radialGradient>
+    <radialGradient id="${p}-halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f4c95d" stop-opacity="0.5" />
+      <stop offset="1" stop-color="#f4c95d" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="${p}-floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1338" stop-opacity="0" />
+      <stop offset="0.5" stop-color="#26102f" stop-opacity="0.86" />
+      <stop offset="1" stop-color="#190a22" />
+    </linearGradient>
+    <filter id="${p}-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="11" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" fill="url(#${p}-sky)" />
+  <circle cx="200" cy="178" r="196" fill="url(#${p}-halo)" />
+  <circle cx="200" cy="184" r="106" fill="url(#${p}-sun)" />
+
+  <g fill="#2a1338" opacity="0.8">
+    <rect x="0" y="212" width="400" height="5" />
+    <rect x="0" y="230" width="400" height="7" />
+    <rect x="0" y="252" width="400" height="10" />
+    <rect x="0" y="280" width="400" height="15" />
+  </g>
+
+  <rect x="0" y="284" width="400" height="116" fill="url(#${p}-floor)" />
+
+  <g fill="none" stroke="#f4c95d" stroke-opacity="0.3" stroke-width="2">
+    <circle cx="26" cy="44" r="44" />
+    <circle cx="26" cy="44" r="66" />
+    <circle cx="26" cy="44" r="90" />
+    <circle cx="26" cy="44" r="116" />
+  </g>
+
+  <circle cx="330" cy="72" r="17" fill="#ffd9c0" opacity="0.72" />
+  <rect x="292" y="342" width="76" height="4" rx="2" fill="#f4c95d" opacity="0.55" />
+  <rect x="292" y="354" width="42" height="4" rx="2" fill="#e0543c" opacity="0.75" />
+
+  <rect width="400" height="400" filter="url(#${p}-grain)" opacity="0.13" style="mix-blend-mode:overlay" />
+`;
+
+const COVER_ALT =
+  'Invented album sleeve: a banded gold sun setting into a deep plum horizon, with fine gold arcs in the corner.';
+
+const PHONE_ALT =
+  'The Mozz now playing screen on an iPhone: the track Amber Hour by Cassette Sun, playing from a Plex server, marked as downloaded, with the album artwork, a scrubber reading one minute forty-seven, and playback controls.';
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play your library from Plex, Jellyfin, Navidrome or any Subsonic server, or download albums for offline listening."
+  themeColor="#2a1338"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="bloom" />
+
+  <div class="bloom" aria-hidden="true">
+    <div class="bloom-art"><svg viewBox="0 0 400 400" set:html={cover('bg')} /></div>
+    <span class="orb orb-coral"></span>
+    <span class="orb orb-gold"></span>
+    <span class="orb orb-rose"></span>
+    <span class="orb orb-plum"></span>
+    <span class="vignette"></span>
+  </div>
+
+  <main class="stage">
+    <header class="top">
+      <p class="eyebrow">
+        <Mark size={22} decorative />
+        <span class="wordmark">Mozz</span>
+        <span class="rule"></span>
+        <span class="kicker">self-hosted music player</span>
+      </p>
+      <h1>
+        Mozz plays the music on <span class="hl">your own server</span>. Free, and open source.
+      </h1>
+    </header>
+
+    <div class="say">
+      <p class="body">
+        Point it at Plex, Jellyfin, Navidrome or any Subsonic server and play your library on
+        iPhone and iPad. Download an album and it keeps playing with no signal.
+      </p>
+
+      <div class="cta">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">
+            <span class="dot"></span>Coming to the App Store
+          </span>
+        )}
+        <a class="gh" href={GITHUB_URL}>Read the source</a>
+      </div>
+
+      <p class="note">Not on the App Store yet. The code is up now.</p>
+    </div>
+
+    <div class="device">
+      <div class="phone" role="img" aria-label={PHONE_ALT}>
+        <div class="screen">
+          <div class="wash" aria-hidden="true">
+            <svg viewBox="0 0 400 400" set:html={cover('wash')} />
+          </div>
+
+          <div class="ui" aria-hidden="true">
+            <div class="statusbar">
+              <span class="clock">9:41</span>
+              <svg class="sb" viewBox="0 0 60 14" fill="currentColor">
+                <rect x="0" y="8" width="3" height="4" rx="1.2" />
+                <rect x="5" y="6" width="3" height="6" rx="1.2" />
+                <rect x="10" y="4" width="3" height="8" rx="1.2" />
+                <rect x="15" y="2" width="3" height="10" rx="1.2" />
+                <path
+                  d="M22.2 5.4a8.4 8.4 0 0 1 10.6 0"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M24.6 8.2a4.8 4.8 0 0 1 5.8 0"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+                <circle cx="27.5" cy="11.2" r="1.3" />
+                <rect
+                  x="40"
+                  y="3"
+                  width="16.4"
+                  height="9"
+                  rx="2.8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-opacity="0.5"
+                />
+                <rect x="41.8" y="4.8" width="10.4" height="5.4" rx="1.6" />
+                <path
+                  d="M58.2 6.4v3.2"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
+
+            <div class="topbar">
+              <svg class="glyph chev" viewBox="0 0 24 24">
+                <path
+                  d="M6 9.5 12 15.5 18 9.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="source">
+                <ServerLogo name="Plex" size={11} brand />
+                <span class="source-label">Slow Rooms</span>
+              </span>
+              <svg class="glyph more" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="5" cy="12" r="1.9" />
+                <circle cx="12" cy="12" r="1.9" />
+                <circle cx="19" cy="12" r="1.9" />
+              </svg>
+            </div>
+
+            <div class="art">
+              <svg viewBox="0 0 400 400" role="img" aria-label={COVER_ALT} set:html={cover('art')} />
+            </div>
+
+            <div class="meta">
+              <span class="titles">
+                <span class="track">Amber Hour</span>
+                <span class="artist">Cassette Sun</span>
+              </span>
+              <span class="eq"><i></i><i></i><i></i><i></i></span>
+            </div>
+
+            <div class="chips">
+              <span class="chip">
+                <svg viewBox="0 0 24 24" class="chip-i">
+                  <circle cx="12" cy="12" r="10" fill="currentColor" />
+                  <path
+                    d="M12 6.8v8.4M8.2 11.4 12 15.2l3.8-3.8"
+                    fill="none"
+                    stroke="#2a1338"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Downloaded
+              </span>
+              <span class="chip ghost">Track 4 of 9</span>
+            </div>
+
+            <div class="scrub">
+              <span class="bar"><i class="fill"></i><i class="knob"></i></span>
+              <span class="times"><span>1:47</span><span>−2:31</span></span>
+            </div>
+
+            <div class="transport">
+              <svg class="glyph t-side" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3.5 7h3.2c1.5 0 2.5.8 3.4 2.1l3.3 4.9c.9 1.3 1.9 2 3.4 2h2.7" />
+                  <path d="M17.2 4.2 20.5 7l-3.3 2.8" />
+                  <path d="M3.5 17h3.2c1.5 0 2.5-.8 3.4-2.1l.7-1" />
+                  <path d="M13.6 9.4l.9-1.3c.9-1.3 1.9-2.1 3.4-2.1h2.6" />
+                  <path d="M17.2 13.2 20.5 16l-3.3 2.8" />
+                </g>
+              </svg>
+
+              <svg class="glyph t-step" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4.6" y="5.4" width="2.2" height="13.2" rx="1.1" />
+                <path d="M20 5.9v12.2L9.4 12z" />
+              </svg>
+
+              <span class="play">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.4 5.1 19.4 12 8.4 18.9z" /></svg>
+              </span>
+
+              <svg class="glyph t-step" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="17.2" y="5.4" width="2.2" height="13.2" rx="1.1" />
+                <path d="M4 5.9v12.2L14.6 12z" />
+              </svg>
+
+              <svg class="glyph t-side" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6.8 6.8h8.4a4 4 0 0 1 4 4v1.4" />
+                  <path d="M16.4 3.6 19.6 6.8l-3.2 3.2" />
+                  <path d="M17.2 17.2H8.8a4 4 0 0 1-4-4v-1.4" />
+                  <path d="M7.6 20.4 4.4 17.2l3.2-3.2" />
+                </g>
+              </svg>
+            </div>
+
+            <div class="vol">
+              <svg class="glyph v-i" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 9.5h3.2L11 6.2v11.6L7.2 14.5H4z" />
+              </svg>
+              <span class="bar"><i class="fill"></i></span>
+              <svg class="glyph v-i" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 9.5h3.2L10 6.2v11.6L6.2 14.5H3z" />
+                <path
+                  d="M13.6 8.6a4.6 4.6 0 0 1 0 6.8M16.4 6a8.4 8.4 0 0 1 0 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="tray">
+              <svg class="glyph tray-i" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <path d="M4 7h11M4 12h13M4 17h8" />
+                </g>
+              </svg>
+              <svg class="glyph tray-i" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                  <rect x="3.2" y="4.2" width="17.6" height="11.2" rx="2.4" />
+                </g>
+                <path d="M12 14.4 17 20.4H7z" fill="currentColor" />
+              </svg>
+              <svg class="glyph tray-i" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <path d="M4 6.5h10M4 11h10M4 15.5h6" />
+                </g>
+                <path d="M17 8.4 22 12l-5 3.6z" fill="currentColor" />
+              </svg>
+            </div>
+
+            <span class="home"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="aside">
+      <p class="support">
+        Radio and Mozz Weekly are included. No account, no tracking, no subscription.
+      </p>
+      <div class="works">
+        <p class="works-label">Works with</p>
+        <ul class="works-list" role="list">
+          <li><ServerLogo name="Plex" size={19} /><span>Plex</span></li>
+          <li><ServerLogo name="Jellyfin" size={19} /><span>Jellyfin</span></li>
+          <li><ServerLogo name="Navidrome" size={19} /><span>Navidrome</span></li>
+          <li class="text-only"><span>Subsonic</span></li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #24102f;
+  }
+
+  :global(body) {
+    background: #24102f;
+    color: #fdeede;
+    font-family: 'Archivo', 'Helvetica Neue', Arial;
+  }
+
+  /* ---------------------------------------------------------------- bloom */
+
+  .bloom {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 18%, #55184a 0%, #34123f 45%, #1c0a26 100%);
+    z-index: 0;
+  }
+
+  /*
+   * The sleeve itself, thrown out of focus and blown up past the frame. This is
+   * the whole idea: the page is lit by the record that happens to be playing.
+   */
+  .bloom-art {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    width: min(155vh, 122%);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%) scale(1.24);
+    filter: blur(56px) saturate(1.55) brightness(1.04);
+    opacity: 0.97;
+  }
+
+  .bloom-art svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(72px);
+  }
+
+  .orb-coral {
+    left: -12%;
+    top: 8%;
+    width: 58%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(224, 84, 60, 0.85), rgba(224, 84, 60, 0) 68%);
+  }
+
+  .orb-gold {
+    right: -14%;
+    top: -8%;
+    width: 52%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(244, 201, 93, 0.7), rgba(244, 201, 93, 0) 66%);
+  }
+
+  .orb-rose {
+    right: 2%;
+    bottom: -22%;
+    width: 60%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(200, 0, 40, 0.62), rgba(200, 0, 40, 0) 65%);
+  }
+
+  .orb-plum {
+    left: -18%;
+    bottom: -26%;
+    width: 66%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(74, 22, 96, 0.9), rgba(42, 19, 56, 0) 70%);
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(64% 52% at 10% 94%, rgba(34, 10, 46, 0.78), rgba(34, 10, 46, 0) 72%),
+      radial-gradient(64% 52% at 90% 94%, rgba(34, 10, 46, 0.72), rgba(34, 10, 46, 0) 72%),
+      radial-gradient(92% 74% at 50% 54%, rgba(20, 8, 28, 0) 38%, rgba(15, 5, 22, 0.66) 100%),
+      linear-gradient(180deg, rgba(29, 9, 39, 0.86) 0%, rgba(29, 9, 39, 0.34) 26%, rgba(29, 9, 39, 0) 44%);
+  }
+
+  /* ---------------------------------------------------------------- stage */
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    height: 100svh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: clamp(1rem, 3vw, 3.4rem);
+    padding: 4.6rem clamp(1.1rem, 3.6vw, 4rem) 0;
+  }
+
+  .top {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: center;
+    max-width: min(100%, 46rem);
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: clamp(0.6rem, 1.4vh, 1.1rem);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(253, 238, 222, 0.74);
+  }
+
+  .wordmark {
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fdeede;
+  }
+
+  .rule {
+    width: 1.4rem;
+    height: 1px;
+    background: rgba(253, 238, 222, 0.4);
+  }
+
+  h1 {
+    font-family: 'Newsreader', 'Iowan Old Style', Georgia;
+    font-weight: 400;
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.014em;
+    text-wrap: balance;
+    color: #fff4e6;
+    text-shadow: 0 1px 2px rgba(38, 10, 48, 0.3), 0 8px 42px rgba(28, 7, 38, 0.55);
+  }
+
+  .hl {
+    color: #f7cf6b;
+    font-style: italic;
+  }
+
+  /* -------------------------------------------------------------- the say */
+
+  .say {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+    justify-self: start;
+    max-width: 34ch;
+    padding-bottom: clamp(1.6rem, 5vh, 3.4rem);
+  }
+
+  .body {
+    font-size: clamp(0.94rem, 1.05vw, 1.06rem);
+    line-height: 1.55;
+    color: rgba(255, 240, 226, 0.87);
+    text-shadow: 0 1px 16px rgba(30, 8, 40, 0.45);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.15rem;
+  }
+
+  .store,
+  .gh {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.78rem 1.15rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+
+  .gh {
+    background: linear-gradient(160deg, #ffe1a0, #f4c95d 62%, #eeb63f);
+    color: #2a1338;
+    box-shadow: 0 14px 30px -16px rgba(244, 201, 93, 0.9);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .gh:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px -14px rgba(244, 201, 93, 0.95);
+  }
+
+  .store.is-pending {
+    color: rgba(255, 240, 226, 0.84);
+    background: rgba(255, 236, 216, 0.1);
+    border: 1px solid rgba(255, 236, 216, 0.32);
+    backdrop-filter: blur(10px);
+    cursor: default;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f4c95d;
+    box-shadow: 0 0 0 3px rgba(244, 201, 93, 0.22);
+  }
+
+  .note {
+    margin-top: 0.7rem;
+    font-size: 0.76rem;
+    color: rgba(255, 236, 216, 0.66);
+  }
+
+  a:focus-visible {
+    outline: 2px solid #f7cf6b;
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
+
+  /* --------------------------------------------------------------- aside */
+
+  .aside {
+    grid-column: 3;
+    grid-row: 2;
+    align-self: end;
+    justify-self: end;
+    max-width: 26ch;
+    text-align: right;
+    padding-bottom: clamp(1.6rem, 5vh, 3.4rem);
+  }
+
+  .support {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 240, 226, 0.82);
+    text-shadow: 0 1px 14px rgba(30, 8, 40, 0.5);
+  }
+
+  .works {
+    margin-top: 1.35rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(255, 236, 216, 0.2);
+  }
+
+  .works-label {
+    font-size: 0.63rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 236, 216, 0.62);
+  }
+
+  .works-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.45rem 1rem;
+    margin-top: 0.7rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .works-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: rgba(255, 240, 226, 0.86);
+  }
+
+  .works-list .text-only {
+    opacity: 0.86;
+  }
+
+  /* -------------------------------------------------------------- device */
+
+  .device {
+    position: relative;
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    /* The phone is taller than the row on purpose — the stage crops it. */
+    --pw: min(21.5vw, 340px, calc(100svh * 0.385));
+  }
+
+  /* The record is the light source: the glow starts at the device. */
+  .device::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 4%;
+    width: 210%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 202, 118, 0.4),
+      rgba(224, 84, 60, 0.24) 38%,
+      rgba(224, 84, 60, 0) 68%
+    );
+    filter: blur(34px);
+    pointer-events: none;
+  }
+
+  .phone {
+    position: relative;
+    width: var(--pw);
+    aspect-ratio: 9 / 19.5;
+    padding: calc(var(--pw) * 0.032);
+    border-radius: calc(var(--pw) * 0.145);
+    background: linear-gradient(150deg, #3b2439, #100716 55%, #2b1730);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 226, 200, 0.2),
+      0 -6px 70px -18px rgba(244, 201, 93, 0.45),
+      0 46px 90px -32px rgba(10, 3, 16, 0.92);
+  }
+
+  .screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--pw) * 0.118);
+    background: #180b21;
+    isolation: isolate;
+  }
+
+  /* The app's own backdrop: the sleeve, blurred, behind the glass. */
+  .wash {
+    position: absolute;
+    inset: -22% -30% auto;
+    aspect-ratio: 1;
+    filter: blur(26px) saturate(1.35);
+    opacity: 0.62;
+  }
+
+  .wash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(24, 11, 33, 0.1) 30%, #180b21 96%);
+  }
+
+  .wash svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ui {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--pw) * 0.038);
+    padding: calc(var(--pw) * 0.05) calc(var(--pw) * 0.062) 0;
+    color: #fdeede;
+    font-size: calc(var(--pw) * 0.042);
+    line-height: 1.2;
+  }
+
+  .statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: calc(var(--pw) * 0.042);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .sb {
+    width: calc(var(--pw) * 0.19);
+    height: auto;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4em;
+  }
+
+  .glyph {
+    width: calc(var(--pw) * 0.062);
+    height: calc(var(--pw) * 0.062);
+    flex: none;
+    color: rgba(253, 238, 222, 0.78);
+  }
+
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42em;
+    padding: 0.32em 0.7em;
+    border-radius: 999px;
+    background: rgba(255, 236, 216, 0.12);
+    font-size: calc(var(--pw) * 0.036);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255, 244, 232, 0.94);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: calc(var(--pw) * 0.042);
+    overflow: hidden;
+    box-shadow:
+      0 calc(var(--pw) * 0.06) calc(var(--pw) * 0.14) rgba(12, 4, 18, 0.6),
+      inset 0 0 0 1px rgba(255, 236, 216, 0.12);
+  }
+
+  .art svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.6em;
+    margin-top: calc(var(--pw) * 0.018);
+  }
+
+  .titles {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--pw) * 0.012);
+    min-width: 0;
+  }
+
+  .track {
+    font-size: calc(var(--pw) * 0.072);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  .artist {
+    font-size: calc(var(--pw) * 0.05);
+    color: rgba(255, 238, 220, 0.7);
+    white-space: nowrap;
+  }
+
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: calc(var(--pw) * 0.008);
+    height: calc(var(--pw) * 0.058);
+  }
+
+  .eq i {
+    width: calc(var(--pw) * 0.011);
+    border-radius: 2px;
+    background: #f7cf6b;
+    animation: eq-pulse 1.05s ease-in-out infinite alternate;
+  }
+
+  .eq i:nth-child(1) { height: 46%; animation-delay: -0.5s; }
+  .eq i:nth-child(2) { height: 88%; animation-delay: -0.15s; }
+  .eq i:nth-child(3) { height: 60%; animation-delay: -0.75s; }
+  .eq i:nth-child(4) { height: 34%; animation-delay: -0.3s; }
+
+  @keyframes eq-pulse {
+    from { transform: scaleY(0.42); }
+    to { transform: scaleY(1); }
+  }
+
+  .chips {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.34em 0.66em;
+    border-radius: 999px;
+    background: rgba(110, 226, 168, 0.16);
+    color: #a9f0cb;
+    font-size: calc(var(--pw) * 0.034);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .chip-i {
+    width: calc(var(--pw) * 0.042);
+    height: calc(var(--pw) * 0.042);
+    color: #7fe6b1;
+  }
+
+  .chip.ghost {
+    background: rgba(255, 236, 216, 0.1);
+    color: rgba(255, 240, 226, 0.72);
+  }
+
+  .scrub {
+    margin-top: calc(var(--pw) * 0.02);
+  }
+
+  .scrub .bar {
+    position: relative;
+    display: block;
+    height: calc(var(--pw) * 0.014);
+    border-radius: 999px;
+    background: rgba(255, 236, 216, 0.24);
+  }
+
+  .scrub .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 42%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #f4c95d, #ffe6a8);
+  }
+
+  .scrub .knob {
+    position: absolute;
+    top: 50%;
+    left: 42%;
+    width: calc(var(--pw) * 0.036);
+    height: calc(var(--pw) * 0.036);
+    margin: calc(var(--pw) * -0.018) 0 0 calc(var(--pw) * -0.018);
+    border-radius: 50%;
+    background: #fff4e6;
+    box-shadow: 0 2px 8px rgba(12, 4, 18, 0.6);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: calc(var(--pw) * 0.026);
+    font-size: calc(var(--pw) * 0.034);
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 238, 220, 0.62);
+  }
+
+  .transport {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: calc(var(--pw) * 0.01);
+  }
+
+  .t-side {
+    width: calc(var(--pw) * 0.062);
+    height: calc(var(--pw) * 0.062);
+    color: rgba(253, 238, 222, 0.6);
+  }
+
+  .t-step {
+    width: calc(var(--pw) * 0.086);
+    height: calc(var(--pw) * 0.086);
+    color: #fdeede;
+  }
+
+  .play {
+    display: grid;
+    place-items: center;
+    width: calc(var(--pw) * 0.19);
+    height: calc(var(--pw) * 0.19);
+    border-radius: 50%;
+    background: #fff4e6;
+    color: #29112f;
+    box-shadow: 0 calc(var(--pw) * 0.03) calc(var(--pw) * 0.07) rgba(12, 4, 18, 0.55);
+  }
+
+  .play svg {
+    width: 58%;
+    height: 58%;
+  }
+
+  .vol {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-top: calc(var(--pw) * 0.014);
+  }
+
+  .v-i {
+    width: calc(var(--pw) * 0.05);
+    height: calc(var(--pw) * 0.05);
+    color: rgba(253, 238, 222, 0.55);
+  }
+
+  .vol .bar {
+    position: relative;
+    flex: 1;
+    height: calc(var(--pw) * 0.012);
+    border-radius: 999px;
+    background: rgba(255, 236, 216, 0.2);
+  }
+
+  .vol .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 64%;
+    border-radius: 999px;
+    background: rgba(255, 244, 230, 0.85);
+  }
+
+  .tray {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: calc(var(--pw) * 0.016);
+  }
+
+  .tray-i {
+    width: calc(var(--pw) * 0.056);
+    height: calc(var(--pw) * 0.056);
+    color: rgba(253, 238, 222, 0.55);
+  }
+
+  .home {
+    width: 34%;
+    height: calc(var(--pw) * 0.013);
+    margin: calc(var(--pw) * 0.03) auto 0;
+    border-radius: 999px;
+    background: rgba(255, 244, 230, 0.6);
+  }
+
+  /* ------------------------------------------------------------ narrower */
+
+  @media (max-width: 1040px) {
+    .stage {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto minmax(0, 1fr);
+      justify-items: center;
+      padding-top: 3.8rem;
+      row-gap: clamp(0.7rem, 1.8vh, 1.4rem);
+    }
+
+    .top {
+      grid-column: 1;
+      max-width: min(100%, 26rem);
+    }
+
+    .say {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+      justify-self: center;
+      max-width: 40ch;
+      text-align: center;
+      padding-bottom: 0;
+    }
+
+    .cta {
+      justify-content: center;
+    }
+
+    .aside {
+      grid-column: 1;
+      grid-row: 2;
+      display: none;
+    }
+
+    .device {
+      grid-column: 1;
+      grid-row: 3;
+      --pw: min(66vw, 260px, calc(100svh * 0.3));
+      align-items: end;
+      margin-top: clamp(0.6rem, 2vh, 1.5rem);
+    }
+
+    .phone {
+      /* Cropped by the stage: the device rises out of the bottom edge. */
+      margin-bottom: calc(var(--pw) * -0.34);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .top {
+      max-width: min(100%, 20rem);
+    }
+
+    .body {
+      font-size: 0.92rem;
+    }
+
+    .note {
+      margin-top: 0.55rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .eq i {
+      animation: none;
+      transform: scaleY(0.8);
+    }
+  }
+</style>

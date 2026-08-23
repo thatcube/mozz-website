@@ -1,0 +1,416 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+---
+
+<Layout
+  title={`${NAME} — listen past the signal`}
+  description="Mozz is a free player for music on your own server. Stream at home or download albums for offline listening on iPhone and iPad."
+  themeColor="#e8dff5"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@500;600&family=Paytone+One&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="headphones" />
+
+  <main class="poster">
+    <header class="masthead">
+      <a class="brand" href={GITHUB_URL} aria-label="Mozz on GitHub">
+        <Mark size={30} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>Free forever · Open source</p>
+    </header>
+
+    <svg
+      class="headphones"
+      viewBox="0 0 900 900"
+      role="img"
+      aria-label="Large violet over-ear headphones with a coiled cable, printed in overlapping apricot and red inks"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g class="ink-apricot">
+        <circle cx="450" cy="414" r="326" />
+        <path d="M111 715c62 50 118 75 174 75 74 0 98-49 159-49 66 0 92 70 163 70 68 0 111-30 171-94l21 70c-55 57-117 85-189 85-89 0-121-67-173-67-49 0-83 49-157 49-80 0-145-30-198-78z" />
+      </g>
+
+      <g class="ink-red" transform="translate(13 10)">
+        <path
+          d="M128 414C128 186 263 52 450 52S772 186 772 414h-99c0-173-89-267-223-267s-223 94-223 267z"
+        />
+        <rect x="99" y="342" width="144" height="339" rx="65" />
+        <rect x="657" y="342" width="144" height="339" rx="65" />
+        <path
+          d="M717 626c81 40 94 117 46 166-44 45-119 34-122 81-2 32 35 45 71 27 25-13 42-39 47-68l39 8c-8 45-34 82-71 101-64 32-132 3-130-67 2-79 93-69 132-109 28-29 15-75-36-99z"
+        />
+      </g>
+
+      <g class="ink-violet">
+        <path
+          fill-rule="evenodd"
+          d="M118 414C118 176 258 39 450 39s332 137 332 375h-107c0-166-88-260-225-260s-225 94-225 260zm65-47h-44c10-181 111-285 258-303v44c-119 17-198 104-214 259z"
+        />
+
+        <path d="M121 313h92l35 93-49 27-67-44z" />
+        <rect x="105" y="337" width="132" height="340" rx="61" />
+        <rect x="63" y="390" width="145" height="238" rx="70" />
+        <rect x="80" y="417" width="93" height="184" rx="45" class="cup-face" />
+        <path d="M164 376h53v34h-53zm-16-42h76v29h-76zm22-38h48v27h-48z" class="slider-cut" />
+
+        <path d="M687 313h92l-11 76-67 44-49-27z" />
+        <rect x="663" y="337" width="132" height="340" rx="61" />
+        <rect x="692" y="390" width="145" height="238" rx="70" />
+        <rect x="727" y="417" width="93" height="184" rx="45" class="cup-face" />
+        <path d="M683 376h53v34h-53zm-7-42h76v29h-76zm6-38h48v27h-48z" class="slider-cut" />
+
+        <path
+          class="cable"
+          d="M765 609c93 45 111 135 55 193-51 52-141 37-144 88-2 30 31 42 65 26 27-13 46-41 51-73"
+        />
+      </g>
+
+      <g class="print-marks" aria-hidden="true">
+        <circle cx="90" cy="218" r="8" />
+        <path d="M74 218h32M90 202v32" />
+        <circle cx="812" cy="180" r="8" />
+        <path d="M796 180h32M812 164v32" />
+      </g>
+    </svg>
+
+    <section class="message" aria-labelledby="headline">
+      <p class="kicker">Free · iPhone and iPad</p>
+      <h1 id="headline">
+        <span>A music player</span><br />
+        <span>for your server.</span>
+      </h1>
+      <p class="lede">
+        Mozz is the free player for music on your own server. Download albums,
+        then keep listening wherever you go.
+      </p>
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source</a>
+      </div>
+    </section>
+
+    <div class="compatibility" aria-label="Compatible music servers">
+      <span>Works with</span>
+      <p>Plex · Jellyfin · Navidrome · Subsonic</p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #e8dff5;
+  }
+
+  :global(body) {
+    overflow-x: hidden;
+    color: #24123c;
+    background: #e8dff5;
+    font-family: 'DM Sans', ui-sans-serif, sans-serif;
+  }
+
+  .poster {
+    --lilac: #e8dff5;
+    --violet: #5a2ea6;
+    --violet-dark: #35136f;
+    --apricot: #ff9f68;
+    --red: #c80028;
+    --paper: #fff5de;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100svh;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 62px clamp(24px, 4.2vw, 68px) 24px;
+    background: var(--lilac);
+  }
+
+  .masthead {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--violet-dark);
+    font: 400 clamp(1.25rem, 2vw, 1.6rem)/1 'Paytone One', sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  .masthead p,
+  .compatibility {
+    font: 600 0.68rem/1.2 'IBM Plex Mono', monospace;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .masthead p {
+    color: var(--violet);
+  }
+
+  .headphones {
+    position: absolute;
+    z-index: 1;
+    top: 16px;
+    left: 50%;
+    width: min(79vw, 1050px);
+    max-width: none;
+    height: min(95svh, 900px);
+    transform: translateX(-50%);
+    overflow: visible;
+  }
+
+  .ink-apricot {
+    fill: var(--apricot);
+  }
+
+  .ink-red {
+    fill: var(--red);
+    opacity: 0.94;
+  }
+
+  .ink-violet {
+    fill: var(--violet);
+  }
+
+  .cup-face {
+    fill: var(--violet-dark);
+  }
+
+  .slider-cut {
+    fill: var(--paper);
+  }
+
+  .cable {
+    fill: none;
+    stroke: var(--violet);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 24;
+  }
+
+  .print-marks {
+    fill: none;
+    stroke: var(--red);
+    stroke-width: 4;
+    opacity: 0.65;
+  }
+
+  .message {
+    position: relative;
+    z-index: 3;
+    align-self: center;
+    justify-self: center;
+    width: min(100%, 860px);
+    margin-top: -2vh;
+    text-align: center;
+  }
+
+  .kicker {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 7px 11px 6px;
+    color: var(--paper);
+    background: var(--red);
+    font: 600 0.7rem/1 'IBM Plex Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-1.5deg);
+  }
+
+  h1 {
+    color: var(--violet-dark);
+    font: 400 clamp(4rem, 6.2vw, 6.1rem)/0.86 'Paytone One', sans-serif;
+    letter-spacing: -0.075em;
+  }
+
+  h1 span {
+    display: inline-block;
+    padding: 0.01em 0.14em 0.09em;
+    background: rgba(232, 223, 245, 0.95);
+    box-shadow: 4px 4px 0 var(--red);
+  }
+
+  .lede {
+    max-width: 460px;
+    margin: clamp(25px, 3.2vh, 34px) auto 0;
+    color: #291846;
+    font-size: clamp(0.94rem, 1.35vw, 1.08rem);
+    font-weight: 600;
+    line-height: 1.42;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border: 3px solid var(--violet-dark);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .store {
+    color: var(--paper);
+    background: var(--violet-dark);
+    box-shadow: 5px 5px 0 var(--red);
+  }
+
+  .store.is-pending {
+    cursor: default;
+  }
+
+  .source {
+    color: var(--violet-dark);
+    background: var(--paper);
+    box-shadow: 5px 5px 0 var(--apricot);
+  }
+
+  .brand:focus-visible,
+  .store:focus-visible,
+  .source:focus-visible {
+    outline: 4px solid var(--red);
+    outline-offset: 4px;
+  }
+
+  .source:hover {
+    color: var(--paper);
+    background: var(--violet-dark);
+  }
+
+  .compatibility {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 12px;
+    width: max-content;
+    max-width: 100%;
+    justify-self: center;
+    padding: 6px 9px;
+    color: var(--violet-dark);
+    background: var(--lilac);
+    text-align: center;
+  }
+
+  .compatibility span {
+    padding: 5px 7px;
+    color: var(--paper);
+    background: var(--violet);
+  }
+
+  .compatibility p {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  @media (max-width: 720px) {
+    .poster {
+      padding: 58px 18px 18px;
+    }
+
+    .masthead p {
+      max-width: 130px;
+      text-align: right;
+    }
+
+    .headphones {
+      top: 92px;
+      width: 555px;
+      height: 555px;
+    }
+
+    .message {
+      align-self: start;
+      margin-top: 94px;
+    }
+
+    h1 {
+      font-size: clamp(2.45rem, 11.4vw, 3rem);
+      line-height: 0.9;
+    }
+
+    h1 span {
+      padding-inline: 0.1em;
+      box-shadow: 3px 3px 0 var(--red);
+    }
+
+    .lede {
+      max-width: 320px;
+      margin-top: 23px;
+      padding: 0 4px;
+      font-size: 0.9rem;
+      line-height: 1.38;
+    }
+
+    .actions {
+      max-width: 290px;
+      margin: 17px auto 0;
+    }
+
+    .store,
+    .source {
+      min-height: 39px;
+      padding: 0 13px;
+      border-width: 2px;
+      font-size: 0.74rem;
+    }
+
+    .compatibility {
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.57rem;
+      line-height: 1.35;
+    }
+  }
+
+  @media (max-height: 720px) and (min-width: 721px) {
+    .message {
+      transform: scale(0.86);
+    }
+
+    .headphones {
+      height: 102svh;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .headphones,
+    .kicker {
+      animation: none;
+    }
+  }
+</style>

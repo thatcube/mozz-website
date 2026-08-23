@@ -1,0 +1,466 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE_A = "Your server's music,";
+const HEADLINE_B = 'in your pocket.';
+const LEDE =
+  'Mozz is a free, open source player for iPhone and iPad. It plays your Plex, Jellyfin, Navidrome or Subsonic library, and downloads albums so they keep playing with no signal.';
+
+const ART_LABEL =
+  'A drawn personal cassette player with a Mozz tape turning behind its window, headphones with orange foam pads lying beside it, and one long headphone cable looping right around the page.';
+
+/*
+ * The player, drawn once in its own 820x520 space and placed twice — once in
+ * the landscape composition, once in the portrait one. Injected as markup
+ * rather than duplicated by hand so the two never drift apart.
+ */
+const PLAYER = `
+  <rect x="72" y="94" width="720" height="410" rx="34" fill="#16283a" opacity="0.2" />
+
+  <path
+    d="M 736 148 h 64 a 20 20 0 0 1 20 20 v 172 a 22 22 0 0 1 -22 22 h -26 v -30 h 20 v -158 h -56 z"
+    fill="#b23a1f" stroke="#221d1c" stroke-width="5" stroke-linejoin="round"
+  />
+  <circle cx="786" cy="174" r="10" fill="#f4efe0" stroke="#221d1c" stroke-width="4" />
+
+  <rect x="66" y="40" width="688" height="64" rx="26" fill="#ef6a44" stroke="#221d1c" stroke-width="5" />
+  <circle cx="660" cy="60" r="15" fill="#221d1c" />
+  <rect x="130" y="46" width="150" height="16" rx="8" fill="#b23a1f" opacity="0.5" />
+
+  <rect x="50" y="70" width="720" height="410" rx="32" fill="#d94f30" stroke="#221d1c" stroke-width="5" />
+  <rect x="78" y="100" width="664" height="290" rx="18" fill="#f4efe0" stroke="#221d1c" stroke-width="5" />
+
+  <rect x="100" y="122" width="430" height="246" rx="14" fill="#26313f" />
+  <rect x="116" y="138" width="398" height="214" rx="10" fill="#4a586b" />
+  <circle cx="134" cy="156" r="5" fill="#2c3745" />
+  <circle cx="496" cy="156" r="5" fill="#2c3745" />
+  <circle cx="134" cy="334" r="5" fill="#2c3745" />
+  <circle cx="496" cy="334" r="5" fill="#2c3745" />
+
+  <rect x="136" y="152" width="358" height="84" rx="6" fill="#f2ecdc" stroke="#221d1c" stroke-width="3" />
+  <text x="154" y="190" fill="#221d1c" font-family="'Bricolage Grotesque', Georgia, serif" font-size="34" font-weight="800" letter-spacing="-0.5">MOZZ WEEKLY</text>
+  <rect x="154" y="200" width="118" height="6" fill="#c80028" />
+  <text x="154" y="226" fill="#221d1c" opacity="0.62" font-family="'IBM Plex Mono', monospace" font-size="15" font-weight="500" letter-spacing="1.5">SIDE A</text>
+  <text x="476" y="226" text-anchor="end" fill="#221d1c" opacity="0.62" font-family="'IBM Plex Mono', monospace" font-size="15" font-weight="500" letter-spacing="1.5">45 MIN</text>
+
+  <rect x="214" y="330" width="202" height="10" fill="#3c2820" />
+  <circle cx="214" cy="292" r="53" fill="#4a3226" />
+  <circle cx="416" cy="292" r="35" fill="#4a3226" />
+
+  <g transform="translate(214 292)">
+    <circle r="19" fill="#ded6c1" stroke="#221d1c" stroke-width="3" />
+    <g class="hub" style="transform-box:fill-box;transform-origin:center">
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" />
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" transform="rotate(60)" />
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" transform="rotate(120)" />
+    </g>
+  </g>
+  <g transform="translate(416 292)">
+    <circle r="19" fill="#ded6c1" stroke="#221d1c" stroke-width="3" />
+    <g class="hub hub-fast" style="transform-box:fill-box;transform-origin:center">
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" />
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" transform="rotate(60)" />
+      <rect x="-2.5" y="-13" width="5" height="26" fill="#221d1c" transform="rotate(120)" />
+    </g>
+  </g>
+
+  <path d="M 126 348 L 300 148 L 352 148 L 178 348 Z" fill="#ffffff" opacity="0.07" />
+  <rect x="100" y="122" width="430" height="246" rx="14" fill="none" stroke="#221d1c" stroke-width="5" />
+
+  <rect x="548" y="124" width="182" height="58" rx="12" fill="#c80028" stroke="#221d1c" stroke-width="4" />
+  <text x="639" y="164" text-anchor="middle" fill="#f7f2e4" font-family="'Bricolage Grotesque', Georgia, serif" font-size="32" font-weight="800" letter-spacing="1.5">MOZZ</text>
+  <text x="639" y="206" text-anchor="middle" fill="#221d1c" opacity="0.6" font-family="'IBM Plex Mono', monospace" font-size="15" font-weight="500" letter-spacing="1.6">MODEL M-2</text>
+
+  <text x="548" y="242" fill="#221d1c" opacity="0.6" font-family="'IBM Plex Mono', monospace" font-size="14" font-weight="600" letter-spacing="1.8">VOL</text>
+  <rect x="548" y="252" width="182" height="34" rx="17" fill="#ded6c1" stroke="#221d1c" stroke-width="4" />
+  <rect x="562" y="266" width="152" height="6" rx="3" fill="#221d1c" opacity="0.25" />
+  <rect x="648" y="244" width="46" height="50" rx="10" fill="#f7f2e4" stroke="#221d1c" stroke-width="4" />
+  <rect x="659" y="256" width="4" height="26" fill="#221d1c" opacity="0.55" />
+  <rect x="669" y="256" width="4" height="26" fill="#221d1c" opacity="0.55" />
+  <rect x="679" y="256" width="4" height="26" fill="#221d1c" opacity="0.55" />
+
+  <rect x="548" y="312" width="104" height="36" rx="18" fill="#ded6c1" stroke="#221d1c" stroke-width="4" />
+  <rect x="552" y="316" width="46" height="28" rx="14" fill="#f7f2e4" stroke="#221d1c" stroke-width="3" />
+  <text x="666" y="340" fill="#221d1c" opacity="0.6" font-family="'IBM Plex Mono', monospace" font-size="14" font-weight="600" letter-spacing="1.4">HOLD</text>
+  <circle cx="716" cy="330" r="10" fill="#f2903c" stroke="#221d1c" stroke-width="3" />
+
+  <rect x="74" y="394" width="126" height="78" rx="14" fill="#b23a1f" />
+  <path d="M 86 414 L 188 414 L 178 398 L 96 398 Z" fill="#fbf7ea" stroke="#221d1c" stroke-width="4" stroke-linejoin="round" />
+  <rect x="78" y="412" width="118" height="52" rx="8" fill="#efe7d4" stroke="#221d1c" stroke-width="4" />
+  <path d="M 133 425 L 133 451 L 115 438 Z M 155 425 L 155 451 L 137 438 Z" fill="#221d1c" />
+
+  <rect x="210" y="394" width="126" height="78" rx="14" fill="#b23a1f" />
+  <path d="M 222 420 L 324 420 L 314 404 L 232 404 Z" fill="#fbf7ea" stroke="#221d1c" stroke-width="4" stroke-linejoin="round" />
+  <rect x="214" y="418" width="118" height="48" rx="8" fill="#efe7d4" stroke="#221d1c" stroke-width="4" />
+  <path d="M 262 428 L 262 456 L 288 442 Z" fill="#c80028" />
+
+  <rect x="346" y="394" width="126" height="78" rx="14" fill="#b23a1f" />
+  <path d="M 358 414 L 460 414 L 450 398 L 368 398 Z" fill="#fbf7ea" stroke="#221d1c" stroke-width="4" stroke-linejoin="round" />
+  <rect x="350" y="412" width="118" height="52" rx="8" fill="#efe7d4" stroke="#221d1c" stroke-width="4" />
+  <path d="M 391 425 L 391 451 L 409 438 Z M 413 425 L 413 451 L 431 438 Z" fill="#221d1c" />
+
+  <rect x="482" y="394" width="126" height="78" rx="14" fill="#b23a1f" />
+  <path d="M 494 414 L 596 414 L 586 398 L 504 398 Z" fill="#fbf7ea" stroke="#221d1c" stroke-width="4" stroke-linejoin="round" />
+  <rect x="486" y="412" width="118" height="52" rx="8" fill="#efe7d4" stroke="#221d1c" stroke-width="4" />
+  <rect x="533" y="426" width="24" height="24" fill="#221d1c" />
+
+  <rect x="618" y="394" width="126" height="78" rx="14" fill="#b23a1f" />
+  <path d="M 630 414 L 732 414 L 722 398 L 640 398 Z" fill="#fbf7ea" stroke="#221d1c" stroke-width="4" stroke-linejoin="round" />
+  <rect x="622" y="412" width="118" height="52" rx="8" fill="#efe7d4" stroke="#221d1c" stroke-width="4" />
+  <rect x="668" y="426" width="9" height="24" fill="#221d1c" />
+  <rect x="685" y="426" width="9" height="24" fill="#221d1c" />
+
+  <g transform="rotate(30 660 60)">
+    <rect x="642" y="-14" width="38" height="76" rx="13" fill="#2b2b31" stroke="#221d1c" stroke-width="4" />
+    <rect x="646" y="16" width="30" height="9" fill="#ded6c1" />
+    <path d="M 650 -12 q 11 -20 22 0 z" fill="#2b2b31" />
+  </g>
+`;
+
+/* The headphones, drawn once in a 300x240 space. */
+const EARS = `
+  <ellipse cx="150" cy="216" rx="126" ry="17" fill="#16283a" opacity="0.2" />
+  <path d="M 150 62 C 146 100 120 108 96 122" fill="none" stroke="#221d1c" stroke-width="10" stroke-linecap="round" />
+  <path d="M 152 62 C 158 104 196 116 214 128" fill="none" stroke="#221d1c" stroke-width="10" stroke-linecap="round" />
+  <path d="M 74 112 C 88 34 214 26 236 108" fill="none" stroke="#221d1c" stroke-width="21" stroke-linecap="round" />
+  <path d="M 74 112 C 88 34 214 26 236 108" fill="none" stroke="#ded6c1" stroke-width="10" stroke-linecap="round" />
+  <g transform="rotate(-16 78 142)">
+    <ellipse cx="78" cy="142" rx="46" ry="52" fill="#efe7d4" stroke="#221d1c" stroke-width="5" />
+    <ellipse cx="78" cy="142" rx="32" ry="38" fill="#f2903c" stroke="#221d1c" stroke-width="4" />
+    <ellipse cx="78" cy="142" rx="15" ry="19" fill="#221d1c" opacity="0.16" />
+  </g>
+  <circle cx="212" cy="150" r="62" fill="#efe7d4" stroke="#221d1c" stroke-width="5" />
+  <circle cx="212" cy="150" r="53" fill="none" stroke="#221d1c" stroke-width="2" opacity="0.3" />
+  <circle cx="212" cy="150" r="46" fill="#f2903c" stroke="#221d1c" stroke-width="4" />
+  <circle cx="212" cy="150" r="20" fill="#221d1c" opacity="0.16" />
+  <rect x="137" y="32" width="28" height="36" rx="11" fill="#2b2b31" stroke="#221d1c" stroke-width="4" />
+`;
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz plays the music on your own Plex, Jellyfin, Navidrome or Subsonic server, on iPhone and iPad. Download albums and they keep playing with no signal."
+  themeColor="#f2f0e6"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="walkman" />
+
+  <main class="hero">
+    <svg class="art art-desk" viewBox="0 0 2000 900" preserveAspectRatio="xMidYMax slice" role="img" aria-label={ART_LABEL}>
+      <rect x="-20" y="-20" width="2040" height="940" fill="#f2f0e6" />
+      <path d="M -60 520 C 500 430 1500 430 2060 520 L 2060 980 L -60 980 Z" fill="#2f5d8c" />
+      <path d="M -60 520 C 500 430 1500 430 2060 520" fill="none" stroke="#4b7cad" stroke-width="11" />
+      <path
+        d="M 1225 474 C 1345 450 1448 380 1472 274 C 1492 178 1416 94 1286 68 C 1146 40 980 46 840 80 C 706 112 578 156 480 226 C 440 258 442 312 480 330 C 520 348 552 318 534 284 C 516 250 462 252 424 288 C 356 352 296 356 216 332 C 116 302 56 386 100 456 C 136 522 254 548 342 558 C 400 566 450 570 487 574"
+        fill="none" stroke="#221d1c" stroke-width="11" stroke-linecap="round"
+      />
+      <g transform="translate(631 424) scale(0.9)" set:html={PLAYER} />
+      <g transform="translate(330 516) scale(1.05)" set:html={EARS} />
+    </svg>
+
+    <svg class="art art-mob" viewBox="0 0 390 844" preserveAspectRatio="xMidYMax slice" role="img" aria-label={ART_LABEL}>
+      <rect x="-20" y="-20" width="430" height="884" fill="#f2f0e6" />
+      <path d="M -30 580 C 90 536 300 536 420 580 L 420 900 L -30 900 Z" fill="#2f5d8c" />
+      <path d="M -30 580 C 90 536 300 536 420 580" fill="none" stroke="#4b7cad" stroke-width="7" />
+      <path
+        d="M 311 615 C 346 574 342 476 300 438 C 258 400 176 404 128 434 C 108 447 96 478 90 497"
+        fill="none" stroke="#221d1c" stroke-width="8" stroke-linecap="round"
+      />
+      <g transform="translate(14 590) scale(0.45)" set:html={PLAYER} />
+      <g transform="translate(24 474) scale(0.44)" set:html={EARS} />
+    </svg>
+
+    <div class="stack">
+      <p class="brand"><Mark size={26} decorative />{NAME}</p>
+
+      <h1>{HEADLINE_A}<br />{HEADLINE_B}</h1>
+
+      <p class="lede">{LEDE}</p>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source on GitHub</a>
+      </div>
+
+      <p class="works works-mob">
+        <span class="works-label">Works with</span>
+        <span class="works-logos">
+          <ServerLogo name="Plex" size={20} />
+          <ServerLogo name="Jellyfin" size={20} />
+          <ServerLogo name="Navidrome" size={20} />
+          <span class="subsonic">Subsonic</span>
+        </span>
+      </p>
+    </div>
+
+    <p class="works works-desk">
+      <span class="works-label">Works with</span>
+      <span class="works-logos">
+        <ServerLogo name="Plex" size={22} />
+        <ServerLogo name="Jellyfin" size={22} />
+        <ServerLogo name="Navidrome" size={22} />
+        <span class="subsonic">Subsonic</span>
+      </span>
+    </p>
+
+    <p class="fine">No account. No tracking.<br />No subscription.</p>
+  </main>
+</Layout>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #f2f0e6;
+    color: #221d1c;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .art-mob {
+    display: none;
+  }
+
+  .stack {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 74px 32px 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin-top: 20px;
+    max-width: 18ch;
+    font-family: 'Bricolage Grotesque', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(1.78rem, 4.4vw, 3.7rem);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+  }
+
+  .lede {
+    margin-top: 20px;
+    max-width: 41rem;
+    font-size: clamp(0.98rem, 1.25vw, 1.125rem);
+    line-height: 1.55;
+    color: rgba(34, 29, 28, 0.82);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .source {
+    background: #c80028;
+    color: #fdf4f0;
+    border: 2px solid #221d1c;
+    box-shadow: 3px 3px 0 #221d1c;
+  }
+
+  .source:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 #221d1c;
+  }
+
+  .store.is-pending {
+    background: #e7e1cf;
+    color: rgba(34, 29, 28, 0.68);
+    border: 2px solid rgba(34, 29, 28, 0.24);
+  }
+
+  .store.is-pending::before {
+    content: '';
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #d94f30;
+  }
+
+  .works {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .works-label,
+  .subsonic,
+  .fine {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .works-logos {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .works-desk,
+  .fine {
+    position: absolute;
+    bottom: 30px;
+    z-index: 2;
+    color: #f4efe0;
+  }
+
+  .works-desk {
+    left: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .works-desk .works-label {
+    opacity: 0.82;
+  }
+
+  .fine {
+    right: 40px;
+    text-align: right;
+    line-height: 1.8;
+    opacity: 0.76;
+  }
+
+  .works-mob {
+    display: none;
+    margin-top: 18px;
+    color: rgba(34, 29, 28, 0.72);
+  }
+
+  a:focus-visible {
+    outline: 3px solid #2f5d8c;
+    outline-offset: 3px;
+  }
+
+  :global(.hub) {
+    animation: mozz-hub 9s linear infinite;
+  }
+
+  :global(.hub-fast) {
+    animation-duration: 5.5s;
+  }
+
+  @keyframes mozz-hub {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .art-desk {
+      display: none;
+    }
+
+    .art-mob {
+      display: block;
+    }
+
+    .stack {
+      padding: 58px 24px 0;
+    }
+
+    h1 {
+      margin-top: 14px;
+    }
+
+    .lede {
+      margin-top: 14px;
+      max-width: 30rem;
+      font-size: 0.97rem;
+      line-height: 1.5;
+    }
+
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      margin-top: 16px;
+      width: min(100%, 20rem);
+    }
+
+    .store,
+    .source {
+      justify-content: center;
+      height: 46px;
+    }
+
+    .works-desk,
+    .fine {
+      display: none;
+    }
+
+    .works-mob {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.hub) {
+      animation: none;
+    }
+
+    .source:hover {
+      transform: none;
+      box-shadow: 3px 3px 0 #221d1c;
+    }
+  }
+</style>

@@ -1,13 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Mark from '../components/Mark.astro';
-import { HEROES } from '../data/heroes';
+import { APP_HEROES, ART_HEROES } from '../data/heroes';
 import { NAME } from '../data/site';
+
+const SETS = [
+  {
+    id: 'app',
+    title: 'With the app',
+    note: 'These show Mozz itself. They read as a music player straight away, and they need a fresh screenshot whenever the interface moves on.',
+    heroes: APP_HEROES,
+  },
+  {
+    id: 'art',
+    title: 'Illustrated',
+    note: 'These carry the idea without a single screen in them, so the page keeps working no matter how the app changes.',
+    heroes: ART_HEROES,
+  },
+];
 ---
 
 <Layout
   title={`${NAME} — hero studies`}
-  description="Ten quiet, direct hero directions for Mozz."
+  description="Twenty hero directions for Mozz."
   themeColor="#f6f4ee"
   noindex
 >
@@ -24,36 +39,47 @@ import { NAME } from '../data/site';
       <div class="brand"><Mark size={38} decorative /><span>{NAME}</span></div>
       <h1>Pick the opening note.</h1>
       <p>
-        Ten hero studies only. Each one says what Mozz is, then uses one quiet
-        illustration to make the idea clearer.
+        Twenty heroes, two ways of solving the same page. Ten put the app on
+        screen. Ten draw the idea instead, so the website never goes stale when
+        the app is redesigned. Only the hero is built — the rest of the page
+        follows whichever one wins.
       </p>
     </header>
 
-    <ol role="list">
-      {HEROES.map((hero) => (
-        <li>
-          <a class="study" href={`/h/${hero.slug}`}>
-            <span
-              class="preview"
-              style={`--a:${hero.swatch[0]};--b:${hero.swatch[1]};--c:${hero.swatch[2]}`}
-            >
-              <img
-                src={`/hero-thumbs/${hero.slug}.png`}
-                alt={`${hero.name} hero study`}
-                width="1440"
-                height="900"
-                loading="lazy"
-                onerror="this.remove()"
-              />
-            </span>
-            <span class="copy">
-              <strong>{hero.name}</strong>
-              <span>{hero.idea}</span>
-            </span>
-          </a>
-        </li>
-      ))}
-    </ol>
+    {SETS.map((set) => (
+      <section aria-labelledby={`set-${set.id}`}>
+        <div class="set-head">
+          <h2 id={`set-${set.id}`}>{set.title}</h2>
+          <p>{set.note}</p>
+        </div>
+
+        <ol role="list">
+          {set.heroes.map((hero) => (
+            <li>
+              <a class="study" href={`/h/${hero.slug}`}>
+                <span
+                  class="preview"
+                  style={`--a:${hero.swatch[0]};--b:${hero.swatch[1]};--c:${hero.swatch[2]}`}
+                >
+                  <img
+                    src={`/hero-thumbs/${hero.slug}.png`}
+                    alt={`${hero.name} hero study`}
+                    width="1440"
+                    height="900"
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
+                </span>
+                <span class="copy">
+                  <strong>{hero.name}</strong>
+                  <span>{hero.idea}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
   </main>
 </Layout>
 
@@ -66,12 +92,35 @@ import { NAME } from '../data/site';
     font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   }
 
-  header, ol {
+  header, ol, .set-head {
     width: min(78rem, 100%);
     margin-inline: auto;
   }
 
   header { margin-bottom: clamp(2.5rem, 6vw, 5rem); }
+
+  .set-head {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 34rem);
+    gap: 1rem clamp(1.5rem, 3vw, 3rem);
+    align-items: baseline;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(32, 33, 36, 0.16);
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .set-head h2 {
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+    letter-spacing: -0.03em;
+  }
+
+  .set-head p {
+    color: #6a6862;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  section + section { margin-top: clamp(3rem, 7vw, 6rem); }
 
   .back {
     display: inline-block;
@@ -153,5 +202,6 @@ import { NAME } from '../data/site';
   @media (max-width: 43rem) {
     ol { grid-template-columns: 1fr; }
     .copy { grid-template-columns: 5.5rem 1fr; }
+    .set-head { grid-template-columns: 1fr; }
   }
 </style>

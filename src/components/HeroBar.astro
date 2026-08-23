@@ -1,5 +1,5 @@
 ---
-import { HEROES } from '../data/heroes';
+import { APP_HEROES, ART_HEROES, HEROES } from '../data/heroes';
 
 export interface Props {
   slug: string;
@@ -7,20 +7,29 @@ export interface Props {
 
 const { slug } = Astro.props;
 const current = HEROES.findIndex((hero) => hero.slug === slug);
+const GROUPS = [
+  { label: 'App', heroes: APP_HEROES },
+  { label: 'Art', heroes: ART_HEROES },
+];
 ---
 
 <nav class="hero-bar" aria-label="Hero studies">
   <a href="/heroes" class="all">All heroes</a>
-  <ol role="list">
-    {HEROES.map((hero) => (
-      <li>
-        <a href={`/h/${hero.slug}`} aria-current={hero.slug === slug ? 'page' : undefined}>
-          {hero.name}
-        </a>
-      </li>
-    ))}
-  </ol>
-  <span>{current + 1} / {HEROES.length}</span>
+  {GROUPS.map((group) => (
+    <>
+      <span class="group-label">{group.label}</span>
+      <ol role="list">
+        {group.heroes.map((hero) => (
+          <li>
+            <a href={`/h/${hero.slug}`} aria-current={hero.slug === slug ? 'page' : undefined}>
+              {hero.name}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </>
+  ))}
+  <span class="count">{current + 1} / {HEROES.length}</span>
 </nav>
 
 <style>
@@ -46,7 +55,16 @@ const current = HEROES.findIndex((hero) => hero.slug === slug);
 
   .all, .hero-bar > span { flex: none; }
   .all { font-weight: 800; }
-  .hero-bar > span { margin-left: auto; opacity: 0.48; }
+  .count { margin-left: auto; opacity: 0.48; }
+
+  .group-label {
+    padding-left: 0.6rem;
+    border-left: 1px solid rgba(20, 20, 22, 0.16);
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.42;
+  }
 
   ol {
     display: flex;

@@ -1,0 +1,543 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { HERO_COPY } from '../../data/hero-copy';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz plays music from your own server on iPhone and iPad. Stream from home or download albums for offline listening."
+  themeColor="#1a1b33"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Geologica:CRSV,wght@0,400;0,500;0,650&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="night" />
+
+  <main class="night">
+    <svg
+      class="room-art"
+      viewBox="0 0 1600 900"
+      preserveAspectRatio="xMidYMid slice"
+      role="img"
+      aria-label="A flat illustration of a listener relaxing on a sofa at night, wearing headphones and holding a softly glowing phone beside a warm floor lamp"
+    >
+      <defs>
+        <clipPath id="night-window">
+          <rect x="1250" y="112" width="272" height="332" rx="7" />
+        </clipPath>
+      </defs>
+
+      <g class="room-world">
+        <rect width="1600" height="900" fill="#1a1b33" />
+
+        <path d="M0 0H1600V195C1320 230 1145 169 887 207C545 258 331 164 0 218Z" fill="#20213e" />
+        <path d="M0 638L1600 605V900H0Z" fill="#11142b" />
+        <path d="M0 638L1600 605V624L0 657Z" fill="#2e2852" />
+
+        <g class="window">
+          <rect x="1225" y="88" width="322" height="382" rx="10" fill="#0d1026" />
+          <rect x="1250" y="112" width="272" height="332" rx="7" fill="#355487" />
+          <g clip-path="url(#night-window)">
+            <rect x="1250" y="112" width="272" height="332" fill="#304978" />
+            <circle cx="1448" cy="181" r="45" fill="#cbd0ff" />
+            <circle cx="1468" cy="164" r="45" fill="#304978" />
+            <circle class="star star-one" cx="1301" cy="164" r="5" fill="#ffd98c" />
+            <circle class="star star-two" cx="1380" cy="222" r="4" fill="#e7e2ff" />
+            <circle cx="1490" cy="275" r="3" fill="#e7e2ff" />
+            <path d="M1250 359L1286 323L1314 344L1359 286L1400 349L1433 327L1462 360L1498 319L1522 343V444H1250Z" fill="#1b294e" />
+            <path d="M1250 387L1295 369L1339 393L1382 354L1428 398L1472 368L1522 390V444H1250Z" fill="#121b3b" />
+            <rect x="1276" y="397" width="13" height="18" fill="#ffb43a" />
+            <rect x="1364" y="382" width="14" height="21" fill="#ffcf73" />
+            <rect x="1479" y="398" width="11" height="16" fill="#ffb43a" />
+          </g>
+          <rect x="1377" y="100" width="17" height="355" fill="#0d1026" />
+          <rect x="1238" y="265" width="297" height="15" fill="#0d1026" />
+          <path d="M1192 74H1270C1246 184 1245 353 1287 489H1179C1218 333 1211 185 1192 74Z" fill="#534a91" />
+          <path d="M1550 74H1600V490H1520C1551 342 1564 199 1550 74Z" fill="#534a91" />
+          <path d="M1200 76H1260M1545 76H1600" stroke="#8576df" stroke-width="10" stroke-linecap="round" />
+        </g>
+
+        <g class="lamp-light">
+          <path d="M568 263L793 263L1192 900H164Z" fill="#ffb43a" opacity=".11" />
+          <path d="M603 268H760L1005 900H335Z" fill="#ffb43a" opacity=".09" />
+          <ellipse cx="670" cy="745" rx="365" ry="132" fill="#ffb43a" opacity=".12" />
+        </g>
+
+        <g class="room-details">
+          <path d="M80 470H331L314 646H95Z" fill="#2a315c" />
+          <path d="M104 492H307L294 625H117Z" fill="#7a6bd6" />
+          <circle cx="205" cy="558" r="58" fill="#e95655" />
+          <circle cx="205" cy="558" r="22" fill="#ffca65" />
+          <path d="M231 505L288 492L294 566Z" fill="#293054" />
+          <rect x="77" y="646" width="266" height="19" rx="9" fill="#0b0e22" />
+        </g>
+
+        <g class="lamp">
+          <ellipse cx="679" cy="824" rx="111" ry="25" fill="#090b1e" opacity=".72" />
+          <path d="M669 282H687V806H669Z" fill="#d78926" />
+          <path d="M626 804H730L753 830H604Z" fill="#d78926" />
+          <path d="M621 266H735L779 345H577Z" fill="#ffb43a" />
+          <path d="M590 334H766L779 345H577Z" fill="#dc8622" />
+          <path d="M634 266L650 201H706L722 266Z" fill="#ffd98c" />
+          <ellipse class="lamp-glow" cx="678" cy="330" rx="122" ry="44" fill="#ffca65" opacity=".18" />
+        </g>
+
+        <g class="sofa-shadow">
+          <ellipse cx="1028" cy="844" rx="412" ry="46" fill="#080a1b" opacity=".82" />
+        </g>
+
+        <g class="sofa">
+          <path d="M739 508C739 471 766 449 804 449H1261C1300 449 1324 474 1324 511V720H739Z" fill="#49417f" />
+          <path d="M784 485H1002C1031 485 1048 502 1048 531V654H768V501C768 492 775 485 784 485Z" fill="#665bad" />
+          <path d="M1077 485H1265C1282 485 1294 499 1294 516V654H1058V505C1058 494 1066 485 1077 485Z" fill="#5a4f9c" />
+          <path d="M729 616H1337V761C1337 791 1314 810 1285 810H780C750 810 729 791 729 761Z" fill="#514785" />
+          <path d="M741 628H1326V684H741Z" fill="#7163b8" />
+          <path d="M690 571C690 544 710 528 737 528H779V811H733C707 811 690 791 690 766Z" fill="#453d77" />
+          <path d="M1293 533H1334C1360 533 1376 551 1376 578V765C1376 793 1359 811 1332 811H1293Z" fill="#453d77" />
+          <path d="M762 810H814L804 853H774Z" fill="#29234e" />
+          <path d="M1265 810H1316L1306 853H1274Z" fill="#29234e" />
+        </g>
+
+        <g class="blanket">
+          <path d="M1060 633C1148 612 1231 634 1310 670V792H1028C1041 736 1048 682 1060 633Z" fill="#292d57" />
+          <path d="M1089 648C1168 637 1239 657 1310 688V714C1234 678 1167 667 1084 680Z" fill="#353b70" />
+          <path d="M1078 705C1167 689 1235 713 1310 743V766C1227 734 1167 720 1073 738Z" fill="#353b70" />
+        </g>
+
+        <g class="listener">
+          <path d="M867 478C894 454 935 448 973 459C1018 473 1047 512 1055 569L1073 685H836L824 584C817 536 834 501 867 478Z" fill="#c80028" />
+          <path d="M915 464H966L973 505C950 520 923 515 902 497Z" fill="#9f5e51" />
+          <circle cx="938" cy="394" r="70" fill="#b8715e" />
+          <path d="M873 389C876 330 909 306 951 306C1001 306 1028 341 1013 401C996 380 976 359 934 353C918 380 897 396 873 405Z" fill="#24213f" />
+          <path d="M1008 363C1030 374 1039 407 1027 435L1006 426Z" fill="#24213f" />
+          <path d="M913 447C933 455 956 453 974 442" fill="none" stroke="#8d4f48" stroke-width="8" stroke-linecap="round" />
+
+          <path d="M880 343C901 302 977 290 1010 341" fill="none" stroke="#ffb43a" stroke-width="18" stroke-linecap="round" />
+          <rect x="867" y="363" width="31" height="80" rx="15" fill="#d78926" transform="rotate(-5 867 363)" />
+          <rect x="995" y="360" width="31" height="80" rx="15" fill="#d78926" transform="rotate(8 995 360)" />
+          <rect x="875" y="378" width="19" height="48" rx="9" fill="#ffd98c" />
+          <rect x="1001" y="376" width="19" height="48" rx="9" fill="#ffd98c" transform="rotate(8 1001 376)" />
+
+          <path d="M850 549C809 585 794 635 777 680" fill="none" stroke="#c80028" stroke-width="50" stroke-linecap="round" />
+          <path d="M779 671C763 693 759 716 772 730C785 743 807 731 817 711L832 681Z" fill="#b8715e" />
+
+          <path d="M1018 540C1053 558 1080 590 1100 628" fill="none" stroke="#a60023" stroke-width="48" stroke-linecap="round" />
+          <path d="M1092 620C1110 641 1118 665 1107 680C1096 694 1072 685 1060 667L1044 641Z" fill="#b8715e" />
+
+          <path d="M842 660C910 646 986 651 1053 679C1094 696 1120 725 1149 756L1091 807C1047 766 1010 741 949 731C893 723 850 738 812 757Z" fill="#303764" />
+          <path d="M1100 788C1174 801 1239 808 1305 817L1289 866C1201 864 1127 854 1059 836Z" fill="#252b52" />
+          <path d="M1280 825L1357 838C1373 841 1382 858 1375 872C1369 884 1356 888 1343 885L1270 867Z" fill="#bdb7df" />
+
+          <g class="phone" transform="rotate(12 1088 635)">
+            <rect x="1060" y="582" width="58" height="107" rx="13" fill="#0d1026" />
+            <rect x="1067" y="592" width="44" height="84" rx="8" fill="#8b7ceb" />
+            <circle cx="1089" cy="624" r="14" fill="#ffb43a" />
+            <path d="M1075 654C1084 641 1093 644 1098 651C1103 658 1107 656 1111 650V676H1067V665C1071 663 1073 659 1075 654Z" fill="#c80028" />
+            <rect x="1082" y="586" width="15" height="3" rx="2" fill="#31365c" />
+          </g>
+        </g>
+
+        <g class="record">
+          <path d="M500 731L661 714L679 856L517 872Z" fill="#e95655" />
+          <path d="M500 731L661 714L653 781L509 796Z" fill="#ffbd4a" />
+          <circle cx="600" cy="803" r="52" fill="#191a2e" />
+          <circle cx="600" cy="803" r="17" fill="#7a6bd6" />
+          <circle cx="600" cy="803" r="4" fill="#ffcf73" />
+          <path d="M517 752L582 745" stroke="#1a1b33" stroke-width="12" stroke-linecap="round" />
+          <path d="M520 773L561 769" stroke="#1a1b33" stroke-width="7" stroke-linecap="round" />
+        </g>
+
+        <g class="side-table">
+          <ellipse cx="1453" cy="657" rx="105" ry="29" fill="#7a6bd6" />
+          <path d="M1348 657H1558V679H1348Z" fill="#554b92" />
+          <path d="M1379 677H1401L1381 855H1357Z" fill="#312b5c" />
+          <path d="M1507 677H1529L1548 855H1524Z" fill="#312b5c" />
+          <rect x="1407" y="601" width="80" height="56" rx="8" fill="#ffb43a" />
+          <path d="M1419 623H1475" stroke="#1a1b33" stroke-width="9" stroke-linecap="round" />
+          <path d="M1419 641H1458" stroke="#c80028" stroke-width="7" stroke-linecap="round" />
+        </g>
+      </g>
+    </svg>
+
+    <div class="shade" aria-hidden="true"></div>
+
+    <section class="intro" aria-labelledby="night-title">
+      <div class="brand">
+        <Mark size={27} decorative />
+        <strong>{NAME}</strong>
+        <span>Self-hosted music player</span>
+      </div>
+
+      <h1 id="night-title">{HERO_COPY.headline}</h1>
+      <p class="lede">{HERO_COPY.body}</p>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View on GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+
+      <p class="support">{HERO_COPY.support}</p>
+    </section>
+
+    <div class="works" aria-label="Works with Plex, Jellyfin, Navidrome and Subsonic">
+      <span>Works with</span>
+      <strong>Plex</strong>
+      <i aria-hidden="true"></i>
+      <strong>Jellyfin</strong>
+      <i aria-hidden="true"></i>
+      <strong>Navidrome</strong>
+      <i aria-hidden="true"></i>
+      <strong>Subsonic</strong>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  :global(html),
+  :global(body) {
+    width: 100%;
+    overflow: hidden;
+    background: #1a1b33;
+  }
+
+  :global(body) {
+    color: #fff8ed;
+    font-family: 'Geologica', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .night {
+    --night: #1a1b33;
+    --night-deep: #0d1026;
+    --amber: #ffb43a;
+    --cream: #fff8ed;
+    --violet: #7a6bd6;
+    --red: #c80028;
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    min-height: 620px;
+    overflow: clip;
+    isolation: isolate;
+    background: var(--night);
+  }
+
+  .room-art {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .shade {
+    position: absolute;
+    inset: 42px 0 auto;
+    z-index: 1;
+    height: 520px;
+    background: linear-gradient(100deg, rgba(13, 16, 38, 0.9) 0%, rgba(13, 16, 38, 0.62) 34%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .intro {
+    position: absolute;
+    top: clamp(78px, 10svh, 105px);
+    left: clamp(28px, 5.5vw, 82px);
+    z-index: 2;
+    width: min(570px, calc(100% - 56px));
+    animation: arrive 700ms cubic-bezier(0.16, 0.78, 0.25, 1) both;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 20px;
+  }
+
+  .brand strong {
+    font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    font-size: 21px;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+  }
+
+  .brand > span:last-child {
+    margin-left: 5px;
+    padding-left: 14px;
+    color: rgba(255, 248, 237, 0.66);
+    border-left: 1px solid rgba(255, 248, 237, 0.27);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 560px;
+    font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(49px, 5vw, 75px);
+    font-weight: 650;
+    line-height: 0.91;
+    letter-spacing: -0.065em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 535px;
+    margin-top: 20px;
+    color: rgba(255, 248, 237, 0.8);
+    font-size: clamp(14px, 1.25vw, 17px);
+    font-weight: 400;
+    line-height: 1.58;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .store {
+    color: #211425;
+    background: var(--amber);
+    box-shadow: 0 10px 0 rgba(13, 16, 38, 0.25);
+  }
+
+  .store.is-pending {
+    cursor: default;
+  }
+
+  .source {
+    color: var(--cream);
+    border: 1px solid rgba(255, 248, 237, 0.36);
+    background: rgba(26, 27, 51, 0.52);
+    backdrop-filter: blur(8px);
+  }
+
+  .source span {
+    margin-left: 7px;
+  }
+
+  .source:hover {
+    border-color: var(--amber);
+    background: rgba(26, 27, 51, 0.82);
+  }
+
+  .source:focus-visible {
+    outline: 3px solid var(--amber);
+    outline-offset: 4px;
+  }
+
+  .support {
+    margin-top: 15px;
+    color: rgba(255, 248, 237, 0.6);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.015em;
+  }
+
+  .works {
+    position: absolute;
+    bottom: 30px;
+    left: clamp(28px, 5.5vw, 82px);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: rgba(255, 248, 237, 0.78);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .works > span {
+    margin-right: 4px;
+    color: rgba(255, 248, 237, 0.46);
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .works strong {
+    font-weight: 500;
+  }
+
+  .works i {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--amber);
+    opacity: 0.8;
+  }
+
+  .star-one {
+    animation: twinkle 3.8s ease-in-out infinite;
+  }
+
+  .star-two {
+    animation: twinkle 3.8s 1.2s ease-in-out infinite;
+  }
+
+  .lamp-glow {
+    animation: breathe 4.5s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @keyframes arrive {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% { opacity: 0.14; transform: scale(0.96); }
+    50% { opacity: 0.24; transform: scale(1.05); }
+  }
+
+  @media (max-width: 700px) {
+    .night {
+      min-height: 700px;
+    }
+
+    .room-art {
+      object-position: 50% 50%;
+    }
+
+    .lamp,
+    .lamp-light {
+      transform: translateY(125px);
+    }
+
+    .shade {
+      inset: 42px 0 auto;
+      height: 555px;
+      background: linear-gradient(to bottom, rgba(13, 16, 38, 0.98) 0%, rgba(13, 16, 38, 0.91) 61%, rgba(13, 16, 38, 0.22) 92%, transparent 100%);
+    }
+
+    .intro {
+      top: 64px;
+      left: 20px;
+      width: calc(100% - 40px);
+    }
+
+    .brand {
+      margin-bottom: 15px;
+    }
+
+    .brand > span:last-child {
+      margin-left: auto;
+      padding-left: 10px;
+      font-size: 8px;
+      letter-spacing: 0.09em;
+    }
+
+    h1 {
+      max-width: 345px;
+      font-size: clamp(42px, 12.5vw, 50px);
+      line-height: 0.91;
+    }
+
+    .lede {
+      max-width: 350px;
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.46;
+    }
+
+    .actions {
+      gap: 8px;
+      margin-top: 17px;
+    }
+
+    .store,
+    .source {
+      min-height: 40px;
+      padding-inline: 14px;
+      font-size: 11px;
+    }
+
+    .support {
+      max-width: 335px;
+      margin-top: 12px;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .works {
+      bottom: 17px;
+      left: 20px;
+      max-width: calc(100% - 40px);
+      flex-wrap: wrap;
+      gap: 7px 9px;
+      padding: 9px 12px;
+      color: rgba(255, 248, 237, 0.82);
+      border-radius: 12px;
+      background: rgba(13, 16, 38, 0.72);
+      font-size: 9px;
+      white-space: normal;
+      backdrop-filter: blur(8px);
+    }
+
+    .works > span {
+      width: 100%;
+      margin: 0 0 1px;
+    }
+  }
+
+  @media (max-width: 370px) {
+    .brand > span:last-child {
+      display: none;
+    }
+
+    .store,
+    .source {
+      padding-inline: 12px;
+      font-size: 10px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro,
+    .star-one,
+    .star-two,
+    .lamp-glow {
+      animation: none;
+    }
+  }
+</style>

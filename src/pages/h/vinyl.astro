@@ -1,0 +1,582 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Play music from your own Plex, Jellyfin, Navidrome or Subsonic server. Stream at home or download albums for offline listening."
+  themeColor="#f0e2c8"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=IBM+Plex+Mono:wght@500;600&family=Spline+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="vinyl" />
+
+  <main class="hero">
+    <section class="intro" aria-labelledby="vinyl-title">
+      <div class="identity">
+        <Mark size={30} decorative />
+        <span class="wordmark">Mozz</span>
+        <span class="category">Self-hosted music player</span>
+      </div>
+
+      <h1 id="vinyl-title">A free player for your <span>self-hosted music.</span></h1>
+      <p class="lede">
+        Play music from your own Plex, Jellyfin, Navidrome or Subsonic server on iPhone and
+        iPad. Stream from home or download albums for offline listening.
+      </p>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source</a>
+      </div>
+
+      <p class="support">
+        <span>Also on the record</span>
+        Radio · Mozz Weekly · Free forever · Open source
+      </p>
+    </section>
+
+    <figure class="illustration">
+      <svg
+        class="record-player"
+        viewBox="0 0 1100 900"
+        role="img"
+        aria-label="A large black vinyl record turning beneath a silver tonearm"
+      >
+        <defs>
+          <radialGradient id="wax" cx="34%" cy="27%" r="78%">
+            <stop offset="0" stop-color="#3e3935" />
+            <stop offset=".42" stop-color="#26221f" />
+            <stop offset=".78" stop-color="#171412" />
+            <stop offset="1" stop-color="#080706" />
+          </radialGradient>
+          <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#574f49" />
+            <stop offset=".34" stop-color="#13110f" />
+            <stop offset=".72" stop-color="#050403" />
+            <stop offset="1" stop-color="#413a35" />
+          </linearGradient>
+          <linearGradient id="sheen" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff5e4" stop-opacity="0" />
+            <stop offset=".42" stop-color="#fff5e4" stop-opacity=".04" />
+            <stop offset=".58" stop-color="#fff5e4" stop-opacity=".34" />
+            <stop offset=".75" stop-color="#fff5e4" stop-opacity=".08" />
+            <stop offset="1" stop-color="#fff5e4" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#776f68" />
+            <stop offset=".2" stop-color="#e9ddcd" />
+            <stop offset=".48" stop-color="#fff8e9" />
+            <stop offset=".74" stop-color="#b3a99e" />
+            <stop offset="1" stop-color="#625b55" />
+          </linearGradient>
+          <clipPath id="disc-clip">
+            <circle cx="500" cy="500" r="410" />
+          </clipPath>
+          <clipPath id="label-clip">
+            <circle cx="500" cy="500" r="121" />
+          </clipPath>
+          <filter id="disc-shadow" x="-30%" y="-30%" width="160%" height="170%">
+            <feDropShadow dx="3" dy="26" stdDeviation="24" flood-color="#3c241c" flood-opacity=".4" />
+          </filter>
+          <filter id="arm-shadow" x="-60%" y="-30%" width="220%" height="180%">
+            <feDropShadow dx="-7" dy="14" stdDeviation="10" flood-color="#2a1812" flood-opacity=".38" />
+          </filter>
+        </defs>
+
+        <circle cx="500" cy="500" r="410" fill="#120f0d" filter="url(#disc-shadow)" />
+
+        <g class="platter">
+          <circle cx="500" cy="500" r="410" fill="url(#rim)" />
+          <circle cx="500" cy="500" r="397" fill="url(#wax)" />
+          <circle cx="500" cy="500" r="389" fill="none" stroke="#746960" stroke-width="2" opacity=".3" />
+          <circle cx="500" cy="500" r="373" fill="none" stroke="#100e0c" stroke-width="17" opacity=".84" />
+
+          <g class="grooves" fill="none">
+            <circle cx="500" cy="500" r="365" />
+            <circle cx="500" cy="500" r="356" />
+            <circle cx="500" cy="500" r="348" />
+            <circle cx="500" cy="500" r="340" />
+            <circle cx="500" cy="500" r="331" />
+            <circle cx="500" cy="500" r="322" />
+            <circle cx="500" cy="500" r="314" />
+            <circle cx="500" cy="500" r="305" />
+            <circle cx="500" cy="500" r="297" />
+            <circle cx="500" cy="500" r="288" />
+            <circle cx="500" cy="500" r="279" />
+            <circle cx="500" cy="500" r="270" />
+            <circle cx="500" cy="500" r="261" />
+            <circle cx="500" cy="500" r="252" />
+            <circle cx="500" cy="500" r="243" />
+            <circle cx="500" cy="500" r="234" />
+            <circle cx="500" cy="500" r="225" />
+            <circle cx="500" cy="500" r="216" />
+            <circle cx="500" cy="500" r="207" />
+            <circle cx="500" cy="500" r="198" />
+            <circle cx="500" cy="500" r="189" />
+            <circle cx="500" cy="500" r="180" />
+            <circle cx="500" cy="500" r="171" />
+            <circle cx="500" cy="500" r="162" />
+            <circle cx="500" cy="500" r="153" />
+            <circle cx="500" cy="500" r="144" />
+            <circle cx="500" cy="500" r="135" />
+          </g>
+
+          <g fill="none" stroke="#9a8d82" opacity=".13">
+            <circle cx="500" cy="500" r="336" stroke-width="7" />
+            <circle cx="500" cy="500" r="284" stroke-width="5" />
+            <circle cx="500" cy="500" r="229" stroke-width="8" />
+            <circle cx="500" cy="500" r="178" stroke-width="5" />
+          </g>
+
+          <circle cx="500" cy="500" r="124" fill="#e8b44f" />
+          <circle cx="500" cy="500" r="119" fill="#c80028" />
+          <g clip-path="url(#label-clip)">
+            <path d="M371 532 Q500 458 629 532 L629 635 L371 635Z" fill="#ef8f6a" />
+            <path
+              d="M374 477 Q500 420 626 477"
+              fill="none"
+              stroke="#e8b44f"
+              stroke-width="15"
+            />
+          </g>
+          <circle cx="500" cy="500" r="105" fill="none" stroke="#fff0d6" stroke-width="1.5" opacity=".58" />
+          <text class="label-mono" x="500" y="450" text-anchor="middle">MOZZ RECORDS</text>
+          <text class="label-title" x="500" y="498" text-anchor="middle">MOZZ</text>
+          <text class="label-mono label-small" x="500" y="527" text-anchor="middle">YOUR MUSIC · SIDE A</text>
+          <text class="label-mono label-small label-bottom" x="500" y="568" text-anchor="middle">
+            FREE FOREVER · 33⅓
+          </text>
+          <circle cx="500" cy="500" r="17" fill="#edc875" />
+          <circle cx="500" cy="500" r="6" fill="#26221f" />
+        </g>
+
+        <g class="light-rake" clip-path="url(#disc-clip)" fill="none">
+          <path
+            d="M110 805 C287 694 309 331 799 112"
+            stroke="url(#sheen)"
+            stroke-width="122"
+            stroke-linecap="round"
+          />
+          <path
+            d="M184 820 C338 667 384 334 827 165"
+            stroke="#fff8e8"
+            stroke-width="11"
+            stroke-linecap="round"
+            opacity=".19"
+          />
+          <path
+            d="M131 660 C293 589 345 279 706 112"
+            stroke="#fff8e8"
+            stroke-width="3"
+            stroke-linecap="round"
+            opacity=".3"
+          />
+        </g>
+
+        <g class="tonearm" filter="url(#arm-shadow)">
+          <circle cx="963" cy="139" r="77" fill="#332e2a" />
+          <circle cx="963" cy="139" r="66" fill="url(#metal)" stroke="#655e57" stroke-width="4" />
+          <circle cx="963" cy="139" r="43" fill="#24211e" stroke="#a79b8e" stroke-width="7" />
+          <circle cx="963" cy="139" r="17" fill="#d9cfc1" />
+          <path
+            d="M963 174 C975 331 921 491 815 632"
+            fill="none"
+            stroke="#4b423b"
+            stroke-width="42"
+            stroke-linecap="round"
+          />
+          <path
+            d="M963 174 C975 331 921 491 815 632"
+            fill="none"
+            stroke="url(#metal)"
+            stroke-width="28"
+            stroke-linecap="round"
+          />
+          <path
+            d="M956 178 C968 330 913 484 809 623"
+            fill="none"
+            stroke="#fff7e9"
+            stroke-width="4"
+            stroke-linecap="round"
+            opacity=".66"
+          />
+          <path d="M832 610 L775 655 L791 698 L853 643Z" fill="#292522" stroke="#746a61" stroke-width="5" />
+          <path d="M795 692 L768 718" stroke="#b7aca0" stroke-width="5" stroke-linecap="round" />
+          <circle cx="767" cy="720" r="6" fill="#c80028" />
+        </g>
+      </svg>
+    </figure>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #f0e2c8;
+  }
+
+  :global(body) {
+    min-width: 0;
+    color: #26221f;
+    background:
+      radial-gradient(circle at 14% 24%, rgba(255, 248, 229, 0.78), transparent 29rem),
+      radial-gradient(circle at 88% 72%, rgba(186, 116, 74, 0.14), transparent 32rem),
+      #f0e2c8;
+    font-family: 'Spline Sans', 'Avenir Next', system-ui;
+  }
+
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100svh;
+    padding-top: 42px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero::before {
+    position: absolute;
+    inset: 42px 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, #c80028 0 42%, #e8b44f 42% 73%, #26221f 73%);
+    content: '';
+  }
+
+  .intro {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(100%, 68rem);
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4.7svh, 2.8rem) 1.5rem 0;
+    text-align: center;
+  }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.105em;
+    text-transform: uppercase;
+  }
+
+  .wordmark {
+    font-family: 'Bricolage Grotesque', 'Arial Black', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    text-transform: none;
+  }
+
+  .category {
+    padding-left: 0.75rem;
+    border-left: 2px solid #c80028;
+  }
+
+  h1 {
+    max-width: 56rem;
+    margin-top: clamp(0.75rem, 2.1svh, 1.25rem);
+    font-family: 'Bricolage Grotesque', 'Arial Black', sans-serif;
+    font-size: clamp(2.8rem, 5.4vw, 5rem);
+    font-stretch: 88%;
+    font-weight: 800;
+    line-height: 0.91;
+    letter-spacing: -0.065em;
+    text-wrap: balance;
+  }
+
+  h1 span {
+    color: #c80028;
+  }
+
+  .lede {
+    max-width: 47rem;
+    margin-top: clamp(0.8rem, 2svh, 1.15rem);
+    font-size: clamp(0.92rem, 1.25vw, 1.05rem);
+    line-height: 1.47;
+    text-wrap: balance;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: clamp(0.9rem, 2.2svh, 1.3rem);
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 2.7rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.1rem;
+    border: 2px solid #26221f;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .store {
+    color: #fff5e4;
+    background: #c80028;
+    border-color: #c80028;
+  }
+
+  .is-pending {
+    cursor: default;
+  }
+
+  .source {
+    background: rgba(255, 245, 228, 0.38);
+    transition:
+      color 160ms ease,
+      background 160ms ease;
+  }
+
+  .source:hover {
+    color: #fff5e4;
+    background: #26221f;
+  }
+
+  .source:focus-visible {
+    outline: 3px solid #c80028;
+    outline-offset: 3px;
+  }
+
+  .support {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+    padding: 0.2rem 0.45rem;
+    background: rgba(240, 226, 200, 0.94);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: clamp(0.57rem, 0.8vw, 0.68rem);
+    font-weight: 600;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  .support span {
+    padding: 0.35rem 0.5rem;
+    color: #fff5e4;
+    background: #26221f;
+  }
+
+  .illustration {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-height: 28rem;
+    margin: -1.3rem 0 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .record-player {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(70rem, 100%);
+    height: auto;
+    max-width: 100%;
+    transform: translate(-50%, -54%);
+  }
+
+  .platter {
+    transform-origin: 500px 500px;
+    animation: turn 18s linear infinite;
+  }
+
+  .grooves {
+    stroke: #8d8177;
+    stroke-width: 1.35;
+    opacity: 0.31;
+  }
+
+  .label-title {
+    fill: #fff0d6;
+    font-family: 'Bricolage Grotesque', 'Arial Black', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -2px;
+  }
+
+  .label-mono {
+    fill: #fff0d6;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+  }
+
+  .label-small {
+    font-size: 9px;
+    letter-spacing: 1.8px;
+  }
+
+  .label-bottom {
+    fill: #6f1b21;
+  }
+
+  .light-rake {
+    transform-origin: 500px 500px;
+    animation: rake 7s ease-in-out infinite alternate;
+  }
+
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes rake {
+    from {
+      transform: rotate(-2deg);
+      opacity: 0.72;
+    }
+    to {
+      transform: rotate(3deg);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero::before {
+      background: linear-gradient(90deg, #c80028 0 50%, #e8b44f 50% 77%, #26221f 77%);
+    }
+
+    .intro {
+      padding: 1rem 1rem 0;
+    }
+
+    .identity {
+      gap: 0.5rem;
+      font-size: 0.56rem;
+      letter-spacing: 0.07em;
+    }
+
+    .wordmark {
+      font-size: 1rem;
+    }
+
+    .category {
+      padding-left: 0.5rem;
+    }
+
+    h1 {
+      max-width: 22rem;
+      margin-top: 0.7rem;
+      font-size: clamp(2.45rem, 11.4vw, 3.05rem);
+      line-height: 0.92;
+    }
+
+    .lede {
+      max-width: 22rem;
+      margin-top: 0.72rem;
+      font-size: 0.82rem;
+      line-height: 1.38;
+    }
+
+    .actions {
+      width: 100%;
+      gap: 0.45rem;
+      margin-top: 0.78rem;
+    }
+
+    .store,
+    .source {
+      min-height: 2.45rem;
+      padding: 0.58rem 0.7rem;
+      font-size: 0.68rem;
+    }
+
+    .support {
+      display: block;
+      margin-top: 0.66rem;
+      padding: 0.12rem 0.25rem;
+      font-size: 0.53rem;
+      line-height: 1.75;
+    }
+
+    .support span {
+      margin-right: 0.35rem;
+      padding: 0.2rem 0.3rem;
+    }
+
+    .illustration {
+      min-height: 22rem;
+      margin-top: -0.4rem;
+    }
+
+    .record-player {
+      top: 50%;
+      width: 100%;
+      max-width: 100%;
+      transform: translate(-50%, -48%) scale(1.63);
+    }
+  }
+
+  @media (max-width: 350px) {
+    .category {
+      display: none;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-height: 740px) and (min-width: 641px) {
+    .intro {
+      padding-top: 1.1rem;
+    }
+
+    h1 {
+      margin-top: 0.6rem;
+      font-size: clamp(2.8rem, 4.8vw, 4.2rem);
+    }
+
+    .lede {
+      margin-top: 0.55rem;
+    }
+
+    .actions {
+      margin-top: 0.65rem;
+    }
+
+    .support {
+      margin-top: 0.55rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .platter,
+    .light-rake {
+      animation: none;
+    }
+  }
+</style>

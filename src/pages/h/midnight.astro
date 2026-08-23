@@ -1,0 +1,1044 @@
+---
+/**
+ * Midnight — the app set.
+ *
+ * A dark room at the end of the day. The Mozz now playing screen is the only
+ * light in it: the artwork throws a cool cast onto the wall behind, a pool of
+ * it onto the surface the phone stands on, and everything further away falls
+ * off into shape rather than flat black. The writing stays quiet and sits in
+ * the dark where it is still comfortably legible.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+import { HERO_COPY } from '../../data/hero-copy';
+
+const headline = 'Mozz is a free player for your self-hosted music.';
+
+/** Invented, so the cover and the credits belong to nobody. */
+const NOW = {
+  title: 'Long Way Round',
+  artist: 'Talvi Fields',
+  elapsed: '2:41',
+  remaining: '-1:58',
+  clock: '1:47',
+};
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz plays the music on your own Plex, Jellyfin, Navidrome or Subsonic server, on iPhone and iPad. Stream it at home or download albums and listen offline. Free forever, open source."
+  themeColor="#05060c"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="midnight" />
+
+  <main class="page">
+    <div class="wall" aria-hidden="true"></div>
+    <div class="corner" aria-hidden="true"></div>
+    <span class="led" aria-hidden="true"></span>
+    <div class="bloom" aria-hidden="true"></div>
+    <div class="floor" aria-hidden="true"></div>
+
+    <div class="prop prop-sleeves" aria-hidden="true">
+      <svg viewBox="0 0 240 180" focusable="false">
+        <defs>
+          <linearGradient id="mnSleeveA" x1="1" y1="0" x2="0.1" y2="1">
+            <stop offset="0" stop-color="#2b3855" />
+            <stop offset="0.45" stop-color="#141b2b" />
+            <stop offset="1" stop-color="#080b13" />
+          </linearGradient>
+          <linearGradient id="mnSleeveB" x1="1" y1="0.1" x2="0.2" y2="1">
+            <stop offset="0" stop-color="#1d2740" />
+            <stop offset="0.5" stop-color="#0e1420" />
+            <stop offset="1" stop-color="#070910" />
+          </linearGradient>
+          <radialGradient id="mnDisk" cx="0.62" cy="0.4" r="0.72">
+            <stop offset="0" stop-color="#1b2740" />
+            <stop offset="0.55" stop-color="#0d1320" />
+            <stop offset="1" stop-color="#070a11" />
+          </radialGradient>
+        </defs>
+        <!-- a record halfway out of its sleeve -->
+        <g transform="translate(6 0)">
+          <circle cx="168" cy="96" r="56" fill="url(#mnDisk)" />
+          <path d="M168 40 A 56 56 0 0 1 168 152" fill="none" stroke="#5eead4" stroke-opacity="0.2" stroke-width="2.2" />
+          <path d="M186 46 A 56 56 0 0 1 186 146" fill="none" stroke="#5eead4" stroke-opacity="0.12" stroke-width="1" />
+          <circle cx="168" cy="96" r="18" fill="#151d2e" />
+          <path d="M168 78 A 18 18 0 0 1 168 114" fill="none" stroke="#5eead4" stroke-opacity="0.16" stroke-width="1.4" />
+        </g>
+        <g transform="rotate(-7 76 102)">
+          <rect x="10" y="36" width="120" height="120" rx="3" fill="url(#mnSleeveB)" />
+          <path d="M130 39 L130 153" stroke="#5eead4" stroke-opacity="0.2" stroke-width="2" stroke-linecap="round" />
+        </g>
+        <g transform="rotate(4 116 106)">
+          <rect x="52" y="46" width="118" height="118" rx="3" fill="url(#mnSleeveA)" />
+          <path d="M170 49 L170 161" stroke="#5eead4" stroke-opacity="0.24" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M56 49 L168 49" stroke="#5eead4" stroke-opacity="0.16" stroke-width="1.6" stroke-linecap="round" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="prop prop-cans" aria-hidden="true">
+      <svg viewBox="0 0 240 172" focusable="false">
+        <defs>
+          <linearGradient id="mnBand" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1a2334" />
+            <stop offset="0.45" stop-color="#111826" />
+            <stop offset="1" stop-color="#0a0e17" />
+          </linearGradient>
+        </defs>
+        <!-- headband -->
+        <path d="M62 124 C 52 30, 188 30, 178 124" fill="none" stroke="url(#mnBand)" stroke-width="19" stroke-linecap="round" />
+        <path
+          d="M64 118 C 56 44, 150 30, 176 56"
+          fill="none"
+          stroke="#5eead4"
+          stroke-opacity="0.16"
+          stroke-width="2.6"
+          stroke-linecap="round"
+          transform="translate(-4 -5)"
+        />
+        <!-- cups -->
+        <ellipse cx="58" cy="126" rx="27" ry="33" transform="rotate(-8 58 126)" fill="#131a2a" />
+        <ellipse cx="58" cy="126" rx="27" ry="33" transform="rotate(-8 58 126)" fill="none" stroke="#5eead4" stroke-opacity="0.2" stroke-width="2" />
+        <ellipse cx="58" cy="126" rx="16" ry="21" transform="rotate(-8 58 126)" fill="#070a12" />
+        <ellipse cx="182" cy="126" rx="27" ry="33" transform="rotate(8 182 126)" fill="#0c111c" />
+        <ellipse cx="182" cy="126" rx="27" ry="33" transform="rotate(8 182 126)" fill="none" stroke="#5eead4" stroke-opacity="0.14" stroke-width="1.6" />
+        <!-- cable -->
+        <path d="M48 154 C 36 166, 24 158, 4 164" fill="none" stroke="#101725" stroke-width="4.5" stroke-linecap="round" />
+      </svg>
+    </div>
+
+    <div class="grain" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <div class="stage">
+      <p class="brand">
+        <Mark size={24} decorative />
+        <span class="wordmark">Mozz</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span class="kicker">self-hosted music player</span>
+      </p>
+
+      <h1 class="headline">{headline}</h1>
+
+      <div class="scene">
+        <div class="say">
+          <p class="body">{HERO_COPY.body}</p>
+          <p class="support">{HERO_COPY.support}</p>
+        </div>
+
+        <div class="device">
+          <div
+            class="phone"
+            role="img"
+            aria-label={`The Mozz now playing screen at night: a downloaded album from a Jellyfin server, cover art, the track ${NOW.title} by ${NOW.artist}, a progress bar and playback controls.`}
+          >
+            <div class="screen">
+              <span class="island" aria-hidden="true"></span>
+
+              <div class="status">
+                <span class="clock">{NOW.clock}</span>
+                <span class="cell" aria-hidden="true">
+                  <svg viewBox="0 0 30 12" focusable="false">
+                    <rect x="0.6" y="1.2" width="21" height="9.6" rx="3" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.7" />
+                    <rect x="2.2" y="2.8" width="14" height="6.4" rx="1.6" fill="currentColor" opacity="0.85" />
+                    <path d="M23.6 4.6v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+                  </svg>
+                </span>
+              </div>
+
+              <p class="chip">
+                <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                  <path d="M8 2.6v7.2m0 0 3-3m-3 3-3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M3 12.4h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                Downloaded · Jellyfin
+              </p>
+
+              <div class="art">
+                <svg viewBox="0 0 120 120" focusable="false" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="mnField" x1="0" y1="0" x2="0.3" y2="1">
+                      <stop offset="0" stop-color="#16234c" />
+                      <stop offset="0.5" stop-color="#0b1230" />
+                      <stop offset="1" stop-color="#05070f" />
+                    </linearGradient>
+                    <radialGradient id="mnHalo" cx="0.5" cy="0.5" r="0.5">
+                      <stop offset="0" stop-color="#5eead4" stop-opacity="0.5" />
+                      <stop offset="0.6" stop-color="#5eead4" stop-opacity="0.12" />
+                      <stop offset="1" stop-color="#5eead4" stop-opacity="0" />
+                    </radialGradient>
+                    <linearGradient id="mnDisc" x1="0.2" y1="0" x2="0.8" y2="1">
+                      <stop offset="0" stop-color="#dffdf4" />
+                      <stop offset="0.42" stop-color="#5eead4" />
+                      <stop offset="1" stop-color="#1c8f7e" />
+                    </linearGradient>
+                    <clipPath id="mnDiscClip">
+                      <circle cx="60" cy="70" r="26" />
+                    </clipPath>
+                  </defs>
+                  <rect width="120" height="120" fill="url(#mnField)" />
+                  <circle cx="60" cy="70" r="52" fill="url(#mnHalo)" />
+                  <circle cx="60" cy="70" r="26" fill="url(#mnDisc)" />
+                  <g clip-path="url(#mnDiscClip)" fill="#06131b" opacity="0.55">
+                    <rect x="30" y="56" width="60" height="2.4" />
+                    <rect x="30" y="64" width="60" height="3.4" />
+                    <rect x="30" y="74" width="60" height="4.6" />
+                    <rect x="30" y="86" width="60" height="6" />
+                  </g>
+                  <path d="M6 104 L114 30" stroke="#c80028" stroke-width="1.6" stroke-linecap="round" opacity="0.92" />
+                  <path d="M6 111 L114 37" stroke="#c80028" stroke-width="0.8" stroke-linecap="round" opacity="0.35" />
+                  <g fill="#e8e6f0" opacity="0.5">
+                    <circle cx="22" cy="24" r="1" />
+                    <circle cx="41" cy="15" r="0.7" />
+                    <circle cx="96" cy="20" r="0.9" />
+                    <circle cx="82" cy="33" r="0.6" />
+                  </g>
+                </svg>
+              </div>
+
+              <div class="meta">
+                <div class="titles">
+                  <p class="tt">{NOW.title}</p>
+                  <p class="ar">{NOW.artist}</p>
+                </div>
+                <svg class="heart" viewBox="0 0 20 20" focusable="false" aria-hidden="true">
+                  <path
+                    d="M10 16.5S3 12.4 3 7.9A3.9 3.9 0 0 1 10 5.6 3.9 3.9 0 0 1 17 7.9c0 4.5-7 8.6-7 8.6Z"
+                    fill="#c80028"
+                  />
+                </svg>
+              </div>
+
+              <div class="bar" aria-hidden="true"><span class="fill"><i class="knob"></i></span></div>
+              <p class="times" aria-hidden="true"><span>{NOW.elapsed}</span><span>{NOW.remaining}</span></p>
+
+              <div class="transport" aria-hidden="true">
+                <svg class="ic" viewBox="0 0 22 22" focusable="false">
+                  <path d="M2 6h4l10 10h4M16 4l4 2-4 2M2 16h4l3-3M16 18l4-2-4-2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <svg class="ic big" viewBox="0 0 24 24" focusable="false">
+                  <path d="M20 5 9 12l11 7V5Z" fill="currentColor" />
+                  <rect x="4" y="5" width="2.4" height="14" rx="1.2" fill="currentColor" />
+                </svg>
+                <span class="play">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M8.5 5.4 19 12 8.5 18.6V5.4Z" fill="currentColor" /></svg>
+                </span>
+                <svg class="ic big" viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 5l11 7-11 7V5Z" fill="currentColor" />
+                  <rect x="17.6" y="5" width="2.4" height="14" rx="1.2" fill="currentColor" />
+                </svg>
+                <svg class="ic" viewBox="0 0 22 22" focusable="false">
+                  <path d="M5 8h10a3 3 0 0 1 3 3v1M17 5l3 3-3 3M17 14H7a3 3 0 0 1-3-3v-1M5 17l-3-3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+
+              <div class="next" aria-hidden="true">
+                <span class="thumb"></span>
+                <span class="next-text">
+                  <span class="next-label">Up next</span>
+                  <span class="next-title">Harbour Lights · from Mozz Weekly</span>
+                </span>
+                <svg class="ic sm" viewBox="0 0 20 20" focusable="false">
+                  <path d="M4 6h12M4 10h12M4 14h8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </div>
+
+              <div class="tray" aria-hidden="true">
+                <svg class="ic sm" viewBox="0 0 20 20" focusable="false">
+                  <path d="M4 8h3l4-3v10l-4-3H4V8Z" fill="currentColor" />
+                </svg>
+                <span class="vol"><i></i></span>
+                <svg class="ic sm" viewBox="0 0 20 20" focusable="false">
+                  <path d="M10 3.5 16.5 13h-13L10 3.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+                  <rect x="6.6" y="14.4" width="6.8" height="2.4" rx="1.2" fill="currentColor" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <span class="reflect" aria-hidden="true"></span>
+          <span class="pool" aria-hidden="true"></span>
+          <span class="contact" aria-hidden="true"></span>
+        </div>
+
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <span class="dot" aria-hidden="true"></span>Coming to the App Store
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source on GitHub</a>
+
+          <div class="works">
+            <p class="works-label">Works with</p>
+            <ul role="list" class="logos">
+              <li><ServerLogo name="Plex" size={20} /><span>Plex</span></li>
+              <li><ServerLogo name="Jellyfin" size={20} /><span>Jellyfin</span></li>
+              <li><ServerLogo name="Navidrome" size={20} /><span>Navidrome</span></li>
+              <li><span class="txt">Subsonic</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    --ink: #05060c;
+    --mint: #5eead4;
+    --type: #ece9f4;
+    --body: #b6b8cd;
+    --dim: #989bb3;
+    --red: #c80028;
+    --pw: clamp(184px, min(20vw, 28svh), 276px);
+
+    position: relative;
+    min-height: 100svh;
+    max-width: 100%;
+    overflow: clip;
+    background: var(--ink);
+    color: var(--type);
+    font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial;
+    isolation: isolate;
+  }
+
+  .wall,
+  .corner,
+  .bloom,
+  .floor,
+  .grain,
+  .vignette,
+  .prop {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* The light in the room, in layers: a broad cool wash from the screen, a
+     hotter core right behind it, a warm lobe from the red in the artwork, and
+     the base gradient of the wall itself. */
+  .wall {
+    inset: 0;
+    background:
+      radial-gradient(38% 28% at 50% 48%, rgba(94, 234, 212, 0.24), transparent 72%),
+      radial-gradient(80% 72% at 50% 50%, rgba(94, 234, 212, 0.14), rgba(94, 234, 212, 0.045) 44%, transparent 80%),
+      radial-gradient(32% 26% at 50% 68%, rgba(200, 0, 40, 0.16), transparent 76%),
+      radial-gradient(126% 100% at 50% 40%, #10162c 0%, #080b17 46%, #04050b 100%);
+  }
+
+  /* Where the two walls meet, so the dark behind the phone has a corner in it. */
+  .corner {
+    inset: 0 auto 0 0;
+    width: 21%;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.3) 72%, transparent 100%);
+    box-shadow: inset -1px 0 0 rgba(158, 196, 220, 0.06);
+  }
+
+  /* A switched-off amplifier somewhere in the dark, and the only warm light. */
+  .led {
+    position: absolute;
+    right: 13.5%;
+    bottom: 4.5%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff2a4d;
+    box-shadow:
+      0 0 4px 1px rgba(200, 0, 40, 0.9),
+      0 0 26px 8px rgba(200, 0, 40, 0.26);
+    pointer-events: none;
+  }
+
+  .bloom {
+    left: 50%;
+    top: 46%;
+    width: min(680px, 78%);
+    height: min(520px, 52%);
+    transform: translate(-50%, -50%);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(94, 234, 212, 0.3), rgba(94, 234, 212, 0.07) 52%, transparent 76%);
+    filter: blur(46px);
+    mix-blend-mode: screen;
+    animation: mn-breathe 11s ease-in-out infinite;
+  }
+
+  @keyframes mn-breathe {
+    0%,
+    100% {
+      opacity: 0.78;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+  }
+
+  /* The surface the phone stands on. */
+  .floor {
+    inset: auto 0 0 0;
+    height: clamp(130px, 19svh, 210px);
+    background:
+      radial-gradient(52% 120% at 50% 0%, rgba(94, 234, 212, 0.26), rgba(94, 234, 212, 0.07) 48%, transparent 78%),
+      linear-gradient(180deg, rgba(132, 152, 192, 0) 0%, rgba(132, 152, 192, 0.13) 10%, rgba(26, 34, 56, 0.5) 46%, rgba(6, 8, 15, 0.94) 100%);
+  }
+
+  .floor::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 7% 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(180, 205, 226, 0.14) 24%, rgba(196, 232, 226, 0.4) 50%, rgba(180, 205, 226, 0.14) 76%, transparent);
+  }
+
+  .prop svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .prop-sleeves {
+    left: clamp(-3%, 3vw, 6%);
+    bottom: 9%;
+    width: clamp(160px, 17vw, 236px);
+    opacity: 0.8;
+  }
+
+  .prop-cans {
+    right: clamp(-3%, 1.5vw, 3%);
+    bottom: -3%;
+    width: clamp(150px, 16vw, 226px);
+    opacity: 0.62;
+  }
+
+  /* Grain keeps the deep gradients from banding, and gives the black some tooth. */
+  .grain {
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: screen;
+  }
+
+  .vignette {
+    inset: 0;
+    background: radial-gradient(102% 78% at 50% 52%, transparent 42%, rgba(0, 0, 0, 0.62) 100%);
+  }
+
+  .stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100svh;
+    padding: calc(42px + clamp(0.9rem, 2.2svh, 1.6rem)) clamp(1rem, 4vw, 3rem) clamp(3rem, 10.5svh, 6.5rem);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: clamp(0.7rem, 1.8svh, 1.3rem);
+  }
+
+  .wordmark {
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .rule {
+    width: 22px;
+    height: 1px;
+    background: rgba(232, 230, 240, 0.28);
+  }
+
+  .kicker {
+    color: var(--dim);
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .headline {
+    max-width: 22ch;
+    margin: 0;
+    color: var(--type);
+    font-family: 'Newsreader', Georgia;
+    font-optical-sizing: auto;
+    font-size: clamp(1.62rem, 3.5vw, 3.05rem);
+    font-weight: 500;
+    line-height: 1.14;
+    letter-spacing: -0.005em;
+    text-align: center;
+    text-wrap: balance;
+    text-shadow: 0 0 34px rgba(94, 234, 212, 0.16);
+  }
+
+  .scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    gap: clamp(1.2rem, 4vw, 4.2rem);
+    width: 100%;
+    max-width: 1240px;
+    margin-top: auto;
+    padding-top: clamp(0.8rem, 2.4svh, 1.8rem);
+  }
+
+  .say {
+    justify-self: end;
+    max-width: 30ch;
+    padding-bottom: clamp(1rem, 5svh, 3.4rem);
+    text-align: right;
+  }
+
+  .body {
+    color: var(--body);
+    font-size: clamp(0.86rem, 0.95vw, 1rem);
+    line-height: 1.6;
+  }
+
+  .support {
+    margin-top: 0.85rem;
+    color: var(--dim);
+    font-size: clamp(0.78rem, 0.85vw, 0.9rem);
+    line-height: 1.55;
+  }
+
+  .device {
+    position: relative;
+    width: var(--pw);
+  }
+
+  .pool {
+    position: absolute;
+    left: 50%;
+    bottom: -3%;
+    width: 210%;
+    height: 17%;
+    transform: translateX(-50%);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(140, 245, 226, 0.5), rgba(94, 234, 212, 0.16) 44%, transparent 72%);
+    filter: blur(13px);
+    z-index: -1;
+  }
+
+  .contact {
+    position: absolute;
+    left: 50%;
+    bottom: -1.4%;
+    width: 128%;
+    height: 5%;
+    transform: translateX(-50%);
+    background: radial-gradient(50% 50% at 50% 42%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.6) 38%, transparent 72%);
+    filter: blur(7px);
+    z-index: -1;
+  }
+
+  .reflect {
+    position: absolute;
+    top: 99.5%;
+    left: -18%;
+    width: 136%;
+    height: 22%;
+    background:
+      radial-gradient(38% 96% at 50% 0%, rgba(132, 244, 226, 0.5), rgba(94, 234, 212, 0.14) 46%, transparent 78%),
+      radial-gradient(26% 70% at 50% 0%, rgba(86, 132, 210, 0.4), transparent 76%);
+    filter: blur(12px);
+    opacity: 0.85;
+    z-index: -1;
+  }
+
+  /* The phone. Everything inside is sized in em from this font-size, so the
+     whole interface scales with the frame. */
+  .phone {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 19.3;
+    padding: 0.42rem;
+    border-radius: clamp(26px, 3vw, 40px);
+    background: linear-gradient(160deg, #4a5064 0%, #171b27 26%, #0a0d15 60%, #262b3a 100%);
+    box-shadow:
+      0 0 0 1px rgba(150, 170, 200, 0.16),
+      0 34px 70px -18px rgba(0, 0, 0, 0.9),
+      0 0 90px rgba(94, 234, 212, 0.22),
+      0 0 190px rgba(94, 234, 212, 0.12);
+    font-size: calc(var(--pw) * 0.047);
+  }
+
+  .screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0.95em 0.9em 1.05em;
+    border-radius: clamp(21px, 2.4vw, 33px);
+    background: radial-gradient(120% 70% at 50% 34%, #0d1222 0%, #06080f 62%, #04050a 100%);
+    overflow: hidden;
+  }
+
+  .island {
+    position: absolute;
+    top: 1.05em;
+    left: 50%;
+    width: 26%;
+    height: 1.55em;
+    border-radius: 999px;
+    background: #000;
+    transform: translateX(-50%);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgba(236, 233, 244, 0.82);
+    font-size: 0.74em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .cell svg {
+    width: 2.4em;
+    height: auto;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.35em;
+    margin-top: 1.15em;
+    padding: 0.34em 0.72em 0.34em 0.55em;
+    border: 1px solid rgba(94, 234, 212, 0.34);
+    border-radius: 999px;
+    color: #8ff3e1;
+    font-size: 0.7em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .chip svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .art {
+    position: relative;
+    margin-top: 0.85em;
+    border-radius: 0.75em;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(140, 220, 205, 0.18),
+      0 16px 34px -10px rgba(0, 0, 0, 0.85),
+      0 0 44px rgba(94, 234, 212, 0.26);
+  }
+
+  .art svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.6em;
+    margin-top: 1.15em;
+  }
+
+  .titles {
+    min-width: 0;
+  }
+
+  .tt {
+    color: #f4f2fb;
+    font-size: 1.12em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ar {
+    margin-top: 0.12em;
+    color: rgba(200, 202, 220, 0.78);
+    font-size: 0.88em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .heart {
+    width: 1.35em;
+    height: 1.35em;
+    flex: none;
+    filter: drop-shadow(0 0 7px rgba(200, 0, 40, 0.75));
+  }
+
+  .bar {
+    position: relative;
+    height: 0.32em;
+    margin-top: 1.15em;
+    border-radius: 999px;
+    background: rgba(160, 172, 205, 0.2);
+  }
+
+  .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 41%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(94, 234, 212, 0.55), #9df5e4);
+    box-shadow: 0 0 10px rgba(94, 234, 212, 0.6);
+  }
+
+  .knob {
+    position: absolute;
+    right: -0.24em;
+    top: 50%;
+    width: 0.62em;
+    height: 0.62em;
+    border-radius: 50%;
+    background: #ecfffb;
+    transform: translateY(-50%);
+    box-shadow: 0 0 9px rgba(94, 234, 212, 0.9);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5em;
+    color: rgba(178, 182, 205, 0.72);
+    font-size: 0.68em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .transport {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.15em;
+    color: rgba(226, 226, 240, 0.72);
+  }
+
+  .ic {
+    width: 1.35em;
+    height: 1.35em;
+  }
+
+  .ic.big {
+    width: 1.7em;
+    height: 1.7em;
+    color: rgba(240, 240, 250, 0.92);
+  }
+
+  .play {
+    display: grid;
+    place-items: center;
+    width: 3.15em;
+    height: 3.15em;
+    border-radius: 50%;
+    background: radial-gradient(70% 70% at 40% 30%, #ffffff, #ddeaf3);
+    color: #06080f;
+    box-shadow: 0 0 26px rgba(190, 245, 235, 0.5);
+  }
+
+  .play svg {
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  .next {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-top: 1.35em;
+    padding-top: 1.05em;
+    border-top: 1px solid rgba(150, 168, 205, 0.14);
+    color: rgba(190, 194, 214, 0.6);
+  }
+
+  .thumb {
+    width: 2.3em;
+    height: 2.3em;
+    flex: none;
+    border-radius: 0.34em;
+    background: linear-gradient(150deg, #1d2b58 0%, #0e1730 46%, #2f8d80 100%);
+    box-shadow: 0 0 0 1px rgba(140, 220, 205, 0.14);
+  }
+
+  .next-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.16em;
+    min-width: 0;
+  }
+
+  .next-label {
+    color: rgba(143, 243, 225, 0.72);
+    font-size: 0.62em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .next-title {
+    color: rgba(214, 216, 232, 0.8);
+    font-size: 0.78em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tray {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    margin-top: auto;
+    padding-top: 1em;
+    color: rgba(190, 194, 214, 0.55);
+  }
+
+  .ic.sm {
+    width: 1.05em;
+    height: 1.05em;
+    flex: none;
+  }
+
+  .vol {
+    position: relative;
+    flex: 1;
+    height: 0.24em;
+    border-radius: 999px;
+    background: rgba(160, 172, 205, 0.18);
+  }
+
+  .vol i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 62%;
+    border-radius: 999px;
+    background: rgba(226, 231, 245, 0.62);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    max-width: 24rem;
+    padding-bottom: clamp(1rem, 5svh, 3.4rem);
+  }
+
+  .store,
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(0.82rem, 0.9vw, 0.94rem);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .store {
+    border: 1px solid rgba(94, 234, 212, 0.3);
+    background: rgba(94, 234, 212, 0.07);
+    color: #a8f4e5;
+  }
+
+  .store.is-pending {
+    cursor: default;
+  }
+
+  .dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 8px rgba(94, 234, 212, 0.9);
+  }
+
+  .ghost {
+    border: 1px solid rgba(232, 230, 240, 0.2);
+    color: var(--type);
+    transition: border-color 160ms ease, background-color 160ms ease;
+  }
+
+  .ghost:hover {
+    border-color: rgba(232, 230, 240, 0.5);
+    background: rgba(232, 230, 240, 0.06);
+  }
+
+  .ghost:focus-visible,
+  .store:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 3px;
+  }
+
+  .works {
+    margin-top: 0.6rem;
+  }
+
+  .works-label {
+    color: var(--dim);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.9rem;
+    margin: 0.55rem 0 0;
+    padding: 0;
+    color: rgba(216, 218, 234, 0.72);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .logos li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .logos :global(svg) {
+    opacity: 0.72;
+  }
+
+  .txt {
+    padding-left: 0.05rem;
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      --pw: clamp(140px, min(39vw, 26svh), 196px);
+    }
+
+    .stage {
+      justify-content: flex-start;
+      padding-bottom: clamp(0.8rem, 2svh, 1.4rem);
+    }
+
+    .headline {
+      max-width: 17ch;
+      font-size: clamp(1.5rem, 6.4vw, 2.2rem);
+    }
+
+    .scene {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      align-items: center;
+      gap: clamp(0.75rem, 2.2svh, 1.35rem);
+      margin-top: clamp(0.7rem, 1.8svh, 1.2rem);
+      padding-top: 0;
+    }
+
+    .device {
+      order: -1;
+    }
+
+    .say {
+      justify-self: center;
+      max-width: 34ch;
+      padding-bottom: 0;
+      text-align: center;
+    }
+
+    .body {
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .support {
+      margin-top: 0.5rem;
+      font-size: 0.76rem;
+    }
+
+    .actions {
+      align-items: center;
+      gap: 0.55rem;
+      padding-bottom: 0;
+      text-align: center;
+    }
+
+    .store,
+    .ghost {
+      padding: 0.62rem 1rem;
+    }
+
+    .works {
+      margin-top: 0.35rem;
+    }
+
+    .works-label {
+      text-align: center;
+    }
+
+    .logos {
+      justify-content: center;
+      gap: 0.35rem 0.7rem;
+      font-size: 0.75rem;
+    }
+
+    .prop-sleeves {
+      left: -9%;
+      bottom: 2%;
+      width: 140px;
+      opacity: 0.4;
+    }
+
+    .prop-cans {
+      right: -11%;
+      bottom: 0.5%;
+      width: 150px;
+      opacity: 0.36;
+    }
+
+    .floor {
+      height: clamp(110px, 18svh, 170px);
+    }
+
+    .corner {
+      width: 13%;
+      box-shadow: none;
+    }
+
+    .led {
+      right: 7%;
+      bottom: 3.2%;
+    }
+
+    .bloom {
+      top: 40%;
+      width: 118%;
+      height: 44%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bloom {
+      animation: none;
+    }
+  }
+</style>

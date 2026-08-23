@@ -1,0 +1,663 @@
+---
+/**
+ * Home — art set.
+ *
+ * A painted dusk valley. The library lives in the house on the left, warm light
+ * pouring out of its windows; the listener is further down the valley on a
+ * bench, the same gold light in their hand. No interface, no arrows, no labels:
+ * the colour does the connecting.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+/** Warm motes carried down the valley on the evening air. Deterministic, so the
+ *  server render and the client render agree. */
+const drift = Array.from({ length: 56 }, (_, i) => {
+  const t = i / 55;
+  const wob = Math.sin(i * 2.399);
+  const wob2 = Math.cos(i * 1.712);
+  return {
+    x: +(686 + t * 442 + wob * 38).toFixed(1),
+    y: +(320 - Math.sin(t * Math.PI) * 92 + t * 126 + wob2 * 42).toFixed(1),
+    r: +(1.1 + Math.abs(Math.sin(i * 0.97)) * 2.2).toFixed(2),
+    o: +(0.2 + Math.abs(Math.cos(i * 1.31)) * 0.6).toFixed(2),
+    d: +((i % 11) * 0.63).toFixed(2),
+    s: +(6.4 + (i % 7) * 0.9).toFixed(1),
+  };
+});
+
+/** A thinner scatter over the rest of the valley, so the air is never empty. */
+const ambient = Array.from({ length: 30 }, (_, i) => ({
+  x: +(150 + ((i * 173) % 1360)).toFixed(1),
+  y: +(248 + ((i * 61) % 190)).toFixed(1),
+  r: +(0.8 + (i % 3) * 0.45).toFixed(2),
+  o: +(0.1 + (i % 4) * 0.07).toFixed(2),
+  d: +((i % 9) * 0.71).toFixed(2),
+  s: +(8 + (i % 5) * 1.3).toFixed(1),
+}));
+
+const stars = Array.from({ length: 46 }, (_, i) => ({
+  x: +(((i * 211) % 1580) + 10).toFixed(1),
+  y: +(((i * 97) % 392) + 8).toFixed(1),
+  r: +(0.7 + (i % 3) * 0.45).toFixed(2),
+  o: +(0.16 + (i % 5) * 0.1).toFixed(2),
+  d: +((i % 8) * 0.9).toFixed(2),
+}));
+
+/** Grass along the very front of the frame, in clumps so it reads drawn, not combed. */
+const blades = [70, 240, 430, 640, 880, 1050, 1290, 1480].flatMap((cx, ci) =>
+  Array.from({ length: 6 }, (_, j) => {
+    const k = ci * 7 + j;
+    const x = cx + (j - 2.5) * 17 + Math.sin(k * 2.7) * 6;
+    const h = 16 + Math.abs(Math.sin(k * 1.9)) * 26;
+    const lean = Math.sin(k * 1.31) * 15;
+    const base = 594 + Math.sin(ci * 1.3) * 7;
+    return {
+      d: `M${x.toFixed(1)} ${base.toFixed(1)} Q ${(x + lean * 0.32).toFixed(1)} ${(base - h * 0.64).toFixed(1)} ${(x + lean).toFixed(1)} ${(base - h).toFixed(1)}`,
+      w: +(2.2 + (k % 4) * 0.8).toFixed(1),
+    };
+  })
+);
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz plays the music on your own Plex, Jellyfin, Navidrome or Subsonic server, on iPhone and iPad. Stream it from anywhere or download albums and listen with no signal."
+  themeColor="#0a1c28"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Karla:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="home" />
+
+  <div class="stage">
+    <svg class="stars" viewBox="0 0 1600 460" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+      {stars.map((s) => (
+        <circle class="star" cx={s.x} cy={s.y} r={s.r} fill="#dfeaf0" opacity={s.o} style={`--d:${s.d}s`} />
+      ))}
+    </svg>
+
+    <svg
+      class="moon"
+      viewBox="0 0 420 420"
+      role="img"
+      aria-label="A moon low in the evening sky with the grooves and centre label of a record"
+    >
+      <defs>
+        <radialGradient id="homeMoonHalo">
+          <stop offset="0.42" stop-color="#ffe0ac" stop-opacity="0.34" />
+          <stop offset="0.72" stop-color="#ffc857" stop-opacity="0.1" />
+          <stop offset="1" stop-color="#ffc857" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="homeMoonFace" cx="0.38" cy="0.32" r="0.82">
+          <stop offset="0" stop-color="#fdf1d8" />
+          <stop offset="0.62" stop-color="#f0dcb4" />
+          <stop offset="1" stop-color="#cbaf82" />
+        </radialGradient>
+        <linearGradient id="homeMoonShade" x1="0.1" y1="0" x2="0.9" y2="1">
+          <stop offset="0.35" stop-color="#132a3a" stop-opacity="0" />
+          <stop offset="1" stop-color="#132a3a" stop-opacity="0.42" />
+        </linearGradient>
+      </defs>
+
+      <circle cx="210" cy="210" r="208" fill="url(#homeMoonHalo)" />
+      <circle cx="210" cy="210" r="152" fill="url(#homeMoonFace)" />
+      <g fill="none" stroke="#132a3a" stroke-opacity="0.1">
+        <circle cx="210" cy="210" r="52" stroke-width="1.4" />
+        <circle cx="210" cy="210" r="66" stroke-width="1.6" />
+        <circle cx="210" cy="210" r="80" stroke-width="1.3" />
+        <circle cx="210" cy="210" r="94" stroke-width="1.7" />
+        <circle cx="210" cy="210" r="108" stroke-width="1.3" />
+        <circle cx="210" cy="210" r="122" stroke-width="1.6" />
+        <circle cx="210" cy="210" r="136" stroke-width="1.3" />
+        <circle cx="210" cy="210" r="147" stroke-width="1.5" />
+      </g>
+      <circle cx="210" cy="210" r="40" fill="#c80028" />
+      <circle cx="210" cy="210" r="40" fill="none" stroke="#8d0020" stroke-width="1.6" stroke-opacity="0.55" />
+      <circle cx="210" cy="210" r="5" fill="#1a3346" />
+      <circle cx="210" cy="210" r="152" fill="url(#homeMoonShade)" />
+    </svg>
+
+    <svg
+      class="land"
+      viewBox="0 0 1600 620"
+      role="img"
+      aria-label="A house on a hillside at dusk with its windows lit gold and a hi-fi glowing in one room, while warm specks of light drift down the valley to a person on a bench wearing headphones, a phone glowing in their hand"
+    >
+      <defs>
+        <radialGradient id="homeSunset">
+          <stop offset="0" stop-color="#f3a45c" stop-opacity="0.5" />
+          <stop offset="0.45" stop-color="#d8713f" stop-opacity="0.22" />
+          <stop offset="1" stop-color="#a84d3a" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="homeHouseGlow">
+          <stop offset="0" stop-color="#ffc857" stop-opacity="0.36" />
+          <stop offset="0.4" stop-color="#ffb43a" stop-opacity="0.15" />
+          <stop offset="1" stop-color="#ffb43a" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="homePhoneGlow">
+          <stop offset="0" stop-color="#ffd97e" stop-opacity="0.62" />
+          <stop offset="0.5" stop-color="#ffc857" stop-opacity="0.2" />
+          <stop offset="1" stop-color="#ffc857" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="homeGround" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0f3242" />
+          <stop offset="0.55" stop-color="#0a2331" />
+          <stop offset="1" stop-color="#061621" />
+        </linearGradient>
+        <linearGradient id="homeWindow" x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0" stop-color="#ffe6a6" />
+          <stop offset="1" stop-color="#ffb02f" />
+        </linearGradient>
+        <linearGradient id="homeSpill" x1="0" y1="0" x2="0.4" y2="1">
+          <stop offset="0" stop-color="#ffcf6b" stop-opacity="0.4" />
+          <stop offset="1" stop-color="#ffb43a" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="homePhone" x1="0" y1="0" x2="0.6" y2="1">
+          <stop offset="0" stop-color="#fff3d4" />
+          <stop offset="1" stop-color="#ffc046" />
+        </linearGradient>
+        <linearGradient id="homeVignette" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#040e16" stop-opacity="0" />
+          <stop offset="0.78" stop-color="#040e16" stop-opacity="0.25" />
+          <stop offset="1" stop-color="#03090f" stop-opacity="0.75" />
+        </linearGradient>
+        <filter id="homeSoft" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="14" />
+        </filter>
+        <filter id="homeSofter" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="26" />
+        </filter>
+        <filter id="homeSmoke" x="-60%" y="-30%" width="220%" height="180%">
+          <feGaussianBlur stdDeviation="7" />
+        </filter>
+      </defs>
+
+      <ellipse cx="600" cy="214" rx="640" ry="126" fill="url(#homeSunset)" />
+
+      <path
+        d="M0 218 C 150 192 270 204 400 182 C 540 158 660 178 800 170 C 940 162 1080 194 1220 184 C 1360 174 1490 194 1600 178 L1600 620 L0 620 Z"
+        fill="#1a4d5f"
+        opacity="0.85"
+      />
+      <g fill="#ffc857" opacity="0.5">
+        <circle cx="178" cy="207" r="1.9" />
+        <circle cx="212" cy="211" r="1.6" />
+        <circle cx="262" cy="203" r="1.7" />
+        <circle cx="1298" cy="192" r="1.6" />
+        <circle cx="1338" cy="196" r="1.5" />
+      </g>
+
+      <path
+        d="M0 272 C 160 252 280 266 420 248 C 560 230 700 254 840 246 C 980 238 1120 266 1260 252 C 1400 238 1500 262 1600 250 L1600 620 L0 620 Z"
+        fill="#123c4c"
+      />
+
+      <ellipse cx="640" cy="286" rx="820" ry="86" fill="#4ea699" opacity="0.13" filter="url(#homeSofter)" />
+
+      <path
+        d="M0 336 C 180 324 320 310 470 302 C 600 295 700 304 820 318 C 980 336 1160 348 1330 340 C 1440 335 1520 340 1600 334 L1600 620 L0 620 Z"
+        fill="url(#homeGround)"
+      />
+
+      <ellipse cx="500" cy="356" rx="680" ry="120" fill="#2f7d75" opacity="0.16" filter="url(#homeSofter)" />
+
+      <g fill="#0a2833">
+        <path d="M362 320 l-15 0 l15 -42 l15 42 z" />
+        <path d="M396 322 l-12 0 l12 -32 l12 32 z" />
+        <path d="M806 328 l-16 0 l16 -46 l16 46 z" />
+        <path d="M846 330 l-13 0 l13 -36 l13 36 z" />
+        <path d="M884 331 l-11 0 l11 -28 l11 28 z" />
+      </g>
+
+      <g class="homestead" transform="translate(-16 32) translate(570 348) scale(1.1) translate(-570 -348)">
+        <ellipse cx="580" cy="300" rx="440" ry="260" fill="url(#homeHouseGlow)" class="breathe" />
+        <ellipse cx="588" cy="376" rx="250" ry="52" fill="#ffb43a" opacity="0.14" filter="url(#homeSoft)" />
+
+        <path
+          d="M470 328 L560 328 L664 442 L426 442 Z"
+          fill="url(#homeSpill)"
+          filter="url(#homeSoft)"
+          opacity="0.8"
+        />
+        <path
+          d="M646 348 L684 348 L752 434 L636 434 Z"
+          fill="url(#homeSpill)"
+          filter="url(#homeSoft)"
+          opacity="0.65"
+        />
+
+        <g class="house">
+        <path d="M652 190 h28 v66 h-28 z" fill="#091a22" />
+        <path
+          d="M660 186 C 648 160 676 152 664 128 C 656 110 678 100 672 84"
+          fill="none"
+          stroke="#cfe0e4"
+          stroke-opacity="0.13"
+          stroke-width="9"
+          stroke-linecap="round"
+          filter="url(#homeSmoke)"
+        />
+        <path d="M430 258 L570 168 L742 258 Z" fill="#0a1c24" />
+        <path d="M446 256 h250 v92 h-250 z" fill="#0d2530" />
+        <path d="M446 256 h34 v92 h-34 z" fill="#081820" />
+
+        <rect x="492" y="272" width="88" height="60" rx="2" fill="url(#homeWindow)" />
+        <g class="hifi">
+          <rect x="504" y="284" width="21" height="38" rx="2.5" fill="#0d2a2c" />
+          <circle cx="514.5" cy="292" r="2.3" fill="#4ea699" />
+          <circle cx="514.5" cy="300" r="2.3" fill="#4ea699" opacity="0.75" />
+          <circle cx="514.5" cy="308" r="2.3" fill="#c80028" />
+          <circle cx="551" cy="304" r="12" fill="#0d2a2c" />
+          <circle cx="551" cy="304" r="5" fill="#1d4a44" />
+          <path d="M566 322 v-16 a7 7 0 0 1 12 -5" fill="none" stroke="#0d2a2c" stroke-width="3.4" />
+        </g>
+        <path d="M536 272 v60 M492 304 h88" stroke="#0d2530" stroke-width="3.4" opacity="0.65" />
+
+        <rect x="600" y="278" width="40" height="36" rx="2" fill="#ffc857" opacity="0.9" />
+        <path d="M620 278 v36" stroke="#0d2530" stroke-width="3" opacity="0.55" />
+        <rect x="656" y="300" width="34" height="48" rx="1.5" fill="#ffbe4d" opacity="0.86" />
+        <path d="M446 254 L570 174 L742 254" fill="none" stroke="#ffc857" stroke-width="2.6" opacity="0.24" />
+        </g>
+      </g>
+
+      <g fill="none" stroke="#ffc857" filter="url(#homeSofter)" class="ripples">
+        <ellipse cx="560" cy="300" rx="190" ry="150" stroke-opacity="0.07" stroke-width="9" />
+        <ellipse cx="560" cy="300" rx="292" ry="216" stroke-opacity="0.05" stroke-width="11" />
+        <ellipse cx="560" cy="300" rx="404" ry="286" stroke-opacity="0.035" stroke-width="13" />
+      </g>
+
+      <g class="motes">
+        {ambient.map((m) => (
+          <circle class="mote" cx={m.x} cy={m.y} r={m.r} fill="#ffdf9d" opacity={m.o} style={`--d:${m.d}s;--s:${m.s}s`} />
+        ))}
+        {drift.map((m) => (
+          <circle class="mote" cx={m.x} cy={m.y} r={m.r} fill="#ffcf72" opacity={m.o} style={`--d:${m.d}s;--s:${m.s}s`} />
+        ))}
+      </g>
+
+      <path
+        d="M0 492 C 200 474 360 490 520 500 C 700 511 860 498 1020 502 C 1200 507 1400 496 1600 486 L1600 620 L0 620 Z"
+        fill="#03101a"
+      />
+
+      <ellipse class="faraway" cx="1152" cy="430" rx="150" ry="128" fill="url(#homePhoneGlow)" filter="url(#homeSoft)" />
+
+      <g class="faraway" fill="#030d16">
+        <rect x="962" y="404" width="12" height="146" rx="3" />
+        <rect x="1172" y="404" width="12" height="140" rx="3" />
+        <rect x="946" y="402" width="238" height="12" rx="4" />
+        <rect x="946" y="426" width="238" height="12" rx="4" />
+        <rect x="936" y="456" width="258" height="15" rx="4" />
+      </g>
+
+      <g class="figure faraway" fill="#020a11">
+        <path d="M1092 394 C 1116 398 1140 410 1152 428 L1136 444 C 1122 428 1104 418 1084 414 Z" />
+        <path d="M1030 470 C 1024 434 1032 400 1048 382 C 1062 366 1090 366 1100 382 C 1110 398 1108 434 1102 470 Z" />
+        <path d="M1064 448 C 1094 450 1122 456 1132 466 C 1141 480 1143 514 1140 542 L1112 542 C 1114 512 1110 492 1100 484 C 1088 476 1070 472 1058 470 Z" />
+        <ellipse cx="1126" cy="546" rx="24" ry="9" />
+        <circle cx="1074" cy="350" r="34" />
+        <path d="M1044 340 A 34 34 0 0 1 1106 336" fill="none" stroke="#020a11" stroke-width="9" stroke-linecap="round" />
+        <ellipse cx="1046" cy="354" rx="11" ry="14" />
+      </g>
+
+      <g class="faraway" fill="none" stroke="#ffc857" stroke-linecap="round">
+        <path d="M1096 327 A 34 34 0 0 1 1101 368" stroke-width="3.6" stroke-opacity="0.5" />
+        <path d="M1100 386 C 1107 406 1107 436 1101 462" stroke-width="3" stroke-opacity="0.3" />
+        <path d="M1122 424 C 1132 428 1140 434 1146 442" stroke-width="3" stroke-opacity="0.35" />
+      </g>
+
+      <g class="faraway">
+        <g transform="rotate(-16 1154 428)">
+          <rect x="1143" y="408" width="22" height="40" rx="5" fill="url(#homePhone)" />
+          <rect x="1147" y="413" width="14" height="30" rx="3" fill="#fff6de" opacity="0.55" />
+        </g>
+      </g>
+
+      <g fill="#010810">
+        <path d="M0 548 C 180 556 330 586 470 582 C 640 576 780 592 940 586 C 1120 579 1300 594 1440 578 C 1520 568 1570 574 1600 566 L1600 620 L0 620 Z" />
+        <ellipse cx="126" cy="566" rx="96" ry="28" />
+        <ellipse cx="1512" cy="566" rx="84" ry="24" />
+        <ellipse cx="712" cy="590" rx="58" ry="16" />
+      </g>
+      <ellipse cx="1180" cy="548" rx="640" ry="104" fill="#4ea699" opacity="0.1" filter="url(#homeSofter)" />
+      <ellipse class="faraway" cx="1230" cy="534" rx="300" ry="78" fill="url(#homePhoneGlow)" opacity="0.42" filter="url(#homeSoft)" />
+      <g fill="none" stroke="#164049" stroke-linecap="round" opacity="0.5">
+        {blades.map((b) => (
+          <path d={b.d} stroke-width={b.w} transform="translate(-4 -3)" />
+        ))}
+      </g>
+      <g fill="none" stroke="#010810" stroke-linecap="round">
+        {blades.map((b) => (
+          <path d={b.d} stroke-width={b.w} />
+        ))}
+      </g>
+
+      <rect x="0" y="330" width="1600" height="290" fill="url(#homeVignette)" />
+    </svg>
+
+    <div class="scrim" aria-hidden="true"></div>
+
+    <main class="copy">
+      <p class="brand">
+        <Mark size={26} decorative />
+        <span>{NAME}</span>
+      </p>
+
+      <h1>
+        Your server stays home.<br />
+        <em>Your music comes with you.</em>
+      </h1>
+
+      <p class="lede">
+        Mozz is a free music player for iPhone and iPad. It plays the library on your own Plex, Jellyfin,
+        Navidrome or Subsonic server — stream it from wherever you are, or download albums and listen with
+        no signal at all.
+      </p>
+
+      <p class="support">Radio and Mozz Weekly included. Free forever. Open source.</p>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source <span aria-hidden="true">↗</span></a>
+      </div>
+
+      <p class="works">
+        <span class="works-label">Works with</span>
+        <span class="chip"><ServerLogo name="Plex" size={15} />Plex</span>
+        <span class="chip"><ServerLogo name="Jellyfin" size={15} />Jellyfin</span>
+        <span class="chip"><ServerLogo name="Navidrome" size={15} />Navidrome</span>
+        <span class="chip">Subsonic</span>
+      </p>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .stage {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(120% 74% at 34% 78%, rgba(210, 118, 62, 0.24) 0%, rgba(210, 118, 62, 0) 62%),
+      linear-gradient(180deg, #060f18 0%, #0a1c28 26%, #10303f 52%, #17414a 72%, #2a5551 88%, #43655a 100%);
+    color: #f6ead7;
+    font-family: 'Karla', system-ui;
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 62%;
+    z-index: 0;
+  }
+
+  .star {
+    animation: twinkle 5.5s ease-in-out infinite alternate;
+    animation-delay: var(--d);
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.15; }
+    to { opacity: 0.85; }
+  }
+
+  .moon {
+    position: absolute;
+    z-index: 0;
+    width: clamp(200px, 21vw, 316px);
+    height: auto;
+    right: clamp(-46px, -1.4vw, 0px);
+    top: clamp(34px, 6vh, 74px);
+  }
+
+  .land {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+  }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(5, 14, 22, 0.68) 0%, rgba(5, 14, 22, 0.3) 34%, rgba(5, 14, 22, 0) 58%);
+  }
+
+  .breathe {
+    animation: breathe 9s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @keyframes breathe {
+    from { opacity: 0.82; }
+    to { opacity: 1.12; }
+  }
+
+  .mote {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: float var(--s, 8s) ease-in-out infinite alternate;
+    animation-delay: var(--d, 0s);
+  }
+
+  @keyframes float {
+    from { transform: translate(0, 5px); opacity: 0.35; }
+    to { transform: translate(9px, -8px); opacity: 1; }
+  }
+
+  .copy {
+    position: relative;
+    z-index: 3;
+    max-width: 830px;
+    margin: 0 auto;
+    padding: clamp(58px, 7.4vh, 84px) 24px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #ffc857;
+    margin: 0 0 clamp(12px, 2vh, 20px);
+  }
+
+  h1 {
+    font-family: 'Newsreader', 'Iowan Old Style', Georgia;
+    font-weight: 400;
+    font-size: clamp(2.3rem, 5.6vw, 4.3rem);
+    line-height: 1.04;
+    letter-spacing: -0.014em;
+    margin: 0;
+    text-wrap: balance;
+    text-shadow: 0 2px 26px rgba(4, 12, 20, 0.7);
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: #ffc857;
+  }
+
+  .lede {
+    margin: clamp(14px, 2.2vh, 20px) 0 0;
+    max-width: 56ch;
+    font-size: clamp(0.99rem, 1.15vw, 1.1rem);
+    line-height: 1.58;
+    color: rgba(238, 228, 210, 0.84);
+    text-shadow: 0 1px 16px rgba(4, 12, 20, 0.6);
+  }
+
+  .support {
+    margin: 10px 0 0;
+    font-size: 0.88rem;
+    letter-spacing: 0.01em;
+    color: rgba(120, 214, 194, 0.92);
+    text-shadow: 0 1px 14px rgba(4, 12, 20, 0.7);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: clamp(18px, 2.6vh, 26px);
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 13px 22px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .store {
+    background: #c80028;
+    color: #fff2f2;
+    border: 1px solid #e0143e;
+    box-shadow: 0 12px 30px rgba(120, 0, 24, 0.42);
+  }
+
+  .store.is-pending {
+    background: rgba(255, 200, 87, 0.1);
+    border: 1px solid rgba(255, 200, 87, 0.42);
+    color: #ffd88a;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  .source {
+    border: 1px solid rgba(246, 234, 215, 0.3);
+    color: #f6ead7;
+    background: rgba(8, 24, 34, 0.42);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .source:hover {
+    border-color: rgba(255, 200, 87, 0.7);
+    background: rgba(255, 200, 87, 0.12);
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+    margin: clamp(15px, 2.2vh, 22px) 0 0;
+    font-size: 0.83rem;
+    color: rgba(214, 227, 226, 0.66);
+  }
+
+  .works-label {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: rgba(214, 227, 226, 0.48);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  a:focus-visible,
+  .store:focus-visible {
+    outline: 2px solid #ffc857;
+    outline-offset: 4px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 900px) {
+    .land {
+      width: 196%;
+      max-width: none;
+      left: -44%;
+    }
+
+    .faraway {
+      transform: translate(-84px, 4px);
+    }
+
+    .moon {
+      width: clamp(150px, 40vw, 200px);
+      right: -5%;
+      left: auto;
+      top: auto;
+      bottom: 32%;
+      opacity: 0.9;
+    }
+
+    .copy {
+      padding: 54px 20px 24px;
+      max-width: 470px;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 8.4vw, 2.35rem);
+      line-height: 1.08;
+    }
+
+    .lede {
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .support {
+      font-size: 0.82rem;
+    }
+
+    .store,
+    .source {
+      padding: 11px 16px;
+      font-size: 0.86rem;
+    }
+
+    .works {
+      font-size: 0.78rem;
+      gap: 6px 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star,
+    .mote,
+    .breathe {
+      animation: none;
+    }
+  }
+</style>

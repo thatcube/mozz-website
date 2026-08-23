@@ -1,0 +1,628 @@
+---
+/**
+ * Waveform — the art set.
+ *
+ * One audio waveform drawn at landscape scale: a lit ridge of sound across the
+ * whole width, a sun going down behind it, haze pooling at the horizon and the
+ * whole thing reflected in the water below. No screenshot, no device, no UI.
+ *
+ * The shape is not noise. `SHAPE` is an arrangement — quiet intro, verse,
+ * chorus, a near-silent breakdown, a bigger second chorus, a fade — so the
+ * silhouette has the dynamics of an actual track rather than the even fringe of
+ * a stock equalizer graphic.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const VB_W = 1440;
+const VB_H = 460;
+const HORIZON = 300;
+const SUN_X = 906;
+
+/** Position through the track → loudness. The song, basically. */
+const SHAPE: [number, number][] = [
+  [0.0, 0.09],
+  [0.05, 0.24],
+  [0.11, 0.41],
+  [0.17, 0.33],
+  [0.23, 0.53],
+  [0.3, 0.45],
+  [0.36, 0.74],
+  [0.42, 0.97],
+  [0.47, 0.84],
+  [0.52, 0.19],
+  [0.56, 0.11],
+  [0.6, 0.31],
+  [0.66, 0.5],
+  [0.72, 0.69],
+  [0.78, 1.0],
+  [0.84, 0.9],
+  [0.89, 0.61],
+  [0.94, 0.34],
+  [1.0, 0.12],
+];
+
+const smooth = (t: number) => t * t * (3 - 2 * t);
+
+function envelope(t: number): number {
+  const x = ((t % 1) + 1) % 1;
+  for (let i = 1; i < SHAPE.length; i += 1) {
+    const [t0, v0] = SHAPE[i - 1];
+    const [t1, v1] = SHAPE[i];
+    if (x <= t1) return v0 + (v1 - v0) * smooth((x - t0) / (t1 - t0));
+  }
+  return SHAPE[SHAPE.length - 1][1];
+}
+
+/** Deterministic jitter — same drawing on every build. */
+function hash(i: number, seed: number): number {
+  const s = Math.sin(i * 127.1 + seed * 311.7) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+function ridge(count: number, seed: number, phase = 0): number[] {
+  return Array.from({ length: count }, (_, i) => {
+    const t = count === 1 ? 0 : i / (count - 1);
+    const e = envelope(t + phase);
+    const beat = i % 4 === 0 ? 1.16 : i % 2 === 0 ? 1 : 0.88;
+    const accent = i % 16 === 0 ? 1.09 : 1;
+    const jitter = 0.74 + 0.4 * hash(i, seed);
+    const trem = 1 + 0.05 * Math.sin(i * 0.71);
+    return Math.min(1, Math.max(0.03, e * beat * accent * jitter * trem));
+  });
+}
+
+type Bar = { x: number; w: number; h: number };
+
+function bars(amps: number[], base: number, span: number): Bar[] {
+  const slot = VB_W / amps.length;
+  const w = slot * 0.62;
+  return amps.map((a, i) => ({
+    x: i * slot + (slot - w) / 2,
+    w,
+    h: base + a * span,
+  }));
+}
+
+const n = (v: number) => v.toFixed(2);
+
+const up = (list: Bar[]) =>
+  list.map((b) => `<rect x="${n(b.x)}" y="${n(HORIZON - b.h)}" width="${n(b.w)}" height="${n(b.h)}"/>`).join('');
+
+const down = (list: Bar[]) =>
+  list
+    .map((b) => `<rect x="${n(b.x)}" y="${HORIZON}" width="${n(b.w)}" height="${n(Math.min(96, b.h * 0.32))}"/>`)
+    .join('');
+
+/** Sun on water: a soft pool of light, broken by a few flat dashes. */
+function glint(k: string, seed: number): string {
+  const dashes = Array.from({ length: 6 }, (_, j) => {
+    const y = 304 + j * 15;
+    const w = (140 - j * 16) * (0.7 + 0.45 * hash(j, seed));
+    const x = SUN_X - w / 2 + (hash(j + 40, seed) - 0.5) * 30;
+    const o = (0.34 - j * 0.05).toFixed(3);
+    return `<rect x="${n(x)}" y="${n(y)}" width="${n(Math.max(16, w))}" height="1.8" fill="#ffe3bb" opacity="${o}"/>`;
+  }).join('');
+
+  return `<rect x="0" y="${HORIZON}" width="${VB_W}" height="150" fill="url(#pool2-${k})"/>${dashes}`;
+}
+
+/** The whole scene, as markup, so the two densities share one description. */
+function scene(count: number, k: string): string {
+  const near = bars(ridge(count, 3), 13, 250);
+  const far = bars(ridge(Math.max(9, Math.round(count * 0.68)), 17, 0.41), 60, 88);
+
+  return `
+<defs>
+  <linearGradient id="hot-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${VB_W}" y2="0">
+    <stop offset="0" stop-color="#5b2a8c"/>
+    <stop offset="0.11" stop-color="#8d2a72"/>
+    <stop offset="0.22" stop-color="#c80028"/>
+    <stop offset="0.34" stop-color="#f04a3d"/>
+    <stop offset="0.46" stop-color="#ff6b4a"/>
+    <stop offset="0.57" stop-color="#ffa851"/>
+    <stop offset="0.65" stop-color="#ffd166"/>
+    <stop offset="0.74" stop-color="#ff9c54"/>
+    <stop offset="0.85" stop-color="#e8514c"/>
+    <stop offset="0.93" stop-color="#a92d63"/>
+    <stop offset="1" stop-color="#5f2a8a"/>
+  </linearGradient>
+
+  <linearGradient id="cool-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${VB_W}" y2="0">
+    <stop offset="0" stop-color="#392a5e"/>
+    <stop offset="0.25" stop-color="#5a3066"/>
+    <stop offset="0.5" stop-color="#8b4069"/>
+    <stop offset="0.66" stop-color="#c06a63"/>
+    <stop offset="0.82" stop-color="#7d3b65"/>
+    <stop offset="1" stop-color="#3d2a5c"/>
+  </linearGradient>
+
+  <linearGradient id="sink-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="34" x2="0" y2="${HORIZON}">
+    <stop offset="0" stop-color="#0a0e1c" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="#090c1a" stop-opacity="0.26"/>
+    <stop offset="0.85" stop-color="#080b18" stop-opacity="0.62"/>
+    <stop offset="1" stop-color="#070a16" stop-opacity="0.74"/>
+  </linearGradient>
+
+  <linearGradient id="haze-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="140" x2="0" y2="${HORIZON}">
+    <stop offset="0" stop-color="#2a1c40" stop-opacity="0"/>
+    <stop offset="0.6" stop-color="#7b3355" stop-opacity="0.45"/>
+    <stop offset="1" stop-color="#ff8a55" stop-opacity="0.62"/>
+  </linearGradient>
+
+  <linearGradient id="pool-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="238" x2="0" y2="${HORIZON}">
+    <stop offset="0" stop-color="#ffb070" stop-opacity="0"/>
+    <stop offset="1" stop-color="#ffc98a" stop-opacity="0.4"/>
+  </linearGradient>
+
+  <linearGradient id="water-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="${HORIZON}" x2="0" y2="${VB_H}">
+    <stop offset="0" stop-color="#1b2340"/>
+    <stop offset="0.3" stop-color="#111a31"/>
+    <stop offset="1" stop-color="#070b18"/>
+  </linearGradient>
+
+  <radialGradient id="pool2-${k}" gradientUnits="userSpaceOnUse" cx="${SUN_X}" cy="${HORIZON}" r="210">
+    <stop offset="0" stop-color="#ffcf8c" stop-opacity="0.4"/>
+    <stop offset="0.45" stop-color="#ff9d5e" stop-opacity="0.18"/>
+    <stop offset="1" stop-color="#ff7a4a" stop-opacity="0"/>
+  </radialGradient>
+
+  <linearGradient id="fadeGrad-${k}" gradientUnits="userSpaceOnUse" x1="0" y1="${HORIZON}" x2="0" y2="392">
+    <stop offset="0" stop-color="#fff"/>
+    <stop offset="0.4" stop-color="#6b6b6b"/>
+    <stop offset="1" stop-color="#000"/>
+  </linearGradient>
+
+  <mask id="fade-${k}" maskUnits="userSpaceOnUse" x="0" y="${HORIZON}" width="${VB_W}" height="160">
+    <rect x="0" y="${HORIZON}" width="${VB_W}" height="160" fill="url(#fadeGrad-${k})"/>
+  </mask>
+
+  <clipPath id="far-${k}">${up(far)}</clipPath>
+  <clipPath id="near-${k}">${up(near)}</clipPath>
+  <clipPath id="refl-${k}">${down(near)}</clipPath>
+</defs>
+
+<g clip-path="url(#far-${k})">
+  <rect x="0" y="0" width="${VB_W}" height="${HORIZON}" fill="url(#cool-${k})"/>
+  <rect x="0" y="140" width="${VB_W}" height="160" fill="url(#haze-${k})"/>
+</g>
+
+<rect x="0" y="176" width="${VB_W}" height="124" fill="url(#haze-${k})" opacity="0.55"/>
+
+<g clip-path="url(#near-${k})">
+  <rect x="0" y="0" width="${VB_W}" height="${HORIZON}" fill="url(#hot-${k})"/>
+  <rect x="0" y="34" width="${VB_W}" height="266" fill="url(#sink-${k})"/>
+</g>
+
+<rect x="0" y="238" width="${VB_W}" height="62" fill="url(#pool-${k})"/>
+<rect x="0" y="298.6" width="${VB_W}" height="1.6" fill="url(#hot-${k})" opacity="0.75"/>
+
+<rect x="0" y="300" width="${VB_W}" height="160" fill="url(#water-${k})"/>
+<rect x="0" y="300" width="${VB_W}" height="26" fill="url(#pool-${k})" opacity="0.5"/>
+${glint(k, 5)}
+
+<g clip-path="url(#refl-${k})" mask="url(#fade-${k})" opacity="0.42">
+  <rect x="0" y="${HORIZON}" width="${VB_W}" height="120" fill="url(#hot-${k})"/>
+</g>
+<rect x="0" y="${HORIZON}" width="${VB_W}" height="3" fill="url(#hot-${k})" opacity="0.3"/>
+`;
+}
+
+const wide = scene(132, 'w');
+const narrow = scene(54, 'n');
+
+const artLabel =
+  'An audio waveform drawn the full width of the page as a landscape at dusk: a bright ridge of loud and quiet passages, a low sun setting behind it, and the ridge reflected in dark water below.';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin, Navidrome or Subsonic server, or download albums for offline listening."
+  themeColor="#0a0f1e"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300..600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="waveform" />
+
+  <main class="stage">
+    <div class="stars" aria-hidden="true"></div>
+    <div class="clouds" aria-hidden="true"></div>
+    <div class="sun" aria-hidden="true"></div>
+
+    <div class="art" role="img" aria-label={artLabel}>
+      <svg
+        class="range range--wide"
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+        set:html={wide}
+      />
+      <svg
+        class="range range--narrow"
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+        set:html={narrow}
+      />
+    </div>
+
+    <section class="copy" aria-labelledby="hero-title">
+      <p class="brand">
+        <Mark size={24} decorative />
+        <strong>{NAME}</strong>
+        <span>Self-hosted music player</span>
+      </p>
+
+      <h1 id="hero-title">A free player for the music on your own server.</h1>
+
+      <p class="lede">
+        Play your Plex, Jellyfin, Navidrome or Subsonic library on iPhone and iPad. Stream it at home, or
+        download an album and hear it with no signal at all.
+      </p>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>Read the source on GitHub</a>
+      </div>
+
+      <p class="support">Mozz is free forever and open source. Radio and Mozz Weekly included.</p>
+    </section>
+
+    <div class="reserve" aria-hidden="true"></div>
+
+    <p class="works">
+      <span class="works-label">Works with</span>
+      <span class="server"><ServerLogo name="Plex" size={14} />Plex</span>
+      <span class="server"><ServerLogo name="Jellyfin" size={14} />Jellyfin</span>
+      <span class="server"><ServerLogo name="Navidrome" size={14} />Navidrome</span>
+      <span class="server">Subsonic</span>
+    </p>
+  </main>
+</Layout>
+
+<style>
+  .stage {
+    --art: 44svh;
+    --horizon: calc(var(--art) * 0.348);
+    --sun: clamp(150px, 22vw, 320px);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100svh;
+    overflow: hidden;
+    background:
+      radial-gradient(72% 34% at 63% 84%, rgba(255, 196, 122, 0.42), rgba(255, 107, 74, 0.16) 46%, transparent 74%),
+      linear-gradient(
+        180deg,
+        #05080f 0%,
+        #080e1c 16%,
+        #101733 32%,
+        #23193f 46%,
+        #43204f 57%,
+        #742a4f 68%,
+        #ad3a45 77%,
+        #dd5a3c 84%,
+        #ff8f4d 91%,
+        #ffc06a 100%
+      );
+    font-family: 'Archivo', ui-sans-serif, system-ui;
+    color: #fdf1e4;
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0 0 46% 0;
+    pointer-events: none;
+    opacity: 0.75;
+    background-image:
+      radial-gradient(1.7px 1.7px at 8% 22%, rgba(255, 255, 255, 0.9), transparent),
+      radial-gradient(1.3px 1.3px at 17% 46%, rgba(214, 226, 255, 0.7), transparent),
+      radial-gradient(1.6px 1.6px at 26% 13%, rgba(255, 255, 255, 0.75), transparent),
+      radial-gradient(1.2px 1.2px at 34% 62%, rgba(255, 226, 214, 0.55), transparent),
+      radial-gradient(1.8px 1.8px at 43% 27%, rgba(255, 255, 255, 0.8), transparent),
+      radial-gradient(1.2px 1.2px at 52% 9%, rgba(226, 235, 255, 0.65), transparent),
+      radial-gradient(1.5px 1.5px at 61% 40%, rgba(255, 255, 255, 0.6), transparent),
+      radial-gradient(1.3px 1.3px at 69% 17%, rgba(255, 242, 226, 0.7), transparent),
+      radial-gradient(1.9px 1.9px at 78% 33%, rgba(255, 255, 255, 0.85), transparent),
+      radial-gradient(1.2px 1.2px at 86% 8%, rgba(226, 232, 255, 0.6), transparent),
+      radial-gradient(1.5px 1.5px at 92% 51%, rgba(255, 255, 255, 0.55), transparent),
+      radial-gradient(1.3px 1.3px at 3% 66%, rgba(255, 255, 255, 0.5), transparent),
+      radial-gradient(1.1px 1.1px at 47% 71%, rgba(255, 232, 220, 0.4), transparent),
+      radial-gradient(1.4px 1.4px at 74% 60%, rgba(255, 255, 255, 0.45), transparent);
+  }
+
+  .clouds {
+    position: absolute;
+    inset: 34% 0 0 0;
+    pointer-events: none;
+    opacity: 0.55;
+    background-image:
+      radial-gradient(44% 7% at 20% 26%, rgba(255, 138, 110, 0.3), transparent 72%),
+      radial-gradient(34% 5% at 70% 15%, rgba(255, 174, 124, 0.24), transparent 72%),
+      radial-gradient(50% 6% at 44% 47%, rgba(255, 124, 116, 0.24), transparent 72%),
+      radial-gradient(28% 4.5% at 88% 40%, rgba(255, 192, 142, 0.22), transparent 72%),
+      radial-gradient(38% 5% at 12% 58%, rgba(255, 150, 120, 0.2), transparent 72%);
+  }
+
+  .sun {
+    position: absolute;
+    left: 63%;
+    bottom: var(--horizon);
+    width: var(--sun);
+    height: var(--sun);
+    transform: translate(-50%, 40%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      #fff3cf 0%,
+      #ffd870 34%,
+      #ffab4f 62%,
+      rgba(255, 122, 74, 0.55) 78%,
+      rgba(255, 107, 74, 0) 100%
+    );
+    animation: breathe 14s ease-in-out infinite;
+  }
+
+  .sun::after {
+    content: '';
+    position: absolute;
+    inset: -70%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 168, 96, 0.34), rgba(255, 107, 74, 0) 66%);
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .art {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: var(--art);
+    line-height: 0;
+  }
+
+  .art::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 5.5rem;
+    background: linear-gradient(180deg, rgba(6, 9, 20, 0) 0%, rgba(6, 9, 20, 0.72) 72%, rgba(5, 8, 17, 0.86) 100%);
+  }
+
+  .range {
+    width: 100%;
+    height: 100%;
+  }
+
+  .range--narrow {
+    display: none;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 62rem);
+    padding: calc(42px + 2.1rem) 1.5rem 0;
+    text-align: center;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.34rem 0.85rem 0.34rem 0.4rem;
+    border: 1px solid rgba(255, 214, 178, 0.22);
+    border-radius: 999px;
+    background: rgba(12, 16, 32, 0.4);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+  }
+
+  .brand strong {
+    font-weight: 600;
+  }
+
+  .brand span {
+    color: rgba(255, 226, 202, 0.62);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    font-size: 0.66rem;
+  }
+
+  h1 {
+    margin: 0.95rem auto 0;
+    max-width: 17ch;
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: clamp(2.15rem, 5.5vw, 3.95rem);
+    line-height: 1.04;
+    letter-spacing: -0.014em;
+    text-wrap: balance;
+    text-shadow: 0 3px 30px rgba(4, 8, 18, 0.55);
+  }
+
+  .lede {
+    margin: 0.95rem auto 0;
+    max-width: 54ch;
+    font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+    line-height: 1.55;
+    color: rgba(255, 233, 214, 0.76);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    justify-content: center;
+    margin-top: 1.45rem;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.35rem;
+    border-radius: 999px;
+    font-size: 0.93rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  .source {
+    background: linear-gradient(180deg, #ff7d51, #f4573c);
+    color: #180d18;
+    box-shadow: 0 10px 30px rgba(226, 78, 47, 0.28);
+  }
+
+  .source:hover {
+    background: linear-gradient(180deg, #ff8d61, #ff6244);
+  }
+
+  .store.is-pending {
+    border: 1px solid rgba(255, 197, 145, 0.4);
+    background: rgba(255, 152, 92, 0.1);
+    color: rgba(255, 223, 196, 0.9);
+    cursor: default;
+  }
+
+  .store.is-pending::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ffd166;
+    box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.18);
+  }
+
+  .support {
+    margin-top: 0.9rem;
+    font-size: 0.79rem;
+    letter-spacing: 0.02em;
+    color: rgba(255, 226, 205, 0.55);
+  }
+
+  .reserve {
+    flex: 1 0 auto;
+    min-height: calc(var(--art) - 1.6rem);
+  }
+
+  .works {
+    position: absolute;
+    z-index: 3;
+    bottom: 1.05rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem 1rem;
+    width: calc(100% - 2rem);
+    color: rgba(255, 233, 214, 0.58);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .works-label {
+    color: rgba(255, 233, 214, 0.36);
+  }
+
+  .server {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+  }
+
+  a:focus-visible {
+    outline: 2px solid #ffd166;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 760px) {
+    .range--wide {
+      display: none;
+    }
+
+    .range--narrow {
+      display: block;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .stage {
+      --art: 46svh;
+      --sun: clamp(170px, 54vw, 260px);
+    }
+
+    .copy {
+      padding-top: calc(42px + 1.6rem);
+    }
+
+    h1 {
+      max-width: 15ch;
+      margin-top: 0.85rem;
+    }
+
+    .lede {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      max-width: 34ch;
+    }
+
+    .actions {
+      margin-top: 1.25rem;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .store,
+    .source {
+      justify-content: center;
+      padding: 0.72rem 1.1rem;
+    }
+
+    .works {
+      gap: 0.3rem 0.7rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+    }
+
+    .works-label {
+      flex-basis: 100%;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sun {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,528 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'A free player for the music on your own server.';
+const BODY =
+  'Mozz streams your Plex, Jellyfin, Navidrome or Subsonic library on iPhone and iPad \u2014 or downloads an album so it keeps playing with no signal.';
+const SUPPORT = 'Radio and Mozz Weekly included. Free forever. Open source.';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Stream from your own Plex, Jellyfin, Navidrome or Subsonic server, or download albums and play them offline."
+  themeColor="#123e55"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,700..800&family=Caveat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="cassette" />
+
+  <main class="stage">
+    <svg class="field" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect x="0" y="0" width="1440" height="900" fill="#123e55" />
+      <path
+        d="M-80 214 C 220 92, 470 300, 760 214 S 1220 66, 1540 190"
+        fill="none"
+        stroke="#1a5a79"
+        stroke-width="18"
+        stroke-linecap="round"
+      />
+      <path
+        d="M-80 250 C 230 134, 480 338, 770 254 S 1230 108, 1540 228"
+        fill="none"
+        stroke="#17506c"
+        stroke-width="8"
+        stroke-linecap="round"
+      />
+      <path
+        d="M-80 742 C 250 636, 360 900, 700 842 S 1140 646, 1540 786"
+        fill="none"
+        stroke="#1a5a79"
+        stroke-width="20"
+        stroke-linecap="round"
+      />
+      <path
+        d="M-80 786 C 260 682, 380 944, 716 884 S 1150 692, 1540 830"
+        fill="none"
+        stroke="#17506c"
+        stroke-width="9"
+        stroke-linecap="round"
+      />
+    </svg>
+
+    <div class="inner">
+      <p class="lockup">
+        <Mark size={26} decorative />
+        <span class="wordmark">{NAME}</span>
+        <span class="kicker">Self-hosted music player</span>
+      </p>
+
+      <h1>{HEADLINE}</h1>
+
+      <p class="body">
+        {BODY}{' '}
+        <span class="quiet">{SUPPORT}</span>
+      </p>
+
+      <div class="tape-wrap">
+        <svg
+          class="tape"
+          viewBox="0 0 1000 640"
+          role="img"
+          aria-label="An oversized cassette tape. The write-on label is hand-lettered: songs you already own, no signal required."
+        >
+          <!-- shell -->
+          <rect x="6" y="6" width="988" height="628" rx="28" fill="#e2482d" stroke="#23100a" stroke-width="7" />
+          <rect x="20" y="20" width="960" height="600" rx="20" fill="none" stroke="#b23520" stroke-width="4" />
+
+          <!-- write-protect tabs on the top edge -->
+          <rect x="156" y="9" width="74" height="26" rx="7" fill="#b23520" stroke="#23100a" stroke-width="5" />
+          <rect x="770" y="9" width="74" height="26" rx="7" fill="#b23520" stroke="#23100a" stroke-width="5" />
+
+          <!-- finger grips moulded into the sides -->
+          <g fill="#b23520">
+            <rect x="32" y="398" width="22" height="11" rx="5" />
+            <rect x="32" y="426" width="22" height="11" rx="5" />
+            <rect x="32" y="454" width="22" height="11" rx="5" />
+            <rect x="946" y="398" width="22" height="11" rx="5" />
+            <rect x="946" y="426" width="22" height="11" rx="5" />
+            <rect x="946" y="454" width="22" height="11" rx="5" />
+          </g>
+
+          <!-- screws -->
+          <g class="screws">
+            <g><circle cx="500" cy="32" r="11" /><circle cx="500" cy="32" r="4" class="slot" /></g>
+            <g><circle cx="56" cy="40" r="11" /><circle cx="56" cy="40" r="4" class="slot" /></g>
+            <g><circle cx="944" cy="40" r="11" /><circle cx="944" cy="40" r="4" class="slot" /></g>
+            <g><circle cx="56" cy="588" r="11" /><circle cx="56" cy="588" r="4" class="slot" /></g>
+            <g><circle cx="944" cy="588" r="11" /><circle cx="944" cy="588" r="4" class="slot" /></g>
+          </g>
+
+          <!-- write-on label -->
+          <rect x="64" y="58" width="872" height="268" rx="12" fill="#ffe8d1" stroke="#23100a" stroke-width="5" />
+          <path d="M64 70a12 12 0 0 1 12-12h848a12 12 0 0 1 12 12v50H64z" fill="#c80028" />
+          <line x1="64" y1="120" x2="936" y2="120" stroke="#23100a" stroke-width="4" />
+          <text class="print" x="128" y="102" fill="#ffe8d1">MOZZ</text>
+          <text class="print-fine" x="286" y="100" fill="#ffe8d1" opacity="0.72">NORMAL POSITION · TYPE I</text>
+          <rect x="760" y="72" width="116" height="34" rx="17" fill="#ffe8d1" />
+          <text class="print-chip" x="818" y="96" fill="#c80028">SIDE A</text>
+
+          <line x1="120" y1="212" x2="880" y2="212" stroke="#f2ccaa" stroke-width="3" />
+          <line x1="120" y1="288" x2="880" y2="288" stroke="#f2ccaa" stroke-width="3" />
+          <text class="hand" x="140" y="204" fill="#23100a" transform="rotate(-1 140 204)">songs you already own</text>
+          <text class="hand-sm" x="146" y="280" fill="#1b5a78" transform="rotate(-1 146 280)">no signal required</text>
+
+          <!-- window -->
+          <rect x="110" y="344" width="780" height="208" rx="20" fill="#241511" stroke="#23100a" stroke-width="6" />
+
+          <!-- felt pressure pad, behind the tape -->
+          <rect x="466" y="482" width="68" height="30" rx="4" fill="#120806" />
+          <g stroke="#412c20" stroke-width="3" stroke-linecap="round">
+            <line x1="476" y1="490" x2="524" y2="490" />
+            <line x1="476" y1="498" x2="524" y2="498" />
+            <line x1="476" y1="506" x2="524" y2="506" />
+          </g>
+          <path d="M492 512h16l12 34h-40z" fill="#9aa5ad" stroke="#23100a" stroke-width="3" stroke-linejoin="round" />
+
+          <!-- spools, wound unevenly -->
+          <g>
+            <circle cx="300" cy="448" r="88" fill="#5a3220" stroke="#23100a" stroke-width="4" />
+            <circle cx="300" cy="448" r="74" fill="none" stroke="#7a4a30" stroke-width="3" />
+            <circle cx="300" cy="448" r="58" fill="none" stroke="#7a4a30" stroke-width="3" />
+            <path d="M238 386a88 88 0 0 1 44-24" fill="none" stroke="#9a6141" stroke-width="7" stroke-linecap="round" />
+          </g>
+          <g>
+            <circle cx="700" cy="448" r="56" fill="#5a3220" stroke="#23100a" stroke-width="4" />
+            <circle cx="700" cy="448" r="44" fill="none" stroke="#7a4a30" stroke-width="3" />
+            <path d="M660 408a56 56 0 0 1 28-16" fill="none" stroke="#9a6141" stroke-width="7" stroke-linecap="round" />
+          </g>
+
+          <!-- tape running from spool to spool over the pad -->
+          <path
+            d="M228 508 L176 522 L824 522 L750 492"
+            fill="none"
+            stroke="#3a2015"
+            stroke-width="12"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+          />
+          <path
+            d="M180 516 L820 516"
+            fill="none"
+            stroke="#6e4630"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+
+          <!-- hubs with their teeth -->
+          <g transform="translate(300 448)">
+            <g class="hub hub-a">
+              <circle r="32" fill="#ffe8d1" stroke="#23100a" stroke-width="4" />
+              <circle r="15" fill="#160b06" />
+              <g fill="#160b06">
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(60)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(120)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(180)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(240)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(300)" />
+              </g>
+            </g>
+          </g>
+          <g transform="translate(700 448)">
+            <g class="hub hub-b">
+              <circle r="32" fill="#ffe8d1" stroke="#23100a" stroke-width="4" />
+              <circle r="15" fill="#160b06" />
+              <g fill="#160b06">
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(60)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(120)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(180)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(240)" />
+                <rect x="-4.5" y="-30" width="9" height="15" rx="2" transform="rotate(300)" />
+              </g>
+            </g>
+          </g>
+
+          <!-- tape guides -->
+          <circle cx="176" cy="522" r="15" fill="#e9e2d1" stroke="#23100a" stroke-width="4" />
+          <circle cx="824" cy="522" r="15" fill="#e9e2d1" stroke="#23100a" stroke-width="4" />
+
+          <!-- window glare, flat -->
+          <path d="M150 344 L246 344 L166 552 L110 552 L110 470z" fill="#ffe8d1" opacity="0.07" />
+
+          <!-- bottom edge: capstan holes and the head opening -->
+          <circle cx="352" cy="598" r="20" fill="#160b06" stroke="#23100a" stroke-width="4" />
+          <circle cx="648" cy="598" r="20" fill="#160b06" stroke="#23100a" stroke-width="4" />
+          <rect x="404" y="570" width="192" height="54" rx="8" fill="#160b06" stroke="#23100a" stroke-width="5" />
+          <g fill="#b23520">
+            <path d="M196 592 L216 601 L196 610z" />
+            <text class="moulded" x="228" y="608">A</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View the source on GitHub</a>
+      </div>
+
+      <p class="works">
+        <span class="works-label">Works with</span>
+        <span class="server"><ServerLogo name="Plex" size={15} brand />Plex</span>
+        <span class="server"><ServerLogo name="Jellyfin" size={15} brand />Jellyfin</span>
+        <span class="server"><ServerLogo name="Navidrome" size={15} brand />Navidrome</span>
+        <span class="server">Subsonic</span>
+      </p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #123e55;
+    color: #ffe8d1;
+    font-family: 'Archivo', 'Archivo Fallback', system-ui;
+  }
+
+  .field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .inner {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 1.4vh, 1rem);
+    width: 100%;
+    padding: clamp(3rem, 5.6vh, 3.6rem) 1.25rem clamp(1.2rem, 2.6vh, 1.7rem);
+    text-align: center;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+  }
+
+  .wordmark {
+    font-family: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', Georgia;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+
+  .kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a8cbdd;
+    border-left: 1px solid #2f6c8d;
+    padding-left: 0.6rem;
+  }
+
+  h1 {
+    font-family: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', Georgia;
+    font-weight: 700;
+    font-size: clamp(1.7rem, 3.5vw, 3rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    margin: 0.15rem 0 0;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  .body {
+    margin: 0;
+    max-width: 62ch;
+    font-size: clamp(0.94rem, 1.15vw, 1.06rem);
+    line-height: 1.5;
+    color: #e6f0f5;
+    text-wrap: pretty;
+  }
+
+  .quiet {
+    color: #a8cbdd;
+  }
+
+  .tape-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: clamp(0.3rem, 1.6vh, 1rem) 0 clamp(0.2rem, 1.2vh, 0.7rem);
+  }
+
+  .tape {
+    width: min(1000px, 100%);
+    max-height: 50svh;
+    height: auto;
+    flex: none;
+    transform: rotate(-1.6deg);
+    filter: drop-shadow(14px 18px 0 rgba(6, 32, 46, 0.55));
+  }
+
+  .print {
+    font-family: 'Archivo', system-ui;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 7px;
+  }
+
+  .print-fine {
+    font-family: 'Archivo', system-ui;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 2.4px;
+  }
+
+  .print-chip {
+    font-family: 'Archivo', system-ui;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 2.6px;
+    text-anchor: middle;
+  }
+
+  .moulded {
+    font-family: 'Archivo', system-ui;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+
+  .hand {
+    font-family: 'Caveat', 'Caveat Fallback', cursive;
+    font-weight: 700;
+    font-size: 74px;
+  }
+
+  .hand-sm {
+    font-family: 'Caveat', 'Caveat Fallback', cursive;
+    font-weight: 600;
+    font-size: 40px;
+  }
+
+  .screws circle {
+    fill: #b23520;
+    stroke: #23100a;
+    stroke-width: 4;
+  }
+
+  .screws .slot {
+    fill: #23100a;
+    stroke: none;
+  }
+
+  .hub {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: spin 14s linear infinite;
+  }
+
+  .hub-b {
+    animation-duration: 8s;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 0.1rem;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.66rem 1.25rem;
+    font-size: 0.94rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .source {
+    background: #ffe8d1;
+    color: #1a0d07;
+    border: 2px solid #ffe8d1;
+  }
+
+  .source:hover {
+    background: #ffd9b6;
+    border-color: #ffd9b6;
+  }
+
+  .is-pending {
+    border: 2px dashed #4d87a6;
+    color: #c8dfeb;
+    cursor: default;
+  }
+
+  .is-pending::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e2482d;
+    flex: none;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem 0.9rem;
+    margin: 0.2rem 0 0;
+    font-size: 0.76rem;
+    color: #a8cbdd;
+  }
+
+  .works-label {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8fbcd2;
+  }
+
+  .server {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  a:focus-visible,
+  .store:focus-visible {
+    outline: 3px solid #ffe8d1;
+    outline-offset: 3px;
+  }
+
+  .source:focus-visible {
+    outline-color: #e2482d;
+  }
+
+  @media (max-width: 760px) {
+    .inner {
+      padding-top: 3.2rem;
+      gap: 0.6rem;
+    }
+
+    h1 {
+      font-size: clamp(1.55rem, 7.2vw, 2rem);
+      max-width: 17ch;
+    }
+
+    .body {
+      font-size: 0.92rem;
+      max-width: 40ch;
+    }
+
+    .tape {
+      width: 132%;
+      max-width: none;
+      max-height: none;
+      transform: rotate(-1.2deg);
+      filter: drop-shadow(9px 12px 0 rgba(6, 32, 46, 0.55));
+    }
+
+    .tape-wrap {
+      margin: 0.35rem 0 0.5rem;
+    }
+
+    .actions {
+      flex-direction: column;
+      align-self: stretch;
+    }
+
+    .store,
+    .source {
+      justify-content: center;
+    }
+
+    .works {
+      font-size: 0.72rem;
+      gap: 0.35rem 0.7rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hub {
+      animation: none;
+    }
+  }
+</style>

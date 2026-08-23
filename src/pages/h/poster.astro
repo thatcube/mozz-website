@@ -1,0 +1,429 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, SITE, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'A free player for the music on your own server.';
+const BODY =
+  'Point Mozz at Plex, Jellyfin, Navidrome or Subsonic. Stream it at home, or download an album and play it with no signal at all.';
+const BILL = ['Radio', 'Mozz Weekly', 'Downloads', 'iPhone and iPad'];
+const domain = SITE.replace(/^https?:\/\//, '');
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin, Navidrome or Subsonic server, at home or offline."
+  themeColor="#f5efe2"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="poster" />
+
+  <main class="poster">
+    <div class="press" aria-hidden="true">
+      <svg class="cone" viewBox="0 0 400 400">
+        <defs>
+          <pattern id="poster-dots" width="9" height="9" patternUnits="userSpaceOnUse">
+            <circle cx="4.5" cy="4.5" r="2.6" fill="#e03e2d" />
+          </pattern>
+        </defs>
+        <circle cx="188" cy="186" r="196" fill="url(#poster-dots)" opacity="0.85" />
+        <g fill="none" stroke="#e03e2d">
+          <circle cx="200" cy="200" r="192" stroke-width="12" />
+          <circle cx="200" cy="200" r="171" stroke-width="20" />
+        </g>
+        <circle cx="200" cy="200" r="152" fill="#e03e2d" />
+        <g fill="none" stroke="#f5efe2" stroke-width="5">
+          <circle cx="200" cy="200" r="136" />
+          <circle cx="200" cy="200" r="118" />
+          <circle cx="200" cy="200" r="99" />
+          <circle cx="200" cy="200" r="79" />
+        </g>
+        <circle cx="200" cy="200" r="58" fill="#f5efe2" />
+        <circle cx="200" cy="200" r="48" fill="#e03e2d" />
+        <g fill="#e03e2d">
+          <circle cx="200" cy="16" r="11" />
+          <circle cx="200" cy="384" r="11" />
+          <circle cx="16" cy="200" r="11" />
+          <circle cx="384" cy="200" r="11" />
+        </g>
+      </svg>
+
+      <svg class="bars" viewBox="0 0 120 20" preserveAspectRatio="none">
+        <g fill="#e03e2d">
+          <rect x="0" y="11" width="4" height="9" />
+          <rect x="6" y="6" width="4" height="14" />
+          <rect x="12" y="14" width="4" height="6" />
+          <rect x="18" y="3" width="4" height="17" />
+          <rect x="24" y="9" width="4" height="11" />
+          <rect x="30" y="16" width="4" height="4" />
+          <rect x="36" y="7" width="4" height="13" />
+          <rect x="42" y="12" width="4" height="8" />
+          <rect x="48" y="2" width="4" height="18" />
+          <rect x="54" y="10" width="4" height="10" />
+          <rect x="60" y="15" width="4" height="5" />
+          <rect x="66" y="5" width="4" height="15" />
+          <rect x="72" y="13" width="4" height="7" />
+          <rect x="78" y="8" width="4" height="12" />
+          <rect x="84" y="1" width="4" height="19" />
+          <rect x="90" y="11" width="4" height="9" />
+          <rect x="96" y="6" width="4" height="14" />
+          <rect x="102" y="14" width="4" height="6" />
+          <rect x="108" y="4" width="4" height="16" />
+          <rect x="114" y="10" width="4" height="10" />
+        </g>
+      </svg>
+
+      <span class="halftone"></span>
+      <span class="grain"></span>
+    </div>
+
+    <div class="ink">
+      <header class="billing">
+        <span class="bill-mark"><Mark size={22} decorative /> Self-hosted music player</span>
+        <span class="bill-fine">Free forever · open source</span>
+      </header>
+
+      <div class="word">
+        <svg class="wordmark" viewBox="0 0 1000 214" role="img" aria-label="Mozz">
+          <text x="500" y="196" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs"
+            >MOZZ</text
+          >
+        </svg>
+      </div>
+
+      <ul class="bill-list" role="list">
+        {BILL.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <div class="say">
+        <h1>{HEADLINE}</h1>
+        <p>{BODY}</p>
+      </div>
+
+      <div class="foot">
+        <div class="actions">
+          <a class="source" href={GITHUB_URL}>Get the source on GitHub</a>
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+          )}
+        </div>
+
+        <div class="works">
+          <span class="works-label">Works with</span>
+          <span class="server"><ServerLogo name="Plex" size={15} />Plex</span>
+          <span class="server"><ServerLogo name="Jellyfin" size={15} />Jellyfin</span>
+          <span class="server"><ServerLogo name="Navidrome" size={15} />Navidrome</span>
+          <span class="server">Subsonic</span>
+        </div>
+      </div>
+
+      <footer class="colophon">
+        <span>No account · no tracking · GPL-3.0</span>
+        <span>{domain}</span>
+      </footer>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .poster {
+    --paper: #f5efe2;
+    --red: #e03e2d;
+    --blue: #1c3f94;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    min-height: 100svh;
+    padding: clamp(52px, 6.4vh, 70px) clamp(18px, 3.4vw, 46px) clamp(16px, 2.6vh, 30px);
+    background: var(--paper);
+    color: var(--blue);
+    font-family: 'Bricolage Grotesque', 'Trebuchet MS', system-ui;
+  }
+
+  /* ---- the inks ------------------------------------------------------- */
+
+  .press {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .cone {
+    position: absolute;
+    top: 50%;
+    right: -13%;
+    width: min(92vh, 66%);
+    aspect-ratio: 1;
+    transform: translateY(-54%);
+  }
+
+  .bars {
+    position: absolute;
+    inset: auto 0 0;
+    width: 100%;
+    height: clamp(38px, 8vh, 74px);
+    opacity: 0.9;
+  }
+
+  .halftone {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, rgba(224, 62, 45, 0.62) 1.7px, transparent 1.9px);
+    background-size: 8px 8px;
+    -webkit-mask-image: linear-gradient(152deg, rgba(0, 0, 0, 0.72) 3%, rgba(0, 0, 0, 0.34) 26%, transparent 48%);
+    mask-image: linear-gradient(152deg, rgba(0, 0, 0, 0.72) 3%, rgba(0, 0, 0, 0.34) 26%, transparent 48%);
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(40, 30, 20, 0.4) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+  }
+
+  /* Every mark of blue is one plate, printed on top — so where it crosses the
+     red it overprints instead of hiding it. */
+  .ink {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    mix-blend-mode: multiply;
+  }
+
+  /* ---- billing -------------------------------------------------------- */
+
+  .billing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--blue);
+    font-size: clamp(10px, 1vw, 12.5px);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .bill-mark {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .bill-fine {
+    opacity: 0.78;
+  }
+
+  /* ---- the type, which is the picture --------------------------------- */
+
+  .word {
+    margin-top: clamp(10px, 2.4vh, 26px);
+    border-bottom: 1px solid var(--blue);
+  }
+
+  .wordmark {
+    width: 100%;
+    height: auto;
+  }
+
+  .wordmark text {
+    font-family: 'Big Shoulders Display', 'Haettenschweiler', 'Arial Narrow', system-ui;
+    font-weight: 900;
+    font-size: 268px;
+    fill: var(--blue);
+  }
+
+  .bill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1.1rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui;
+    font-size: clamp(15px, 2.3vw, 30px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .bill-list li:not(:last-child)::after {
+    content: '✳';
+    margin-left: 1.1rem;
+    font-size: 0.7em;
+    vertical-align: 0.12em;
+    color: var(--red);
+  }
+
+  /* ---- what it is ----------------------------------------------------- */
+
+  .say {
+    margin-top: auto;
+    padding-top: clamp(14px, 3.4vh, 40px);
+  }
+
+  h1 {
+    max-width: 17em;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui;
+    font-size: clamp(29px, 5.6vw, 80px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+  }
+
+  .say p {
+    max-width: 44ch;
+    margin-top: clamp(0.7rem, 1.8vh, 1.3rem);
+    font-size: clamp(13px, 1.15vw, 16.5px);
+    line-height: 1.42;
+    font-weight: 500;
+  }
+
+  /* ---- the bottom of the bill ----------------------------------------- */
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 1.6rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: clamp(16px, 3vh, 34px);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+
+  .source,
+  .store {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.62rem 1.05rem;
+    font-size: clamp(11.5px, 1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .source {
+    background: var(--blue);
+    color: var(--paper);
+    box-shadow: 5px 5px 0 var(--red);
+  }
+
+  .source:hover {
+    box-shadow: 2px 2px 0 var(--red);
+    transform: translate(3px, 3px);
+  }
+
+  .store.is-pending {
+    border: 2px dashed var(--blue);
+    opacity: 0.82;
+  }
+
+  .source,
+  .source:hover {
+    transition: transform 140ms ease, box-shadow 140ms ease;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.85rem;
+    align-items: center;
+    font-size: clamp(10.5px, 0.85vw, 12.5px);
+    font-weight: 500;
+  }
+
+  .works-label {
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .server {
+    display: inline-flex;
+    gap: 0.32rem;
+    align-items: center;
+  }
+
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    justify-content: space-between;
+    margin-top: clamp(12px, 2.4vh, 26px);
+    padding-top: 0.5rem;
+    border-top: 3px solid var(--blue);
+    font-size: clamp(9.5px, 0.8vw, 11.5px);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  a:focus-visible,
+  .store:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .cone {
+      top: 40%;
+      right: -24%;
+      width: 96%;
+    }
+
+    h1 {
+      max-width: none;
+      font-size: clamp(30px, 8.7vw, 48px);
+    }
+
+    .say p {
+      font-size: 14.5px;
+    }
+
+    .bill-list {
+      font-size: 17px;
+      gap: 0.1rem 0.8rem;
+    }
+
+    .foot {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .source,
+    .source:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,578 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+type Sleeve = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  r: number;
+  base: string;
+  ink: string;
+  accent: string;
+  art: 'sun' | 'slash' | 'bars' | 'rings' | 'wave' | 'blocks' | 'arch' | 'burst';
+};
+
+const sleeves: Sleeve[] = [
+  { x: 92, y: 132, w: 110, h: 326, r: -7, base: '#273f77', ink: '#f2c84b', accent: '#ef6548', art: 'sun' },
+  { x: 142, y: 105, w: 113, h: 348, r: -5, base: '#d84a33', ink: '#f6d975', accent: '#293555', art: 'slash' },
+  { x: 195, y: 148, w: 108, h: 310, r: -8, base: '#3d7d69', ink: '#f4e9d8', accent: '#d9a22e', art: 'bars' },
+  { x: 246, y: 80, w: 119, h: 376, r: -4, base: '#f0b82e', ink: '#222036', accent: '#e75050', art: 'rings' },
+  { x: 303, y: 125, w: 112, h: 333, r: -7, base: '#6d3b82', ink: '#ffbc42', accent: '#69d0bd', art: 'wave' },
+  { x: 356, y: 58, w: 124, h: 400, r: -3, base: '#0f6b78', ink: '#f5e6c8', accent: '#f46144', art: 'blocks' },
+  { x: 417, y: 118, w: 112, h: 340, r: -6, base: '#ef684a', ink: '#21334f', accent: '#f5d05d', art: 'arch' },
+  { x: 470, y: 145, w: 108, h: 315, r: -8, base: '#202b52', ink: '#ea5b70', accent: '#f5c547', art: 'burst' },
+  { x: 521, y: 96, w: 116, h: 363, r: -5, base: '#78a755', ink: '#f4e9d8', accent: '#d34838', art: 'sun' },
+  { x: 577, y: 136, w: 108, h: 324, r: -7, base: '#b9365b', ink: '#ffd06f', accent: '#343567', art: 'bars' },
+  { x: 628, y: 112, w: 114, h: 349, r: -4, base: '#335d92', ink: '#efcf65', accent: '#dc5035', art: 'slash' },
+  { x: 684, y: 152, w: 106, h: 308, r: -6, base: '#d98528', ink: '#27373e', accent: '#f2e2bd', art: 'rings' },
+  { x: 735, y: 116, w: 114, h: 345, r: 5, base: '#285e52', ink: '#f4d56d', accent: '#d84943', art: 'wave' },
+  { x: 789, y: 76, w: 120, h: 384, r: 3, base: '#e85f47', ink: '#43214d', accent: '#f6d16b', art: 'blocks' },
+  { x: 847, y: 137, w: 108, h: 322, r: 7, base: '#55458b', ink: '#72d2bc', accent: '#ffc14d', art: 'arch' },
+  { x: 899, y: 101, w: 116, h: 359, r: 4, base: '#1b6d8b', ink: '#f0bd3c', accent: '#f4e9d8', art: 'burst' },
+  { x: 955, y: 147, w: 107, h: 312, r: 8, base: '#b7392d', ink: '#f4dc96', accent: '#2c5970', art: 'sun' },
+  { x: 1005, y: 66, w: 122, h: 394, r: 3, base: '#e3a62f', ink: '#292846', accent: '#d74a56', art: 'slash' },
+  { x: 1064, y: 119, w: 112, h: 340, r: 6, base: '#397565', ink: '#f5ead8', accent: '#f0a837', art: 'bars' },
+  { x: 1118, y: 91, w: 118, h: 368, r: 4, base: '#762f6c', ink: '#ec6a49', accent: '#f2d766', art: 'rings' },
+  { x: 1174, y: 142, w: 108, h: 317, r: 8, base: '#305b91', ink: '#f6cd51', accent: '#e7543f', art: 'wave' },
+  { x: 1226, y: 109, w: 115, h: 350, r: 5, base: '#da4e3b', ink: '#f0dfb9', accent: '#315c4f', art: 'blocks' },
+  { x: 1282, y: 150, w: 106, h: 307, r: 8, base: '#5b8050', ink: '#f3cd52', accent: '#a93148', art: 'arch' },
+];
+---
+
+<Layout
+  title={`${NAME} — your collection, played`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Stream music from your own server or download albums for offline listening."
+  themeColor="#f4e9d8"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="crates" />
+
+  <main class="hero">
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="Mozz home">
+        <Mark size={27} decorative />
+        <strong>{NAME}</strong>
+        <span>Self-hosted music player</span>
+      </a>
+
+      <div class="compatibility" aria-label="Works with Plex, Jellyfin, Navidrome and Subsonic">
+        <span>Works with</span>
+        <span class="server"><ServerLogo name="Plex" size={18} />Plex</span>
+        <span class="server"><ServerLogo name="Jellyfin" size={18} />Jellyfin</span>
+        <span class="server"><ServerLogo name="Navidrome" size={18} />Navidrome</span>
+        <span class="subsonic">Subsonic</span>
+      </div>
+    </header>
+
+    <section class="pitch" aria-labelledby="crates-title">
+      <p class="eyebrow">The music you kept is still yours.</p>
+      <h1 id="crates-title">Your collection,<br />played by Mozz.</h1>
+      <p class="lede">
+        A free player for the music on your own server. Stream on iPhone and iPad,
+        or download albums for offline listening.
+      </p>
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+        <a class="source" href={GITHUB_URL}>View on GitHub</a>
+      </div>
+    </section>
+
+    <svg
+      class="crate-art"
+      viewBox="0 0 1440 570"
+      preserveAspectRatio="xMidYMid slice"
+      role="img"
+      aria-label="Two worn wooden record crates seen from above, packed with colourful abstract sleeves fanned at different angles"
+    >
+      <defs>
+        <clipPath id="crate-well">
+          <path d="M52 92 1388 92 1320 500 120 500Z" />
+        </clipPath>
+        <filter id="sleeve-shadow" x="-30%" y="-20%" width="170%" height="160%">
+          <feDropShadow dx="3" dy="8" stdDeviation="6" flood-color="#21140e" flood-opacity=".27" />
+        </filter>
+        <filter id="crate-shadow" x="-20%" y="-40%" width="140%" height="190%">
+          <feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#4b2616" flood-opacity=".28" />
+        </filter>
+      </defs>
+
+      <ellipse cx="720" cy="524" rx="665" ry="38" fill="#9d775d" opacity=".2" />
+
+      <g filter="url(#crate-shadow)">
+        <path d="M45 164 1395 164 1372 213 70 213Z" fill="#7b4728" stroke="#2b1b15" stroke-width="7" />
+        <path d="M63 175 1380 175 1314 500 124 500Z" fill="#3a241b" stroke="#2b1b15" stroke-width="7" />
+        <path d="m58 174 61-39 1261 0 20 29z" fill="#9a6238" stroke="#2b1b15" stroke-width="7" />
+        <path d="M107 154h1250" fill="none" stroke="#c8894e" stroke-width="9" opacity=".55" />
+      </g>
+
+      <g clip-path="url(#crate-well)" filter="url(#sleeve-shadow)">
+        {sleeves.map((sleeve) => (
+          <g
+            class="record"
+            transform={`translate(${sleeve.x} ${sleeve.y}) rotate(${sleeve.r} ${sleeve.w / 2} ${sleeve.h})`}
+          >
+            <rect width={sleeve.w} height={sleeve.h} rx="3" fill={sleeve.base} stroke="#201816" stroke-width="6" />
+
+            {sleeve.art === 'sun' && (
+              <>
+                <circle cx={sleeve.w * 0.53} cy="77" r="39" fill={sleeve.ink} />
+                <circle cx={sleeve.w * 0.53} cy="77" r="15" fill={sleeve.accent} />
+                <path d={`M8 137 H${sleeve.w - 8} V171 H8Z`} fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'slash' && (
+              <>
+                <path d={`M-6 128 78 0h42L35 170H-6Z`} fill={sleeve.ink} />
+                <circle cx={sleeve.w - 28} cy="78" r="22" fill={sleeve.accent} />
+                <rect x="13" y="190" width={sleeve.w - 26} height="15" fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'bars' && (
+              <>
+                <rect x="12" y="28" width="17" height="117" fill={sleeve.ink} />
+                <rect x="38" y="58" width="17" height="87" fill={sleeve.accent} />
+                <rect x="64" y="12" width="17" height="133" fill={sleeve.ink} />
+                <rect x="90" y="82" width="17" height="63" fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'rings' && (
+              <>
+                <circle cx={sleeve.w / 2} cy="84" r="49" fill={sleeve.ink} />
+                <circle cx={sleeve.w / 2} cy="84" r="31" fill={sleeve.base} />
+                <circle cx={sleeve.w / 2} cy="84" r="14" fill={sleeve.accent} />
+                <path d={`M10 155h${sleeve.w - 20}v28H10Z`} fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'wave' && (
+              <>
+                <path
+                  d={`M-8 53 Q18 14 42 53 T92 53 T${sleeve.w + 15} 53 V97 Q92 134 67 97 T17 97 T-8 97Z`}
+                  fill={sleeve.ink}
+                />
+                <circle cx={sleeve.w * 0.72} cy="154" r="21" fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'blocks' && (
+              <>
+                <rect x="0" y="0" width={sleeve.w * 0.46} height="105" fill={sleeve.ink} />
+                <rect x={sleeve.w * 0.46} y="0" width={sleeve.w * 0.54} height="48" fill={sleeve.accent} />
+                <rect x={sleeve.w * 0.46} y="48" width={sleeve.w * 0.27} height="57" fill="#f4e9d8" />
+                <rect x="17" y="130" width={sleeve.w - 34} height="36" fill={sleeve.accent} />
+              </>
+            )}
+
+            {sleeve.art === 'arch' && (
+              <>
+                <path
+                  d={`M12 151V78C12 29 ${sleeve.w - 12} 29 ${sleeve.w - 12} 78v73Z`}
+                  fill={sleeve.ink}
+                />
+                <path
+                  d={`M39 151V88c0-25 ${sleeve.w - 78}-25 ${sleeve.w - 78} 0v63Z`}
+                  fill={sleeve.accent}
+                />
+              </>
+            )}
+
+            {sleeve.art === 'burst' && (
+              <>
+                <path
+                  d={`M${sleeve.w / 2} 11 67 61 ${sleeve.w - 8} 45 77 86 ${sleeve.w - 5} 121 66 112 ${sleeve.w / 2} 166 42 113 6 127 31 85 4 49 42 62Z`}
+                  fill={sleeve.ink}
+                />
+                <circle cx={sleeve.w / 2} cy="88" r="18" fill={sleeve.accent} />
+              </>
+            )}
+
+            <rect x="8" y={sleeve.h - 28} width={sleeve.w - 16} height="10" fill={sleeve.ink} opacity=".78" />
+          </g>
+        ))}
+
+        <g transform="translate(646 27) rotate(-2 70 425)" class="divider">
+          <rect width="140" height="435" rx="4" fill="#eadbbd" stroke="#2b1b15" stroke-width="7" />
+          <path d="M14 94q54-26 109 0" fill="none" stroke="#b88a5b" stroke-width="8" opacity=".45" />
+          <text x="69" y="126" text-anchor="middle" fill="#33251d">keepers</text>
+          <path d="m23 145 89-10M30 161l73-8" fill="none" stroke="#33251d" stroke-width="5" stroke-linecap="round" opacity=".7" />
+        </g>
+
+        <g transform="translate(1003 38) rotate(2 62 410)" filter="url(#sleeve-shadow)">
+          <rect width="124" height="414" rx="3" fill="#bf3a2b" stroke="#201816" stroke-width="7" />
+          <circle cx="62" cy="91" r="48" fill="#f4e9d8" />
+          <path d="M62 43v96M14 91h96" stroke="#273b62" stroke-width="18" />
+          <circle cx="62" cy="91" r="14" fill="#e4aa2e" />
+          <path d="M15 172h94v25H15ZM15 210h58v14H15Z" fill="#273b62" />
+        </g>
+      </g>
+
+      <g filter="url(#crate-shadow)">
+        <path d="M55 397 1390 397 1317 558 122 558Z" fill="#9a6037" stroke="#2b1b15" stroke-width="8" />
+        <path d="m55 397 67 30h1195l73-30" fill="#c07b42" stroke="#2b1b15" stroke-width="8" />
+        <path d="M720 400v158" stroke="#2b1b15" stroke-width="14" />
+        <path d="M731 414v132" stroke="#c88649" stroke-width="7" opacity=".55" />
+
+        <path d="M131 458c100-24 196 25 310-4s180 12 253-4" fill="none" stroke="#704126" stroke-width="7" stroke-linecap="round" opacity=".65" />
+        <path d="M773 476c117-38 244 23 361-10 69-20 112-3 152 8" fill="none" stroke="#704126" stroke-width="7" stroke-linecap="round" opacity=".65" />
+        <path d="M188 523c83-21 155 12 236-4" fill="none" stroke="#c6884d" stroke-width="5" stroke-linecap="round" opacity=".65" />
+        <path d="M861 526c92-23 171 9 261-3" fill="none" stroke="#c6884d" stroke-width="5" stroke-linecap="round" opacity=".65" />
+
+        <circle cx="535" cy="458" r="9" fill="#5a3422" />
+        <circle cx="1205" cy="505" r="8" fill="#5a3422" />
+        <path d="M55 397h37l-17 28-20-9ZM1317 558h-42l23-31 34 0Z" fill="#6f4229" />
+        <path d="M1365 411h25l-18 42-26-9Z" fill="#e2a361" opacity=".72" />
+      </g>
+
+      <g class="crate-label" transform="translate(215 441) rotate(-2)">
+        <rect width="224" height="76" rx="3" fill="#e8d7b4" stroke="#3a281f" stroke-width="5" />
+        <path d="M11 10h202v56H11Z" fill="none" stroke="#bf3a2b" stroke-width="4" />
+        <text x="112" y="35" text-anchor="middle">PERSONAL LIBRARY</text>
+        <text class="label-small" x="112" y="57" text-anchor="middle">PLAYED OFTEN · KEPT ALWAYS</text>
+      </g>
+
+      <g class="crate-stencil" transform="translate(897 455) rotate(1)">
+        <text x="0" y="38">MZ — 01</text>
+        <path d="M0 54h168" stroke="#3c2a20" stroke-width="6" stroke-dasharray="25 8" />
+      </g>
+    </svg>
+  </main>
+</Layout>
+
+<style>
+  :global(html),
+  :global(body) {
+    width: 100%;
+    overflow: hidden;
+    background: #f4e9d8;
+  }
+
+  .hero {
+    --cream: #f4e9d8;
+    --paper: #eadbbd;
+    --ink: #241a16;
+    --muted: #6e5d50;
+    --brick: #bf3a2b;
+    --sage: #4b7f6d;
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    min-height: 690px;
+    overflow: clip;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 18% 20%, rgba(255, 255, 255, .64), transparent 30%),
+      linear-gradient(115deg, #f7eedf 0%, var(--cream) 62%, #eddec9 100%);
+    font-family: 'Familjen Grotesk', 'Helvetica Neue', Arial;
+  }
+
+  .hero::before {
+    position: absolute;
+    inset: 42px 0 auto;
+    height: 5px;
+    background: linear-gradient(90deg, var(--brick) 0 34%, #e5ab32 34% 59%, var(--sage) 59% 82%, #304f78 82%);
+    content: '';
+  }
+
+  .masthead {
+    position: absolute;
+    top: 68px;
+    right: clamp(24px, 4.5vw, 70px);
+    left: clamp(24px, 4.5vw, 70px);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+
+  .wordmark strong {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -.035em;
+  }
+
+  .wordmark > span:last-child {
+    margin-left: 7px;
+    color: var(--muted);
+    font: 600 10px/1.2 'Martian Mono', 'Courier New';
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .compatibility {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .compatibility > span:first-child {
+    font: 600 9px/1 'Martian Mono', 'Courier New';
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .server {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .subsonic {
+    padding-left: 13px;
+    border-left: 2px solid rgba(36, 26, 22, .18);
+  }
+
+  .pitch {
+    position: relative;
+    z-index: 3;
+    width: min(780px, calc(100% - 48px));
+    margin: 0 auto;
+    padding-top: clamp(135px, 16vh, 174px);
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin-bottom: 8px;
+    color: var(--brick);
+    font: 600 10px/1.2 'Martian Mono', 'Courier New';
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(48px, 5.4vw, 76px);
+    font-weight: 600;
+    line-height: .93;
+    letter-spacing: -.062em;
+  }
+
+  .lede {
+    max-width: 610px;
+    margin: 16px auto 0;
+    color: #55453b;
+    font-size: clamp(16px, 1.4vw, 18px);
+    line-height: 1.42;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border: 3px solid var(--ink);
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+
+  .store {
+    color: #fff9ef;
+    background: var(--brick);
+  }
+
+  .store.is-pending {
+    color: var(--ink);
+    background: #e2cfaa;
+  }
+
+  .source {
+    background: #fff9ef;
+  }
+
+  .source:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .source:focus-visible,
+  .wordmark:focus-visible {
+    outline: 3px solid var(--brick);
+    outline-offset: 4px;
+  }
+
+  .crate-art {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: min(56vh, 530px);
+    animation: settle 650ms cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  .divider text {
+    font: 600 29px/1 'Caveat', cursive;
+  }
+
+  .crate-label text {
+    fill: #33251d;
+    font: 600 14px/1 'Martian Mono', 'Courier New';
+    letter-spacing: .08em;
+  }
+
+  .crate-label .label-small {
+    font-size: 7px;
+    letter-spacing: .045em;
+  }
+
+  .crate-stencil text {
+    fill: #3c2a20;
+    font: 600 32px/1 'Martian Mono', 'Courier New';
+    letter-spacing: .13em;
+    opacity: .8;
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateY(36px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      min-height: 700px;
+    }
+
+    .masthead {
+      top: 61px;
+      right: 18px;
+      left: 18px;
+    }
+
+    .wordmark > span:last-child {
+      display: none;
+    }
+
+    .compatibility {
+      gap: 7px;
+    }
+
+    .compatibility > span:first-child,
+    .server,
+    .subsonic {
+      font-size: 0;
+    }
+
+    .compatibility > span:first-child,
+    .subsonic {
+      display: none;
+    }
+
+    .pitch {
+      width: calc(100% - 36px);
+      padding-top: 117px;
+      text-align: left;
+    }
+
+    .eyebrow {
+      margin-bottom: 9px;
+      font-size: 8px;
+    }
+
+    h1 {
+      max-width: 360px;
+      font-size: clamp(42px, 12.3vw, 51px);
+      line-height: .94;
+    }
+
+    .lede {
+      max-width: 355px;
+      margin: 13px 0 0;
+      font-size: 15px;
+      line-height: 1.36;
+    }
+
+    .actions {
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .store,
+    .source {
+      min-height: 39px;
+      padding: 0 12px;
+      border-width: 2px;
+      font-size: 11px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .crate-art {
+      height: 52vh;
+      min-height: 410px;
+      max-height: 470px;
+    }
+  }
+
+  @media (max-width: 420px) and (max-height: 760px) {
+    .pitch {
+      padding-top: 108px;
+    }
+
+    h1 {
+      font-size: 39px;
+    }
+
+    .lede {
+      font-size: 14px;
+    }
+
+    .crate-art {
+      min-height: 300px;
+      height: 39vh;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crate-art {
+      animation: none;
+    }
+  }
+</style>
