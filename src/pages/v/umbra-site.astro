@@ -190,7 +190,8 @@ const DRIFT_BACK = Array.from({ length: 12 }, (_, i) => i + 4);
 const WALL = Array.from({ length: 48 }, (_, i) => i * 3 + 1);
 
 /** The library grid drawn on the iPad in the pair section. */
-const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
+/* Hand-shuffled rather than a stride, so no two rows of the grid repeat. */
+const PAD_TILES = [4, 9, 1, 6, 12, 3, 15, 7, 18, 2, 11, 5, 8, 14, 0, 17, 10, 19, 13, 16, 21, 24, 26, 23];
 ---
 
 <Layout title={`${NAME} — a free player for the music on your own server`} description={META} themeColor="#0a070d">
@@ -415,7 +416,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
          Three lamps at three distances: lit, penumbra, umbra. -->
     <section class="band servers" id="um-servers" aria-labelledby="um-servers-t">
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Where the music already is</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>01</b>Where the music already is</p>
         <h2 id="um-servers-t">Point it at the machine you already own.</h2>
 
         <ul class="lamps" role="list">
@@ -444,7 +445,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
          weight — the argument the hero makes, said in words. -->
     <section class="band parity" aria-labelledby="um-parity-t">
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Two halves of the same picture</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>02</b>Two halves of the same picture</p>
         <h2 id="um-parity-t">In the light, or in the shadow. Same player.</h2>
 
         <div class="halves">
@@ -501,7 +502,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
          right. Decoration for the weekly mixes, not a hero. -->
     <section class="band weekly" aria-labelledby="um-weekly-t">
       <div class="wrap weekly-head">
-        <p class="eyebrow"><i aria-hidden="true"></i>Featured</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>03</b>Featured</p>
         <h2 id="um-weekly-t">{WEEKLY.title}</h2>
         <p class="weekly-body">{WEEKLY.body}</p>
       </div>
@@ -529,7 +530,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
     <!-- ========================================================== FEATURES -->
     <section class="band does" aria-labelledby="um-does-t">
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>What it does with them</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>04</b>What it does with them</p>
         <h2 id="um-does-t">A player, built the way a library wants to be played.</h2>
 
         <ul class="cards" role="list">
@@ -546,12 +547,47 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
       </div>
     </section>
 
+    <!-- ============================================================ ALOUD
+         New ground: the app reaches past the phone. Drawn rather than
+         described — the request goes one way and the sound comes back. -->
+    <section class="band aloud" aria-labelledby="um-aloud-t">
+      <div class="wrap aloud-grid">
+        <div class="aloud-say">
+          <p class="eyebrow"><i aria-hidden="true"></i><b>05</b>Past the phone</p>
+          <h2 id="um-aloud-t">{FEATURES[7].title}</h2>
+          <p class="aloud-body">{FEATURES[7].body}</p>
+        </div>
+
+        <svg class="aloud-illo" viewBox="0 0 440 210" role="img" aria-label="A HomePod handing a request to an iPhone, which plays it and AirPlays the sound back.">
+          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <rect x="34" y="52" width="86" height="122" rx="42" />
+            <ellipse cx="77" cy="66" rx="30" ry="10" opacity="0.5" />
+            <path d="M52 96h50M52 110h50M52 124h50M58 138h38" opacity="0.4" />
+            <rect x="330" y="38" width="74" height="140" rx="16" />
+            <rect x="342" y="56" width="50" height="104" rx="6" opacity="0.45" />
+            <circle cx="367" cy="108" r="13" fill="currentColor" stroke="none" />
+            <path d="M136 78C196 52 268 50 316 62" />
+            <path d="M304 52l14 10-13 11" />
+            <path d="M316 158C258 180 190 178 138 160" opacity="0.75" />
+            <path d="M150 150l-14 10 13 11" opacity="0.75" />
+          </g>
+          <g class="aloud-label" font-size="11" letter-spacing="1.6">
+            <text x="77" y="196" text-anchor="middle">HOMEPOD</text>
+            <text x="367" y="196" text-anchor="middle">IPHONE</text>
+            <text x="226" y="46" text-anchor="middle">REQUEST</text>
+            <text x="226" y="186" text-anchor="middle">AIRPLAY BACK</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
     <!-- ============================================================= SPLIT
          The study at /h/split, moved off the hero and turned against
          something that is not a phone: on the left, the sound itself, drawn
          as the mark with the room leaving it; on the right, the reason any
-         of this matters. The wordmark straddles the seam so the two fields
-         stay one picture. -->
+         of this matters. The seam itself is the only ornament: a hairline
+         and the chapter mark, so the two fields read as one picture without
+         reprinting the logo behind them. -->
     <section class="split" aria-labelledby="um-own-t">
       <div class="field field-sound">
         <svg class="sound" viewBox="0 0 360 320" role="img" aria-label="The Mozz mark with sound leaving it in widening arcs.">
@@ -580,13 +616,15 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
           <span class="dot" aria-hidden="true"></span>
           {TAGLINE}
         </p>
-        <span class="seam seam-left" aria-hidden="true"><span>MOZZ</span></span>
       </div>
 
       <div class="field field-own">
-        <span class="seam seam-right" aria-hidden="true"><span>MOZZ</span></span>
+        <span class="seam-mark" aria-hidden="true">
+          <i></i>
+          <span>06 &middot; nobody in between</span>
+        </span>
         <div class="own">
-          <p class="eyebrow on-red"><i aria-hidden="true"></i>Why it is built this way</p>
+          <p class="eyebrow on-red"><i aria-hidden="true"></i><b>06</b>Why it is built this way</p>
           <h2 id="um-own-t">Nothing in the middle.</h2>
           <ul role="list">
             {
@@ -607,7 +645,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
          devices arrive together as the section is scrolled into view. -->
     <section class="band pair" aria-labelledby="um-pair-t">
       <div class="wrap pair-head">
-        <p class="eyebrow"><i aria-hidden="true"></i>Both screens</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>07</b>Both screens</p>
         <h2 id="um-pair-t">iPhone and iPad, one app.</h2>
         <p class="pair-body">{FAQS[4].a}</p>
       </div>
@@ -670,7 +708,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
       </div>
 
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Before you ask</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>08</b>Before you ask</p>
         <h2 id="um-faq-t">Questions, answered plainly.</h2>
 
         <dl class="qa">
@@ -1464,6 +1502,12 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
     background: var(--red);
   }
 
+  .eyebrow b {
+    font-weight: 500;
+    color: var(--red);
+    letter-spacing: 0.14em;
+  }
+
   .band h2 {
     max-width: 20ch;
     margin-top: 0.7rem;
@@ -1825,6 +1869,44 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
     color: rgba(238, 234, 226, 0.6);
   }
 
+  /* --------------------------------------------------------------- aloud */
+
+  .aloud {
+    border-top: 1px solid rgba(238, 234, 226, 0.1);
+  }
+
+  .aloud-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+  }
+
+  .aloud-body {
+    max-width: 44ch;
+    margin-top: 1rem;
+    font-size: clamp(13.5px, 1.06vw, 16px);
+    line-height: 1.6;
+    color: rgba(238, 234, 226, 0.68);
+  }
+
+  .aloud-illo {
+    width: 100%;
+    height: auto;
+    padding: clamp(18px, 2.4vw, 38px);
+    border: 1px solid rgba(238, 234, 226, 0.14);
+    border-radius: 4px;
+    background:
+      radial-gradient(90% 120% at 22% 40%, rgba(216, 0, 45, 0.16), rgba(10, 7, 13, 0) 66%),
+      var(--ink);
+    color: var(--cream);
+  }
+
+  .aloud-illo .aloud-label {
+    fill: var(--red);
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+  }
+
   /* --------------------------------------------------------------- split */
 
   .split {
@@ -1914,8 +1996,14 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
     color: rgba(253, 246, 236, 0.72);
   }
 
-  .eyebrow.on-red i {
+  .eyebrow.on-red i,
+  .eyebrow.on-red b {
+    color: var(--paper);
     background: var(--paper);
+  }
+
+  .eyebrow.on-red b {
+    background: none;
   }
 
   .own h2 {
@@ -1958,30 +2046,41 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
     color: rgba(253, 246, 236, 0.82);
   }
 
-  /* The word straddling the seam: one half printed in each field's ink. */
-  .seam {
+  /* The seam is marked by the chapter, not by the logo: one hairline down
+     the join and the number set small against it. */
+  .seam-mark {
     position: absolute;
-    top: clamp(26px, 5vh, 60px);
-    font-family: 'Bricolage Grotesque', Arial, sans-serif;
-    font-variation-settings: 'opsz' 96, 'wdth' 152, 'wght' 800;
-    font-size: clamp(70px, 11vw, 190px);
-    line-height: 0.78;
-    letter-spacing: -0.03em;
-    white-space: nowrap;
-    user-select: none;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-block: clamp(22px, 4vh, 48px);
     pointer-events: none;
   }
 
-  .seam-left {
-    right: 0;
-    transform: translateX(50%);
-    color: rgba(238, 234, 226, 0.17);
+  .seam-mark i {
+    flex: 1;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      rgba(253, 246, 236, 0) 0%,
+      rgba(253, 246, 236, 0.55) 22%,
+      rgba(253, 246, 236, 0.55) 78%,
+      rgba(253, 246, 236, 0) 100%
+    );
   }
 
-  .seam-right {
-    left: 0;
-    transform: translateX(-50%);
-    color: rgba(20, 10, 17, 0.3);
+  .seam-mark span {
+    flex: none;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(253, 246, 236, 0.66);
+    writing-mode: vertical-rl;
   }
 
   /* ---------------------------------------------------------------- pair */
@@ -2519,6 +2618,10 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
   }
 
   @media (max-width: 980px) {
+    .aloud-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .lamps,
     .cards {
       grid-template-columns: minmax(0, 1fr);
@@ -2541,7 +2644,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 2 + 2);
       min-height: clamp(360px, 60svh, 560px);
     }
 
-    .seam {
+    .seam-mark {
       display: none;
     }
 

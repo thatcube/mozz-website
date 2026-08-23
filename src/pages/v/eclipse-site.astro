@@ -161,7 +161,8 @@ function sleeve(index: number, lit = false): string {
 
 const DRIFT = Array.from({ length: 12 }, (_, i) => i);
 const WALL = Array.from({ length: 60 }, (_, i) => i * 5 + 2);
-const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
+/* Hand-shuffled rather than a stride, so no two rows of the grid repeat. */
+const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 10, 3, 8, 1, 6];
 ---
 
 <Layout title={`${NAME} — a free player for the music on your own server`} description={META} themeColor="#eeeae2">
@@ -419,7 +420,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
       <span class="transit" aria-hidden="true"></span>
 
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Where the music already is</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>01</b>Where the music already is</p>
         <h2 id="ec-servers-t">Point it at the machine you already own.</h2>
 
         <ul class="rack" role="list">
@@ -444,7 +445,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     <!-- ================================================= STREAMING / OFFLINE -->
     <section class="band parity" aria-labelledby="ec-parity-t">
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Equal halves</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>02</b>Equal halves</p>
         <h2 id="ec-parity-t">In the light or out of it, the same player.</h2>
 
         <div class="halves">
@@ -504,7 +505,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
          for as long as it is inside the light. -->
     <section class="band weekly" aria-labelledby="ec-weekly-t">
       <div class="wrap weekly-head">
-        <p class="eyebrow"><i aria-hidden="true"></i>Featured</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>03</b>Featured</p>
         <h2 id="ec-weekly-t">{WEEKLY.title}</h2>
         <p class="weekly-body">{WEEKLY.body}</p>
       </div>
@@ -528,7 +529,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     <!-- ========================================================= FEATURES -->
     <section class="band does" aria-labelledby="ec-does-t">
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>What it does with them</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>04</b>What it does with them</p>
         <h2 id="ec-does-t">A player built the way a library wants to be played.</h2>
 
         <ul class="cards" role="list">
@@ -545,10 +546,43 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
       </div>
     </section>
 
+    <!-- ============================================================ ALOUD -->
+    <section class="band aloud" aria-labelledby="ec-aloud-t">
+      <div class="wrap aloud-grid">
+        <div class="aloud-say">
+          <p class="eyebrow"><i aria-hidden="true"></i><b>05</b>Past the phone</p>
+          <h2 id="ec-aloud-t">{FEATURES[7].title}</h2>
+          <p class="aloud-body">{FEATURES[7].body}</p>
+        </div>
+
+        <svg class="aloud-illo" viewBox="0 0 440 210" role="img" aria-label="A HomePod handing a request to an iPhone, which plays it and AirPlays the sound back.">
+          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <rect x="34" y="52" width="86" height="122" rx="42" />
+            <ellipse cx="77" cy="66" rx="30" ry="10" opacity="0.5" />
+            <path d="M52 96h50M52 110h50M52 124h50M58 138h38" opacity="0.4" />
+            <rect x="330" y="38" width="74" height="140" rx="16" />
+            <rect x="342" y="56" width="50" height="104" rx="6" opacity="0.45" />
+            <circle cx="367" cy="108" r="13" fill="currentColor" stroke="none" />
+            <path d="M136 78C196 52 268 50 316 62" />
+            <path d="M304 52l14 10-13 11" />
+            <path d="M316 158C258 180 190 178 138 160" opacity="0.75" />
+            <path d="M150 150l-14 10 13 11" opacity="0.75" />
+          </g>
+          <g class="aloud-label" font-size="11" letter-spacing="1.6">
+            <text x="77" y="196" text-anchor="middle">HOMEPOD</text>
+            <text x="367" y="196" text-anchor="middle">IPHONE</text>
+            <text x="226" y="46" text-anchor="middle">REQUEST</text>
+            <text x="226" y="186" text-anchor="middle">AIRPLAY BACK</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
     <!-- ============================================================ SPLIT
          /h/split, moved down the page and turned against a drawing rather
          than a device: the eclipse itself on one side, the reason the app
-         exists on the other, and the wordmark holding the seam. -->
+         exists on the other. The seam is marked by the chapter rather than
+         by another copy of the logo. -->
     <section class="split" aria-labelledby="ec-own-t">
       <div class="field field-diagram">
         <svg class="diagram" viewBox="0 0 360 340" role="img" aria-label="An eclipse diagram: a dark disc crossing a lit one, with a red corona.">
@@ -571,13 +605,15 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
           </g>
         </svg>
         <p class="field-note"><span class="dot" aria-hidden="true"></span>{TAGLINE}</p>
-        <span class="seam seam-left" aria-hidden="true"><span>MOZZ</span></span>
       </div>
 
       <div class="field field-own">
-        <span class="seam seam-right" aria-hidden="true"><span>MOZZ</span></span>
+        <span class="seam-mark" aria-hidden="true">
+          <i></i>
+          <span>06 &middot; nobody in between</span>
+        </span>
         <div class="own">
-          <p class="eyebrow"><i aria-hidden="true"></i>Why it is built this way</p>
+          <p class="eyebrow"><i aria-hidden="true"></i><b>06</b>Why it is built this way</p>
           <h2 id="ec-own-t">Nothing standing in between.</h2>
           <ul role="list">
             {
@@ -596,7 +632,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     <!-- ============================================================= PAIR -->
     <section class="band pair" aria-labelledby="ec-pair-t">
       <div class="wrap pair-head">
-        <p class="eyebrow"><i aria-hidden="true"></i>Both screens</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>07</b>Both screens</p>
         <h2 id="ec-pair-t">iPhone and iPad, one app.</h2>
         <p class="pair-body">{FAQS[4].a}</p>
       </div>
@@ -653,7 +689,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
       </div>
 
       <div class="wrap">
-        <p class="eyebrow"><i aria-hidden="true"></i>Before you ask</p>
+        <p class="eyebrow"><i aria-hidden="true"></i><b>08</b>Before you ask</p>
         <h2 id="ec-faq-t">Questions, answered plainly.</h2>
 
         <dl class="qa">
@@ -1392,6 +1428,12 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     opacity: 1;
   }
 
+  .eyebrow b {
+    font-weight: 500;
+    color: var(--red);
+    letter-spacing: 0.14em;
+  }
+
   .band h2 {
     max-width: 20ch;
     margin-top: 0.7rem;
@@ -1764,6 +1806,41 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     opacity: 0.7;
   }
 
+  /* -------------------------------------------------------------- aloud */
+
+  .aloud {
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+  }
+
+  .aloud-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+  }
+
+  .aloud-body {
+    max-width: 44ch;
+    margin-top: 1rem;
+    font-size: clamp(13.5px, 1.06vw, 16px);
+    line-height: 1.6;
+    opacity: 0.72;
+  }
+
+  .aloud-illo {
+    width: 100%;
+    height: auto;
+    padding: clamp(18px, 2.4vw, 38px);
+    border: 1px solid rgba(20, 16, 26, 0.2);
+    background: var(--stock);
+    color: var(--ink);
+  }
+
+  .aloud-illo .aloud-label {
+    fill: var(--red);
+    font-family: 'DM Mono', ui-monospace, monospace;
+  }
+
   /* -------------------------------------------------------------- split */
 
   .split {
@@ -1890,30 +1967,40 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
     opacity: 0.72;
   }
 
-  .seam {
+  /* The seam carries the chapter, not another copy of the wordmark. */
+  .seam-mark {
     position: absolute;
-    top: clamp(24px, 5vh, 58px);
-    font-family: 'Archivo', sans-serif;
-    font-weight: 900;
-    font-stretch: 125%;
-    font-size: clamp(70px, 11vw, 190px);
-    line-height: 0.78;
-    letter-spacing: -0.03em;
-    white-space: nowrap;
-    user-select: none;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-block: clamp(22px, 4vh, 48px);
     pointer-events: none;
   }
 
-  .seam-left {
-    right: 0;
-    transform: translateX(50%);
-    color: rgba(238, 234, 226, 0.12);
+  .seam-mark i {
+    flex: 1;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 16, 26, 0) 0%,
+      rgba(20, 16, 26, 0.42) 22%,
+      rgba(20, 16, 26, 0.42) 78%,
+      rgba(20, 16, 26, 0) 100%
+    );
   }
 
-  .seam-right {
-    left: 0;
-    transform: translateX(-50%);
-    color: rgba(20, 16, 26, 0.1);
+  .seam-mark span {
+    flex: none;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.62;
+    writing-mode: vertical-rl;
   }
 
   /* --------------------------------------------------------------- pair */
@@ -2436,6 +2523,10 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
   }
 
   @media (max-width: 980px) {
+    .aloud-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .rack,
     .halves,
     .cards {
@@ -2455,7 +2546,7 @@ const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
       min-height: clamp(380px, 62svh, 560px);
     }
 
-    .seam {
+    .seam-mark {
       display: none;
     }
 
