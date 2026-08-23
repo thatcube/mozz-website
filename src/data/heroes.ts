@@ -1,26 +1,99 @@
 /**
- * Hero studies — round four.
+ * Hero studies.
  *
- * Two sets, ten each, answering the same brief in opposite ways:
+ * Round five, `kind: 'latest'`, is ten new standalone directions that carry on
+ * from the strongest of the red/white/black set: oversized type, poster and
+ * print thinking, one memorable gesture each and nothing decorative around it.
+ * They lead the list, so the gallery and the nav both open on the newest work.
  *
+ * The rounds below them:
+ *
+ *   kind: 'new'  nineteen studies in red, white and black.
  *   kind: 'app'  the hero shows Mozz itself — real interface, real cover art,
  *                colour taken from the record that happens to be playing.
  *   kind: 'art'  the hero shows an illustration instead, so the page never has
  *                to be redrawn when the app's interface moves on.
- *
- * Earlier rounds failed the same way twice: pale line drawings that diagrammed
- * the product rather than sounding like it. Both sets below carry colour.
  */
 
 export interface HeroStudy {
   slug: string;
   name: string;
-  kind: 'new' | 'app' | 'art';
+  kind: 'latest' | 'new' | 'app' | 'art';
   idea: string;
   swatch: [string, string, string];
 }
 
 export const HEROES: HeroStudy[] = [
+  {
+    slug: 'broadsheet',
+    name: 'Broadsheet',
+    kind: 'latest',
+    idea: 'The front page of a newspaper, with the price stamped across the masthead.',
+    swatch: ['#f4efe2', '#c80028', '#14110d'],
+  },
+  {
+    slug: 'rack',
+    name: 'Rack',
+    kind: 'latest',
+    idea: 'The other end of the wire: the machine in the cupboard, cropped by both edges.',
+    swatch: ['#0b0b0d', '#d8002d', '#f2eee6'],
+  },
+  {
+    slug: 'dropout',
+    name: 'Dropout',
+    kind: 'latest',
+    idea: 'Two readouts on one axis \u2014 the signal runs out, the music does not.',
+    swatch: ['#f7f3ea', '#d8002d', '#16131a'],
+  },
+  {
+    slug: 'schematic',
+    name: 'Schematic',
+    kind: 'latest',
+    idea: 'The product drawn as a part: dimensioned, leadered, and one red control.',
+    swatch: ['#0a0a0c', '#d9d5cc', '#d8002d'],
+  },
+  {
+    slug: 'bias',
+    name: 'Bias',
+    kind: 'latest',
+    idea: 'One red band thrown across the frame; the page is the two triangles left over.',
+    swatch: ['#f6f2e9', '#d8002d', '#14121a'],
+  },
+  {
+    slug: 'zed',
+    name: 'Zed',
+    kind: 'latest',
+    idea: 'A single Z at page scale, with the copy ragging along its diagonal.',
+    swatch: ['#f6f2e9', '#d8002d', '#14121a'],
+  },
+  {
+    slug: 'roll',
+    name: 'Roll',
+    kind: 'latest',
+    idea: 'The wordmark punched through a player-piano roll, sprockets and all.',
+    swatch: ['#0b0a0e', '#d8002d', '#f2eee6'],
+  },
+  {
+    slug: 'spine',
+    name: 'Spine',
+    kind: 'latest',
+    idea: 'A shelf seen edge-on, and the gap where one record was pulled.',
+    swatch: ['#efe9dc', '#d8002d', '#16131a'],
+  },
+  {
+    slug: 'manifesto',
+    name: 'Manifesto',
+    kind: 'latest',
+    idea: 'One block of reading type, with six phrases shouted inside the sentence.',
+    swatch: ['#f7f3ea', '#d8002d', '#2f2c27'],
+  },
+  {
+    slug: 'stub',
+    name: 'Stub',
+    kind: 'latest',
+    idea: 'A ticket with a real perforation \u2014 and the half that still works offline.',
+    swatch: ['#0b0a0e', '#f4efe2', '#d8002d'],
+  },
   {
     slug: 'umbra',
     name: 'Umbra',
@@ -296,6 +369,7 @@ export const HEROES: HeroStudy[] = [
   },
 ];
 
+export const LATEST_HEROES = HEROES.filter((hero) => hero.kind === 'latest');
 export const NEW_HEROES = HEROES.filter((hero) => hero.kind === 'new');
 export const APP_HEROES = HEROES.filter((hero) => hero.kind === 'app');
 export const ART_HEROES = HEROES.filter((hero) => hero.kind === 'art');
