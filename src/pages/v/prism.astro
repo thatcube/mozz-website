@@ -48,7 +48,7 @@ const SCREENS = ['mozz-nowplaying', 'mozz-album-red', 'mozz-album-warm', 'mozz-a
 // Stats, woven into prose rather than lined up as a metric row.
 const sSearch = STATS[0]; // 16ms — search across 100,000 tracks
 const sStart = STATS[1];  // 75ms — from tap to first note
-const sServers = STATS[2]; // 3 — server types, one library
+const sServers = STATS[2]; // 3 — compatible server families
 const sFree = STATS[3];   // $0 — forever, and open source
 
 const heroLabel =
@@ -461,9 +461,8 @@ const heroLabel =
         <h2 id="pr-own">One source. No one else in the light.</h2>
         <p>
           <span class="own-free">{sFree.value}</span> {sFree.label}. There is no
-          Mozz login, because there is no Mozz server — the app talks to yours and
-          nobody else. Every feature is in the free app, because there is no other
-          kind.
+          Mozz account, because there is no Mozz server. No analytics, no telemetry;
+          optional enrichment can be switched off. Every feature is in the free app.
         </p>
       </div>
 

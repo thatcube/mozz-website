@@ -29,7 +29,7 @@ const SPECTRUM = [
 // lined up as a metric row.
 const perfSearch = STATS[0]; // 16ms — search across 100,000 tracks
 const perfStart = STATS[1];  // 75ms — from tap to first note
-const serverStat = STATS[2]; // 3 — server types, one library
+const serverStat = STATS[2]; // 3 — compatible server families
 const freeStat = STATS[3];   // $0 — forever, and open source
 ---
 
@@ -163,8 +163,8 @@ const freeStat = STATS[3];   // $0 — forever, and open source
       <div class="connect-head">
         <h2 id="au-servers">Point Mozz at the server you already run.</h2>
         <p>
-          {serverStat.value} server types, {serverStat.label}. Add more than one
-          and they browse like a single collection.
+          {serverStat.value} {serverStat.label}. Pick the one you already run;
+          its catalog is mirrored onto the device.
         </p>
       </div>
 
@@ -386,8 +386,8 @@ const freeStat = STATS[3];   // $0 — forever, and open source
         <h2 id="au-own">It's yours, all the way down.</h2>
         <p>
           <span class="own-free">{freeStat.value}</span> {freeStat.label}. No
-          Mozz login, because there is no Mozz server — the app talks to yours and
-          nobody else.
+          Mozz account, because there is no Mozz server. No analytics, no telemetry;
+          optional enrichment can be switched off.
         </p>
       </div>
 

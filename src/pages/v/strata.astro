@@ -35,7 +35,7 @@ const HEADLINE = 'The whole night runs on a server you own.';
 // STATS, woven into the sections they belong to rather than lined up in a row.
 const searchStat = STATS[0]; // 16ms — search across 100,000 tracks
 const startStat = STATS[1];  // 75ms — from tap to first note
-const serverStat = STATS[2]; // 3 — server types, one library
+const serverStat = STATS[2]; // 3 — compatible server families
 const freeStat = STATS[3];   // $0 — forever, and open source
 
 // The adaptive-tint shelf: five real screens, each recoloured from its own art.
@@ -264,7 +264,7 @@ const STARS = [
           <h1>{HEADLINE}</h1>
           <p class="lede">
             Mozz is a free, open-source iOS player for the Plex, Jellyfin or
-            Navidrome server already humming in your house. No account, no
+            Navidrome server already humming in your house. No Mozz account, no
             subscription, nothing watching. Just your library — streamed or
             downloaded — lighting up every screen.
           </p>
@@ -323,8 +323,8 @@ const STARS = [
         <div class="sect-head">
           <h2 id="st-library">One library, lit by whatever is playing.</h2>
           <p>
-            Every server browses as a single collection, and the whole interface
-            takes its colour from the record's own art. Search runs on an
+            Your server's catalog is mirrored onto the device, and the whole
+            interface takes its colour from the record's own art. Search runs on an
             on-device database — <strong>{searchStat.value}</strong> {searchStat.label},
             so the list keeps moving while you type.
           </p>
@@ -469,8 +469,8 @@ const STARS = [
           <h2 id="st-own">It's yours, all the way down.</h2>
           <p>
             <strong>{freeStat.value}</strong> {freeStat.label}. There is no Mozz
-            login, because there is no Mozz server — the app talks to yours and
-            nobody else.
+            account, because there is no Mozz server. There is no telemetry, and
+            optional open-service enrichment can be switched off.
           </p>
         </div>
 

@@ -371,7 +371,7 @@ const shelf = makeScene();
   s.faceX(118, 12, 16, 5, 7, '#0e0e12', 'led');            // port on right face
   s.faceX(118, 20, 24, 5, 7, '#35e08f', 'led');            // LED
 
-  // ── the switch + three ethernet cables (one library, all patched in) ──
+  // ── the switch + three ethernet cables (three compatible server families) ──
   s.box(120, 24, 4, 16, 10, 5, DARK2);
   for (let i = 0; i < 4; i++) s.faceX(136, 25 + i * 2.2, 26.8 + i * 2.2, 5, 8, i < 3 ? '#e0a94e' : '#33323c', 'led');
   for (let i = 0; i < 6; i++) s.faceY(34, 121 + i * 2.4, 122.8 + i * 2.4, 5, 7.4, '#14131a', 'flat');            // RJ45 ports on the front edge
@@ -747,7 +747,7 @@ const specFor = (i: number) => STATS[i];
     <section class="scene servers" aria-labelledby="srv-h">
       <div class="scene-head">
         <h2 id="srv-h">Point it at a machine you already own.</h2>
-        <p>Three server types, one library — drawn as your own rack, patched together on the desk. Add more than one and browse them like they were always the same shelf.</p>
+        <p>Three compatible server families, drawn as your own rack on the desk. Pick the server you already run; Mozz mirrors its catalog onto the device.</p>
       </div>
       <figure class="band-art">
         <svg class="art" viewBox={shelf.vb(6)} role="img"

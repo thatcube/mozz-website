@@ -42,7 +42,7 @@ const HEADLINE = 'Your library is the sky. Mozz is how you play it.';
 // Stats, woven into the prose of the section each one belongs to.
 const sSearch = STATS[0];  // 16ms — search across 100,000 tracks
 const sStart = STATS[1];   // 75ms — from tap to first note
-const sServers = STATS[2]; // 3 — server types, one library
+const sServers = STATS[2]; // 3 — compatible server families
 const sFree = STATS[3];    // $0 — forever, and open source
 
 const R = (n: number) => Math.round(n * 10) / 10;
@@ -816,7 +816,7 @@ const heroLabel =
         <p class="band__lede">
           {NAME} does not host your music and could not if it wanted to — there is no
           {' '}{NAME} server anywhere. It is a player that points at the machine already
-          humming in your house: {sServers.value} kinds of server, one library.
+          humming in your house, with support for {sServers.value} server families.
         </p>
       </div>
 
@@ -1229,9 +1229,8 @@ const heroLabel =
       <div class="close__plate">
         <h2 id="h-close">The doors are open. Bring your own sky.</h2>
         <p>
-          {NAME} is free forever and open source under GPL-3.0. iPhone and iPad
-          today, written in SwiftUI; an Apple TV app is planned and shares the
-          same core.
+          {NAME} is free forever and open source under GPL-3.0, for iPhone and
+          iPad running iOS or iPadOS 17 or later.
         </p>
         <div class="actions">
           {APP_STORE_URL ? (

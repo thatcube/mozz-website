@@ -28,7 +28,7 @@ import {
 
 const HEADLINE = 'Your house, on the air.';
 
-const serverStat = STATS[2]; // 3 — server types, one library
+const serverStat = STATS[2]; // 3 — compatible server families
 const searchStat = STATS[0]; // 16ms — search across 100,000 tracks
 const startStat = STATS[1];  // 75ms — from tap to first note
 const freeStat = STATS[3];   // $0 — forever, and open source
@@ -217,9 +217,8 @@ const TINTS = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlis
       <div class="servers-head">
         <h2 id="sg-servers">Point it at a server you already run.</h2>
         <p>
-          {serverStat.value} server types behind one library. Sign in once and
-          Mozz browses them like a single collection — the transmitter is a box
-          in your house, not a company in the cloud.
+          {serverStat.value} {serverStat.label}. Sign in to the one you already
+          run — the transmitter is a box in your house, not a company in the cloud.
         </p>
       </div>
 
@@ -229,7 +228,7 @@ const TINTS = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlis
           <line x1="40" y1="35" x2="1160" y2="35" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="2 8" opacity="0.55" />
           <circle cx="600" cy="35" r="8" fill="#c80028" />
           <circle cx="600" cy="35" r="17" fill="none" stroke="#c80028" stroke-width="1.4" opacity="0.35" />
-          <text x="600" y="18" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="12" fill="#3c6a60">one library</text>
+          <text x="600" y="18" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="12" fill="#3c6a60">one player</text>
         </svg>
         <ul class="chain-nodes" role="list">
           {SERVERS.map((s) => (
@@ -327,7 +326,7 @@ const TINTS = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlis
     <!-- OWNERSHIP ========================================================= -->
     <section class="own" aria-labelledby="sg-own">
       <div class="own-head">
-        <h2 id="sg-own">A clean signal, and nobody else on the line.</h2>
+        <h2 id="sg-own">A clean signal, with no telemetry on the line.</h2>
         <p>{freeStat.value} forever, and open source under GPL-3.0 — every feature in the free app, because there is no other kind.</p>
       </div>
 

@@ -6,8 +6,8 @@
  * number or a feature changes in the app, it changes once, here.
  *
  * Sources (all verified against thatcube/Mozz on GitHub, never a local clone):
- *   README.md            — free forever, GPL-3.0 + App Store Exception, iOS now / tvOS planned
- *   docs/PRIVACY.md      — no account, no analytics, no telemetry; the MetaBrainz exception
+ *   README.md            — tagline, server support, streaming/offline parity, privacy, platforms
+ *   docs/PRIVACY.md      — no Mozz account, analytics, or telemetry; optional enrichment services
  *   ARCHITECTURE.md §8   — FTS p95 15.7 ms @ 100k tracks, 75 ms time-to-first-audio
  *   Sources/MozzApp/Resources/Brands.xcassets — Plex, Jellyfin, Navidrome
  *   Sources/MozzRecommend/RecommendationService.swift — offline Mozz Weekly mixes
@@ -45,14 +45,14 @@ export const BRAND = {
 export const SERVERS = [
   { name: 'Plex', note: 'Sign in with your Plex account and pick a library.' },
   { name: 'Jellyfin', note: 'Quick Connect or a plain username and password.' },
-  { name: 'Navidrome', note: 'Any Subsonic-compatible server works.' },
+  { name: 'Navidrome', note: 'The tested OpenSubsonic server; other compatible servers are best-effort.' },
 ] as const;
 
 /** Verified capabilities. Nothing here is aspirational. */
 export const FEATURES = [
   {
-    title: 'Your servers, one library',
-    body: 'Plex, Jellyfin and Navidrome behind a single interface. Add more than one and browse them like they were always the same collection.',
+    title: 'Your library, mirrored on-device',
+    body: 'Connect Plex, Jellyfin, or a Subsonic/OpenSubsonic server such as Navidrome. Mozz syncs its catalog into a local database, so browsing and search stay fast when the server is unreachable.',
   },
   {
     title: 'Built to work offline',
@@ -67,8 +67,8 @@ export const FEATURES = [
     body: 'Seventy-five milliseconds from tapping a track to hearing it. Gapless queue, so an album that was mixed to run together still runs together.',
   },
   {
-    title: 'Radio that understands taste',
-    body: 'Stations are built from real listening similarity by way of MusicBrainz and ListenBrainz, so a mellow track never seeds an hour of hard rock just because both are tagged "rock".',
+    title: 'Radio and discovery on your terms',
+    body: 'MusicBrainz and ListenBrainz can sharpen radio, mixes, and shuffle when enrichment is enabled. Turn it off and local genre-based recommendations still work.',
   },
   {
     title: 'A new mix every week',
@@ -84,11 +84,11 @@ export const FEATURES = [
 export const OWNERSHIP = [
   {
     title: 'No account',
-    body: 'There is no Mozz login, because there is no Mozz server. The app talks to your server and nobody else.',
+    body: 'There is no Mozz account and no Mozz server. Sign in only to the media server you already run.',
   },
   {
     title: 'No tracking',
-    body: 'No analytics, no telemetry, no ad networks. Nothing phones home.',
+    body: 'No analytics, telemetry, or ad networks. Optional lyrics and recommendation enrichment contact only the named open services when enabled.',
   },
   {
     title: 'No subscription',
@@ -104,14 +104,14 @@ export const OWNERSHIP = [
 export const STATS = [
   { value: '16ms', label: 'search across 100,000 tracks' },
   { value: '75ms', label: 'from tap to first note' },
-  { value: '3', label: 'server types, one library' },
+  { value: '3', label: 'compatible server families' },
   { value: '$0', label: 'forever, and open source' },
 ] as const;
 
 export const FAQS = [
   {
     q: 'What do I need to run it?',
-    a: 'A Plex, Jellyfin or Navidrome server with your music on it. Mozz is the player; your server is the library.',
+    a: 'A Plex, Jellyfin, or Subsonic/OpenSubsonic server with your music on it. Navidrome is the tested OpenSubsonic target; other compatible servers are best-effort.',
   },
   {
     q: 'Is it really free?',
@@ -123,11 +123,11 @@ export const FAQS = [
   },
   {
     q: 'What does it send about me?',
-    a: 'Nothing about you. For recommendations it asks MusicBrainz and ListenBrainz what sounds similar to a given artist and title. That request carries no name, no server address, no account, and you can switch it off in Settings.',
+    a: 'Mozz has no backend, analytics, or telemetry. Plex sign-in uses Plex services; lyrics and recommendation enrichment can contact LRCLIB, MusicBrainz, and ListenBrainz when enabled. Enrichment can be switched off.',
   },
   {
     q: 'Which platforms?',
-    a: 'iPhone and iPad today, written in SwiftUI. An Apple TV app is planned and shares the same core.',
+    a: 'iPhone and iPad running iOS or iPadOS 17 or later. Mozz is written in SwiftUI.',
   },
 ] as const;
 
