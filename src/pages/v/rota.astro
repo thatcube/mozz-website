@@ -26,6 +26,7 @@ import Gapless from '../../components/sleeve/Gapless.astro';
 import Equalizer from '../../components/sleeve/Equalizer.astro';
 import Weekly from '../../components/sleeve/Weekly.astro';
 import Narrowing from '../../components/sleeve/Narrowing.astro';
+import Voice from '../../components/sleeve/Voice.astro';
 import Device from '../../components/sleeve/Device.astro';
 import StoreButton from '../../components/sleeve/StoreButton.astro';
 import { featureMark, termMark } from '../../data/sleeve-art';
@@ -220,7 +221,7 @@ const SPINDLE = [
         <p class="kicker">Turn 05 — capabilities</p>
         <h2 id="rota-features">What it does, in full.</h2>
         <p class="lede">
-          {FEATURES.length} things, and none of them behind a paid tier. Each one
+          Everything it does, and none of it behind a paid tier. Each one
           carries the mark that explains it.
         </p>
       </div>
@@ -303,6 +304,28 @@ const SPINDLE = [
         Real hardware proportions, drawn rather than photographed — 71.6 × 147.6
         for the phone, 178.5 × 247.6 for the tablet.
       </p>
+
+      <div class="voice">
+        <div class="voice-copy">
+          <p class="kicker kicker--sub">And one you never touch</p>
+          <h3>{FEATURES[7].title}.</h3>
+          <p class="lede">
+            Every other ring on this page is entered from its centre. This one is
+            entered from outside the device entirely — the request arrives in the
+            room, and the library already sitting on the phone answers it.
+          </p>
+        </div>
+        <figure class="fig">
+          <Voice />
+          <figcaption>
+            <span>Fig. 08</span>
+            <span>
+              The request leaves the speaker, the phone resolves it against the
+              library it already holds, and the audio returns along the red line.
+            </span>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="turn" aria-labelledby="rota-terms">
@@ -702,7 +725,7 @@ const SPINDLE = [
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(1.6rem, 4vw, 3.4rem);
-    align-items: start;
+    align-items: center;
     max-width: var(--measure);
     margin-inline: auto;
   }
@@ -894,6 +917,31 @@ const SPINDLE = [
     letter-spacing: 0.13em;
     text-transform: uppercase;
     opacity: 0.5;
+  }
+
+  /* Voice --------------------------------------------------------------- */
+  .voice {
+    max-width: var(--measure);
+    margin: clamp(3rem, 6vw, 5rem) auto 0;
+    padding-top: clamp(2.4rem, 5vw, 3.8rem);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .kicker--sub {
+    color: inherit;
+    opacity: 0.48;
+  }
+
+  .voice h3 {
+    margin-top: 0.9rem;
+    margin-inline: auto;
+    max-width: 18ch;
+    font-size: clamp(1.5rem, 2.9vw, 2.3rem);
+    line-height: 1.06;
+    letter-spacing: -0.037em;
+    font-weight: 700;
+    text-wrap: balance;
   }
 
   /* Terms --------------------------------------------------------------- */

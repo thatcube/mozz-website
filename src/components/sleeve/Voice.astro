@@ -1,0 +1,89 @@
+---
+/**
+ * DIAGRAM — a spoken request entering the same rings.
+ *
+ * Everywhere else on these pages the concentric rings are entered from their
+ * centre: the server you own, pushing outward. This is the one drawing where
+ * the rings are entered from outside. A request leaves a speaker that has no
+ * apps of its own, is resolved by the phone against the library already on it,
+ * and the audio returns along the red line. The circuit closes, and nothing in
+ * it leaves the room.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  label = 'A spoken request leaving a speaker, resolved by an iPhone against the concentric-ring library, and returning as audio along a red line',
+} = Astro.props;
+
+const POD = { x: 41, y: 150 };
+const PHONE = { x: 253, y: 150 };
+const LIB = { x: 436, y: 150 };
+const RINGS = [24, 48, 72, 96];
+
+/** The spoken request, opening rightward out of the speaker. */
+function arc(r: number) {
+  const a = (46 * Math.PI) / 180;
+  const x1 = POD.x + Math.cos(-a) * r;
+  const y1 = POD.y + Math.sin(-a) * r;
+  const x2 = POD.x + Math.cos(a) * r;
+  const y2 = POD.y + Math.sin(a) * r;
+  return `M${x1} ${y1} A${r} ${r} 0 0 1 ${x2} ${y2}`;
+}
+---
+
+<Dia ratio="560 / 300" class={className}>
+  <svg viewBox="0 0 560 300" role="img" aria-label={label}>
+    {[44, 62, 80].map((r) => <path d={arc(r)} class="ring" />)}
+
+    <rect x={POD.x - 13} y={POD.y - 13} width="26" height="26" class="ink" />
+
+    <line x1="127" y1="150" x2="221" y2="150" class="ring" />
+    <polygon points="233,150 219,143 219,157" class="ink" />
+
+    <rect x={PHONE.x - 13} y={PHONE.y - 13} width="26" height="26" class="ink" />
+
+    <line x1="266" y1="150" x2="321" y2="150" class="ring" />
+    <polygon points="335,150 321,143 321,157" class="ink" />
+
+    {RINGS.map((r) => <circle cx={LIB.x} cy={LIB.y} r={r} class="ring" />)}
+    <circle cx={LIB.x - 48} cy={LIB.y} r="7" class="red" />
+
+    <path d={`M${LIB.x} 246 V272 H${POD.x} V163`} class="rline" />
+    <polygon points="219,272 233,265 233,279" class="red" />
+  </svg>
+
+  <p class="dl dl--l" style="left:1%;top:19%">
+    HomePod<i>no apps of its own</i>
+  </p>
+  <p class="dl" style="left:38%;top:38%">Asked out loud</p>
+  <p class="dl" style="left:45.2%;top:19%">
+    iPhone<i>resolves it, then plays it</i>
+  </p>
+  <p class="dl" style="left:77.9%;top:11%">
+    Your library<i>already on the device</i>
+  </p>
+  <p class="dl dl--red" style="left:40.6%;top:84%">AirPlayed back</p>
+</Dia>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 1.6;
+  }
+
+  .rline {
+    fill: none;
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 1.6;
+  }
+
+  .ink { fill: var(--sl-ink, #131313); }
+  .red { fill: var(--sl-red, #c80028); }
+</style>
