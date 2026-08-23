@@ -1,0 +1,791 @@
+---
+/**
+ * VARIANT — PRISM
+ * See the design contract in the HTML comment at the top of <main>.
+ *
+ * The hero is a single full-bleed inline SVG authored at a wide viewBox and
+ * cropped with `slice`, so it is drawn for the whole frame from the first
+ * stroke rather than a contained illustration stretched to fit. A portrait
+ * companion SVG re-composes the same idea for narrow screens.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'One library, refracted onto everything you play.';
+
+// The pastel spectrum used everywhere — a soft, aurora-adjacent split of white.
+const SPEC = ['#7d8ff0', '#89b6f1', '#79d6c8', '#bfe6a0', '#f2d98a', '#f5c2cf', '#ef9fbb'];
+const rad = (d: number) => (d * Math.PI) / 180;
+
+// A fan of wedges radiating from a single apex, the way a prism throws a
+// spectrum. Authored past the viewBox so bands always bleed off the edges.
+function fan(ox: number, oy: number, a0: number, a1: number, r: number) {
+  return SPEC.map((c, i) => {
+    const s = a0 + ((a1 - a0) * i) / SPEC.length;
+    const e = a0 + ((a1 - a0) * (i + 1)) / SPEC.length;
+    const p0 = { x: ox + r * Math.cos(rad(s)), y: oy + r * Math.sin(rad(s)) };
+    const p1 = { x: ox + r * Math.cos(rad(e)), y: oy + r * Math.sin(rad(e)) };
+    return { c, d: `M${ox} ${oy} L${p0.x.toFixed(1)} ${p0.y.toFixed(1)} L${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Z` };
+  });
+}
+
+// Landscape hero: apex just right of the prism, opening right-and-down.
+const LAND = fan(470, 455, -18, 64, 1560);
+// Portrait hero: apex high, opening straight down to fill the lower frame.
+const PORT = fan(400, 505, 44, 132, 1780);
+
+// Adaptive-tint spectrum — six real screens, each wearing a record's colour.
+const SCREENS = ['mozz-nowplaying', 'mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlist', 'mozz-album-dark'];
+
+// Stats, woven into prose rather than lined up as a metric row.
+const sSearch = STATS[0]; // 16ms — search across 100,000 tracks
+const sStart = STATS[1];  // 75ms — from tap to first note
+const sServers = STATS[2]; // 3 — server types, one library
+const sFree = STATS[3];   // $0 — forever, and open source
+
+const heroLabel =
+  'A single hard shaft of white light crosses from the upper left and strikes a tall glass prism left of centre. Out of the prism a broad pastel spectrum fans across the frame, widening as it runs off the right and bottom edges. Riding the spectrum bands are frosted glass cards — album tiles, a track list and a small now-playing card — drifting outward at different scales. Back along the entering beam a small label marks one server you own, tied to the dispersed cards by hairline dotted lines.';
+---
+
+<Layout
+  title={`${NAME} — one library, refracted onto everything you play`}
+  description="A free, open source music app for Plex, Jellyfin and Navidrome. One library you already own, refracted onto every screen — streaming or offline, with no account and nothing tracking you."
+  themeColor="#f3f1fb"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="pr">
+    <!--
+      THESIS: One beam in, your whole library out. The music is already yours on
+      a server you run; Mozz is the prism that splits that single source into the
+      many screens and moods you actually listen through.
+      OWN-WORLD: A pale luminous violet field, white and frosted glass, one hard
+      shaft of light and a soft pastel spectrum. Brand red is the single
+      saturated note, kept for the call to action and a few live marks.
+      FIRST VIEWPORT: A full-bleed hero — the spectrum sweeps above the words,
+      cards drift below them, the prism and beam sit to the left and tiles run off
+      the right, so the light literally wraps the copy.
+      DROP-IN: /hero/prism.jpg layers over the drawn light; absent, it never paints.
+    -->
+
+    <VariantBar slug="prism" tone="cool" />
+
+    <!-- HERO ----------------------------------------------------------------- -->
+    <header class="hero">
+      <!-- Optional AI plate drop-in: public/hero/prism.jpg (absent → the drawing carries it). -->
+      <div class="hero-plate" aria-hidden="true"></div>
+
+      <!-- Landscape composition. -->
+      <svg class="hero-svg is-land" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label={heroLabel}>
+        <defs>
+          <radialGradient id="pr-bloom" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.92"/>
+            <stop offset="0.55" stop-color="#f4f1fc" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#f4f1fc" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="pr-sky" cx="0.3" cy="0.1" r="1">
+            <stop offset="0" stop-color="#fbf7ff"/>
+            <stop offset="0.5" stop-color="#efeafb"/>
+            <stop offset="1" stop-color="#e7e2f6"/>
+          </radialGradient>
+          <linearGradient id="pr-glass" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
+            <stop offset="1" stop-color="#d8ddf6" stop-opacity="0.62"/>
+          </linearGradient>
+          <linearGradient id="pr-beam" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#ffffff"/>
+          </linearGradient>
+          <linearGradient id="pr-tA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9fb1f2"/><stop offset="1" stop-color="#c8b8f2"/></linearGradient>
+          <linearGradient id="pr-tB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4c4d0"/><stop offset="1" stop-color="#f7d9c9"/></linearGradient>
+          <linearGradient id="pr-tC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#79d6c8"/><stop offset="1" stop-color="#8fbef0"/></linearGradient>
+          <linearGradient id="pr-tD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2d98a"/><stop offset="1" stop-color="#f5b98a"/></linearGradient>
+          <linearGradient id="pr-tE" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9a8f0"/><stop offset="1" stop-color="#8fa6f0"/></linearGradient>
+          <filter id="pr-soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="16"/></filter>
+          <filter id="pr-soft2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+          <filter id="pr-cast" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="20" dy="28" stdDeviation="26" flood-color="#4b4682" flood-opacity="0.28"/></filter>
+        </defs>
+
+        <!-- FAR: luminous ground + soft blurred spectrum wash bleeding off-frame -->
+        <rect x="0" y="0" width="1600" height="1000" fill="url(#pr-sky)"/>
+        <g filter="url(#pr-soft)" opacity="0.5">
+          {LAND.map((b) => <path d={b.d} fill={b.c}/>)}
+        </g>
+        <ellipse cx="770" cy="470" rx="560" ry="360" fill="url(#pr-bloom)"/>
+        <!-- far card, bleeding off the top-right edge -->
+        <g opacity="0.5" transform="translate(1372 -70) rotate(-9)">
+          <rect x="0" y="0" width="196" height="196" rx="26" fill="url(#pr-tC)"/>
+          <rect x="0" y="0" width="196" height="196" rx="26" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.7"/>
+        </g>
+
+        <!-- MID: the crisp refracted spectrum -->
+        <g filter="url(#pr-soft2)" opacity="0.9">
+          {LAND.map((b) => <path d={b.d} fill={b.c} opacity="0.82"/>)}
+        </g>
+        <!-- a bright inner core running down the spectrum's throat -->
+        <path d="M470 455 L1120 300 L1160 372 Z" fill="#ffffff" opacity="0.5" filter="url(#pr-soft2)"/>
+
+        <!-- hairline dotted connectors: the one source, tied to the dispersed cards -->
+        <g fill="none" stroke="#8b86b8" stroke-width="2.4" stroke-dasharray="2 12" stroke-linecap="round" opacity="0.72">
+          <path d="M300 300 C 620 320 900 420 1092 470"/>
+          <path d="M300 320 C 560 470 760 700 872 812"/>
+          <path d="M300 312 C 720 300 1180 420 1462 604"/>
+        </g>
+
+        <!-- the entering shaft: hard-edged, off the top-left corner, with a soft halo -->
+        <line x1="-150" y1="-80" x2="352" y2="392" stroke="#ffffff" stroke-width="46" stroke-linecap="round" opacity="0.55" filter="url(#pr-soft2)"/>
+        <line x1="-150" y1="-80" x2="352" y2="392" stroke="url(#pr-beam)" stroke-width="15" stroke-linecap="round"/>
+        <line x1="-150" y1="-80" x2="352" y2="392" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
+
+        <!-- source chip near the beam origin -->
+        <g transform="translate(150 250)">
+          <rect x="0" y="0" width="188" height="70" rx="18" fill="#ffffff" opacity="0.82"/>
+          <rect x="0" y="0" width="188" height="70" rx="18" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <g transform="translate(20 20)" stroke="#7d8ff0" stroke-width="3" fill="none" stroke-linecap="round">
+            <rect x="0" y="0" width="30" height="30" rx="6" fill="#eef0fd" stroke="#c3caf1" stroke-width="2"/>
+            <line x1="7" y1="9" x2="23" y2="9"/><line x1="7" y1="16" x2="23" y2="16"/><line x1="7" y1="23" x2="16" y2="23"/>
+          </g>
+          <text x="64" y="30" class="pr-chip">One server</text>
+          <text x="64" y="50" class="pr-chip-sub">that you own</text>
+        </g>
+
+        <!-- NEAR: the glass prism, cast + refraction highlight -->
+        <g filter="url(#pr-cast)">
+          <path d="M360 250 L486 545 L292 560 Z" fill="url(#pr-glass)" stroke="#ffffff" stroke-width="2.5"/>
+        </g>
+        <path d="M360 250 L486 545 L292 560 Z" fill="none" stroke="#c4cbef" stroke-width="1"/>
+        <path d="M360 250 L402 545 L292 560 Z" fill="#ffffff" opacity="0.32"/>
+        <path d="M360 250 L486 545" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+
+        <!-- NEAR: now-playing card, riding a mid band -->
+        <g filter="url(#pr-cast)" transform="translate(1010 400) rotate(-5)">
+          <rect x="0" y="0" width="264" height="126" rx="22" fill="#ffffff" opacity="0.86"/>
+          <rect x="0" y="0" width="264" height="126" rx="22" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <rect x="18" y="20" width="86" height="86" rx="14" fill="url(#pr-tE)"/>
+          <rect x="122" y="30" width="118" height="12" rx="6" fill="#3a3358" opacity="0.85"/>
+          <rect x="122" y="52" width="86" height="9" rx="4.5" fill="#7d769c"/>
+          <rect x="122" y="82" width="118" height="6" rx="3" fill="#e3def0"/>
+          <rect x="122" y="82" width="64" height="6" rx="3" fill="#c80028"/>
+          <circle cx="122" cy="85" r="6" fill="#c80028"/>
+        </g>
+
+        <!-- NEAR: track list card, below the words -->
+        <g filter="url(#pr-cast)" transform="translate(736 720) rotate(4)">
+          <rect x="0" y="0" width="252" height="196" rx="22" fill="#ffffff" opacity="0.84"/>
+          <rect x="0" y="0" width="252" height="196" rx="22" fill="none" stroke="#ffffff" stroke-width="2"/>
+          {[0,1,2,3].map((i) => (
+            <g transform={`translate(20 ${22 + i*44})`}>
+              <rect x="0" y="0" width="30" height="30" rx="8" fill={['url(#pr-tB)','url(#pr-tC)','url(#pr-tD)','url(#pr-tA)'][i]}/>
+              <rect x="44" y="4" width="150" height="9" rx="4.5" fill="#3a3358" opacity="0.8"/>
+              <rect x="44" y="19" width="98" height="7" rx="3.5" fill="#a49ec2"/>
+            </g>
+          ))}
+        </g>
+
+        <!-- NEAR: large album tile, deliberately cut by the right edge -->
+        <g filter="url(#pr-cast)" transform="translate(1436 512) rotate(6)">
+          <rect x="0" y="0" width="268" height="268" rx="30" fill="url(#pr-tA)"/>
+          <rect x="0" y="0" width="268" height="268" rx="30" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.75"/>
+          <path d="M0 150 Q 120 90 268 168 L268 268 L0 268 Z" fill="#ffffff" opacity="0.16"/>
+          <g fill="#c80028" opacity="0.9"><rect x="26" y="26" width="12" height="12"/><rect x="42" y="26" width="12" height="12"/><rect x="26" y="42" width="12" height="12"/></g>
+        </g>
+
+        <!-- NEAR: album tile, cut by the bottom edge -->
+        <g filter="url(#pr-cast)" transform="translate(1066 872) rotate(-6)">
+          <rect x="0" y="0" width="236" height="236" rx="28" fill="url(#pr-tD)"/>
+          <rect x="0" y="0" width="236" height="236" rx="28" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.72"/>
+          <circle cx="118" cy="96" r="42" fill="#ffffff" opacity="0.28"/>
+        </g>
+      </svg>
+
+      <!-- Portrait composition — a genuine re-arrangement, not the landscape letterboxed. -->
+      <svg class="hero-svg is-port" viewBox="0 0 900 1600" preserveAspectRatio="xMidYMid slice" role="img" aria-label={heroLabel}>
+        <defs>
+          <radialGradient id="pr-bloomP" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.94"/>
+            <stop offset="0.55" stop-color="#f4f1fc" stop-opacity="0.5"/>
+            <stop offset="1" stop-color="#f4f1fc" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="pr-skyP" cx="0.4" cy="0.08" r="1.1">
+            <stop offset="0" stop-color="#fbf7ff"/>
+            <stop offset="0.5" stop-color="#efeafb"/>
+            <stop offset="1" stop-color="#e6e1f6"/>
+          </radialGradient>
+        </defs>
+
+        <rect x="0" y="0" width="900" height="1600" fill="url(#pr-skyP)"/>
+        <g filter="url(#pr-soft)" opacity="0.5">{PORT.map((b) => <path d={b.d} fill={b.c}/>)}</g>
+        <ellipse cx="450" cy="820" rx="440" ry="420" fill="url(#pr-bloomP)"/>
+        <g filter="url(#pr-soft2)" opacity="0.9">{PORT.map((b) => <path d={b.d} fill={b.c} opacity="0.82"/>)}</g>
+
+        <!-- dotted connectors -->
+        <g fill="none" stroke="#8b86b8" stroke-width="3" stroke-dasharray="2 13" stroke-linecap="round" opacity="0.7">
+          <path d="M250 300 C 360 520 460 760 512 1064"/>
+          <path d="M250 312 C 520 520 760 720 828 900"/>
+        </g>
+
+        <!-- entering shaft, off the top -->
+        <line x1="-90" y1="-80" x2="340" y2="452" stroke="#ffffff" stroke-width="52" stroke-linecap="round" opacity="0.5" filter="url(#pr-soft2)"/>
+        <line x1="-90" y1="-80" x2="340" y2="452" stroke="url(#pr-beam)" stroke-width="16" stroke-linecap="round"/>
+        <line x1="-90" y1="-80" x2="340" y2="452" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+
+        <!-- source chip -->
+        <g transform="translate(120 210)">
+          <rect x="0" y="0" width="196" height="72" rx="18" fill="#ffffff" opacity="0.82"/>
+          <rect x="0" y="0" width="196" height="72" rx="18" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <g transform="translate(20 21)"><rect x="0" y="0" width="30" height="30" rx="6" fill="#eef0fd" stroke="#c3caf1" stroke-width="2"/><g stroke="#7d8ff0" stroke-width="3" stroke-linecap="round"><line x1="7" y1="9" x2="23" y2="9"/><line x1="7" y1="16" x2="23" y2="16"/><line x1="7" y1="23" x2="16" y2="23"/></g></g>
+          <text x="64" y="31" class="pr-chip">One server</text>
+          <text x="64" y="51" class="pr-chip-sub">that you own</text>
+        </g>
+
+        <!-- prism -->
+        <g filter="url(#pr-cast)"><path d="M300 260 L430 560 L236 576 Z" fill="url(#pr-glass)" stroke="#ffffff" stroke-width="2.5"/></g>
+        <path d="M300 260 L346 560 L236 576 Z" fill="#ffffff" opacity="0.32"/>
+
+        <!-- cards riding the lower fan -->
+        <g filter="url(#pr-cast)" transform="translate(392 1010) rotate(-5)">
+          <rect x="0" y="0" width="300" height="132" rx="22" fill="#ffffff" opacity="0.86"/>
+          <rect x="0" y="0" width="300" height="132" rx="22" fill="none" stroke="#ffffff" stroke-width="2"/>
+          <rect x="20" y="22" width="88" height="88" rx="14" fill="url(#pr-tE)"/>
+          <rect x="126" y="34" width="150" height="12" rx="6" fill="#3a3358" opacity="0.85"/>
+          <rect x="126" y="56" width="104" height="9" rx="4.5" fill="#7d769c"/>
+          <rect x="126" y="86" width="150" height="6" rx="3" fill="#e3def0"/>
+          <rect x="126" y="86" width="82" height="6" rx="3" fill="#c80028"/>
+        </g>
+        <g filter="url(#pr-cast)" transform="translate(560 830) rotate(6)">
+          <rect x="0" y="0" width="240" height="240" rx="30" fill="url(#pr-tA)"/>
+          <rect x="0" y="0" width="240" height="240" rx="30" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.72"/>
+          <g fill="#c80028" opacity="0.9"><rect x="24" y="24" width="12" height="12"/><rect x="40" y="24" width="12" height="12"/><rect x="24" y="40" width="12" height="12"/></g>
+        </g>
+        <!-- large tile cut by the bottom edge -->
+        <g filter="url(#pr-cast)" transform="translate(300 1360) rotate(-5)">
+          <rect x="0" y="0" width="320" height="320" rx="34" fill="url(#pr-tD)"/>
+          <rect x="0" y="0" width="320" height="320" rx="34" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.7"/>
+          <circle cx="150" cy="120" r="52" fill="#ffffff" opacity="0.26"/>
+        </g>
+      </svg>
+
+      <!-- The quiet pocket the composition encircles. -->
+      <div class="hero-inner">
+        <div class="hero-pocket">
+          <div class="lockup">
+            <Mark size={26} decorative />
+            <span class="wordmark">{NAME}</span>
+          </div>
+          <h1>{HEADLINE}</h1>
+          <p class="lede">
+            Your music already lives on a server you run — Plex, Jellyfin or
+            Navidrome. Mozz is the glass it passes through: one collection,
+            thrown onto every screen and every mood, streaming or fully offline.
+          </p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SERVERS — one beam through three pieces of glass ---------------------- -->
+    <section class="sources" aria-labelledby="pr-src">
+      <div class="sect-head">
+        <h2 id="pr-src">Point it at a machine you already own.</h2>
+        <p>
+          {sServers.value} server types, {sServers.label}. One beam enters, and
+          each server is just another pane it passes through — add more than one
+          and they browse like a single collection.
+        </p>
+      </div>
+
+      <div class="prisms">
+        <span class="prisms-beam" aria-hidden="true"></span>
+        {SERVERS.map((s) => (
+          <div class="prisms-node">
+            <div class="prisms-glass" aria-hidden="true">
+              <span class="prisms-spec"></span>
+              <ServerLogo name={s.name} size={34} brand />
+            </div>
+            <span class="prisms-name">{s.name}</span>
+            <p class="prisms-note">{s.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ADAPTIVE COLOUR — the record, dispersed into screens ----------------- -->
+    <section class="tint" aria-labelledby="pr-tint">
+      <div class="sect-head">
+        <h2 id="pr-tint">It takes the colour of the record.</h2>
+        <p>
+          Play anything and Mozz refracts its whole interface — every screen,
+          edge to edge — from that record's own artwork. One app, split into
+          whatever you happen to be hearing. Search keeps up: the catalogue lives
+          on the device, so {sSearch.value} finds a track across 100,000 of them.
+        </p>
+      </div>
+
+      <figure class="fan" aria-label="Six real Mozz screens, each tinted by the record it is playing, fanned out like a spectrum.">
+        <span class="fan-bloom" aria-hidden="true"></span>
+        <span class="fan-beam" aria-hidden="true"></span>
+        <div class="fan-rays">
+          {SCREENS.map((n, i) => (
+            <span class={`fan-cell fc${i}`}>
+              <Shot name={n} class="fan-img" sizes="150px" />
+            </span>
+          ))}
+        </div>
+      </figure>
+    </section>
+
+    <!-- NOW PLAYING — the phone in a caustic pool ---------------------------- -->
+    <section class="now" aria-labelledby="pr-now">
+      <div class="now-stage" aria-hidden="true">
+        <span class="now-pool"></span>
+        <span class="now-shard now-shard-a"></span>
+        <span class="now-shard now-shard-b"></span>
+        <div class="now-phone">
+          <Phone name="mozz-nowplaying" width={300} priority sizes="(max-width: 60rem) 62vw, 300px" ariaHidden />
+        </div>
+        <div class="now-caption">
+          <span class="now-dot"></span>
+          <span>{sStart.value} — tap to first note</span>
+        </div>
+      </div>
+      <div class="now-copy">
+        <h2 id="pr-now">The moment the light lands.</h2>
+        <p>
+          {sStart.value} from tapping a track to hearing it, and the queue is
+          gapless — an album mixed to run together still runs together. A proper
+          equalizer sits underneath, and Mozz plays the file you actually own
+          instead of quietly re-encoding it.
+        </p>
+        <ul class="now-list">
+          {FEATURES.slice(3, 6).map((f) => (
+            <li><strong>{f.title}.</strong> {f.body}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- OFFLINE — the beam gone, the spectrum still lit ---------------------- -->
+    <section class="offline" aria-labelledby="pr-off">
+      <figure class="off-art" aria-hidden="true">
+        <svg viewBox="0 0 1040 520" role="img" width="1040" height="520">
+          <defs>
+            <linearGradient id="pr-og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/><stop offset="1" stop-color="#d8ddf6" stop-opacity="0.6"/></linearGradient>
+            <filter id="pr-ocast" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="16" dy="22" stdDeviation="22" flood-color="#4b4682" flood-opacity="0.28"/></filter>
+            <filter id="pr-osoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+          </defs>
+
+          <ellipse cx="640" cy="270" rx="380" ry="230" fill="#efeafb"/>
+
+          <!-- the entering beam, switched off: drawn only as a dim dotted ghost -->
+          <line x1="70" y1="60" x2="300" y2="250" stroke="#b9b4d4" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 14" opacity="0.7"/>
+
+          <!-- but the spectrum the device already caught stays lit -->
+          <g filter="url(#pr-osoft)" opacity="0.92">
+            <path d="M330 250 L620 150 L620 196 Z" fill="#7d8ff0"/>
+            <path d="M330 258 L620 196 L620 242 Z" fill="#79d6c8"/>
+            <path d="M330 266 L620 242 L620 288 Z" fill="#f2d98a"/>
+            <path d="M330 274 L620 288 L620 334 Z" fill="#f5c2cf"/>
+          </g>
+
+          <!-- prism -->
+          <g filter="url(#pr-ocast)"><path d="M300 150 L392 300 L232 300 Z" fill="url(#pr-og)" stroke="#ffffff" stroke-width="2"/></g>
+          <path d="M300 150 L318 300 L232 300 Z" fill="#ffffff" opacity="0.32"/>
+
+          <!-- dormant server, unplugged -->
+          <g opacity="0.55">
+            <rect x="96" y="330" width="128" height="92" rx="18" fill="#ffffff" stroke="#d3d7f0"/>
+            <rect x="118" y="354" width="84" height="12" rx="6" fill="#c7cdf0"/>
+            <rect x="118" y="378" width="84" height="12" rx="6" fill="#c7cdf0"/>
+            <path d="M224 366 C 380 356 470 336 560 300" fill="none" stroke="#9b96bd" stroke-width="2.5" stroke-dasharray="3 10" stroke-linecap="round"/>
+          </g>
+          <text x="160" y="452" text-anchor="middle" class="pr-olabel">Server switched off</text>
+
+          <!-- phone, downloads still glowing -->
+          <g filter="url(#pr-ocast)"><rect x="620" y="86" width="188" height="330" rx="36" fill="url(#pr-og)" stroke="#ffffff" stroke-width="2"/></g>
+          <rect x="638" y="104" width="152" height="294" rx="26" fill="#f7f3fc"/>
+          <text x="664" y="146" class="pr-oscreen">Downloaded</text>
+          {[0,1,2,3].map((i) => (
+            <g transform={`translate(660 ${168 + i*52})`}>
+              <rect x="0" y="0" width="110" height="38" rx="11" fill="#ffffff" stroke="#e6e2f4"/>
+              <circle cx="22" cy="19" r="12" fill="#e8ecfb"/>
+              <path d="M16 19l4.5 4.5 8-9" fill="none" stroke="#c80028" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="44" y="12" width="54" height="7" rx="3.5" fill="#c9cff0"/>
+              <rect x="44" y="24" width="36" height="6" rx="3" fill="#ddd7ee"/>
+            </g>
+          ))}
+        </svg>
+      </figure>
+      <div class="off-copy">
+        <h2 id="pr-off">Take the whole spectrum underground.</h2>
+        <p>
+          Downloads are part of the design, not bolted on later. Pull a record
+          onto the phone and it plays with the server dark — browsing, searching
+          and gapless playback, exactly as they behave at home. Streaming and
+          offline are the same first-class thing here, not a feature and its
+          apology.
+        </p>
+      </div>
+    </section>
+
+    <!-- OWNERSHIP — four facets of one piece of glass ------------------------ -->
+    <section class="own" aria-labelledby="pr-own">
+      <div class="sect-head">
+        <h2 id="pr-own">One source. No one else in the light.</h2>
+        <p>
+          <span class="own-free">{sFree.value}</span> {sFree.label}. There is no
+          Mozz login, because there is no Mozz server — the app talks to yours and
+          nobody else. Every feature is in the free app, because there is no other
+          kind.
+        </p>
+      </div>
+
+      <div class="facets">
+        <span class="facets-glint" aria-hidden="true"></span>
+        {OWNERSHIP.map((o) => (
+          <article class="facet">
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="honest">
+        The one honest caveat: turn on recommendations and Mozz asks MusicBrainz
+        and ListenBrainz what sounds similar to an artist and title. That request
+        carries no name, no server address and no account — and it switches off in
+        Settings.
+      </p>
+    </section>
+
+    <!-- FAQ ------------------------------------------------------------------ -->
+    <section class="faq" aria-labelledby="pr-faq">
+      <h2 id="pr-faq">Questions, answered plainly.</h2>
+      <div class="faq-list">
+        {FAQS.map((f) => (
+          <details>
+            <summary>
+              <span>{f.q}</span>
+              <span class="faq-mark" aria-hidden="true"></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- FOOTER --------------------------------------------------------------- -->
+    <footer class="foot">
+      <div class="foot-lockup">
+        <Mark size={30} decorative />
+        <span class="wordmark">{NAME}</span>
+      </div>
+      <p>Free forever, and open source under GPL-3.0.</p>
+      <a class="foot-gh" href={GITHUB_URL}>See it on GitHub</a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .pr {
+    --ground: #f3f1fb;
+    --ink: #241c3a;
+    --ink-body: #443c60;
+    --ink-muted: #5c5578;
+    --peri: #8fa6f0;
+    --lilac: #b9a8f0;
+    --red: #c80028;
+    --red-bright: #d6002b;
+    --glass-line: rgba(120, 112, 168, 0.22);
+    --edge: rgba(255, 255, 255, 0.75);
+
+    position: relative;
+    background: var(--ground);
+    color: var(--ink-body);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    isolation: isolate;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Clash Display', ui-sans-serif, system-ui, sans-serif;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.03;
+    text-wrap: balance;
+  }
+
+  section { position: relative; }
+
+  .sect-head { max-width: 46rem; margin: 0 auto clamp(2rem, 5vw, 3.25rem); text-align: center; }
+  .sect-head h2 { font-size: clamp(1.8rem, 4vw, 2.9rem); }
+  .sect-head p { margin-top: 1rem; margin-inline: auto; max-width: 64ch; color: var(--ink-body); text-wrap: pretty; }
+
+  /* ===================== HERO ===================== */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    max-height: 1100px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Optional AI plate: layered over the drawn light; with no file it never paints. */
+  .hero-plate {
+    position: absolute; inset: 0; z-index: 1;
+    background-image: var(--hero-plate, none);
+    background-size: cover; background-position: center;
+    opacity: 0.9; pointer-events: none;
+  }
+
+  .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .is-port { display: none; }
+
+  .hero-svg :global(.pr-chip) { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 15px; fill: #322a4e; }
+  .hero-svg :global(.pr-chip-sub) { font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 12px; fill: #6f6893; }
+
+  .hero-inner {
+    position: relative; z-index: 3;
+    min-height: 100svh; max-height: 1100px;
+    display: grid; place-items: center;
+    padding: clamp(4.5rem, 9vw, 7rem) clamp(1.25rem, 5vw, 2.5rem) clamp(3rem, 7vw, 5rem);
+  }
+
+  /* The frosted caustic pool the beam concentrates into — it is what makes the
+     words legible over the spectrum, and reads as part of the light. */
+  .hero-pocket {
+    position: relative;
+    max-width: 34rem;
+    text-align: center;
+    padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.5rem, 4vw, 2.5rem) clamp(2rem, 4vw, 2.75rem);
+    border-radius: 30px;
+    background: radial-gradient(120% 120% at 50% 40%, rgba(255,255,255,0.82), rgba(244,241,252,0.5));
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 80px -46px rgba(75,70,130,0.5);
+    backdrop-filter: blur(7px) saturate(1.15);
+    -webkit-backdrop-filter: blur(7px) saturate(1.15);
+  }
+
+  .lockup { display: inline-flex; align-items: center; gap: 0.55rem; margin-bottom: clamp(1.1rem, 2.4vw, 1.6rem); }
+  .wordmark { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.3rem; letter-spacing: -0.01em; color: var(--ink); }
+
+  .hero h1 { font-size: clamp(2.35rem, 5.4vw, 4.4rem); margin: 0 auto; max-width: 16ch; }
+  .lede { margin: clamp(1rem, 2.2vw, 1.4rem) auto 0; font-size: clamp(1.02rem, 1.4vw, 1.16rem); color: var(--ink-body); max-width: 46ch; text-wrap: pretty; }
+
+  .actions { margin-top: clamp(1.5rem, 3vw, 2.1rem); display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+
+  .store {
+    display: inline-flex; align-items: center; gap: 0.65rem;
+    padding: 0.82rem 1.35rem; border-radius: 16px;
+    background: linear-gradient(180deg, var(--red-bright), var(--red)); color: #fff;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 18px 34px -14px rgba(200,0,40,0.6), 0 6px 14px -8px rgba(120,0,24,0.5);
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  a.store:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 24px 40px -14px rgba(200,0,40,0.62), 0 8px 18px -8px rgba(120,0,24,0.5); }
+  a.store:active { transform: translateY(0); }
+  .store svg { width: 23px; height: 23px; fill: currentColor; }
+  .store span { display: grid; font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.05; text-align: left; }
+  .store small { font-family: 'Satoshi', sans-serif; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+
+  .store.is-pending {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.66)); color: var(--ink-muted);
+    box-shadow: 0 1px 0 var(--edge) inset, 0 16px 30px -18px rgba(84,74,130,0.5);
+    cursor: default; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .store.is-pending svg { opacity: 0.7; }
+
+  .ghost {
+    display: inline-flex; align-items: center; padding: 0.82rem 1.2rem; border-radius: 16px;
+    border: 1px solid rgba(120,112,168,0.34); background: rgba(255,255,255,0.5); color: var(--ink); font-weight: 600;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .ghost:hover { background: rgba(255,255,255,0.72); border-color: rgba(120,112,168,0.55); transform: translateY(-1px); }
+
+  /* ===================== SERVERS ===================== */
+  .sources { max-width: 72rem; margin-inline: auto; padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 2.5rem) clamp(2.5rem, 6vw, 4rem); }
+
+  .prisms { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 3vw, 2.5rem); }
+  .prisms-beam { position: absolute; top: 38px; left: 4%; right: 4%; height: 3px; background: linear-gradient(90deg, transparent, #7d8ff0 12%, #79d6c8 42%, #f2d98a 66%, #f5c2cf 88%, transparent); opacity: 0.6; border-radius: 2px; }
+  .prisms-node { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .prisms-glass {
+    position: relative; width: 78px; height: 78px; display: grid; place-items: center; margin-bottom: 1rem;
+    border-radius: 20px; color: currentColor;
+    background: linear-gradient(150deg, rgba(255,255,255,0.9), rgba(255,255,255,0.55));
+    border: 1px solid var(--edge);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 24px 26px 50px -30px rgba(84,74,130,0.5);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .prisms-spec { position: absolute; right: -18px; top: 50%; width: 40px; height: 24px; transform: translateY(-50%); border-radius: 4px; background: linear-gradient(90deg, #7d8ff0, #79d6c8, #f2d98a, #f5c2cf); filter: blur(5px); opacity: 0.65; }
+  .prisms-node:last-child .prisms-spec { display: none; }
+  .prisms-name { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.12rem; color: var(--ink); }
+  .prisms-note { margin-top: 0.4rem; max-width: 28ch; color: var(--ink-body); font-size: 0.98rem; }
+
+  /* ===================== ADAPTIVE COLOUR FAN ===================== */
+  .tint { max-width: 74rem; margin-inline: auto; padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2.5rem); }
+  .fan { position: relative; margin: 0 auto; height: clamp(22rem, 40vw, 32rem); max-width: 60rem; overflow: clip; }
+  .fan-bloom { position: absolute; bottom: -6%; left: 50%; width: 78%; height: 90%; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(185,168,240,0.5), transparent 72%); filter: blur(24px); pointer-events: none; }
+  .fan-beam { position: absolute; bottom: 4%; left: 50%; width: 4px; height: 52%; transform: translateX(-50%); background: linear-gradient(#ffffff, rgba(255,255,255,0)); opacity: 0.75; pointer-events: none; }
+  .fan-rays { --cw: clamp(96px, 15vw, 150px); position: absolute; inset: 0; }
+
+  .fan-cell {
+    position: absolute; left: 50%; bottom: 6%;
+    width: var(--cw); aspect-ratio: 9 / 19.5;
+    margin-left: calc(var(--cw) / -2);
+    transform-origin: center bottom;
+    border-radius: 16px; overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.92);
+    box-shadow: 16px 26px 46px -22px rgba(84,74,130,0.55);
+  }
+  .fan-cell :global(.fan-img) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .fan-cell.fc0 { transform: rotate(-30deg); z-index: 1; }
+  .fan-cell.fc1 { transform: rotate(-18deg); z-index: 2; }
+  .fan-cell.fc2 { transform: rotate(-6deg);  z-index: 3; }
+  .fan-cell.fc3 { transform: rotate(6deg);   z-index: 3; }
+  .fan-cell.fc4 { transform: rotate(18deg);  z-index: 2; }
+  .fan-cell.fc5 { transform: rotate(30deg);  z-index: 1; }
+
+  /* ===================== NOW PLAYING ===================== */
+  .now { max-width: 72rem; margin-inline: auto; padding: clamp(3rem, 7vw, 5.5rem) clamp(1.25rem, 4vw, 2.5rem); display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(2rem, 5vw, 4rem); }
+  .now-stage { position: relative; min-height: clamp(26rem, 44vw, 34rem); display: grid; place-items: center; }
+  .now-pool { position: absolute; width: 88%; height: 78%; border-radius: 999px; background: radial-gradient(closest-side, rgba(255,255,255,0.85), rgba(185,168,240,0.28) 60%, transparent 78%); filter: blur(6px); }
+  .now-shard { position: absolute; border-radius: 6px; background: linear-gradient(140deg, rgba(255,255,255,0.85), rgba(216,221,246,0.4)); border: 1px solid rgba(255,255,255,0.8); box-shadow: 20px 24px 44px -28px rgba(84,74,130,0.5); }
+  .now-shard-a { width: 120px; height: 150px; top: 8%; left: 4%; transform: rotate(-14deg); }
+  .now-shard-b { width: 92px; height: 118px; bottom: 10%; right: 6%; transform: rotate(12deg); }
+  .now-phone { position: relative; z-index: 2; }
+  .now-phone :global(.phone) {
+    --phone-bezel: linear-gradient(155deg, #fdfcff, #d7d2e6 46%, #b9b4cc);
+    --phone-bezel-w: 0.036; --phone-rim: rgba(255,255,255,0.9);
+    --phone-shadow: 40px 46px 82px -34px rgba(84,74,130,0.5), 0 4px 12px -6px rgba(84,74,130,0.4);
+  }
+  .now-caption { position: absolute; z-index: 3; bottom: 6%; left: 2%; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.85rem; border-radius: 999px; background: rgba(255,255,255,0.82); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.86rem; font-weight: 600; color: var(--ink); box-shadow: 0 14px 30px -18px rgba(84,74,130,0.5); }
+  .now-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--red); box-shadow: 0 0 0 4px rgba(200,0,40,0.16); }
+  .now-copy h2 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); }
+  .now-copy > p { margin-top: 1rem; max-width: 60ch; color: var(--ink-body); }
+  .now-list { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.9rem; }
+  .now-list li { position: relative; padding-left: 1.4rem; max-width: 64ch; color: var(--ink-body); }
+  .now-list li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(140deg, #7d8ff0, #f5c2cf); }
+  .now-list strong { color: var(--ink); font-weight: 600; }
+
+  /* ===================== OFFLINE ===================== */
+  .offline { max-width: 72rem; margin-inline: auto; padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2.5rem); display: grid; grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: clamp(2rem, 5vw, 4rem); }
+  .off-art { margin: 0; }
+  .off-art svg { width: 100%; height: auto; display: block; }
+  .off-art :global(.pr-olabel) { font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 20px; fill: #6f6893; }
+  .off-art :global(.pr-oscreen) { font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 20px; fill: #322a4e; }
+  .off-copy h2 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); }
+  .off-copy p { margin-top: 1rem; max-width: 60ch; color: var(--ink-body); }
+
+  /* ===================== OWNERSHIP ===================== */
+  .own { max-width: 72rem; margin-inline: auto; padding: clamp(3rem, 7vw, 5rem) clamp(1.25rem, 4vw, 2.5rem); }
+  .own-free { font-family: 'Clash Display', sans-serif; font-weight: 700; color: var(--red); }
+
+  .facets {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--glass-line); border-radius: 26px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 44px 90px -50px rgba(75,70,130,0.5);
+  }
+  .facets-glint { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%); mix-blend-mode: screen; }
+  .facet {
+    position: relative; padding: clamp(1.5rem, 3.4vw, 2.4rem);
+    background: linear-gradient(150deg, rgba(255,255,255,0.82), rgba(244,241,252,0.62));
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .facet:nth-child(2) { background: linear-gradient(150deg, rgba(247,240,250,0.82), rgba(238,236,251,0.62)); }
+  .facet:nth-child(3) { background: linear-gradient(150deg, rgba(240,244,251,0.82), rgba(244,241,252,0.62)); }
+  .facet:nth-child(5) { background: linear-gradient(150deg, rgba(248,242,249,0.82), rgba(239,242,251,0.62)); }
+  .facet h3 { font-size: 1.28rem; color: var(--ink); }
+  .facet p { margin-top: 0.55rem; max-width: 46ch; color: var(--ink-body); }
+
+  .honest { max-width: 64ch; margin: clamp(1.75rem, 4vw, 2.5rem) auto 0; text-align: center; color: var(--ink-muted); font-size: 0.96rem; }
+
+  /* ===================== FAQ ===================== */
+  .faq { max-width: 52rem; margin-inline: auto; padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2.5rem); }
+  .faq h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); text-align: center; margin-bottom: clamp(1.5rem, 4vw, 2.25rem); }
+  .faq-list { display: grid; gap: 0.7rem; }
+  details {
+    border-radius: 18px; border: 1px solid rgba(255,255,255,0.7); overflow: hidden;
+    background: linear-gradient(150deg, rgba(255,255,255,0.72), rgba(244,241,252,0.5));
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 20px 40px -30px rgba(84,74,130,0.45);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.35rem; cursor: pointer; list-style: none; font-family: 'Clash Display', sans-serif; font-weight: 600; font-size: 1.06rem; color: var(--ink); }
+  summary::-webkit-details-marker { display: none; }
+  .faq-mark { position: relative; flex: none; width: 16px; height: 16px; }
+  .faq-mark::before, .faq-mark::after { content: ''; position: absolute; background: var(--red); border-radius: 2px; transition: transform 0.2s ease; }
+  .faq-mark::before { top: 7px; left: 0; width: 16px; height: 2px; }
+  .faq-mark::after { top: 0; left: 7px; width: 2px; height: 16px; }
+  details[open] .faq-mark::after { transform: scaleY(0); }
+  details p { padding: 0 1.35rem 1.2rem; max-width: 68ch; color: var(--ink-body); }
+
+  /* ===================== FOOTER ===================== */
+  .foot { max-width: 72rem; margin-inline: auto; padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 4vw, 2.5rem) clamp(3rem, 7vw, 4.5rem); display: flex; flex-direction: column; align-items: center; gap: 0.8rem; text-align: center; border-top: 1px solid var(--glass-line); }
+  .foot-lockup { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .foot p { color: var(--ink-muted); }
+  .foot-gh {
+    margin-top: 0.4rem; display: inline-flex; align-items: center; padding: 0.7rem 1.3rem; border-radius: 14px;
+    border: 1px solid rgba(120,112,168,0.34); background: rgba(255,255,255,0.55); color: var(--ink); font-weight: 600;
+    transition: background-color 0.18s ease, transform 0.18s ease;
+  }
+  .foot-gh:hover { background: rgba(255,255,255,0.78); transform: translateY(-1px); }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 60rem) {
+    .now { grid-template-columns: 1fr; }
+    .now-stage { order: -1; }
+    .offline { grid-template-columns: 1fr; }
+    .off-art { order: 2; max-width: 34rem; margin-inline: auto; }
+  }
+
+  @media (max-width: 48rem) {
+    .is-land { display: none; }
+    .is-port { display: block; }
+    .prisms { grid-template-columns: 1fr; gap: 1.75rem; }
+    .prisms-beam { display: none; }
+    .prisms-spec { display: none; }
+    .facets { grid-template-columns: 1fr; }
+    .fan { height: clamp(17rem, 62vw, 22rem); }
+    .fan-rays { transform: scale(0.82); transform-origin: bottom center; }
+  }
+
+  @media (max-width: 30rem) {
+    .pr { font-size: 16px; }
+    .hero h1 { font-size: clamp(2.1rem, 9vw, 2.9rem); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .facets-glint { display: none; }
+  }
+</style>

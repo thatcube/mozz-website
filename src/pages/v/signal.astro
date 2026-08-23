@@ -1,0 +1,874 @@
+---
+/**
+ * VARIANT — SIGNAL
+ *
+ * Concept: "your house, broadcasting to everything you own." One small rooftop
+ * aerial sits low in the frame and pours enormous concentric rings out across
+ * the whole viewport, running off all four edges. The rings are the medium; the
+ * things you listen on — a phone, headphones, a speaker, a laptop, a car — ride
+ * them at different radii and depths, each tethered back to the aerial. The
+ * headline sits in the widest calm gap between two rings, so the broadcast
+ * surrounds the words. One machine in your house reaches everything you own,
+ * with nothing in between.
+ *
+ * Everything here is hand-authored SVG + CSS. Palette: cool pale ground, deep
+ * teal structure, Mozz red used only as a mark (the transmit pulse, a status
+ * LED), never as a fill.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, DONATE_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your house, on the air.';
+
+const serverStat = STATS[2]; // 3 — server types, one library
+const searchStat = STATS[0]; // 16ms — search across 100,000 tracks
+const startStat = STATS[1];  // 75ms — from tap to first note
+const freeStat = STATS[3];   // $0 — forever, and open source
+
+// Screens that best show the interface re-tinting itself from the artwork.
+const TINTS = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlist', 'mozz-album-dark'];
+---
+
+<Layout
+  title={`${NAME} — your house, on the air`}
+  description="A free, open source iOS music app for Plex, Jellyfin and Navidrome. One machine in your house reaches every device you own — streamed or downloaded — with no account, no tracking and nothing in between."
+  themeColor="#eef4f4"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=khand@500,600,700&f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="sg">
+    <VariantBar slug="signal" tone="cool" />
+
+    <!-- HERO ================================================================ -->
+    <!-- Drop-in AI art (optional): place a file at /hero/signal.jpg and it will
+         layer softly over the drawn broadcast. With no file it never paints. -->
+    <header class="hero">
+      <svg
+        class="hero-art"
+        viewBox="0 0 1600 1000"
+        preserveAspectRatio="xMidYMid slice"
+        role="img"
+        aria-label="A single rooftop aerial at the foot of the frame broadcasts vast concentric rings that fill the screen. A phone, headphones, a speaker, a laptop and a car ride the rings, each tethered back to the aerial by a fine line."
+      >
+        <defs>
+          <linearGradient id="sg-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#eef6f5" />
+            <stop offset="0.55" stop-color="#e3efec" />
+            <stop offset="1" stop-color="#d2e5e1" />
+          </linearGradient>
+          <radialGradient id="sg-bloom" cx="800" cy="215" r="560" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.62" />
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="sg-field" cx="800" cy="680" r="380" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#f5fbf9" stop-opacity="0.85" />
+            <stop offset="1" stop-color="#f5fbf9" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- far: sky + faint distant wavefronts -->
+        <rect x="-320" y="-460" width="2240" height="1920" fill="url(#sg-sky)" />
+        <rect x="-320" y="-460" width="2240" height="1920" fill="url(#sg-bloom)" />
+        <g fill="none" stroke="#2f7d6e">
+          <circle cx="800" cy="680" r="1320" stroke-width="2" opacity="0.07" />
+          <circle cx="800" cy="680" r="1080" stroke-width="2" opacity="0.11" />
+          <circle cx="800" cy="680" r="850" stroke-width="2.4" opacity="0.17" />
+        </g>
+
+        <!-- near foreground wavefront: heavy, cropped by the edges -->
+        <circle cx="800" cy="680" r="760" fill="none" stroke="#2f7d6e" stroke-width="24" opacity="0.13" />
+
+        <!-- centre near-field light, so the aerial reads against the ground -->
+        <rect x="-320" y="-460" width="2240" height="1920" fill="url(#sg-field)" />
+
+        <!-- mid: the ring carriers -->
+        <g fill="none">
+          <circle cx="800" cy="680" r="650" stroke="#1f5a50" stroke-width="2.2" opacity="0.5" />
+          <circle cx="800" cy="680" r="470" stroke="#1f5a50" stroke-width="2.4" opacity="0.62" />
+          <circle cx="800" cy="680" r="300" stroke="#1f5a50" stroke-width="2.6" opacity="0.72" />
+          <circle cx="800" cy="680" r="150" stroke="#1f5a50" stroke-width="2.8" opacity="0.82" />
+          <circle class="ring-live" cx="800" cy="680" r="150" stroke="#2f7d6e" stroke-width="2.6" opacity="0.5" />
+        </g>
+
+        <!-- hairline tethers from the aerial to each device -->
+        <g stroke="#2f7d6e" stroke-width="1.5" opacity="0.5" stroke-dasharray="2 6" stroke-linecap="round">
+          <line x1="741.7" y1="658.8" x2="358.3" y2="519.3" />
+          <line x1="746.3" y1="711" x2="540.2" y2="830" />
+          <line x1="852.6" y1="647.1" x2="1198.6" y2="430.9" />
+          <line x1="764.4" y1="730.8" x2="582" y2="991.3" />
+          <line x1="854.7" y1="709.1" x2="1373.9" y2="985.2" />
+        </g>
+
+        <!-- devices riding the rings (each grounded with a hard contact shadow) -->
+        <!-- phone -->
+        <g transform="translate(358.3 519.3)">
+          <ellipse cx="5" cy="42" rx="30" ry="8" fill="#123f38" opacity="0.16" />
+          <rect x="-20" y="-42" width="40" height="80" rx="9" fill="#1f5a50" />
+          <rect x="-20" y="-42" width="14" height="80" rx="9" fill="#2f7d6e" />
+          <rect x="-14" y="-34" width="28" height="62" rx="4" fill="#8fbfb5" />
+          <circle cx="0" cy="33" r="2.6" fill="#c80028" />
+        </g>
+        <!-- speaker -->
+        <g transform="translate(540.2 830)">
+          <ellipse cx="3" cy="32" rx="30" ry="8" fill="#123f38" opacity="0.16" />
+          <rect x="-22" y="-26" width="44" height="56" rx="15" fill="#1f5a50" />
+          <rect x="-22" y="-26" width="15" height="56" rx="15" fill="#2f7d6e" />
+          <ellipse cx="0" cy="-24" rx="22" ry="7" fill="#5a9d92" />
+          <g stroke="#0f342e" stroke-width="1.5" opacity="0.5">
+            <line x1="-13" y1="-4" x2="13" y2="-4" />
+            <line x1="-13" y1="4" x2="13" y2="4" />
+            <line x1="-13" y1="12" x2="13" y2="12" />
+          </g>
+        </g>
+        <!-- headphones -->
+        <g transform="translate(1198.6 430.9)">
+          <ellipse cx="0" cy="36" rx="30" ry="8" fill="#123f38" opacity="0.16" />
+          <path d="M-27 8 A27 31 0 0 1 27 8" fill="none" stroke="#1f5a50" stroke-width="9" stroke-linecap="round" />
+          <rect x="-33" y="6" width="16" height="30" rx="7" fill="#1f5a50" />
+          <rect x="17" y="6" width="16" height="30" rx="7" fill="#1f5a50" />
+          <rect x="-31" y="10" width="6" height="22" rx="3" fill="#8fbfb5" />
+          <rect x="25" y="10" width="6" height="22" rx="3" fill="#8fbfb5" />
+        </g>
+        <!-- laptop -->
+        <g transform="translate(582 991.3)">
+          <ellipse cx="0" cy="24" rx="50" ry="9" fill="#123f38" opacity="0.16" />
+          <rect x="-36" y="-64" width="72" height="34" rx="4" fill="#1f5a50" />
+          <rect x="-31" y="-59" width="62" height="24" rx="2" fill="#8fbfb5" />
+          <path d="M-40 -30 L40 -30 L52 16 L-52 16 Z" fill="#2f7d6e" />
+          <path d="M-40 -30 L40 -30 L44 -12 L-44 -12 Z" fill="#1f5a50" />
+        </g>
+        <!-- car -->
+        <g transform="translate(1373.9 985.2)">
+          <ellipse cx="0" cy="30" rx="60" ry="10" fill="#123f38" opacity="0.16" />
+          <path d="M-58 12 Q-58 -6 -40 -9 L-26 -30 Q-23 -34 -15 -34 L26 -34 Q35 -34 41 -22 L54 -11 Q60 -6 60 8 L60 14 Q60 20 51 20 L-51 20 Q-58 20 -58 12 Z" fill="#1f5a50" />
+          <path d="M-22 -28 L20 -28 Q29 -28 33 -18 L37 -13 L-18 -13 Z" fill="#8fbfb5" />
+          <circle cx="-32" cy="18" r="13" fill="#0f342e" />
+          <circle cx="-32" cy="18" r="5" fill="#5a9d92" />
+          <circle cx="35" cy="18" r="13" fill="#0f342e" />
+          <circle cx="35" cy="18" r="5" fill="#5a9d92" />
+        </g>
+
+        <!-- the house + aerial: the origin, low in the frame, cropped by the bottom -->
+        <g>
+          <path d="M800 905 L1044 1040 L556 1040 Z" fill="#1f5a50" />
+          <path d="M800 905 L556 1040 L800 1040 Z" fill="#2f7d6e" />
+          <line x1="800" y1="905" x2="800" y2="1040" stroke="#0f342e" stroke-width="2" opacity="0.35" />
+          <rect x="902" y="930" width="26" height="60" fill="#17433c" />
+          <line x1="800" y1="905" x2="800" y2="676" stroke="#123f38" stroke-width="6" stroke-linecap="round" />
+          <g stroke="#123f38" stroke-width="4" stroke-linecap="round">
+            <line x1="782" y1="712" x2="818" y2="712" />
+            <line x1="786" y1="730" x2="814" y2="730" />
+            <line x1="790" y1="748" x2="810" y2="748" />
+          </g>
+          <circle class="pulse pulse-b" cx="800" cy="676" r="30" fill="none" stroke="#c80028" stroke-width="1.6" opacity="0.26" />
+          <circle class="pulse pulse-a" cx="800" cy="676" r="18" fill="none" stroke="#c80028" stroke-width="2" opacity="0.5" />
+          <circle cx="800" cy="676" r="8" fill="#c80028" />
+        </g>
+      </svg>
+
+      <div class="hero-plate" aria-hidden="true"></div>
+
+      <div class="hero-lockup">
+        <Mark size={26} decorative />
+        <span class="wordmark">{NAME}</span>
+        <span class="on-air"><i aria-hidden="true"></i>On air</span>
+      </div>
+
+      <div class="hero-pocket">
+        <h1>{HEADLINE}</h1>
+        <p class="lede">
+          Mozz plays the music already on your own Plex, Jellyfin or Navidrome
+          server — streamed or downloaded — out to every device you own. No
+          account, nothing tracking you, nothing in between.
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- SERVERS ============================================================= -->
+    <section class="servers" aria-labelledby="sg-servers">
+      <div class="servers-head">
+        <h2 id="sg-servers">Point it at a server you already run.</h2>
+        <p>
+          {serverStat.value} server types behind one library. Sign in once and
+          Mozz browses them like a single collection — the transmitter is a box
+          in your house, not a company in the cloud.
+        </p>
+      </div>
+
+      <div class="chain">
+        <svg class="chain-rail" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="40" y1="35" x2="1160" y2="35" stroke="#bcd8d2" stroke-width="2" />
+          <line x1="40" y1="35" x2="1160" y2="35" stroke="#2f7d6e" stroke-width="2" stroke-dasharray="2 8" opacity="0.55" />
+          <circle cx="600" cy="35" r="8" fill="#c80028" />
+          <circle cx="600" cy="35" r="17" fill="none" stroke="#c80028" stroke-width="1.4" opacity="0.35" />
+          <text x="600" y="18" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="12" fill="#3c6a60">one library</text>
+        </svg>
+        <ul class="chain-nodes" role="list">
+          {SERVERS.map((s) => (
+            <li>
+              <span class="node-port"><ServerLogo name={s.name} size={30} brand /></span>
+              <span class="node-name">{s.name}</span>
+              <span class="node-note">{s.note}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ADAPTIVE COLOUR ==================================================== -->
+    <section class="tint" aria-labelledby="sg-tint">
+      <div class="tint-head">
+        <h2 id="sg-tint">Every screen takes the record's colour.</h2>
+        <p>
+          Play anything and Mozz re-tints its whole interface from that record's
+          own artwork. One app, arriving as whatever you happen to be hearing.
+        </p>
+      </div>
+
+      <div class="tint-phone">
+        <Phone name="mozz-nowplaying" width={252} priority sizes="252px" ariaHidden class="np" />
+      </div>
+
+      <div class="tint-strip">
+        <svg class="strip-arc" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M40 96 Q600 4 1160 96" fill="none" stroke="#bcd8d2" stroke-width="2" />
+        </svg>
+        <div class="strip-shots">
+          {TINTS.map((n) => (
+            <span class="chip">
+              <Shot name={n} sizes="(max-width: 40rem) 40vw, 150px" ariaHidden />
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES ========================================================== -->
+    <section class="feat" aria-labelledby="sg-feat">
+      <div class="feat-dial" aria-hidden="true">
+        <svg viewBox="0 0 320 460" role="img" width="320" height="460">
+          <defs>
+            <radialGradient id="sg-dialface" cx="160" cy="230" r="180" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#f6faf9" />
+              <stop offset="1" stop-color="#e6f0ed" />
+            </radialGradient>
+          </defs>
+          <circle cx="160" cy="230" r="176" fill="url(#sg-dialface)" stroke="#bcd8d2" stroke-width="2" />
+          <g fill="none" stroke="#2f7d6e">
+            <circle cx="160" cy="230" r="132" stroke-width="2" opacity="0.35" />
+            <circle cx="160" cy="230" r="92" stroke-width="2" opacity="0.5" />
+            <circle cx="160" cy="230" r="52" stroke-width="2" opacity="0.65" />
+          </g>
+          <!-- tick ring -->
+          <g stroke="#1f5a50" stroke-width="2" opacity="0.55">
+            <line x1="160" y1="62" x2="160" y2="80" />
+            <line x1="160" y1="380" x2="160" y2="398" />
+            <line x1="76" y1="122" x2="88" y2="134" />
+            <line x1="244" y1="122" x2="232" y2="134" />
+            <line x1="76" y1="338" x2="88" y2="326" />
+            <line x1="244" y1="338" x2="232" y2="326" />
+          </g>
+          <!-- needle points into open dial space, clear of the readouts -->
+          <line x1="160" y1="230" x2="258" y2="322" stroke="#123f38" stroke-width="4" stroke-linecap="round" />
+          <circle cx="160" cy="230" r="12" fill="#1f5a50" />
+          <circle cx="160" cy="230" r="4" fill="#c80028" />
+          <!-- labelled readouts, on the dial -->
+          <g font-family="Khand, sans-serif" fill="#123f38">
+            <text x="160" y="168" text-anchor="middle" font-size="42" font-weight="700">{searchStat.value}</text>
+            <text x="160" y="188" text-anchor="middle" font-size="12.5" fill="#3c6a60" font-family="Satoshi, sans-serif">search · 100k tracks</text>
+            <text x="160" y="312" text-anchor="middle" font-size="30" font-weight="600" fill="#1f5a50">{startStat.value}</text>
+            <text x="160" y="330" text-anchor="middle" font-size="11.5" fill="#3c6a60" font-family="Satoshi, sans-serif">tap to first note</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="feat-list">
+        <h2 id="sg-feat">What comes down the wire.</h2>
+        <ol role="list">
+          {FEATURES.map((f) => (
+            <li>
+              <span class="feat-tick" aria-hidden="true"></span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- OWNERSHIP ========================================================= -->
+    <section class="own" aria-labelledby="sg-own">
+      <div class="own-head">
+        <h2 id="sg-own">A clean signal, and nobody else on the line.</h2>
+        <p>{freeStat.value} forever, and open source under GPL-3.0 — every feature in the free app, because there is no other kind.</p>
+      </div>
+
+      <div class="own-grid">
+        <svg class="own-emblem" viewBox="0 0 240 240" role="img" width="240" height="240" aria-label="A central transmitter with four clear lines running out to the corners.">
+          <circle cx="120" cy="120" r="118" fill="none" stroke="#bcd8d2" stroke-width="1.5" />
+          <g stroke="#2f7d6e" stroke-width="1.5" stroke-dasharray="2 7" opacity="0.6">
+            <line x1="120" y1="120" x2="18" y2="18" />
+            <line x1="120" y1="120" x2="222" y2="18" />
+            <line x1="120" y1="120" x2="18" y2="222" />
+            <line x1="120" y1="120" x2="222" y2="222" />
+          </g>
+          <circle cx="120" cy="120" r="58" fill="none" stroke="#1f5a50" stroke-width="2" opacity="0.55" />
+          <circle cx="120" cy="120" r="32" fill="none" stroke="#1f5a50" stroke-width="2" opacity="0.75" />
+          <circle cx="120" cy="120" r="9" fill="#c80028" />
+        </svg>
+        {OWNERSHIP.map((o) => (
+          <article class="own-cell">
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- FAQ =============================================================== -->
+    <section class="faq" aria-labelledby="sg-faq">
+      <h2 id="sg-faq">Signal check.</h2>
+      <div class="faq-list">
+        {FAQS.map((f) => (
+          <details>
+            <summary>
+              <span class="faq-tick" aria-hidden="true"></span>
+              <span>{f.q}</span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- FOOTER ============================================================ -->
+    <footer class="foot">
+      <div class="foot-line" aria-hidden="true">
+        <svg viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20 Q600 -14 1200 20" fill="none" stroke="#5a9d92" stroke-width="2" opacity="0.5" /></svg>
+      </div>
+      <div class="foot-lockup">
+        <Mark size={30} decorative />
+        <span class="wordmark">{NAME}</span>
+      </div>
+      <p class="foot-say">One app for your music, wherever it lives. Free forever, open source under GPL-3.0.</p>
+      <div class="foot-actions">
+        {APP_STORE_URL ? (
+          <a class="store sm" href={APP_STORE_URL}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+        ) : (
+          <span class="store sm is-pending" aria-disabled="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            <span><small>Coming to the</small>App Store</span>
+          </span>
+        )}
+        <a class="ghost" href={GITHUB_URL}>Source on GitHub</a>
+        <a class="ghost" href={DONATE_URL}>Sponsor</a>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .sg {
+    --ink: #12302a;
+    --t9: #123f38;
+    --t7: #1f5a50;
+    --t5: #2f7d6e;
+    --t3: #5a9d92;
+    --t1: #bcd8d2;
+    --paper: #f6faf9;
+    --ground: #eef4f4;
+    --red: #c80028;
+    --hero-plate: url('/hero/signal.jpg');
+
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  .sg h1,
+  .sg h2,
+  .sg h3 {
+    font-family: 'Khand', system-ui, sans-serif;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  .wordmark {
+    font-family: 'Khand', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- HERO --------------------------------------------------------------- */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: min(100svh, 1100px);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* Optional AI plate — layers softly over the drawing; silent if the file is
+     absent (a background-image that 404s simply paints nothing). */
+  .hero-plate {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: var(--hero-plate);
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: soft-light;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .hero-lockup {
+    position: absolute;
+    z-index: 3;
+    top: clamp(0.9rem, 2.4vw, 1.6rem);
+    left: clamp(1rem, 4vw, 3rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--t9);
+  }
+
+  .on-air {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: 0.3rem;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid var(--t1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--t7);
+  }
+
+  .on-air i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .hero-pocket {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 21%;
+    transform: translateX(-50%);
+    width: min(600px, 88vw);
+    text-align: center;
+  }
+
+  .hero-pocket h1 {
+    font-size: clamp(2.9rem, 7.4vw, 5rem);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-pocket .lede {
+    max-width: 42ch;
+    margin: 0 auto 1.5rem;
+    font-size: clamp(1rem, 1.25vw, 1.16rem);
+    color: #234a42;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.85rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* store badge ------------------------------------------------------------ */
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.2rem 0.7rem 1rem;
+    border-radius: 12px;
+    background: var(--t9);
+    color: #eef6f4;
+    box-shadow: 0 14px 30px -18px rgba(18, 63, 56, 0.7);
+  }
+
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: grid; line-height: 1.05; text-align: left; font-weight: 600; font-size: 1.05rem; }
+  .store small { font-size: 0.62rem; font-weight: 500; opacity: 0.82; letter-spacing: 0.02em; }
+
+  .store.is-pending {
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--t9);
+    border: 1px solid var(--t1);
+    box-shadow: none;
+  }
+
+  .store.sm { padding: 0.55rem 1rem 0.55rem 0.85rem; }
+  .store.sm span { font-size: 0.95rem; }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.15rem;
+    border-radius: 12px;
+    border: 1px solid var(--t5);
+    color: var(--t9);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .ghost:hover { background: rgba(255, 255, 255, 0.85); }
+
+  /* ---- shared section frame ---------------------------------------------- */
+  .servers,
+  .tint,
+  .feat,
+  .own,
+  .faq {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: clamp(3.5rem, 8vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .servers-head,
+  .tint-head,
+  .own-head {
+    max-width: 40ch;
+    margin: 0 auto clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .servers-head h2,
+  .tint-head h2,
+  .own-head h2,
+  .feat-list h2,
+  .faq h2 {
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    margin-bottom: 0.7rem;
+  }
+
+  .servers-head p,
+  .tint-head p,
+  .own-head p {
+    color: #365b53;
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+
+  /* ---- SERVERS ----------------------------------------------------------- */
+  .chain { position: relative; padding-top: 74px; }
+
+  .chain-rail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 0;
+  }
+
+  .chain-nodes {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1rem, 3vw, 2rem);
+    margin: 0;
+  }
+
+  .chain-nodes li {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 0.4rem;
+  }
+
+  /* the port sits on the rail, joined to it by a short dashed stem */
+  .node-port {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--t1);
+    color: var(--t9);
+    margin-top: -37px;
+    box-shadow: 0 12px 26px -18px rgba(18, 63, 56, 0.55);
+  }
+
+  .node-port::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    width: 0;
+    height: 40px;
+    border-left: 1px dashed var(--t5);
+    opacity: 0.6;
+  }
+
+  .node-name { font-family: 'Khand', sans-serif; font-weight: 700; font-size: 1.35rem; margin-top: 0.3rem; }
+  .node-note { color: #3c6a60; font-size: 0.94rem; max-width: 26ch; }
+
+  /* ---- ADAPTIVE COLOUR --------------------------------------------------- */
+  .tint-phone { display: flex; justify-content: center; margin-bottom: clamp(1.5rem, 4vw, 2.6rem); }
+  .tint-phone .np {
+    --phone-bezel: linear-gradient(#20302d, #12211e);
+    --phone-rim: rgba(180, 220, 210, 0.22);
+    --phone-shadow: 0 34px 66px -30px rgba(18, 63, 56, 0.62);
+  }
+
+  .tint-strip { position: relative; }
+
+  .strip-arc {
+    position: absolute;
+    inset: auto 0 24px;
+    width: 100%;
+    height: 90px;
+    z-index: 0;
+  }
+
+  .strip-shots {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(0.6rem, 2vw, 1.4rem);
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    display: block;
+    width: clamp(96px, 13vw, 150px);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 3px solid var(--paper);
+    box-shadow: 0 16px 34px -22px rgba(18, 63, 56, 0.55);
+    background: #0c0c0e;
+  }
+
+  .chip :global(img) { display: block; width: 100%; height: auto; }
+  .chip:nth-child(1), .chip:nth-child(5) { transform: translateY(30px); }
+  .chip:nth-child(2), .chip:nth-child(4) { transform: translateY(10px); }
+
+  /* ---- FEATURES ---------------------------------------------------------- */
+  .feat {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .feat-dial { position: sticky; top: 2rem; }
+  .feat-dial svg { width: 100%; height: auto; filter: drop-shadow(0 24px 40px rgba(18, 63, 56, 0.14)); }
+
+  .feat-list h2 { font-size: clamp(1.9rem, 3.6vw, 3rem); margin-bottom: 1.6rem; }
+  .feat-list ol { display: grid; gap: 0; margin: 0; }
+
+  .feat-list li {
+    position: relative;
+    padding: 1.35rem 0 1.35rem 2rem;
+    border-top: 1px solid var(--t1);
+  }
+  .feat-list li:last-child { border-bottom: 1px solid var(--t1); }
+
+  .feat-tick {
+    position: absolute;
+    left: 0;
+    top: 1.7rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid var(--t5);
+    background: var(--ground);
+  }
+  .feat-list li:hover .feat-tick { background: var(--red); border-color: var(--red); }
+
+  .feat-list h3 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .feat-list p { color: #365b53; max-width: 68ch; }
+
+  /* ---- OWNERSHIP --------------------------------------------------------- */
+  .own-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .own-emblem {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(150px, 22vw, 220px);
+    height: auto;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .own-cell {
+    position: relative;
+    z-index: 1;
+    padding: 1.5rem 1.6rem;
+    background: var(--paper);
+    border: 1px solid var(--t1);
+    border-radius: 16px;
+  }
+  .own-cell:nth-child(2) { margin-right: clamp(2rem, 8vw, 5rem); }
+  .own-cell:nth-child(3) { margin-left: clamp(2rem, 8vw, 5rem); }
+  .own-cell:nth-child(4) { margin-right: clamp(2rem, 8vw, 5rem); }
+  .own-cell:nth-child(5) { margin-left: clamp(2rem, 8vw, 5rem); }
+
+  .own-cell h3 { font-size: 1.45rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--t9); }
+  .own-cell p { color: #365b53; font-size: 0.98rem; }
+
+  /* ---- FAQ --------------------------------------------------------------- */
+  .faq { max-width: 860px; }
+  .faq h2 { font-size: clamp(1.9rem, 3.6vw, 3rem); margin-bottom: 1.4rem; text-align: center; }
+  .faq-list { display: grid; gap: 0; }
+
+  .faq details { border-top: 1px solid var(--t1); }
+  .faq details:last-child { border-bottom: 1px solid var(--t1); }
+
+  .faq summary {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.2rem 0.2rem;
+    cursor: pointer;
+    font-family: 'Khand', sans-serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+    list-style: none;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+
+  .faq-tick {
+    width: 12px;
+    height: 12px;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid var(--t5);
+    transition: background-color 0.15s ease;
+  }
+  .faq details[open] .faq-tick { background: var(--red); border-color: var(--red); }
+
+  .faq details p {
+    margin: 0 0 1.2rem 2rem;
+    color: #365b53;
+    max-width: 66ch;
+  }
+
+  /* ---- FOOTER ------------------------------------------------------------ */
+  .foot {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 4vw, 3rem) 3.5rem;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+  .foot-line { width: 100%; max-width: 700px; }
+  .foot-line svg { width: 100%; height: 40px; }
+  .foot-lockup { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--t9); }
+  .foot-say { color: #365b53; max-width: 52ch; }
+  .foot-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; align-items: center; margin-top: 0.4rem; }
+
+  /* ---- motion ------------------------------------------------------------ */
+  .pulse { transform-box: fill-box; transform-origin: center; }
+  .pulse-a { animation: sg-pulse 3.4s ease-out infinite; }
+  .pulse-b { animation: sg-pulse 3.4s ease-out 0.5s infinite; }
+  .ring-live { transform-box: fill-box; transform-origin: center; animation: sg-ring 6s ease-out infinite; }
+
+  @keyframes sg-pulse {
+    0% { transform: scale(0.5); opacity: 0.55; }
+    70% { opacity: 0; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+  @keyframes sg-ring {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(4.4); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse, .ring-live { animation: none; }
+    .ring-live { display: none; }
+  }
+
+  /* ---- responsive -------------------------------------------------------- */
+  @media (max-width: 860px) {
+    .feat { grid-template-columns: 1fr; }
+    .feat-dial { position: static; max-width: 300px; margin: 0 auto 1rem; }
+  }
+
+  @media (max-width: 680px) {
+    .hero-pocket { top: 15%; width: min(560px, 90vw); }
+    .chain-nodes { grid-template-columns: 1fr; gap: 2.4rem; }
+    .chain-rail { display: none; }
+    .chain { padding-top: 0; }
+    .node-port { margin-top: 0; }
+    .node-port::before { display: none; }
+    .strip-arc { display: none; }
+    .chip:nth-child(n) { transform: none; }
+    .own-grid { grid-template-columns: 1fr; }
+    .own-emblem { display: none; }
+    .own-cell:nth-child(n) { margin: 0; }
+  }
+</style>

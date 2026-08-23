@@ -56,6 +56,7 @@ repository, never a local clone, which can be behind.
 | Gapless queue on `AVQueuePlayer` | `ARCHITECTURE.md` §1, §5 |
 | Equalizer | `Sources/MozzCore/EqualizerSettings.swift` |
 | Recommendations via MusicBrainz + ListenBrainz | `docs/PRIVACY.md` |
+| On-device, offline **Mozz Weekly** mixes | `Sources/MozzRecommend/RecommendationService.swift`, `Sources/MozzApp/Library/HomeView.swift` |
 
 **The one honest caveat.** Recommendations send artist name, track title and/or
 MusicBrainz IDs to MetaBrainz. No name, no server address, no account, and it is

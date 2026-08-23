@@ -10,6 +10,7 @@
  *   docs/PRIVACY.md      — no account, no analytics, no telemetry; the MetaBrainz exception
  *   ARCHITECTURE.md §8   — FTS p95 15.7 ms @ 100k tracks, 75 ms time-to-first-audio
  *   Sources/MozzApp/Resources/Brands.xcassets — Plex, Jellyfin, Navidrome
+ *   Sources/MozzRecommend/RecommendationService.swift — offline Mozz Weekly mixes
  */
 
 export const SITE = 'https://mozzmusic.com';
@@ -68,6 +69,10 @@ export const FEATURES = [
   {
     title: 'Radio that understands taste',
     body: 'Stations are built from real listening similarity by way of MusicBrainz and ListenBrainz, so a mellow track never seeds an hour of hard rock just because both are tagged "rock".',
+  },
+  {
+    title: 'A new mix every week',
+    body: 'Mozz Weekly builds a fresh set from music already in your library. It runs on your device and stays available offline, so discovery never depends on a subscription service.',
   },
   {
     title: 'Tuned to your ears',
@@ -275,5 +280,86 @@ export const VARIANTS: Variant[] = [
       'Soft mesh colour, frosted panels and a great deal of air. The gentlest option, and the one that reads most like a modern product page.',
     swatch: ['#f6f3ff', '#c80028', '#8fa6f0'],
     mood: 'light',
+  },
+  {
+    slug: 'prism',
+    name: 'Prism',
+    vibe: 'one beam in, your whole library out',
+    blurb:
+      'A full-screen hero built as a single shaft of light crossing the frame, striking glass and opening into a spectrum that carries your library off the edge. Immersive from the first pixel.',
+    swatch: ['#f3f1fb', '#c80028', '#7d8ff0'],
+    mood: 'light',
+  },
+  {
+    slug: 'signal',
+    name: 'Signal',
+    vibe: 'your house, broadcasting to everything you own',
+    blurb:
+      'Enormous concentric rings pour out of one small rooftop aerial and run off all four edges of the screen. Your devices ride the rings. The page is the broadcast.',
+    swatch: ['#eef4f4', '#c80028', '#2f7d6e'],
+    mood: 'light',
+  },
+  {
+    slug: 'strata',
+    name: 'Strata',
+    vibe: 'a sky of light over one lit window',
+    blurb:
+      'Full-bleed curtains of colour stacked to the horizon, with a single house below holding the only warm light on the page. The quiet, cinematic one.',
+    swatch: ['#101a2c', '#c80028', '#5ee0b8'],
+    mood: 'dark',
+  },
+  {
+    slug: 'constellation',
+    name: 'Constellation',
+    vibe: 'your library projected across a listening planetarium',
+    blurb:
+      'Album stars fill an architectural dome while server projectors, a radio azimuth, weekly constellations and download meteors turn the whole room into the player.',
+    swatch: ['#050822', '#728cff', '#6df5ca'],
+    mood: 'dark',
+  },
+  {
+    slug: 'archive',
+    name: 'Archive',
+    vibe: 'an endless aisle through every record you own',
+    blurb:
+      'A monumental one-point-perspective music archive with three collection wings, an offline checkout desk and glowing routes for radio and weekly mixes.',
+    swatch: ['#0c0c08', '#c49a5c', '#57d2bd'],
+    mood: 'dark',
+  },
+  {
+    slug: 'subway',
+    name: 'Subway',
+    vibe: 'the signal ends, but the record keeps playing',
+    blurb:
+      'A night train enters the tunnel while downloaded albums stay lit inside. Playback, weekly mixes and source lines become the carriage architecture.',
+    swatch: ['#03060d', '#f24b77', '#ffb21c'],
+    mood: 'dark',
+  },
+  {
+    slug: 'radioland',
+    name: 'Radio Land',
+    vibe: 'a whole listening landscape drawn as one map',
+    blurb:
+      'Server hill, radio towers, familiar weekly routes and an offline train make the product discoverable by exploring a single illustrated country.',
+    swatch: ['#eef0bd', '#87a95e', '#173f37'],
+    mood: 'light',
+  },
+  {
+    slug: 'portal',
+    name: 'Portal',
+    vibe: 'the app opens into the library you already own',
+    blurb:
+      'A room-sized phone doorway reveals album halls, a listening stage and glowing mix paths while records and download crates spill into the foreground.',
+    swatch: ['#09050e', '#8f467b', '#f2a94a'],
+    mood: 'dark',
+  },
+  {
+    slug: 'tideline',
+    name: 'Tideline',
+    vibe: 'a sea of music, charted from the surface down',
+    blurb:
+      'A lighthouse broadcasts above album strata while weekly currents cross the library and downloaded favorites glow safely in a sheltered reef.',
+    swatch: ['#071a24', '#49bea9', '#e0a55c'],
+    mood: 'dark',
   },
 ];

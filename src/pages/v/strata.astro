@@ -1,0 +1,1023 @@
+---
+/**
+ * VARIANT — STRATA
+ *
+ * THESIS: A sky of light over one lit window. The quiet, cinematic member of the
+ *   set. Something small that you own — a server humming in a dark house —
+ *   quietly throwing something vast: stacked curtains of aurora across the whole
+ *   night. The only warm light on the page is the one window that server sits in.
+ *
+ * IMMERSIVE HERO: one full-bleed inline SVG authored at a wide viewBox with hard
+ *   bleed past all four edges, sliced to cover. Aurora above the copy, landscape
+ *   and the lit house below it, hills and reflected light on both sides — the
+ *   composition encircles a quiet dark pocket where the words sit. The aurora
+ *   fans up out of the house's window, so the whole sky reads as what one small
+ *   machine is putting out.
+ *
+ * CRAFT DEFENCE against gradient-slop: every aurora curtain has a drawn path
+ *   edge and internal vertical striation (a light-streak pattern), the horizon
+ *   and near foreground stay crisp and graphic against the soft sky, and the one
+ *   warm window is a precise little drawing. Contrast of texture carries it.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'The whole night runs on a server you own.';
+
+// STATS, woven into the sections they belong to rather than lined up in a row.
+const searchStat = STATS[0]; // 16ms — search across 100,000 tracks
+const startStat = STATS[1];  // 75ms — from tap to first note
+const serverStat = STATS[2]; // 3 — server types, one library
+const freeStat = STATS[3];   // $0 — forever, and open source
+
+// The adaptive-tint shelf: five real screens, each recoloured from its own art.
+const SHELF = ['mozz-album-red', 'mozz-album-warm', 'mozz-artist', 'mozz-playlist', 'mozz-album-dark'];
+
+// Each server gets a window in the dark facade; brand colour picks its glow.
+const SERVER_GLOW: Record<string, string> = {
+  Plex: '#e5a00d',
+  Jellyfin: '#00a4dc',
+  Navidrome: '#3f8fd0',
+};
+
+// The four ownership claims, placed as a small constellation.
+const STARS = [
+  { x: 16, y: 30 },
+  { x: 42, y: 66 },
+  { x: 68, y: 24 },
+  { x: 88, y: 60 },
+];
+---
+
+<Layout
+  title={`${NAME} — the whole night runs on a server you own`}
+  description="A free, open source iOS music app for Plex, Jellyfin and Navidrome. Your library, your server, your files — streamed or downloaded, with no account and nothing tracking you."
+  themeColor="#0a1220"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700&f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="st">
+    <VariantBar slug="strata" tone="neutral" />
+
+    <!-- ======================================================================
+         HERO — full-bleed night sky over one lit window.
+         The SVG is authored 0 0 1600 1000 and sliced to cover, with geometry
+         run deliberately past every edge; the drop-in AI plate below layers
+         over it and degrades to nothing if the file is absent.
+         DROP-IN: /hero/strata.jpg  (optional; the CSS scene is finished without it)
+    ====================================================================== -->
+    <header class="hero">
+      <svg
+        class="hero__art"
+        viewBox="0 0 1600 1000"
+        preserveAspectRatio="xMidYMid slice"
+        role="img"
+        aria-label="A wide night landscape. Stacked curtains of green and violet aurora fill the sky and run off both sides, fanning upward out of the single lit window of one small dark house on the horizon. Low hills and a near ridge of trees frame the scene."
+      >
+        <defs>
+          <linearGradient id="st-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#060b16" />
+            <stop offset="0.45" stop-color="#0a1526" />
+            <stop offset="0.68" stop-color="#0b1728" />
+            <stop offset="0.82" stop-color="#0a1420" />
+            <stop offset="1" stop-color="#070d17" />
+          </linearGradient>
+
+          <linearGradient id="st-cA" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2fbf90" stop-opacity="0" />
+            <stop offset="0.5" stop-color="#2fbf90" stop-opacity="0.34" />
+            <stop offset="1" stop-color="#2fbf90" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="st-cB" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8f6fe0" stop-opacity="0" />
+            <stop offset="0.5" stop-color="#8f6fe0" stop-opacity="0.4" />
+            <stop offset="1" stop-color="#8f6fe0" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="st-cC" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#46e6b0" stop-opacity="0" />
+            <stop offset="0.46" stop-color="#46e6b0" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#1f7f66" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="st-cD" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4fd0e0" stop-opacity="0" />
+            <stop offset="0.5" stop-color="#4fd0e0" stop-opacity="0.3" />
+            <stop offset="1" stop-color="#4fd0e0" stop-opacity="0" />
+          </linearGradient>
+
+          <linearGradient id="st-ray" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#7fffcf" stop-opacity="0.5" />
+            <stop offset="0.5" stop-color="#46e6b0" stop-opacity="0.16" />
+            <stop offset="1" stop-color="#46e6b0" stop-opacity="0" />
+          </linearGradient>
+
+          <radialGradient id="st-deep" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#050a14" stop-opacity="0.72" />
+            <stop offset="1" stop-color="#050a14" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="st-warm" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#ffcf85" stop-opacity="0.9" />
+            <stop offset="0.4" stop-color="#ff9d3d" stop-opacity="0.35" />
+            <stop offset="1" stop-color="#ff9d3d" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="st-window" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe6b0" />
+            <stop offset="1" stop-color="#ffb24d" />
+          </linearGradient>
+          <linearGradient id="st-horizonglow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2fd39a" stop-opacity="0.28" />
+            <stop offset="1" stop-color="#2fd39a" stop-opacity="0" />
+          </linearGradient>
+
+          <!-- Vertical light-streaks: the internal striation that keeps the
+               curtains reading as drawn light instead of a blurred wash. -->
+          <pattern id="st-striae" width="24" height="12" patternUnits="userSpaceOnUse">
+            <rect x="0" width="2" height="12" fill="#ffffff" opacity="0.11" />
+            <rect x="8" width="1.4" height="12" fill="#ffffff" opacity="0.06" />
+            <rect x="16" width="1" height="12" fill="#ffffff" opacity="0.08" />
+          </pattern>
+        </defs>
+
+        <!-- sky ground -->
+        <rect x="-200" y="-200" width="2000" height="1400" fill="url(#st-sky)" />
+
+        <!-- far stars -->
+        <g fill="#dce8ff">
+          <circle cx="180" cy="90" r="1.6" opacity="0.7" />
+          <circle cx="340" cy="150" r="1.1" opacity="0.5" />
+          <circle cx="520" cy="70" r="1.4" opacity="0.6" />
+          <circle cx="690" cy="140" r="1" opacity="0.45" />
+          <circle cx="1010" cy="80" r="1.5" opacity="0.65" />
+          <circle cx="1180" cy="130" r="1.1" opacity="0.5" />
+          <circle cx="1330" cy="70" r="1.3" opacity="0.6" />
+          <circle cx="1470" cy="150" r="1" opacity="0.45" />
+          <circle cx="90" cy="200" r="1" opacity="0.4" />
+          <circle cx="1560" cy="210" r="1.2" opacity="0.5" />
+        </g>
+
+        <!-- CURTAIN A — far, faint green, very high, off both sides + top -->
+        <g>
+          <path d="M-200,-40 C 250,-90 600,-30 900,-45 C1200,-60 1520,-20 1800,-70 L1800,150 C1520,200 1200,150 900,165 C600,180 250,150 -200,120 Z" fill="url(#st-cA)" />
+          <path d="M-200,-40 C 250,-90 600,-30 900,-45 C1200,-60 1520,-20 1800,-70 L1800,150 C1520,200 1200,150 900,165 C600,180 250,150 -200,120 Z" fill="url(#st-striae)" opacity="0.5" />
+        </g>
+
+        <!-- CURTAIN B — violet, upper-mid, off both sides -->
+        <g>
+          <path d="M-200,120 C 200,60 520,110 820,95 C1120,80 1500,120 1800,70 L1800,330 C1500,380 1120,330 820,345 C520,360 200,330 -200,300 Z" fill="url(#st-cB)" />
+          <path d="M-200,120 C 200,60 520,110 820,95 C1120,80 1500,120 1800,70 L1800,330 C1500,380 1120,330 820,345 C520,360 200,330 -200,300 Z" fill="url(#st-striae)" opacity="0.55" />
+        </g>
+
+        <!-- ray-fan: aurora rising out of the window, the picture's whole idea -->
+        <g class="hero__rays">
+          <path d="M800,720 L470,110 L545,110 Z" fill="url(#st-ray)" opacity="0.8" />
+          <path d="M800,720 L610,96 L682,96 Z" fill="url(#st-ray)" />
+          <path d="M800,720 L766,90 L838,90 Z" fill="url(#st-ray)" opacity="0.9" />
+          <path d="M800,720 L918,96 L990,96 Z" fill="url(#st-ray)" />
+          <path d="M800,720 L1058,110 L1132,110 Z" fill="url(#st-ray)" opacity="0.8" />
+        </g>
+
+        <!-- CURTAIN C — the bright green main curtain, aligned over the house -->
+        <g>
+          <path d="M-200,250 C 150,170 500,205 800,190 C1100,178 1450,205 1800,150 L1800,470 C1450,520 1100,470 800,488 C500,502 150,470 -200,430 Z" fill="url(#st-cC)" />
+          <path d="M-200,250 C 150,170 500,205 800,190 C1100,178 1450,205 1800,150 L1800,470 C1450,520 1100,470 800,488 C500,502 150,470 -200,430 Z" fill="url(#st-striae)" opacity="0.6" />
+        </g>
+
+        <!-- CURTAIN D — cyan accent, off the right edge -->
+        <g>
+          <path d="M700,230 C 1000,188 1300,222 1800,168 L1800,410 C1300,458 1000,412 700,438 Z" fill="url(#st-cD)" />
+          <path d="M700,230 C 1000,188 1300,222 1800,168 L1800,410 C1300,458 1000,412 700,438 Z" fill="url(#st-striae)" opacity="0.4" />
+        </g>
+
+        <!-- deep-night pocket: guarantees the copy band is the darkest region.
+             It is the depth of the night, not a grey plate. -->
+        <ellipse cx="800" cy="600" rx="900" ry="300" fill="url(#st-deep)" />
+
+        <!-- reflected aurora sitting on the land, brightest under the house -->
+        <ellipse cx="800" cy="704" rx="520" ry="70" fill="url(#st-horizonglow)" />
+
+        <!-- distant hills (mid dark), off both sides -->
+        <path d="M-200,720 C 200,690 420,714 640,706 C 760,701 900,700 1040,706 C1280,716 1520,694 1800,716 L1800,760 L-200,760 Z" fill="#091320" />
+
+        <!-- ground -->
+        <rect x="-200" y="700" width="2000" height="600" fill="#060d18" />
+
+        <!-- the one lit house -->
+        <g class="hero__house">
+          <ellipse cx="800" cy="672" rx="120" ry="72" fill="url(#st-warm)" opacity="0.55" />
+          <!-- warm spill onto the ground in front -->
+          <path d="M800,690 L720,760 L880,760 Z" fill="url(#st-warm)" opacity="0.4" />
+          <!-- silhouette -->
+          <path d="M758,700 L758,636 L800,600 L842,636 L842,700 Z" fill="#04090f" />
+          <path d="M748,638 L800,596 L852,638" fill="none" stroke="#04090f" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" />
+          <!-- the window: the only warm light on the page -->
+          <rect x="786" y="650" width="28" height="34" rx="1.5" fill="url(#st-window)" />
+          <line x1="800" y1="650" x2="800" y2="684" stroke="#7a4410" stroke-width="1.4" />
+          <line x1="786" y1="667" x2="814" y2="667" stroke="#7a4410" stroke-width="1.4" />
+        </g>
+
+        <!-- near ridge of trees, cut hard by the bottom edge, off both sides -->
+        <path d="M-200,1200 L-200,858
+                 C 120,832 240,860 300,846 L316,812 332,846 C 372,852 430,838 470,858
+                 C 520,884 560,900 660,904 C 720,908 760,930 800,946
+                 C 840,930 880,908 940,904 C1040,900 1090,878 1140,858
+                 C1180,840 1236,852 1276,846 L1292,812 1308,846 C1372,860 1500,830 1800,860
+                 L1800,1200 Z" fill="#03070d" />
+        <!-- a couple of foreground evergreens breaking the ridge line -->
+        <path d="M250,858 L232,922 268,922 Z M250,900 L226,952 274,952 Z" fill="#03070d" />
+        <path d="M1330,858 L1312,922 1348,922 Z M1330,900 L1306,952 1354,952 Z" fill="#03070d" />
+        <!-- fence line along the near ridge, cut by the bottom -->
+        <g stroke="#05090f" stroke-width="4" opacity="0.9">
+          <line x1="560" y1="928" x2="560" y2="1000" />
+          <line x1="640" y1="944" x2="640" y2="1000" />
+          <line x1="720" y1="956" x2="720" y2="1000" />
+          <line x1="880" y1="956" x2="880" y2="1000" />
+          <line x1="960" y1="944" x2="960" y2="1000" />
+          <line x1="1040" y1="928" x2="1040" y2="1000" />
+          <path d="M540,958 L1060,958" stroke-width="3" fill="none" />
+          <path d="M540,984 L1060,984" stroke-width="3" fill="none" />
+        </g>
+      </svg>
+
+      <!-- optional AI plate, layered over the drawn scene; absent = invisible -->
+      <div class="hero__plate" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <div class="lockup">
+          <Mark size={26} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+
+        <div class="hero__pocket">
+          <h1>{HEADLINE}</h1>
+          <p class="lede">
+            Mozz is a free, open-source iOS player for the Plex, Jellyfin or
+            Navidrome server already humming in your house. No account, no
+            subscription, nothing watching. Just your library — streamed or
+            downloaded — lighting up every screen.
+          </p>
+
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         SERVERS — three lit windows in a dark facade. Point Mozz at a machine
+         you already own; each window carries a real brand mark.
+    ====================================================================== -->
+    <section class="servers" aria-labelledby="st-servers">
+      <div class="wrap">
+        <div class="sect-head">
+          <h2 id="st-servers">Point it at a machine you already own.</h2>
+          <p>
+            {serverStat.value} server types behind one interface, {serverStat.label}.
+            Sign in once and Mozz reads the library that is already yours.
+          </p>
+        </div>
+
+        <div class="facade">
+          {SERVERS.map((s) => (
+            <div class="win" style={`--glow:${SERVER_GLOW[s.name]}`}>
+              <span class="win-glow" aria-hidden="true"></span>
+              <span class="win-logo"><ServerLogo name={s.name} size={30} brand /></span>
+              <span class="win-name">{s.name}</span>
+              <p class="win-note">{s.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         LIBRARY + ADAPTIVE TINT — the app recolours from the record. Screens
+         are seated on a dark shelf so they belong in the night, not glare out.
+    ====================================================================== -->
+    <section class="library" aria-labelledby="st-library">
+      <div class="wrap">
+        <div class="sect-head">
+          <h2 id="st-library">One library, lit by whatever is playing.</h2>
+          <p>
+            Every server browses as a single collection, and the whole interface
+            takes its colour from the record's own art. Search runs on an
+            on-device database — <strong>{searchStat.value}</strong> {searchStat.label},
+            so the list keeps moving while you type.
+          </p>
+        </div>
+      </div>
+
+      <div class="shelf" aria-hidden="true">
+        <div class="shelf-rail">
+          {SHELF.map((n) => (
+            <div class="pane">
+              <Shot name={n} sizes="(max-width: 720px) 42vw, 190px" class="pane-img" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         NOW PLAYING — the priority phone. Weaves the 75ms start figure.
+    ====================================================================== -->
+    <section class="playing" aria-labelledby="st-playing">
+      <div class="wrap playing-grid">
+        <div class="playing-stage" aria-hidden="true">
+          <span class="stage-aura"></span>
+          <Phone
+            name="mozz-nowplaying"
+            width={300}
+            priority
+            class="np-phone"
+            sizes="(max-width: 720px) 68vw, 300px"
+            ariaHidden
+          />
+        </div>
+
+        <div class="playing-copy">
+          <h2 id="st-playing">From tap to first note in {startStat.value}.</h2>
+          <p>
+            {startStat.label} — near enough to instant that a track starts the
+            moment your thumb lifts. The queue is gapless, so an album mixed to
+            run together still runs together, and the transport respects the file
+            you actually own instead of re-encoding it.
+          </p>
+          <ul class="ticks">
+            <li>Gapless queue</li>
+            <li>A proper equalizer</li>
+            <li>Radio from real listening similarity</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         FEATURES (6) — six curtains of light, each a capability. A single
+         column of luminous strips, not a grid of identical cards.
+    ====================================================================== -->
+    <section class="feats" aria-labelledby="st-feats">
+      <div class="wrap">
+        <div class="sect-head">
+          <h2 id="st-feats">Everything it does is in the free app.</h2>
+          <p>Because there is no other kind. Six things, plainly.</p>
+        </div>
+
+        <ol class="curtains" role="list">
+          {FEATURES.map((f, i) => (
+            <li class="curtain" style={`--i:${i}`}>
+              <span class="curtain-band" aria-hidden="true"></span>
+              <div class="curtain-text">
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         DOWNLOADS / OFFLINE — the sky dims, the phone keeps its light. The
+         house motif again: what you own keeps working with the server dark.
+    ====================================================================== -->
+    <section class="offline" aria-labelledby="st-offline">
+      <div class="wrap offline-grid">
+        <div class="offline-copy">
+          <h2 id="st-offline">Take the record where the signal won't reach.</h2>
+          <p>
+            Downloads are part of the design, not a bolt-on. Pull a record onto
+            the phone and it plays with the server switched off — the catalogue
+            lives on the device, so browsing, search and gapless playback all
+            behave exactly as they do at home.
+          </p>
+        </div>
+
+        <figure class="offline-art" aria-hidden="true">
+          <svg viewBox="0 0 640 460" role="img" width="640" height="460">
+            <defs>
+              <linearGradient id="st-off-sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0a1524" />
+                <stop offset="1" stop-color="#060d17" />
+              </linearGradient>
+              <radialGradient id="st-off-glow" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#46e6b0" stop-opacity="0.55" />
+                <stop offset="1" stop-color="#46e6b0" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <rect x="0" y="0" width="640" height="460" rx="22" fill="url(#st-off-sky)" />
+
+            <!-- the sky's aurora, now dashed: the server is out of reach -->
+            <path d="M40,120 C 180,84 320,120 470,96 C 540,84 600,104 640,92"
+                  fill="none" stroke="#2f6f5c" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="4 18" opacity="0.7" />
+            <path d="M20,180 C 200,150 360,182 520,158 C 580,150 620,164 640,158"
+                  fill="none" stroke="#5a4f86" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="4 20" opacity="0.6" />
+
+            <!-- the phone still glowing with what you brought down -->
+            <ellipse cx="320" cy="300" rx="180" ry="150" fill="url(#st-off-glow)" />
+            <rect x="250" y="150" width="140" height="270" rx="26" fill="#05202a" stroke="#0f3a44" stroke-width="2" />
+            <rect x="262" y="164" width="116" height="242" rx="18" fill="#08303a" />
+            <text x="278" y="196" class="off-title">Downloaded</text>
+            {[0,1,2,3].map((i) => (
+              <g transform={`translate(276, ${212 + i*44})`}>
+                <rect x="0" y="0" width="88" height="32" rx="9" fill="#0b3d47" />
+                <circle cx="18" cy="16" r="10" fill="#0f4d59" />
+                <path d="M13 16l4 4 7-8" fill="none" stroke="#46e6b0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="36" y="10" width="44" height="5" rx="2.5" fill="#2f7f79" />
+                <rect x="36" y="20" width="28" height="4" rx="2" fill="#1f5a55" />
+              </g>
+            ))}
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         OWNERSHIP (4) — a constellation. Four points of light you can join up,
+         each a reason the music stays yours. Weaves the $0 figure.
+    ====================================================================== -->
+    <section class="own" aria-labelledby="st-own">
+      <div class="wrap">
+        <div class="sect-head">
+          <h2 id="st-own">It's yours, all the way down.</h2>
+          <p>
+            <strong>{freeStat.value}</strong> {freeStat.label}. There is no Mozz
+            login, because there is no Mozz server — the app talks to yours and
+            nobody else.
+          </p>
+        </div>
+
+        <div class="constellation">
+          <svg class="const-lines" viewBox="0 0 100 80" preserveAspectRatio="none" aria-hidden="true">
+            <polyline
+              points={STARS.map((s) => `${s.x},${s.y}`).join(' ')}
+              fill="none" stroke="url(#st-line)" stroke-width="0.4" stroke-linecap="round"
+            />
+            <defs>
+              <linearGradient id="st-line" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#46e6b0" stop-opacity="0.1" />
+                <stop offset="0.5" stop-color="#8f6fe0" stop-opacity="0.6" />
+                <stop offset="1" stop-color="#46e6b0" stop-opacity="0.1" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {OWNERSHIP.map((o, i) => (
+            <article class="node" style={`--nx:${STARS[i].x}%; --ny:${STARS[i].y}%`}>
+              <span class="node-star" aria-hidden="true"></span>
+              <h3>{o.title}</h3>
+              <p>{o.body}</p>
+            </article>
+          ))}
+        </div>
+
+        <p class="honest">
+          The one honest caveat: switch on recommendations and Mozz asks
+          MusicBrainz and ListenBrainz what sounds similar to an artist and title.
+          That request carries no name, no server address and no account — and it
+          turns off in Settings.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         FAQ (5)
+    ====================================================================== -->
+    <section class="faq" aria-labelledby="st-faq">
+      <div class="wrap">
+        <h2 id="st-faq">Questions, answered plainly.</h2>
+        <div class="faq-list">
+          {FAQS.map((f) => (
+            <details>
+              <summary>
+                <span>{f.q}</span>
+                <span class="faq-mark" aria-hidden="true"></span>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         FOOTER
+    ====================================================================== -->
+    <footer class="foot">
+      <div class="wrap foot-grid">
+        <div class="foot-lockup">
+          <Mark size={30} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+        <p>Free forever, and open source under GPL-3.0.</p>
+        <a class="foot-gh" href={GITHUB_URL}>See it on GitHub</a>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .st {
+    --night-0: #060b14;
+    --night-1: #0a1220;
+    --night-2: #0e1a2c;
+    --panel: #101f34;
+    --ink: #eef4fe;
+    --body: #bcc9dc;
+    --muted: #8494ab;
+    --green: #46e6b0;
+    --green-dim: #2fbf90;
+    --violet: #a889ea;
+    --cyan: #6fd6e4;
+    --warm: #ffc46e;
+    --red: #ff3a5e;
+    --line: rgba(150, 176, 214, 0.16);
+
+    /* Hero plate: layered over the drawn scene. If /hero/strata.jpg is absent
+       it simply never paints — no broken image, no grey box. */
+    --hero-plate: url('/hero/strata.jpg');
+
+    position: relative;
+    background: var(--night-1);
+    color: var(--body);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.62;
+    overflow-x: clip;
+    isolation: isolate;
+  }
+
+  .wrap {
+    width: min(1160px, 100% - 3rem);
+    margin-inline: auto;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Zodiak', Georgia, 'Times New Roman', serif;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+  }
+
+  .wordmark {
+    font-family: 'Zodiak', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .lockup { display: inline-flex; align-items: center; gap: 0.6rem; }
+
+  .sect-head { max-width: 40rem; margin-bottom: 2.6rem; }
+  .sect-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
+  .sect-head p {
+    margin-top: 1rem;
+    max-width: 60ch;
+    color: var(--body);
+    font-size: 1.06rem;
+  }
+  .sect-head strong { color: var(--green); font-weight: 700; }
+
+  /* ------------------------------------------------------------------ HERO */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    max-height: 1100px;
+    overflow: hidden;
+  }
+
+  .hero__art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+  }
+
+  .hero__plate {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: var(--hero-plate);
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 2;
+    min-height: 100svh;
+    max-height: 1100px;
+    width: min(1160px, 100% - 3rem);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    padding-block: 1.4rem 3rem;
+  }
+
+  .hero__pocket {
+    margin-top: clamp(20vh, 34vh, 40vh);
+    margin-bottom: auto;
+    max-width: 40rem;
+    text-align: center;
+    align-self: center;
+    /* the deep-night ellipse in the art already darkens this zone; this only
+       tightens the very centre so body copy clears 4.5:1 at any crop. */
+    padding: 1.2rem 1.4rem;
+  }
+
+  .hero__pocket h1 {
+    font-size: clamp(2.5rem, 6vw, 4.6rem);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    text-shadow: 0 2px 30px rgba(4, 8, 16, 0.85);
+  }
+
+  .lede {
+    margin: 1.4rem auto 0;
+    max-width: 46ch;
+    color: #d3ddec;
+    font-size: 1.12rem;
+    text-shadow: 0 1px 16px rgba(4, 8, 16, 0.9);
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.9rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #0a1120;
+    font-weight: 700;
+  }
+  .store svg { width: 22px; height: 22px; fill: currentColor; }
+  .store span { display: flex; flex-direction: column; line-height: 1.05; text-align: left; }
+  .store small { font-size: 0.62rem; font-weight: 500; opacity: 0.7; }
+  .store.is-pending { background: rgba(238, 244, 254, 0.1); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); cursor: default; }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(150, 176, 214, 0.28);
+  }
+  .ghost:hover { background: rgba(150, 176, 214, 0.1); }
+
+  /* -------------------------------------------------------------- SERVERS */
+  .servers { padding: clamp(4.5rem, 9vw, 7.5rem) 0 clamp(3rem, 6vw, 5rem); }
+
+  .facade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+  }
+
+  .win {
+    position: relative;
+    padding: 1.6rem 1.5rem 1.7rem;
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)),
+      var(--panel);
+    box-shadow: inset 0 0 0 1px var(--line);
+    overflow: hidden;
+  }
+  .win-glow {
+    position: absolute;
+    top: -40px; left: 50%;
+    width: 160px; height: 120px;
+    transform: translateX(-50%);
+    background: radial-gradient(50% 60% at 50% 50%, color-mix(in srgb, var(--glow) 55%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .win-logo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    background: rgba(4, 9, 16, 0.55);
+    box-shadow: inset 0 0 0 1px var(--line), 0 0 24px -6px var(--glow);
+  }
+  .win-name {
+    position: relative;
+    display: block;
+    margin-top: 1rem;
+    font-family: 'Zodiak', serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--ink);
+  }
+  .win-note { position: relative; margin-top: 0.4rem; color: var(--body); font-size: 0.98rem; max-width: 32ch; }
+
+  /* -------------------------------------------------------------- LIBRARY */
+  .library { padding: clamp(3rem, 6vw, 5rem) 0 clamp(3.5rem, 7vw, 6rem); }
+  .library strong { color: var(--green); }
+
+  .shelf {
+    margin-top: 2.6rem;
+    padding: 2.4rem 0 3rem;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(70, 230, 176, 0.06), transparent 60%),
+      linear-gradient(180deg, var(--night-2), var(--night-0));
+    box-shadow: inset 0 1px 0 rgba(150, 176, 214, 0.12), inset 0 -1px 0 rgba(0,0,0,0.4);
+  }
+  .shelf-rail {
+    width: min(1160px, 100% - 3rem);
+    margin-inline: auto;
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pane {
+    width: 190px;
+    border-radius: 22px;
+    padding: 6px;
+    background: linear-gradient(180deg, #1a2740, #0b1424);
+    box-shadow:
+      inset 0 0 0 1px rgba(150, 176, 214, 0.18),
+      0 26px 40px -26px rgba(0, 0, 0, 0.8);
+  }
+  .pane :global(.pane-img) {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+    /* seat the bright screens into the night so they don't glare out */
+    filter: brightness(0.9) saturate(1.02);
+  }
+  .pane:nth-child(odd) { transform: translateY(-14px); }
+
+  /* -------------------------------------------------------------- PLAYING */
+  .playing { padding: clamp(3.5rem, 7vw, 6.5rem) 0; }
+  .playing-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .playing-stage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .stage-aura {
+    position: absolute;
+    inset: -6% 8%;
+    background: radial-gradient(45% 55% at 50% 40%, rgba(168, 137, 234, 0.4), rgba(70, 230, 176, 0.12) 55%, transparent 72%);
+    filter: blur(6px);
+    z-index: 0;
+  }
+  .playing-stage :global(.np-phone) {
+    position: relative;
+    z-index: 1;
+    --phone-bezel: linear-gradient(#22314e, #0d1626);
+    --phone-bezel-w: 0.04;
+    --phone-rim: rgba(120, 200, 210, 0.24);
+    --phone-shadow: 0 34px 60px -26px rgba(3, 7, 15, 0.85);
+  }
+  .playing-copy h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
+  .playing-copy > p { margin-top: 1rem; max-width: 58ch; }
+  .ticks {
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .ticks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ticks li::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+  }
+
+  /* ------------------------------------------------------------- FEATURES */
+  .feats { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+  .curtains { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+  .curtain {
+    position: relative;
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 1.6rem;
+    align-items: start;
+    padding: 1.7rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .curtain:last-child { border-bottom: 1px solid var(--line); }
+  .curtain-band {
+    align-self: stretch;
+    min-height: 74px;
+    border-radius: 8px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0 1.5px, transparent 1.5px 9px),
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--c) 0%, transparent),
+        color-mix(in srgb, var(--c) 70%, transparent) 50%,
+        color-mix(in srgb, var(--c) 0%, transparent));
+    box-shadow: 0 0 26px -6px var(--c);
+  }
+  .curtain:nth-child(1) { --c: #46e6b0; }
+  .curtain:nth-child(2) { --c: #6fd6e4; }
+  .curtain:nth-child(3) { --c: #7fb0f0; }
+  .curtain:nth-child(4) { --c: #a889ea; }
+  .curtain:nth-child(5) { --c: #d47be0; }
+  .curtain:nth-child(6) { --c: #46e6b0; }
+  .curtain-text h3 { font-size: 1.32rem; }
+  .curtain-text p { margin-top: 0.5rem; max-width: 66ch; color: var(--body); }
+
+  /* -------------------------------------------------------------- OFFLINE */
+  .offline { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+  .offline-grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 0.9fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  .offline-copy h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); }
+  .offline-copy p { margin-top: 1rem; max-width: 60ch; }
+  .offline-art { margin: 0; }
+  .offline-art svg { width: 100%; height: auto; border-radius: 22px; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8); }
+  :global(.off-title) { fill: #7fd8c4; font: 600 13px 'Satoshi', sans-serif; letter-spacing: 0.02em; }
+
+  /* ------------------------------------------------------------ OWNERSHIP */
+  .own { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+  .constellation {
+    position: relative;
+    margin-top: 1rem;
+    min-height: 440px;
+  }
+  .const-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .node {
+    position: absolute;
+    left: var(--nx);
+    top: var(--ny);
+    width: min(260px, 62vw);
+    transform: translate(-50%, 0);
+    padding-top: 1.4rem;
+    z-index: 1;
+  }
+  .node-star {
+    position: absolute;
+    top: 0; left: 0;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px rgba(70, 230, 176, 0.16), 0 0 22px var(--green);
+  }
+  .node h3 { font-size: 1.25rem; }
+  .node p { margin-top: 0.4rem; color: var(--body); font-size: 0.98rem; }
+  .honest {
+    margin-top: 2rem;
+    max-width: 68ch;
+    color: var(--muted);
+    font-size: 0.96rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+
+  /* ------------------------------------------------------------------ FAQ */
+  .faq { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+  .faq h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); margin-bottom: 1.6rem; }
+  .faq-list { max-width: 46rem; }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem 0;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-family: 'Zodiak', serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-mark { position: relative; width: 16px; height: 16px; flex: none; }
+  .faq-mark::before, .faq-mark::after {
+    content: '';
+    position: absolute;
+    background: var(--green);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .faq-mark::before { top: 7px; left: 0; width: 16px; height: 2px; }
+  .faq-mark::after { top: 0; left: 7px; width: 2px; height: 16px; }
+  .faq details[open] .faq-mark::after { transform: scaleY(0); opacity: 0; }
+  .faq summary:hover { color: var(--green); }
+  .faq p { padding: 0 0 1.3rem; max-width: 68ch; color: var(--body); }
+
+  /* --------------------------------------------------------------- FOOTER */
+  .foot { padding: clamp(3rem, 6vw, 4.5rem) 0 3.5rem; border-top: 1px solid var(--line); }
+  .foot-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; }
+  .foot-lockup { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .foot p { color: var(--muted); }
+  .foot-gh {
+    margin-left: auto;
+    padding: 0.6rem 1.1rem;
+    border-radius: 10px;
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .foot-gh:hover { background: rgba(150, 176, 214, 0.1); }
+
+  /* ----------------------------------------------------------- RESPONSIVE */
+  @media (max-width: 900px) {
+    .facade { grid-template-columns: 1fr; }
+    .playing-grid { grid-template-columns: 1fr; }
+    .playing-stage { order: -1; }
+    .offline-grid { grid-template-columns: 1fr; }
+    .constellation { min-height: 0; }
+    .const-lines { display: none; }
+    .node {
+      position: static;
+      transform: none;
+      width: auto;
+      max-width: 34rem;
+      padding-left: 1.4rem;
+      margin-bottom: 1.6rem;
+    }
+    .node-star { left: 0; top: 1.4rem; }
+  }
+
+  @media (max-width: 560px) {
+    .hero__pocket { margin-top: 15vh; padding: 1rem; }
+    .lede { text-shadow: 0 1px 3px rgba(4,8,16,0.95), 0 2px 22px rgba(4,8,16,0.95); }
+    .shelf-rail { gap: 0.8rem; }
+    .pane { width: 42vw; }
+    .curtain { grid-template-columns: 54px 1fr; gap: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>

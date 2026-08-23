@@ -1,0 +1,1376 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const radio = FEATURES.find((feature) => feature.title.startsWith('Radio'))!;
+const offline = FEATURES.find((feature) => feature.title.includes('offline'))!;
+const search = FEATURES.find((feature) => feature.title.includes('Search'))!;
+const instant = FEATURES.find((feature) => feature.title.includes('Starts'))!;
+
+const trees = [
+  [84, 374], [116, 338], [144, 410], [176, 360], [205, 427], [244, 380],
+  [320, 506], [363, 472], [420, 532], [514, 457], [549, 498], [610, 438],
+  [714, 537], [760, 570], [817, 498], [888, 554], [976, 477], [1034, 516],
+  [1107, 438], [1195, 477], [1304, 417], [1392, 466], [1462, 404],
+];
+
+const cityBlocks = [
+  { x: 1125, y: 332, w: 92, h: 101, c: '#e9875d' },
+  { x: 1235, y: 292, w: 70, h: 139, c: '#e4b253' },
+  { x: 1325, y: 348, w: 94, h: 92, c: '#5f8f8d' },
+  { x: 1090, y: 465, w: 76, h: 78, c: '#e0a25c' },
+  { x: 1185, y: 445, w: 108, h: 113, c: '#d96d62' },
+  { x: 1315, y: 470, w: 73, h: 83, c: '#6d9d91' },
+  { x: 1410, y: 438, w: 86, h: 116, c: '#dda74f' },
+];
+
+const stationNotes = [
+  'Hill FM · from a favorite track',
+  'River Radio · familiar, then further',
+  'Night Tower · listening similarity',
+];
+---
+
+<Layout
+  title={`${NAME} — your music has a whole country to cross`}
+  description="A free, open source iPhone and iPad music app for your own Plex, Jellyfin and Navidrome library. Radio, weekly mixes and offline downloads, with no account or tracking."
+  themeColor="#b9d7d1"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="radioland">
+    <VariantBar slug="radioland" tone="cool" />
+
+    <header class="hero" id="top">
+      <div class="map-key">
+        <Mark size={30} decorative />
+        <span><b>{NAME}</b><small>RADIO LAND · LISTENER’S MAP</small></span>
+      </div>
+
+      <figure class="hero-map">
+        <svg viewBox="0 0 1600 900" role="img" aria-labelledby="map-title map-desc" preserveAspectRatio="xMidYMid slice">
+          <title id="map-title">Radio Land, a map of music travelling from a home server to a listening city</title>
+          <desc id="map-desc">A high oblique illustrated landscape. Plex, Jellyfin and Navidrome sit on Server Hill. Roads, a river and radio waves carry music to Listening City. A pink weekly mix route winds through neighborhoods, and a red train carrying records continues beyond the coverage boundary for offline listening.</desc>
+          <defs>
+            <linearGradient id="radio-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#b9d7d1" />
+              <stop offset="1" stop-color="#e8e2bd" />
+            </linearGradient>
+            <linearGradient id="radio-river" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#8ad0ca" />
+              <stop offset="1" stop-color="#438f9d" />
+            </linearGradient>
+            <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="180%">
+              <feDropShadow dx="0" dy="15" stdDeviation="12" flood-color="#173532" flood-opacity=".18" />
+            </filter>
+            <filter id="tiny-shadow" x="-40%" y="-40%" width="180%" height="200%">
+              <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#173532" flood-opacity=".22" />
+            </filter>
+            <clipPath id="land-clip">
+              <path d="M-40 266 184 162 430 196 634 104 872 178 1077 132 1304 218 1646 148 1668 912-52 918Z" />
+            </clipPath>
+            <g id="fir-tree">
+              <ellipse cx="0" cy="18" rx="17" ry="6" fill="#173532" opacity=".16" />
+              <path d="M-3 17h6V-7h-6z" fill="#72513a" />
+              <path d="m0-43-18 31h11l-16 26h46L7-12h11Z" fill="#315f4d" stroke="#173532" stroke-width="2" stroke-linejoin="round" />
+              <path d="m0-43 0 57h23L7-12h11Z" fill="#234b42" opacity=".7" />
+            </g>
+            <g id="music-crate">
+              <path d="m0 8 29-14 31 15-29 15Z" fill="#f6dfaa" stroke="#173532" stroke-width="2" />
+              <path d="m0 8 31 16v20L0 28Z" fill="#d49955" stroke="#173532" stroke-width="2" />
+              <path d="m31 24 29-15v20L31 44Z" fill="#b77843" stroke="#173532" stroke-width="2" />
+              <path d="m8 3 22-10 22 10M9 16l42 6" fill="none" stroke="#173532" stroke-width="2" />
+              <path d="M13-5v15m8-19V14m8-26V17m8-25v29m8-24v27" stroke="#c80028" stroke-width="3" />
+            </g>
+          </defs>
+
+          <rect width="1600" height="900" fill="url(#radio-sky)" />
+          <circle cx="1360" cy="94" r="48" fill="#f6d66d" opacity=".78" />
+          <g class="clouds" fill="#f7f1d7" opacity=".74">
+            <path d="M68 123c18-31 65-26 74 5 27-20 70 0 63 32H45c-4-18 7-33 23-37Z" />
+            <path d="M1086 82c17-23 53-18 61 7 24-18 59 1 55 27h-137c-2-17 7-29 21-34Z" />
+            <path d="M1457 173c12-18 41-14 47 6 18-13 46 1 41 22h-106c-2-13 6-23 18-28Z" />
+          </g>
+
+          <g class="far-ridges">
+            <path d="m0 273 190-112 190 78 224-130 210 102 256-96 250 124 280-91v245H0Z" fill="#6e9875" />
+            <path d="m0 290 230-75 178 62 235-102 192 80 239-70 252 105 274-78v183H0Z" fill="#8bae73" />
+            <path d="m185 163 29 55-24-9-27 13Zm419-54 34 73-34-15-28 17Zm466 6 29 73-27-13-31 14Zm250 124 26 52-25-10-22 9Z" fill="#f4e8c3" opacity=".9" />
+          </g>
+
+          <path d="M-40 266 184 162 430 196 634 104 872 178 1077 132 1304 218 1646 148 1668 912-52 918Z" fill="#aabd69" stroke="#173532" stroke-width="4" />
+          <path d="M-50 867 1609 807 1668 912-52 918Z" fill="#7c8f52" />
+
+          <g clip-path="url(#land-clip)">
+            <g class="fields" stroke="#79944f" stroke-width="3">
+              <path d="M-40 434 174 340l158 79-220 105Z" fill="#c8c875" />
+              <path d="m112 524 220-105 177 88-222 110Z" fill="#a4bd62" />
+              <path d="m287 617 222-110 170 85-219 111Z" fill="#d3c66c" />
+              <path d="m922 254 190-85 159 79-193 93Z" fill="#becb6c" />
+              <path d="m1078 341 193-93 174 87-195 95Z" fill="#98b45d" />
+              <path d="m1250 430 195-95 198 99-196 96Z" fill="#c7c86a" />
+              <path d="m950 607 242-119 195 98-240 118Z" fill="#d2c773" />
+              <path d="m1147 704 240-118 223 111-242 119Z" fill="#a3bb63" />
+              <path d="M-10 690 158 608l122 61-171 84Z" fill="#8fae5a" />
+            </g>
+            <g class="crop-lines" fill="none" stroke="#eef0b4" stroke-width="5" opacity=".56">
+              <path d="m-13 449 159-70m-113 96 159-70m-109 95 159-70m-97 87 145-65" />
+              <path d="m975 633 167-81m-126 109 167-81m-122 109 167-81m-122 108 167-81" />
+              <path d="m1277 450 138-67m-102 94 138-67m-98 91 138-67" />
+            </g>
+
+            <path d="M681 96c-67 127 30 171 1 281-31 117-156 105-133 236 15 84 116 129 122 308" fill="none" stroke="#d9e7bd" stroke-width="106" stroke-linecap="round" />
+            <path d="M681 96c-67 127 30 171 1 281-31 117-156 105-133 236 15 84 116 129 122 308" fill="none" stroke="url(#radio-river)" stroke-width="82" stroke-linecap="round" />
+            <path d="M665 108c-42 103 23 158-3 255-24 91-119 109-99 228" fill="none" stroke="#bfebe1" stroke-width="8" stroke-linecap="round" opacity=".7" />
+
+            <g class="roads" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M178 477C402 375 479 397 653 476s277 54 465-18 304-53 503 40" stroke="#f2e1b1" stroke-width="38" />
+              <path d="M178 477C402 375 479 397 653 476s277 54 465-18 304-53 503 40" stroke="#665f4a" stroke-width="3" stroke-dasharray="16 18" />
+              <path d="M802 142c-13 148 45 229 126 309s122 174 89 326" stroke="#f2e1b1" stroke-width="26" />
+              <path d="M802 142c-13 148 45 229 126 309s122 174 89 326" stroke="#665f4a" stroke-width="2" stroke-dasharray="12 16" />
+            </g>
+
+            <g class="bridge" filter="url(#tiny-shadow)">
+              <path d="m570 448 84 41 58-28-84-42Z" fill="#d69a5d" stroke="#173532" stroke-width="3" />
+              <path d="m570 448 84 41v16l-84-41Zm84 41 58-28v16l-58 28Z" fill="#a56542" stroke="#173532" stroke-width="3" />
+              <path d="m578 443 84 41m-68-49 84 41m-86-29v27m18-36v27m19-36v27m19-35v26" stroke="#f6e2b0" stroke-width="4" />
+            </g>
+          </g>
+
+          <g class="world-detail">
+            {trees.map(([x, y], index) => (
+              <use href="#fir-tree" x={x} y={y} transform={`scale(${index % 3 === 0 ? 1.15 : index % 3 === 1 ? .82 : 1})`} />
+            ))}
+          </g>
+
+          <g class="server-district" filter="url(#soft-shadow)">
+            <ellipse cx="258" cy="371" rx="181" ry="85" fill="#759755" stroke="#173532" stroke-width="4" />
+            <ellipse cx="258" cy="344" rx="143" ry="66" fill="#91b25f" stroke="#173532" stroke-width="3" />
+            <path d="M173 334 284 280l115 57-112 56Z" fill="#d9c99a" stroke="#173532" stroke-width="3" />
+            <path d="m173 334 114 59v80l-114-58Z" fill="#cf8158" stroke="#173532" stroke-width="3" />
+            <path d="m287 393 112-56v79l-112 57Z" fill="#a95a49" stroke="#173532" stroke-width="3" />
+            <path d="m198 323 82-39 83 41-82 42Z" fill="#f1dfb0" stroke="#173532" stroke-width="3" />
+            <path d="m198 323 83 44v47l-83-43Z" fill="#355d55" stroke="#173532" stroke-width="3" />
+            <path d="m281 367 82-42v47l-82 42Z" fill="#214940" stroke="#173532" stroke-width="3" />
+            <g fill="#d9e96e" stroke="#173532" stroke-width="2">
+              <circle cx="219" cy="347" r="5" /><circle cx="235" cy="355" r="5" /><circle cx="251" cy="363" r="5" />
+            </g>
+            <path d="m312 354 30-15v18l-30 15Z" fill="#172a2a" stroke="#173532" stroke-width="2" />
+            <path d="M246 285v-50m-11 3 11-17 11 17m-22 12h22" fill="none" stroke="#173532" stroke-width="5" stroke-linecap="round" />
+            <circle cx="246" cy="221" r="7" fill="#c80028" stroke="#173532" stroke-width="3" />
+
+            <g class="source-logos">
+              <g transform="translate(134 283)">
+                <path d="M-33-17 0-33l35 18L1 2Z" fill="#fff7d6" stroke="#173532" stroke-width="2" />
+                <g transform="translate(-10 -27) scale(.72)"><ServerLogo name={SERVERS[0].name} size={28} brand /></g>
+              </g>
+              <g transform="translate(348 254)">
+                <path d="M-33-17 0-33l35 18L1 2Z" fill="#fff7d6" stroke="#173532" stroke-width="2" />
+                <g transform="translate(-10 -27) scale(.72)"><ServerLogo name={SERVERS[1].name} size={28} brand /></g>
+              </g>
+              <g transform="translate(416 331)">
+                <path d="M-33-17 0-33l35 18L1 2Z" fill="#fff7d6" stroke="#173532" stroke-width="2" />
+                <g transform="translate(-10 -27) scale(.72)"><ServerLogo name={SERVERS[2].name} size={28} brand /></g>
+              </g>
+            </g>
+            <text x="249" y="499" class="map-label" text-anchor="middle">SERVER HILL</text>
+            <text x="249" y="519" class="map-note" text-anchor="middle">your library begins here</text>
+          </g>
+
+          <g class="broadcast-district">
+            <g class="signal signal-one" fill="none" stroke="#fff1bd" stroke-width="5" opacity=".72">
+              <ellipse cx="809" cy="297" rx="72" ry="38" />
+              <ellipse cx="809" cy="297" rx="125" ry="67" />
+              <ellipse cx="809" cy="297" rx="183" ry="99" />
+            </g>
+            <path d="M808 293 756 472h104Z" fill="#f4d477" stroke="#173532" stroke-width="4" />
+            <path d="M808 293 782 472m26-179 26 179M771 420h75m-63-42h51m-39-39h26" fill="none" stroke="#173532" stroke-width="6" />
+            <circle cx="808" cy="292" r="11" fill="#c80028" stroke="#173532" stroke-width="4" />
+            <path d="m735 475 73-36 77 39-74 37Z" fill="#e3b85c" stroke="#173532" stroke-width="3" />
+            <path d="m735 475 76 40v20l-76-39Zm76 40 74-37v20l-74 37Z" fill="#bd7d4c" stroke="#173532" stroke-width="3" />
+            <text x="806" y="562" class="map-label" text-anchor="middle">RADIO RIDGE</text>
+            <text x="806" y="582" class="map-note" text-anchor="middle">stations from songs you love</text>
+          </g>
+
+          <g class="city-district" filter="url(#tiny-shadow)">
+            <ellipse cx="1290" cy="512" rx="250" ry="130" fill="#809e65" stroke="#173532" stroke-width="4" />
+            {cityBlocks.map((block, index) => (
+              <g>
+                <path d={`M${block.x} ${block.y}l${block.w / 2} -25 ${block.w / 2} 25 -${block.w / 2} 25Z`} fill="#f3dba3" stroke="#173532" stroke-width="3" />
+                <path d={`M${block.x} ${block.y}l${block.w / 2} 25v${block.h}l-${block.w / 2} -25Z`} fill={block.c} stroke="#173532" stroke-width="3" />
+                <path d={`M${block.x + block.w / 2} ${block.y + 25}l${block.w / 2} -25v${block.h}l-${block.w / 2} 25Z`} fill={index % 2 ? '#315c55' : '#315f69'} stroke="#173532" stroke-width="3" />
+                <g fill="#f5df7c">
+                  <rect x={block.x + 12} y={block.y + 27} width="10" height="12" transform={`skewY(26) translate(0 ${index * -1})`} />
+                  <rect x={block.x + 31} y={block.y + 37} width="10" height="12" transform={`skewY(26) translate(0 ${index * -1})`} />
+                </g>
+              </g>
+            ))}
+            <path d="m1476 382 28-14 30 15-29 15Z" fill="#fff0b9" stroke="#173532" stroke-width="3" />
+            <path d="m1476 382 29 16v112l-29-15Z" fill="#c80028" stroke="#173532" stroke-width="3" />
+            <path d="m1505 398 29-15v111l-29 16Z" fill="#8b2435" stroke="#173532" stroke-width="3" />
+            <g transform="translate(1480 411) scale(.68)"><Mark size={28} decorative /></g>
+            <text x="1292" y="681" class="map-label" text-anchor="middle">LISTENING CITY</text>
+            <text x="1292" y="701" class="map-note" text-anchor="middle">iPhone + iPad · in your pocket</text>
+          </g>
+
+          <g class="mix-route">
+            <path d="M306 442C477 340 623 577 796 481s260-16 354 42 195 12 284-70" fill="none" stroke="#fff3c4" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M306 442C477 340 623 577 796 481s260-16 354 42 195 12 284-70" fill="none" stroke="#dd315c" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="22 12" />
+            <g transform="translate(955 451)" filter="url(#tiny-shadow)">
+              <path d="m-73-30 133-2 15 55-134 2Z" fill="#fff1bd" stroke="#173532" stroke-width="3" />
+              <text x="0" y="-6" class="route-label" text-anchor="middle">THIS WEEK’S MIX</text>
+              <text x="0" y="12" class="route-note" text-anchor="middle">a new way through old streets</text>
+            </g>
+          </g>
+
+          <g class="boundary">
+            <path d="M74 660C318 614 437 674 542 778" fill="none" stroke="#fff3c4" stroke-width="5" stroke-dasharray="14 12" />
+            <text x="83" y="641" class="map-note">COVERAGE ENDS</text>
+          </g>
+
+          <g class="offline-train" filter="url(#tiny-shadow)">
+            <path d="M-30 805 570 653" stroke="#313d36" stroke-width="7" />
+            <path d="M-23 825 577 673" stroke="#313d36" stroke-width="7" />
+            <path d="m6 807 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19m32-31 17 19" stroke="#655d47" stroke-width="6" />
+            <g class="train">
+              <path d="m173 695 104-26 57 28-106 27Z" fill="#f4dc9e" stroke="#173532" stroke-width="3" />
+              <path d="m173 695 55 29v61l-55-29Z" fill="#c80028" stroke="#173532" stroke-width="3" />
+              <path d="m228 724 106-27v61l-106 27Z" fill="#952033" stroke="#173532" stroke-width="3" />
+              <path d="m188 718 22 11v18l-22-11Zm58 18 26-7v21l-26 6Zm42-11 26-6v20l-26 7Z" fill="#bce5df" stroke="#173532" stroke-width="2" />
+              <circle cx="213" cy="777" r="12" fill="#263b38" stroke="#f2d996" stroke-width="4" />
+              <circle cx="291" cy="758" r="12" fill="#263b38" stroke="#f2d996" stroke-width="4" />
+              <g transform="translate(232 667) scale(.72)"><use href="#music-crate" /></g>
+              <g transform="translate(275 657) scale(.72)"><use href="#music-crate" /></g>
+              <text x="151" y="815" class="map-label">OFFLINE LINE</text>
+              <text x="151" y="835" class="map-note">records ride past the signal</text>
+            </g>
+          </g>
+
+          <g class="small-stories">
+            <g transform="translate(1012 626)">
+              <ellipse cx="0" cy="24" rx="30" ry="9" fill="#173532" opacity=".13" />
+              <path d="M-30 13 0-2l31 15L1 29Z" fill="#e46e61" stroke="#173532" stroke-width="2" />
+              <circle cx="-5" cy="-16" r="9" fill="#d59a68" stroke="#173532" stroke-width="2" />
+              <path d="M-15-8 6 2 4 18-17 8Z" fill="#2f6159" stroke="#173532" stroke-width="2" />
+              <path d="M3-19q12-11 20 1M3-18q12 9 20 0" fill="none" stroke="#173532" stroke-width="3" />
+              <path d="M34-10q12-12 0-23m0 23q15-4 21-15" fill="none" stroke="#c80028" stroke-width="3" stroke-linecap="round" />
+            </g>
+            <g transform="translate(445 319)">
+              <circle cx="0" cy="0" r="10" fill="#f8ead0" stroke="#173532" stroke-width="2" />
+              <circle cx="19" cy="8" r="9" fill="#f8ead0" stroke="#173532" stroke-width="2" />
+              <path d="M-4-10v-11m19 20 5-11" stroke="#173532" stroke-width="2" />
+            </g>
+          </g>
+        </svg>
+      </figure>
+
+      <div class="hero-sign">
+        <span class="sign-route">ROUTE MZ · ALL MUSIC WELCOME</span>
+        <h1>{TAGLINE}</h1>
+        <p>{SUBLINE} Point {NAME} at the music on your own server, then listen from iPhone or iPad—at home, across town, or beyond the signal.</p>
+        <div class="sign-actions">
+          {APP_STORE_URL ? (
+            <a class="store-link" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store-link pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>Inspect the source ↗</a>
+        </div>
+      </div>
+
+      <a class="scout" href="#server-hill"><span>Start at</span> Server Hill <b>↓</b></a>
+    </header>
+
+    <section class="atlas-intro" aria-labelledby="atlas-heading">
+      <p class="coordinates">FIELD GUIDE · 01 / 04</p>
+      <h2 id="atlas-heading">Look closer.<br />Every district does a job.</h2>
+      <p>The landscape is not a metaphor pasted on afterward. It is how Mozz works: your server remains the source, the phone carries the catalog, and every road stays open.</p>
+    </section>
+
+    <section class="district server-zoom" id="server-hill" aria-labelledby="server-heading">
+      <figure class="district-map server-map">
+        <svg viewBox="0 0 900 700" role="img" aria-label="A close view of Server Hill, where three branded source buildings feed one river">
+          <defs>
+            <filter id="zoom-shadow" x="-30%" y="-30%" width="160%" height="180%">
+              <feDropShadow dx="0" dy="13" stdDeviation="9" flood-color="#173532" flood-opacity=".22" />
+            </filter>
+          </defs>
+          <rect width="900" height="700" fill="#94b661" />
+          <path d="M-80 184 238 29l290 147L918-16v724H-80Z" fill="#b9c76d" />
+          <path d="M618-30c-85 147 69 208-20 354-83 137-44 236 37 398" fill="none" stroke="#dbebbd" stroke-width="148" />
+          <path d="M618-30c-85 147 69 208-20 354-83 137-44 236 37 398" fill="none" stroke="#56a6ad" stroke-width="112" />
+          <g fill="none" stroke="#edf1b1" stroke-width="8" opacity=".65">
+            <path d="M-20 544 305 385m-260 197 325-159m-261 197 325-159" />
+          </g>
+          <ellipse cx="337" cy="313" rx="262" ry="143" fill="#749852" stroke="#173532" stroke-width="5" />
+          <ellipse cx="337" cy="274" rx="209" ry="110" fill="#92b65e" stroke="#173532" stroke-width="4" />
+          <g filter="url(#zoom-shadow)">
+            {SERVERS.map((server, index) => {
+              const positions = [
+                { x: 154, y: 238, roof: '#efbf58', wall: '#d07a4e' },
+                { x: 316, y: 145, roof: '#f0dba2', wall: '#557d72' },
+                { x: 473, y: 248, roof: '#e9815e', wall: '#b5564f' },
+              ];
+              const p = positions[index];
+              return (
+                <g transform={`translate(${p.x} ${p.y})`}>
+                  <path d="M0 42 83 0l87 43-84 44Z" fill={p.roof} stroke="#173532" stroke-width="4" />
+                  <path d="m0 42 86 45v102L0 144Z" fill={p.wall} stroke="#173532" stroke-width="4" />
+                  <path d="m86 87 84-44v102l-84 44Z" fill="#315a53" stroke="#173532" stroke-width="4" />
+                  <path d="m19 81 43 22v43l-43-22Z" fill="#203b38" stroke="#173532" stroke-width="3" />
+                  <circle cx="30" cy="102" r="5" fill="#d5e967" />
+                  <circle cx="45" cy="110" r="5" fill="#d5e967" />
+                  <g transform="translate(61 13) scale(1.3)"><ServerLogo name={server.name} size={32} brand /></g>
+                  <path d="M83 190C110 244 188 232 235 294" fill="none" stroke="#f4e4b5" stroke-width="17" stroke-linecap="round" />
+                  <text x="83" y="222" class="zoom-label" text-anchor="middle">{server.name}</text>
+                </g>
+              );
+            })}
+          </g>
+          <g transform="translate(32 64)">
+            <path d="m0 30 147-1 20 65-146 1Z" fill="#fff0bd" stroke="#173532" stroke-width="4" />
+            <text x="83" y="59" class="zoom-kicker" text-anchor="middle">SOURCE RIDGE</text>
+            <text x="83" y="79" class="zoom-small" text-anchor="middle">three gates · one library</text>
+          </g>
+        </svg>
+      </figure>
+      <div class="district-copy signboard">
+        <p class="coordinates">SOURCE RIDGE · ELEV. YOUR HOUSE</p>
+        <h2 id="server-heading">The music never moves away.</h2>
+        <p>{FEATURES[0].body}</p>
+        <ul class="logo-key" role="list">
+          {SERVERS.map((server) => (
+            <li>
+              <ServerLogo name={server.name} size={27} brand />
+              <span><b>{server.name}</b><small>{server.note}</small></span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="district radio-zoom" aria-labelledby="radio-heading">
+      <div class="district-copy tower-notice">
+        <p class="coordinates">BROADCAST QUARTER · ALWAYS TUNING</p>
+        <h2 id="radio-heading">A song becomes a station.</h2>
+        <p>{radio.body}</p>
+        <ol class="station-dial">
+          {stationNotes.map((note, index) => <li><span>{88 + index * 5}.{index + 1}</span>{note}</li>)}
+        </ol>
+      </div>
+      <figure class="district-map tower-map">
+        <svg viewBox="0 0 900 700" role="img" aria-label="Three radio towers sending broad rings of music over a river valley">
+          <rect width="900" height="700" fill="#90ad66" />
+          <path d="m-20 223 218-116 198 98 242-125 283 140v499H-20Z" fill="#b8c86d" />
+          <path d="M-30 591 951 105v222L-30 813Z" fill="#d8c16e" opacity=".48" />
+          <path d="M-51 518C136 399 214 423 354 494s239 52 375-43 161-96 235-93" fill="none" stroke="#dbeabd" stroke-width="107" />
+          <path d="M-51 518C136 399 214 423 354 494s239 52 375-43 161-96 235-93" fill="none" stroke="#4c9da7" stroke-width="81" />
+          <g class="zoom-signals" fill="none" stroke="#fff0b7" stroke-width="7">
+            <ellipse cx="427" cy="258" rx="88" ry="46" />
+            <ellipse cx="427" cy="258" rx="161" ry="86" />
+            <ellipse cx="427" cy="258" rx="246" ry="132" />
+            <ellipse cx="427" cy="258" rx="340" ry="183" />
+          </g>
+          <g filter="url(#zoom-shadow)">
+            <path d="m426 229-81 316h164Z" fill="#f3d374" stroke="#173532" stroke-width="5" />
+            <path d="M426 229 385 545m41-316 42 316M365 469h123m-104-75h85m-66-69h47" fill="none" stroke="#173532" stroke-width="9" />
+            <circle cx="426" cy="227" r="15" fill="#c80028" stroke="#173532" stroke-width="5" />
+            <path d="m313 548 112-55 119 59-114 58Z" fill="#f1d79a" stroke="#173532" stroke-width="4" />
+            <path d="m313 548 117 62v40l-117-61Zm117 62 114-58v40l-114 58Z" fill="#b76e48" stroke="#173532" stroke-width="4" />
+          </g>
+          <g class="floating-notes" fill="#c80028">
+            <path d="M121 244v-48l38-10v47c0 12-25 17-25 1 0-9 10-14 19-12v-23l-26 7v36c0 12-25 17-25 1 0-10 10-15 19-12v13Z" />
+            <path d="M712 328v-53l42-11v51c0 13-27 18-27 1 0-10 11-16 21-13v-26l-30 8v40c0 13-27 18-27 1 0-11 12-16 21-13v15Z" />
+          </g>
+          <g transform="translate(62 574)">
+            <path d="m0 30 230-1 20 67-229 1Z" fill="#fff0bd" stroke="#173532" stroke-width="4" />
+            <text x="125" y="61" class="zoom-kicker" text-anchor="middle">NO GENRE GUESSWORK</text>
+            <text x="125" y="81" class="zoom-small" text-anchor="middle">similarity travels further than a tag</text>
+          </g>
+        </svg>
+      </figure>
+    </section>
+
+    <section class="district mix-zoom" aria-labelledby="mix-heading">
+      <figure class="district-map mix-map">
+        <svg viewBox="0 0 900 700" role="img" aria-label="A pink weekly mix route winding through named neighborhoods on a street map">
+          <rect width="900" height="700" fill="#a9bf69" />
+          <g stroke="#789851" stroke-width="3">
+            <path d="M-30 218 270 67l178 90-298 151Zm180 90 298-151 197 98-302 154Zm223 101 302-154 199 101-304 154ZM-27 506l270-136 193 98-269 137Zm194 99 269-137 197 99-265 137Z" fill="#c8c873" />
+          </g>
+          <g fill="none" stroke="#f3e4b4" stroke-width="28">
+            <path d="M-40 344C170 227 266 233 414 309s266 97 524-45" />
+            <path d="M252-20c-27 137 43 240 118 330s55 201-14 410" />
+            <path d="M735-10c-102 147-107 265-35 371s61 217 12 368" />
+          </g>
+          <g fill="none" stroke="#665f4a" stroke-width="3" stroke-dasharray="13 16">
+            <path d="M-40 344C170 227 266 233 414 309s266 97 524-45" />
+            <path d="M252-20c-27 137 43 240 118 330s55 201-14 410" />
+            <path d="M735-10c-102 147-107 265-35 371s61 217 12 368" />
+          </g>
+          <g class="tiny-homes" stroke="#173532" stroke-width="3">
+            {[
+              [94, 168, '#d96d62'], [181, 440, '#e6aa54'], [395, 183, '#5a9188'],
+              [527, 497, '#d97759'], [665, 154, '#e2af54'], [785, 455, '#52877f'],
+            ].map(([x, y, color]) => (
+              <g transform={`translate(${x} ${y})`}>
+                <path d="m0 26 43-22 46 23-44 23Z" fill="#f3dca6" />
+                <path d="m0 26 45 24v47L0 73Z" fill={color} />
+                <path d="m45 50 44-23v47L45 97Z" fill="#315951" />
+              </g>
+            ))}
+          </g>
+          <g class="weekly-route">
+            <path d="M37 596C96 467 178 536 226 405s129-42 191-124 119 14 172-35 100-55 156 13 75 24 127-19" fill="none" stroke="#fff0bc" stroke-width="25" stroke-linecap="round" />
+            <path d="M37 596C96 467 178 536 226 405s129-42 191-124 119 14 172-35 100-55 156 13 75 24 127-19" fill="none" stroke="#da315b" stroke-width="14" stroke-linecap="round" stroke-dasharray="26 16" />
+            <circle cx="38" cy="596" r="18" fill="#c80028" stroke="#fff0bd" stroke-width="6" />
+            <path d="m863 216 28 19-31 14Z" fill="#c80028" stroke="#fff0bd" stroke-width="5" />
+          </g>
+          <g class="neighborhood-labels">
+            <text x="92" y="135">OLD FAVORITES</text>
+            <text x="380" y="150">DEEP CUTS</text>
+            <text x="638" y="126">NEAR NEIGHBORS</text>
+            <text x="691" y="553">NEW THIS WEEK</text>
+          </g>
+          <g transform="translate(57 31)">
+            <path d="m0 30 202-1 18 64-201 1Z" fill="#fff0bd" stroke="#173532" stroke-width="4" />
+            <text x="109" y="59" class="zoom-kicker" text-anchor="middle">MIX LINE · WEEKLY</text>
+            <text x="109" y="79" class="zoom-small" text-anchor="middle">the route changes, your map does not</text>
+          </g>
+        </svg>
+      </figure>
+      <div class="district-copy route-pass">
+        <p class="coordinates">MIX LINE · NEW ROUTE EACH WEEK</p>
+        <h2 id="mix-heading">Fresh turns through familiar streets.</h2>
+        <p>Weekly mixes and stations use real listening similarity, so discovery starts with music you know and takes a credible next turn.</p>
+        <aside class="plain-truth">
+          <b>The honest map note</b>
+          <p>Recommendations send an artist, track title and/or MusicBrainz ID to MetaBrainz. Never your name, account or server address—and you can switch it off.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="district offline-zoom" aria-labelledby="offline-heading">
+      <div class="district-copy rail-ticket">
+        <p class="coordinates">OFFLINE LINE · BEYOND COVERAGE</p>
+        <h2 id="offline-heading">The records keep going.</h2>
+        <p>{offline.body}</p>
+        <p class="supporting">{search.body} {instant.body}</p>
+      </div>
+      <figure class="district-map rail-map">
+        <svg viewBox="0 0 900 700" role="img" aria-label="A red train packed with record crates crossing beyond the coverage boundary into mountain country">
+          <rect width="900" height="700" fill="#b9d7d1" />
+          <circle cx="751" cy="92" r="57" fill="#f4d36b" />
+          <path d="M-20 338 185 179l124 98 175-193 155 184 116-122 166 172v395H-20Z" fill="#719474" />
+          <path d="m185 179 46 36-42 8-33 28Zm299-95 58 70-52-16-41 20Zm271 62 39 40-37-9-31 15Z" fill="#f5e8c7" />
+          <path d="M-20 390 206 273l147 76 209-103 146 74 213-105v504H-20Z" fill="#9eb665" />
+          <path d="M-20 613 916 376" fill="none" stroke="#303e39" stroke-width="10" />
+          <path d="M-17 642 923 404" fill="none" stroke="#303e39" stroke-width="10" />
+          <g stroke="#685e49" stroke-width="8">
+            <path d="m31 610 24 31m58-50 24 31m58-51 24 31m58-51 24 31m58-50 24 31m58-50 24 31m58-51 24 31m58-51 24 31m58-50 24 31m58-50 24 31m58-51 24 31" />
+          </g>
+          <path d="M451 40c-29 93-26 202 24 301s37 194 1 329" fill="none" stroke="#fff2bd" stroke-width="8" stroke-dasharray="22 17" />
+          <g transform="translate(432 83) rotate(-4)">
+            <path d="m0 0 190 0 0 69H0Z" fill="#fff0bd" stroke="#173532" stroke-width="4" />
+            <text x="95" y="28" class="zoom-kicker" text-anchor="middle">SIGNAL BOUNDARY</text>
+            <text x="95" y="50" class="zoom-small" text-anchor="middle">downloads continue past this line</text>
+          </g>
+          <g class="big-train" transform="translate(191 398)" filter="url(#zoom-shadow)">
+            <path d="m0 65 239-60 120 60-242 61Z" fill="#f2da9d" stroke="#173532" stroke-width="5" />
+            <path d="m0 65 117 61v127L0 192Z" fill="#c80028" stroke="#173532" stroke-width="5" />
+            <path d="m117 126 242-61v126l-242 62Z" fill="#8e2434" stroke="#173532" stroke-width="5" />
+            <path d="m23 106 49 25v40l-49-24Z" fill="#bfe4dd" stroke="#173532" stroke-width="4" />
+            <path d="m148 145 51-13v43l-51 13Zm76-19 51-13v43l-51 13Zm76-20 34-8v43l-34 9Z" fill="#bfe4dd" stroke="#173532" stroke-width="4" />
+            <circle cx="89" cy="236" r="27" fill="#243b37" stroke="#edcf7b" stroke-width="8" />
+            <circle cx="279" cy="187" r="27" fill="#243b37" stroke="#edcf7b" stroke-width="8" />
+            <g transform="translate(96 -15) scale(1.38)"><use href="#music-crate" /></g>
+            <g transform="translate(180 -36) scale(1.38)"><use href="#music-crate" /></g>
+            <g transform="translate(264 -57) scale(1.38)"><use href="#music-crate" /></g>
+            <path d="M10 85-36 43v80L10 147Z" fill="#d99e54" stroke="#173532" stroke-width="5" />
+            <path d="M-35 42q-39-42-69-5" fill="none" stroke="#f5e8c7" stroke-width="13" stroke-linecap="round" opacity=".8" />
+          </g>
+          <text x="692" y="641" class="zoom-label" text-anchor="middle">NO BARS. FULL ALBUM.</text>
+        </svg>
+      </figure>
+    </section>
+
+    <section class="charter" aria-labelledby="charter-heading">
+      <div class="charter-title">
+        <p class="coordinates">RADIO LAND CHARTER · PERMANENT</p>
+        <h2 id="charter-heading">No toll roads.<br />No border guards.</h2>
+        <p>Your collection stays yours, and the map has no route to an ad network.</p>
+      </div>
+      <ol class="charter-lines" role="list">
+        {OWNERSHIP.map((item, index) => (
+          <li>
+            <span class="seal">{String(index + 1).padStart(2, '0')}</span>
+            <div><h3>{item.title}</h3><p>{item.body}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="ranger-desk" aria-labelledby="faq-heading">
+      <div class="desk-map" aria-hidden="true">
+        <svg viewBox="0 0 640 410">
+          <path d="M18 45 548 18l73 331-528 42Z" fill="#f5e8bd" stroke="#173532" stroke-width="5" />
+          <path d="M68 99c127-58 190-24 268 46s130 72 225 12M91 288c90-86 188-78 266-18s141 43 213-13" fill="none" stroke="#799c62" stroke-width="25" />
+          <path d="M68 99c127-58 190-24 268 46s130 72 225 12M91 288c90-86 188-78 266-18s141 43 213-13" fill="none" stroke="#4d9fa7" stroke-width="12" />
+          <path d="M122 313C185 193 266 245 337 130s146-31 209-73" fill="none" stroke="#d72d58" stroke-width="9" stroke-dasharray="18 11" />
+          <circle cx="121" cy="313" r="14" fill="#c80028" />
+          <g transform="translate(419 238) rotate(7)">
+            <Mark size={72} decorative />
+          </g>
+          <text x="91" y="76" class="desk-label">LISTENER’S NOTES</text>
+          <text x="430" y="349" class="desk-small">PROPERTY OF YOU</text>
+        </svg>
+      </div>
+      <div class="ranger-copy">
+        <p class="coordinates">BEFORE DEPARTURE</p>
+        <h2 id="faq-heading">Ask the ranger.</h2>
+        <dl>
+          {FAQS.map((item) => (
+            <div>
+              <dt>{item.q}</dt>
+              <dd>{item.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <footer class="terminus">
+      <div class="terminus-sign">
+        <div class="terminus-mark"><Mark size={42} decorative /><span>{NAME}</span></div>
+        <p>{TAGLINE}<br /><b>{SUBLINE}</b></p>
+        <div class="sign-actions">
+          {APP_STORE_URL ? (
+            <a class="store-link" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store-link pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>Source on GitHub ↗</a>
+        </div>
+      </div>
+      <div class="footer-line">
+        <span>Free forever · GPL-3.0 with an App Store Exception</span>
+        <a href="#top">Return to the overlook ↑</a>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .radioland {
+    --sky: #b9d7d1;
+    --water: #4c9ca7;
+    --meadow: #aabd69;
+    --meadow-dark: #779852;
+    --paper: #fff0bd;
+    --road: #f2e1b1;
+    --ink: #173532;
+    --ink-soft: #496158;
+    --route: #da315b;
+    --red: #c80028;
+    --gold: #edc86a;
+    --line: 3px solid var(--ink);
+    background: var(--meadow);
+    color: var(--ink);
+    font-family: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    overflow: clip;
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 45px);
+    height: 900px;
+    max-height: 1050px;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--sky);
+    border-bottom: 4px solid var(--ink);
+  }
+
+  .hero-map {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+  }
+
+  .hero-map > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .map-key {
+    position: absolute;
+    z-index: 4;
+    top: 28px;
+    left: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 13px 8px 9px;
+    background: rgba(255, 240, 189, .93);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 rgba(23, 53, 50, .2);
+    transform: rotate(-1deg);
+  }
+
+  .map-key span {
+    display: grid;
+    line-height: 1;
+  }
+
+  .map-key b {
+    font: 800 1.05rem/1 'Bricolage Grotesque', sans-serif;
+  }
+
+  .map-key small {
+    margin-top: 4px;
+    font: 600 .56rem/1 'IBM Plex Mono', monospace;
+    letter-spacing: .12em;
+  }
+
+  .hero-sign {
+    position: absolute;
+    z-index: 5;
+    top: clamp(88px, 11vh, 132px);
+    left: 34%;
+    width: min(510px, 35vw);
+    padding: 22px 26px 24px;
+    background: var(--paper);
+    border: 4px solid var(--ink);
+    border-radius: 3px;
+    box-shadow: 12px 15px 0 rgba(23, 53, 50, .22);
+    transform: perspective(700px) rotateX(2deg) rotateZ(-1.5deg);
+  }
+
+  .hero-sign::before,
+  .hero-sign::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: calc(100% + 3px);
+    width: 12px;
+    height: 145px;
+    background: #754d37;
+    border: 3px solid var(--ink);
+  }
+
+  .hero-sign::before { left: 46px; }
+  .hero-sign::after { right: 46px; }
+
+  .sign-route,
+  .coordinates {
+    display: block;
+    margin: 0 0 11px;
+    color: #785f3f;
+    font: 600 .68rem/1.3 'IBM Plex Mono', monospace;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .hero-sign h1,
+  .district-copy h2,
+  .atlas-intro h2,
+  .charter h2,
+  .ranger-copy h2 {
+    margin: 0;
+    font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-stretch: condensed;
+    letter-spacing: -.055em;
+    line-height: .93;
+  }
+
+  .hero-sign h1 {
+    max-width: 11ch;
+    font-size: clamp(2.5rem, 4.3vw, 4.8rem);
+  }
+
+  .hero-sign > p {
+    max-width: 51ch;
+    margin: 16px 0 18px;
+    font-size: clamp(.92rem, 1.18vw, 1.08rem);
+    line-height: 1.4;
+  }
+
+  .sign-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+
+  .store-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 49px;
+    padding: 7px 15px 7px 12px;
+    color: #fff8dd;
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 5px;
+    box-shadow: 3px 3px 0 rgba(23, 53, 50, .23);
+    font: 700 .98rem/1 'Atkinson Hyperlegible', sans-serif;
+    text-decoration: none;
+    transition: transform .16s ease, box-shadow .16s ease;
+  }
+
+  .store-link svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
+  .store-link span { display: grid; }
+  .store-link small { font-size: .61rem; font-weight: 500; line-height: 1.2; }
+  .store-link.pending { cursor: not-allowed; background: #53665f; color: #eee7c9; }
+
+  .source-link {
+    color: var(--ink);
+    font: 700 .77rem/1 'IBM Plex Mono', monospace;
+    text-underline-offset: 4px;
+  }
+
+  .store-link[href]:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 rgba(23, 53, 50, .23);
+  }
+
+  a:focus-visible {
+    outline: 4px solid #fff;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 7px var(--red);
+  }
+
+  .scout {
+    position: absolute;
+    z-index: 5;
+    right: 30px;
+    bottom: 26px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 13px;
+    color: var(--ink);
+    background: rgba(255, 240, 189, .92);
+    border: 2px solid var(--ink);
+    font: 600 .72rem/1 'IBM Plex Mono', monospace;
+    text-decoration: none;
+    transform: rotate(1deg);
+  }
+
+  .scout span { opacity: .65; }
+  .scout b { color: var(--red); font-size: 1rem; }
+
+  .map-label,
+  .zoom-label {
+    fill: var(--ink);
+    font: 700 17px 'IBM Plex Mono', monospace;
+    letter-spacing: .12em;
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-width: 7px;
+    stroke-linejoin: round;
+  }
+
+  .map-note {
+    fill: var(--ink);
+    font: 600 11px 'IBM Plex Mono', monospace;
+    letter-spacing: .06em;
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+
+  .route-label {
+    fill: var(--ink);
+    font: 700 13px 'IBM Plex Mono', monospace;
+    letter-spacing: .06em;
+  }
+
+  .route-note {
+    fill: var(--ink);
+    font: 600 9px 'Atkinson Hyperlegible', sans-serif;
+  }
+
+  .clouds { animation: cloud-drift 18s ease-in-out infinite alternate; }
+  .signal { transform-origin: 809px 297px; animation: radio-breathe 3.6s ease-in-out infinite; }
+  .mix-route > path:last-of-type,
+  .weekly-route > path:last-of-type { animation: route-run 5s linear infinite; }
+  .train { animation: train-rock 2.1s ease-in-out infinite; }
+  .floating-notes { animation: notes-up 3.2s ease-in-out infinite alternate; }
+
+  @keyframes cloud-drift { to { transform: translateX(28px); } }
+  @keyframes radio-breathe { 50% { opacity: .38; transform: scale(1.035); } }
+  @keyframes route-run { to { stroke-dashoffset: -114px; } }
+  @keyframes train-rock { 50% { transform: translate(2px, -3px); } }
+  @keyframes notes-up { to { transform: translateY(-13px); } }
+
+  .atlas-intro {
+    display: grid;
+    grid-template-columns: .65fr 1.35fr 1fr;
+    gap: clamp(22px, 5vw, 82px);
+    align-items: start;
+    padding: clamp(80px, 11vw, 160px) max(24px, 7vw);
+    background: #f4e8bd;
+    border-bottom: 4px solid var(--ink);
+  }
+
+  .atlas-intro h2 {
+    font-size: clamp(3.4rem, 6.8vw, 7.8rem);
+  }
+
+  .atlas-intro > p:last-child {
+    max-width: 38ch;
+    margin: 7px 0 0;
+    font-size: clamp(1.05rem, 1.55vw, 1.35rem);
+    line-height: 1.5;
+  }
+
+  .district {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(330px, .8fr);
+    min-height: 760px;
+    background: var(--meadow);
+    border-bottom: 4px solid var(--ink);
+  }
+
+  .district:nth-of-type(even) {
+    grid-template-columns: minmax(330px, .8fr) minmax(0, 1.2fr);
+  }
+
+  .district-map {
+    position: relative;
+    min-height: 700px;
+    margin: 0;
+    overflow: hidden;
+    border-right: 4px solid var(--ink);
+  }
+
+  .district:nth-of-type(even) .district-map {
+    border-right: 0;
+    border-left: 4px solid var(--ink);
+  }
+
+  .district-map svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 700px;
+    object-fit: cover;
+  }
+
+  .district-copy {
+    align-self: center;
+    position: relative;
+    z-index: 2;
+    margin: clamp(24px, 5vw, 80px);
+    padding: clamp(27px, 4vw, 54px);
+    background: var(--paper);
+    border: 4px solid var(--ink);
+    box-shadow: 11px 13px 0 rgba(23, 53, 50, .2);
+    transform: rotate(-1deg);
+  }
+
+  .district-copy::before,
+  .district-copy::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #9d7a4f;
+    border: 2px solid var(--ink);
+  }
+
+  .district-copy::before { top: 11px; left: 11px; }
+  .district-copy::after { right: 11px; bottom: 11px; }
+
+  .district-copy h2 {
+    font-size: clamp(3rem, 5vw, 6rem);
+  }
+
+  .district-copy > p:not(.coordinates) {
+    max-width: 48ch;
+    margin: 22px 0 0;
+    font-size: clamp(1rem, 1.25vw, 1.18rem);
+  }
+
+  .logo-key {
+    display: grid;
+    gap: 9px;
+    margin: 25px 0 0;
+    padding: 18px 0 0;
+    list-style: none;
+    border-top: 2px dashed rgba(23, 53, 50, .32);
+  }
+
+  .logo-key li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .logo-key span { display: grid; line-height: 1.2; }
+  .logo-key b { font: 700 .9rem 'IBM Plex Mono', monospace; }
+  .logo-key small { margin-top: 3px; font-size: .73rem; color: var(--ink-soft); }
+
+  .zoom-kicker {
+    fill: var(--ink);
+    font: 700 14px 'IBM Plex Mono', monospace;
+    letter-spacing: .09em;
+  }
+
+  .zoom-small {
+    fill: var(--ink);
+    font: 600 11px 'Atkinson Hyperlegible', sans-serif;
+  }
+
+  .station-dial {
+    display: grid;
+    gap: 0;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
+  }
+
+  .station-dial li {
+    display: grid;
+    grid-template-columns: 63px 1fr;
+    gap: 13px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(23, 53, 50, .28);
+    font-size: .82rem;
+  }
+
+  .station-dial span {
+    color: var(--red);
+    font: 700 .8rem 'IBM Plex Mono', monospace;
+  }
+
+  .radio-zoom { background: #7f9d63; }
+  .radio-zoom .district-copy { transform: rotate(1deg); }
+  .mix-zoom { background: #c9c976; }
+  .mix-zoom .district-copy { transform: rotate(-1.4deg); }
+  .offline-zoom { background: #789673; }
+  .offline-zoom .district-copy { transform: rotate(1.2deg); }
+
+  .neighborhood-labels text {
+    fill: var(--ink);
+    font: 700 13px 'IBM Plex Mono', monospace;
+    letter-spacing: .09em;
+    paint-order: stroke;
+    stroke: #f4e5b3;
+    stroke-width: 6px;
+  }
+
+  .plain-truth {
+    margin-top: 25px;
+    padding: 15px 17px;
+    background: #f7d895;
+    border: 2px solid var(--ink);
+    transform: rotate(1.2deg);
+  }
+
+  .plain-truth b {
+    font: 700 .7rem 'IBM Plex Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .plain-truth p {
+    margin: 6px 0 0;
+    font-size: .8rem;
+    line-height: 1.45;
+  }
+
+  .district-copy .supporting {
+    padding-top: 18px;
+    border-top: 2px dashed rgba(23, 53, 50, .35);
+    font-size: .82rem !important;
+    color: var(--ink-soft);
+  }
+
+  .charter {
+    display: grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: clamp(35px, 8vw, 140px);
+    padding: clamp(85px, 12vw, 170px) max(24px, 8vw);
+    color: #f8eabf;
+    background:
+      radial-gradient(circle at 87% 17%, rgba(218, 49, 91, .26), transparent 22%),
+      #173532;
+    border-bottom: 4px solid #071c19;
+  }
+
+  .charter .coordinates { color: #eacb70; }
+  .charter h2 { font-size: clamp(3.7rem, 7.2vw, 8rem); }
+  .charter-title > p:last-child { max-width: 34ch; font-size: 1.15rem; }
+
+  .charter-lines {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid rgba(248, 234, 191, .5);
+  }
+
+  .charter-lines li {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 20px;
+    padding: 25px 0;
+    border-bottom: 1px solid rgba(248, 234, 191, .3);
+  }
+
+  .seal {
+    display: grid;
+    place-items: center;
+    width: 47px;
+    height: 47px;
+    color: #173532;
+    background: #efcb6b;
+    border-radius: 50%;
+    font: 700 .8rem 'IBM Plex Mono', monospace;
+    box-shadow: inset 0 0 0 4px #173532, 0 0 0 2px #efcb6b;
+  }
+
+  .charter-lines h3 {
+    margin: 0;
+    font: 750 clamp(1.4rem, 2.2vw, 2rem)/1 'Bricolage Grotesque', sans-serif;
+    letter-spacing: -.03em;
+  }
+
+  .charter-lines p {
+    max-width: 52ch;
+    margin: 7px 0 0;
+    color: #cddac0;
+    font-size: .93rem;
+  }
+
+  .ranger-desk {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 8vw, 130px);
+    min-height: 760px;
+    padding: clamp(80px, 10vw, 150px) max(24px, 8vw);
+    background:
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      #7a9668;
+    background-size: 45px 45px;
+    border-bottom: 4px solid var(--ink);
+  }
+
+  .desk-map {
+    align-self: center;
+    filter: drop-shadow(18px 22px 0 rgba(23, 53, 50, .18));
+    transform: rotate(-3deg);
+  }
+
+  .desk-map svg { display: block; width: 100%; }
+  .desk-label { fill: var(--ink); font: 700 18px 'IBM Plex Mono', monospace; letter-spacing: .11em; }
+  .desk-small { fill: var(--ink); font: 700 12px 'IBM Plex Mono', monospace; letter-spacing: .1em; }
+
+  .ranger-copy {
+    align-self: center;
+  }
+
+  .ranger-copy h2 { color: #fff0bd; font-size: clamp(3.7rem, 6vw, 7rem); }
+  .ranger-copy .coordinates { color: #f4d473; }
+  .ranger-copy dl { margin: 35px 0 0; }
+
+  .ranger-copy dl > div {
+    padding: 18px 0;
+    border-top: 2px solid rgba(255, 240, 189, .42);
+  }
+
+  .ranger-copy dt {
+    color: #fff0bd;
+    font: 700 1rem 'IBM Plex Mono', monospace;
+  }
+
+  .ranger-copy dd {
+    max-width: 60ch;
+    margin: 7px 0 0;
+    color: #e0e7cd;
+    font-size: .9rem;
+  }
+
+  .terminus {
+    position: relative;
+    min-height: 690px;
+    display: grid;
+    place-items: center;
+    padding: 90px 24px 70px;
+    color: var(--ink);
+    background:
+      linear-gradient(to bottom, rgba(185, 215, 209, .2), transparent 42%),
+      repeating-linear-gradient(165deg, transparent 0 108px, rgba(23,53,50,.1) 109px 112px),
+      #aabd69;
+  }
+
+  .terminus::before {
+    content: '';
+    position: absolute;
+    inset: auto -4% 0;
+    height: 47%;
+    background: #839f59;
+    clip-path: polygon(0 45%, 21% 12%, 41% 41%, 61% 5%, 82% 38%, 100% 14%, 100% 100%, 0 100%);
+  }
+
+  .terminus-sign {
+    position: relative;
+    z-index: 1;
+    width: min(720px, calc(100vw - 42px));
+    padding: clamp(30px, 5vw, 60px);
+    text-align: center;
+    background: var(--paper);
+    border: 5px solid var(--ink);
+    box-shadow: 15px 18px 0 rgba(23, 53, 50, .22);
+    transform: rotate(-1deg);
+  }
+
+  .terminus-sign::before,
+  .terminus-sign::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 100%;
+    width: 20px;
+    height: 175px;
+    background: #754d37;
+    border: 4px solid var(--ink);
+  }
+
+  .terminus-sign::before { left: 14%; }
+  .terminus-sign::after { right: 14%; }
+
+  .terminus-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    font: 800 2rem/1 'Bricolage Grotesque', sans-serif;
+  }
+
+  .terminus-sign > p {
+    margin: 23px 0 28px;
+    font: 750 clamp(2.2rem, 5vw, 4.5rem)/1 'Bricolage Grotesque', sans-serif;
+    letter-spacing: -.045em;
+  }
+
+  .terminus-sign > p b { color: var(--red); font-size: .52em; letter-spacing: -.01em; }
+  .terminus-sign .sign-actions { justify-content: center; }
+
+  .footer-line {
+    position: absolute;
+    z-index: 2;
+    inset: auto max(20px, 4vw) 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font: 600 .68rem 'IBM Plex Mono', monospace;
+  }
+
+  .footer-line a { color: inherit; text-underline-offset: 4px; }
+
+  @media (max-width: 900px) {
+    .hero {
+      min-height: 820px;
+      height: calc(100svh - 43px);
+      max-height: 920px;
+    }
+
+    .hero-map > svg {
+      width: auto;
+      min-width: 1050px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-47%);
+    }
+
+    .hero-sign {
+      top: 90px;
+      left: 50%;
+      width: min(520px, calc(100% - 44px));
+      transform: translateX(-50%) rotate(-1deg);
+    }
+
+    .hero-sign::before,
+    .hero-sign::after { height: 90px; }
+
+    .map-key { top: 18px; left: 18px; }
+    .scout { right: 18px; bottom: 18px; }
+
+    .atlas-intro {
+      grid-template-columns: 1fr;
+    }
+
+    .atlas-intro .coordinates { margin-bottom: -10px; }
+
+    .district,
+    .district:nth-of-type(even) {
+      grid-template-columns: 1fr;
+    }
+
+    .district-map,
+    .district:nth-of-type(even) .district-map {
+      min-height: min(76vw, 650px);
+      border: 0;
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .district-map svg { min-height: min(76vw, 650px); }
+    .district-copy { margin: clamp(40px, 8vw, 70px) auto; width: min(620px, calc(100% - 42px)); }
+
+    .radio-zoom .district-copy,
+    .offline-zoom .district-copy { order: 2; }
+
+    .charter,
+    .ranger-desk {
+      grid-template-columns: 1fr;
+    }
+
+    .desk-map { width: min(640px, 100%); justify-self: center; }
+  }
+
+  @media (max-width: 520px) {
+    .radioland { font-size: 16px; }
+    .hero { min-height: 844px; height: 100svh; }
+
+    .map-key {
+      top: 13px;
+      left: 12px;
+      padding: 6px 10px 6px 7px;
+    }
+
+    .map-key :global(.mozz-mark) { width: 25px !important; height: 25px !important; }
+    .map-key small { display: none; }
+
+    .hero-map > svg {
+      min-width: 1190px;
+      left: 0;
+      transform: translateX(-21%);
+    }
+
+    .hero-sign {
+      top: 70px;
+      width: calc(100% - 28px);
+      padding: 18px 18px 20px;
+      border-width: 3px;
+      box-shadow: 8px 10px 0 rgba(23, 53, 50, .2);
+    }
+
+    .hero-sign h1 { font-size: clamp(2.7rem, 13vw, 3.55rem); }
+    .hero-sign > p { margin: 13px 0 15px; font-size: .87rem; }
+    .sign-route { font-size: .55rem; }
+    .store-link { min-height: 46px; padding: 6px 11px 6px 9px; font-size: .88rem; }
+    .source-link { font-size: .68rem; }
+    .hero-sign::before { left: 31px; }
+    .hero-sign::after { right: 31px; }
+
+    .scout { font-size: .62rem; }
+    .scout span { display: none; }
+
+    .atlas-intro { padding: 72px 21px; }
+    .atlas-intro h2 { font-size: 3.55rem; }
+    .atlas-intro > p:last-child { font-size: 1rem; }
+
+    .district-map,
+    .district:nth-of-type(even) .district-map {
+      min-height: 455px;
+    }
+
+    .district-map svg {
+      width: auto;
+      min-width: 585px;
+      min-height: 455px;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .district-copy {
+      margin: 42px 14px;
+      width: auto;
+      padding: 28px 22px;
+      border-width: 3px;
+      box-shadow: 8px 10px 0 rgba(23, 53, 50, .18);
+    }
+
+    .district-copy h2 { font-size: 3.35rem; }
+    .district-copy > p:not(.coordinates) { margin-top: 17px; font-size: .96rem; }
+
+    .charter { padding: 76px 21px; gap: 45px; }
+    .charter h2 { font-size: 4rem; }
+    .charter-lines li { grid-template-columns: 45px 1fr; gap: 14px; }
+    .seal { width: 39px; height: 39px; }
+
+    .ranger-desk { padding: 72px 21px 84px; min-height: 0; }
+    .ranger-copy h2 { font-size: 4rem; }
+    .desk-map { width: 112%; margin-left: -6%; }
+
+    .terminus { min-height: 720px; padding-inline: 14px; }
+    .terminus-sign { width: 100%; padding: 28px 18px 34px; border-width: 4px; }
+    .terminus-sign > p { font-size: 2.7rem; }
+    .footer-line { display: grid; text-align: center; justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .radioland *,
+    .radioland *::before,
+    .radioland *::after {
+      scroll-behavior: auto !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+
+  @media print {
+    .hero { min-height: 760px; }
+    .scout { display: none; }
+  }
+</style>

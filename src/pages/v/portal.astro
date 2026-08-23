@@ -1,0 +1,2028 @@
+---
+/**
+ * VARIANT — PORTAL
+ *
+ * THESIS: The app opens into music. Not a phone photographed on a background —
+ *   a phone-shaped doorway at architectural scale, standing in the viewer's own
+ *   dark room, with an impossible physical library on the other side of it.
+ *   Shelves, a listening stage, radio rings, crates of downloads and the mix
+ *   paths all pour out through the threshold and land at your feet.
+ *
+ * WHY IT IS BUILT THIS WAY (and not as one full-bleed slice SVG): everything in
+ *   the composition has to touch the doorway — the light spill starts at its
+ *   sill, the rings continue out of it, the sleeves emerge from its mouth. A
+ *   slice-cropped SVG's coordinates drift against a CSS-sized element as the
+ *   viewport aspect changes, so the scene is layered instead:
+ *     .sky      CSS   — the room's air, ceiling and back wall
+ *     .scenery  SVG   — far field only (hanging shelves, motes) — slice-safe,
+ *                       nothing in it needs to touch the floor or the door
+ *     .floor    CSS3D — a real perspective plane, so the boards converge on the
+ *                       doorway automatically at every aspect ratio
+ *     .core     mixed — the portal itself, its beams, its spill and everything
+ *                       pouring out, all positioned relative to the portal box,
+ *                       so the alignment is true by construction
+ *     .fg       SVG   — crates anchored to the bottom edge, cut by the frame
+ *   The interior world is its own SVG drawn in true one-point perspective from a
+ *   vanishing point inside the hall, generated below so the recession is exact.
+ *
+ * INTEGRATION, not overlay: the wordmark and the red pixel mark are the key in
+ *   the doorway's lintel; the headline is painted on the floor inside the light
+ *   the doorway throws; the buttons are the portal's control desk standing in
+ *   the threshold. Sleeves and rings cross in front of the copy.
+ *
+ * Later sections are chambers of the same world, in the same materials.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Phone from '../../components/Phone.astro';
+import Shot from '../../components/Shot.astro';
+import {
+  NAME, SERVERS, FEATURES, OWNERSHIP, FAQS, STATS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Step into the library you already own.';
+
+// Stats, woven into the chamber they belong to rather than lined up in a row.
+const sSearch = STATS[0];  // 16ms — search across 100,000 tracks
+const sStart = STATS[1];   // 75ms — from tap to first note
+const sServers = STATS[2]; // 3 — server types, one library
+const sFree = STATS[3];    // $0 — forever, and open source
+
+/* ---------------------------------------------------------------------------
+ * Deterministic noise. The shelves want the irregularity of real records, but a
+ * build must be byte-identical every time, so Math.random is out.
+ * ------------------------------------------------------------------------- */
+function prng(seed: number) {
+  let t = seed >>> 0;
+  return () => {
+    t += 0x6d2b79f5;
+    let x = Math.imul(t ^ (t >>> 15), 1 | t);
+    x ^= x + Math.imul(x ^ (x >>> 7), 61 | x);
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = prng(20260822);
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
+/* ---------------------------------------------------------------------------
+ * THE HALL — one-point perspective inside the doorway.
+ *
+ * The interior SVG is 360x780 (the doorway's own 9:19.5). The vanishing point
+ * sits at eye level, a little above the middle. `P(s)` returns the four edges of
+ * the hall at depth `s`, where s=1 is the doorway plane itself and s→0 is the
+ * vanishing point. Depths fall off geometrically, which is what makes the
+ * recession read as distance rather than as a flat fan of lines.
+ * ------------------------------------------------------------------------- */
+const VPX = 180;
+const VPY = 330;
+const BW = 360;
+const BH = 780;
+const P = (s: number) => ({
+  s,
+  l: VPX * (1 - s),
+  r: VPX + (BW - VPX) * s,
+  t: VPY * (1 - s),
+  b: VPY + (BH - VPY) * s,
+});
+const DEPTH = [1, 0.7, 0.485, 0.335, 0.23, 0.155];
+
+/** Warm record spines, with a few cool ones so the wall is not one hue. */
+const SPINE = [
+  '#e8a04a', '#c9622c', '#8f3f14', '#f0c479', '#b8452c',
+  '#5b6f8a', '#9a5b8c', '#d98b3a', '#7a4a2a', '#ddd0b6',
+  '#4f7d74', '#e2743f',
+];
+
+interface Face { d: string; f: string; o: number }
+
+/**
+ * A wall of shelved records running from the doorway back to the vanishing
+ * point: bay panels, four shelf boards per bay, and individual spines whose
+ * heights vary so the row has a top edge you can read.
+ */
+function shelfWall(side: 'l' | 'r') {
+  const bays: Face[] = [];
+  const boards: string[] = [];
+  const spines: Face[] = [];
+  const rows: [number, number][] = [
+    [0.17, 0.35], [0.38, 0.56], [0.59, 0.77], [0.8, 0.96],
+  ];
+
+  for (let i = 0; i < DEPTH.length - 1; i++) {
+    const n = P(DEPTH[i]);
+    const f = P(DEPTH[i + 1]);
+    const nx = side === 'l' ? n.l : n.r;
+    const fx = side === 'l' ? f.l : f.r;
+    const fade = 0.9 - i * 0.09;
+
+    bays.push({
+      d: `M${r2(nx)},${r2(n.t)} L${r2(fx)},${r2(f.t)} L${r2(fx)},${r2(f.b)} L${r2(nx)},${r2(n.b)} Z`,
+      f: i % 2 ? '#20132a' : '#271830',
+      o: 1,
+    });
+
+    for (const [t0, t1] of rows) {
+      const nTop = n.t + (n.b - n.t) * t0;
+      const nBot = n.t + (n.b - n.t) * t1;
+      const fTop = f.t + (f.b - f.t) * t0;
+      const fBot = f.t + (f.b - f.t) * t1;
+
+      // the board the records stand on
+      boards.push(
+        `M${r2(nx)},${r2(nBot)} L${r2(fx)},${r2(fBot)}`
+      );
+
+      const N = 5;
+      for (let k = 0; k < N; k++) {
+        const u0 = k / N;
+        const u1 = (k + 0.82) / N;
+        const h = 0.6 + rand() * 0.4;
+        const x0 = nx + (fx - nx) * u0;
+        const x1 = nx + (fx - nx) * u1;
+        const b0 = nBot + (fBot - nBot) * u0;
+        const b1 = nBot + (fBot - nBot) * u1;
+        const t0y = b0 - (b0 - (nTop + (fTop - nTop) * u0)) * h;
+        const t1y = b1 - (b1 - (nTop + (fTop - nTop) * u1)) * h;
+        spines.push({
+          d: `M${r2(x0)},${r2(t0y)} L${r2(x1)},${r2(t1y)} L${r2(x1)},${r2(b1)} L${r2(x0)},${r2(b0)} Z`,
+          f: SPINE[Math.floor(rand() * SPINE.length)],
+          o: fade,
+        });
+      }
+    }
+  }
+  return { bays, boards, spines };
+}
+
+const wallL = shelfWall('l');
+const wallR = shelfWall('r');
+
+/** Floor and ceiling bays, for the receding boards under and over the hall. */
+const hallFloor = DEPTH.slice(0, -1).map((s, i) => {
+  const n = P(s);
+  const f = P(DEPTH[i + 1]);
+  return {
+    d: `M${r2(n.l)},${r2(n.b)} L${r2(n.r)},${r2(n.b)} L${r2(f.r)},${r2(f.b)} L${r2(f.l)},${r2(f.b)} Z`,
+    f: i % 2 ? '#180f1f' : '#1d1325',
+  };
+});
+const hallCeil = DEPTH.slice(0, -1).map((s, i) => {
+  const n = P(s);
+  const f = P(DEPTH[i + 1]);
+  return {
+    d: `M${r2(n.l)},${r2(n.t)} L${r2(n.r)},${r2(n.t)} L${r2(f.r)},${r2(f.t)} L${r2(f.l)},${r2(f.t)} Z`,
+    f: i % 2 ? '#150d1c' : '#190f21',
+  };
+});
+
+/** The mix path: a lit ribbon of stepping stones running out of the hall. */
+const RIB = 58;
+const ribbon = (() => {
+  const n = P(1);
+  const f = P(0.155);
+  return `M${r2(VPX - RIB)},${r2(n.b)} L${r2(VPX + RIB)},${r2(n.b)} L${r2(VPX + RIB * f.s)},${r2(f.b)} L${r2(VPX - RIB * f.s)},${r2(f.b)} Z`;
+})();
+const stones = [0.94, 0.8, 0.68, 0.575, 0.485, 0.41, 0.345, 0.29, 0.24, 0.2].map((s) => {
+  const p = P(s);
+  const w = 92 * s;
+  const h = 15 * s;
+  return { x: r2(VPX - w / 2), y: r2(p.b - h), w: r2(w), h: r2(h), r: r2(5 * s), o: r2(0.28 + s * 0.5) };
+});
+
+/** The strip light running along the ceiling of the hall, into the distance. */
+const stripLight = (() => {
+  const n = P(1);
+  const f = P(0.155);
+  return `M${VPX - 10},${r2(n.t)} L${VPX + 10},${r2(n.t)} L${r2(VPX + 10 * f.s)},${r2(f.t)} L${r2(VPX - 10 * f.s)},${r2(f.t)} Z`;
+})();
+
+/** The listening stage, mid-hall: a dais, a standing disc, a beam from above. */
+const STAGE_S = 0.4;
+const stage = P(STAGE_S);
+
+/** Radio rings leaving the stage and swelling toward the doorway. */
+const rings = [0, 1, 2, 3, 4, 5].map((i) => {
+  const k = i / 5;
+  return {
+    cy: r2(486 + k * 190),
+    rx: r2(44 + k * 210),
+    ry: r2(11 + k * 62),
+    o: r2(0.5 - k * 0.36),
+    w: r2(2.6 - k * 1.2),
+    d: r2(i * 1.3),
+  };
+});
+
+/* ---------------------------------------------------------------------------
+ * WHAT COMES THROUGH — sleeves that have crossed the threshold into the room.
+ * Positions are relative to the portal box, so they always emerge from the
+ * doorway's mouth no matter how the viewport is shaped. `s` is the forced-
+ * perspective scale: the nearer to the viewer, the larger.
+ * ------------------------------------------------------------------------- */
+const SLEEVE_ART = [
+  // concentric rings, with the brand red as the label
+  '<rect width="100" height="100" fill="#1d1226"/><circle cx="50" cy="50" r="35" fill="none" stroke="#e8a04a" stroke-width="7"/><circle cx="50" cy="50" r="21" fill="none" stroke="#c9622c" stroke-width="7"/><circle cx="50" cy="50" r="8" fill="#d6002b"/>',
+  // hard diagonal split
+  '<rect width="100" height="100" fill="#f0c479"/><path d="M0,100 L100,0 L100,100 Z" fill="#b8452c"/><rect x="11" y="11" width="30" height="9" fill="#1d1226"/><rect x="11" y="26" width="18" height="6" fill="#1d1226" opacity="0.7"/>',
+  // level meter
+  '<rect width="100" height="100" fill="#12232a"/><g fill="#4fd6c4"><rect x="14" y="58" width="11" height="28"/><rect x="31" y="40" width="11" height="46"/><rect x="48" y="24" width="11" height="62"/><rect x="65" y="46" width="11" height="40"/></g><rect x="14" y="14" width="34" height="7" fill="#e8a04a"/>',
+  // dot grid
+  '<rect width="100" height="100" fill="#2a1730"/><g fill="#f0c479">' +
+    [0, 1, 2, 3].map((y) => [0, 1, 2, 3].map((x) => `<circle cx="${20 + x * 20}" cy="${20 + y * 20}" r="${x === 1 && y === 2 ? 9 : 5}"/>`).join('')).join('') +
+    '</g><circle cx="40" cy="60" r="4" fill="#d6002b"/>',
+  // stacked arcs
+  '<rect width="100" height="100" fill="#1a1420"/><path d="M6,94 A88,88 0 0 1 94,6" fill="none" stroke="#e2743f" stroke-width="9"/><path d="M6,94 A62,62 0 0 1 68,32" fill="none" stroke="#9a5b8c" stroke-width="9"/><path d="M6,94 A34,34 0 0 1 40,60" fill="none" stroke="#4fd6c4" stroke-width="9"/>',
+  // horizon band
+  '<rect width="100" height="100" fill="#e6dcc6"/><rect y="52" width="100" height="48" fill="#2a1730"/><circle cx="50" cy="52" r="19" fill="#d6002b"/><rect y="48" width="100" height="4" fill="#1d1226"/>',
+];
+
+const TILES = [
+  { x: 2, y: -54, s: 0.32, r: -9, art: 0, d: 0, disc: false },
+  { x: -40, y: 4, s: 0.46, r: 13, art: 2, d: 1.2, disc: false },
+  { x: 46, y: 52, s: 0.6, r: -11, art: 4, d: 0.6, disc: false },
+  { x: -158, y: 92, s: 0.95, r: -14, art: 1, d: 1.8, disc: true },
+  { x: 172, y: 62, s: 1.02, r: 12, art: 3, d: 2.3, disc: false },
+  { x: -268, y: 18, s: 0.78, r: 18, art: 5, d: 0.9, disc: false },
+  { x: 292, y: -38, s: 0.7, r: -16, art: 0, d: 1.5, disc: true },
+  { x: -352, y: 162, s: 1.34, r: 7, art: 4, d: 2.7, disc: false },
+  { x: 372, y: 178, s: 1.42, r: -6, art: 2, d: 2.1, disc: false },
+];
+
+/** Where the three real server marks hang inside the hall. */
+const PLAQUES = [
+  { name: 'Plex', x: 19, y: 47, s: 0.8, c: '#e5a00d' },
+  { name: 'Jellyfin', x: 50, y: 31, s: 0.62, c: '#00a4dc' },
+  { name: 'Navidrome', x: 81, y: 49, s: 0.8, c: '#3f8fd0' },
+];
+
+/**
+ * Six niches, each carrying its own engraved glyph. Drawn rather than borrowed:
+ * three doors, a crate, a lens over a stack, a lit path, a wave and a fader.
+ */
+const GLYPH = [
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M6 30V10l9-4v28z"/><path d="M21 30V8l9 3v19z"/><path d="M33 30V14l7 3v13z"/><path d="M3 30h42"/></g>',
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M7 16h34v18H7z"/><path d="M7 22h34M7 28h34"/><path d="M15 16V7h8v9M27 16V9h7v7"/><path d="M24 4v7m0 0 3-3m-3 3-3-3"/></g>',
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="20" cy="18" r="10"/><path d="M27 25l9 9"/><path d="M6 34h20M6 39h12"/></g>',
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M24 6v9M24 33v9M8 24h9M31 24h9"/><circle cx="24" cy="24" r="7"/><path d="M13 13l5 5M35 13l-5 5M13 35l5-5M35 35l-5-5"/></g>',
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="26" r="4"/><path d="M17 19a10 10 0 0 0 0 14M31 19a10 10 0 0 1 0 14"/><path d="M11 13a18 18 0 0 0 0 26M37 13a18 18 0 0 1 0 26"/></g>',
+  '<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 6v34M24 6v34M36 6v34"/><rect x="7" y="14" width="10" height="6" rx="2" fill="currentColor" stroke="none"/><rect x="19" y="26" width="10" height="6" rx="2" fill="currentColor" stroke="none"/><rect x="31" y="18" width="10" height="6" rx="2" fill="currentColor" stroke="none"/></g>',
+];
+
+/** The four fixtures this world does not contain: drawn as absences. */
+const ABSENT = [
+  // a turnstile with no arm
+  '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M24 40V22"/><circle cx="24" cy="18" r="6"/><path d="M12 40h24"/><path d="M30 18h14" stroke-dasharray="4 5" opacity="0.42"/><path d="M18 18H4" stroke-dasharray="4 5" opacity="0.42"/></g>',
+  // an empty ledger stand
+  '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 12h28v26H10z" stroke-dasharray="5 6" opacity="0.42"/><path d="M24 38v-8"/><path d="M14 44h20"/></g>',
+  // a meter with no needle
+  '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 32a16 16 0 0 1 32 0"/><path d="M8 32h32"/><path d="M24 32l10-9" stroke-dasharray="4 5" opacity="0.4"/><circle cx="24" cy="32" r="2.4" fill="currentColor" stroke="none"/></g>',
+  // an open shackle
+  '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="12" y="22" width="24" height="18" rx="3"/><path d="M18 22v-5a6 6 0 0 1 12 0"/><path d="M30 17v5" stroke-dasharray="4 4" opacity="0.4"/></g>',
+];
+
+const SHELF_SHOTS = ['mozz-album-red', 'mozz-artist', 'mozz-album-warm', 'mozz-playlist', 'mozz-album-dark'];
+
+const heroLabel =
+  'A colossal doorway the shape of a phone stands in a dark room. Through it a warm hall recedes: walls of shelved records running back to a vanishing point, a lit path of stepping stones down the middle, and a raised stage part way in where a record stands upright under a beam of light, throwing rings of sound out toward the doorway. Album sleeves drift out of the opening into the room and grow as they come, light spills across the floor, and crates of downloaded records sit in the near foreground, cut off by the bottom of the frame.';
+---
+
+<Layout
+  title={`${NAME} — step into the library you already own`}
+  description="A free, open source iPhone and iPad music player for Plex, Jellyfin and Navidrome. Your library, your server, your files — streamed or downloaded, with no account and nothing tracking you."
+  themeColor="#0a0710"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="pt">
+    <VariantBar slug="portal" tone="neutral" />
+
+    <!-- =====================================================================
+         FIRST VIEWPORT — the room, the doorway, and what is coming through it
+    ====================================================================== -->
+    <section class="hero">
+      <div class="sky" aria-hidden="true"></div>
+
+      <!-- Far field only. Nothing here has to meet the floor or the doorway,
+           so the slice crop can move freely with the viewport. -->
+      <svg class="scenery" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="pt-airglow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffb257" stop-opacity="0" />
+            <stop offset="1" stop-color="#ffb257" stop-opacity="0.13" />
+          </linearGradient>
+          <linearGradient id="pt-beam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd6a0" stop-opacity="0.16" />
+            <stop offset="1" stop-color="#ffd6a0" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+
+        <!-- ceiling joists of the viewer's own room, running back overhead -->
+        <g stroke="#2a1d30" stroke-width="8" fill="none" opacity="0.85">
+          <path d="M-60,-40 L560,196" />
+          <path d="M300,-60 L700,190" />
+          <path d="M1660,-40 L1040,196" />
+          <path d="M1300,-60 L900,190" />
+        </g>
+        <g stroke="#1d1424" stroke-width="26" fill="none" opacity="0.9">
+          <path d="M-60,120 L1660,120" />
+          <path d="M-60,44 L1660,44" />
+        </g>
+
+        <!-- shelving in the viewer's room, silhouetted at both edges -->
+        <g fill="#160f1d">
+          <path d="M-60,150 H210 V1060 H-60 Z" />
+          <path d="M1390,150 H1660 V1060 H1390 Z" />
+        </g>
+        <g fill="#241832">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <>
+              <rect x="-60" y={196 + i * 128} width="264" height="15" />
+              <rect x={1396} y={196 + i * 128} width="264" height="15" />
+            </>
+          ))}
+        </g>
+        <g opacity="0.5">
+          {[0, 1, 2, 3, 4, 5].map((i) =>
+            [0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
+              <rect
+                x={-52 + k * 32}
+                y={196 + i * 128 - (54 + ((i * 7 + k * 5) % 4) * 11)}
+                width="22"
+                height={54 + ((i * 7 + k * 5) % 4) * 11}
+                fill={SPINE[(i * 5 + k * 3) % SPINE.length]}
+                opacity="0.5"
+              />
+            ))
+          )}
+          {[0, 1, 2, 3, 4, 5].map((i) =>
+            [0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
+              <rect
+                x={1404 + k * 32}
+                y={196 + i * 128 - (54 + ((i * 3 + k * 7) % 4) * 11)}
+                width="22"
+                height={54 + ((i * 3 + k * 7) % 4) * 11}
+                fill={SPINE[(i * 7 + k * 5) % SPINE.length]}
+                opacity="0.5"
+              />
+            ))
+          )}
+        </g>
+
+        <!-- air lit by the doorway -->
+        <rect x="0" y="420" width="1600" height="580" fill="url(#pt-airglow)" />
+        <path d="M700,150 L900,150 L1180,1000 L420,1000 Z" fill="url(#pt-beam)" />
+
+        <!-- dust hanging in the light -->
+        <g fill="#ffd6a0" class="motes">
+          {Array.from({ length: 34 }).map((_, i) => {
+            const x = r2(240 + rand() * 1120);
+            const y = r2(220 + rand() * 700);
+            const rr = r2(1 + rand() * 2.6);
+            return <circle cx={x} cy={y} r={rr} opacity={r2(0.12 + rand() * 0.36)} style={`--md:${r2(rand() * 9)}s`} />;
+          })}
+        </g>
+      </svg>
+
+      <!-- A genuine perspective plane: the boards converge on the doorway by
+           construction, so no crop can knock them out of alignment. -->
+      <div class="floor" aria-hidden="true"><div class="floor__grid"></div></div>
+
+      <!-- Everything that must line up with the doorway lives in here. -->
+      <div class="core">
+        <div class="halo" aria-hidden="true"></div>
+
+        <div class="portal">
+          <svg class="hall" viewBox="0 0 360 780" preserveAspectRatio="xMidYMid slice" role="img" aria-label={heroLabel}>
+            <defs>
+              <radialGradient id="pt-far" cx="0.5" cy="0.42" r="0.6">
+                <stop offset="0" stop-color="#ffd9a6" stop-opacity="0.95" />
+                <stop offset="0.45" stop-color="#ff9d3d" stop-opacity="0.42" />
+                <stop offset="1" stop-color="#ff9d3d" stop-opacity="0" />
+              </radialGradient>
+              <linearGradient id="pt-ribbon" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#ffc478" stop-opacity="0.55" />
+                <stop offset="1" stop-color="#ffe6bd" stop-opacity="0.1" />
+              </linearGradient>
+              <linearGradient id="pt-cone" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff0d2" stop-opacity="0.42" />
+                <stop offset="1" stop-color="#ffb257" stop-opacity="0.04" />
+              </linearGradient>
+              <linearGradient id="pt-haze" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0a0710" stop-opacity="0.55" />
+                <stop offset="0.4" stop-color="#0a0710" stop-opacity="0" />
+                <stop offset="1" stop-color="#0a0710" stop-opacity="0.5" />
+              </linearGradient>
+              <linearGradient id="pt-strip" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#ffe9c6" stop-opacity="0.8" />
+                <stop offset="1" stop-color="#ffe9c6" stop-opacity="0.18" />
+              </linearGradient>
+            </defs>
+
+            <rect width="360" height="780" fill="#100a17" />
+
+            <!-- the end of the hall, still lit -->
+            <rect
+              x={r2(P(0.155).l)} y={r2(P(0.155).t)}
+              width={r2(P(0.155).r - P(0.155).l)} height={r2(P(0.155).b - P(0.155).t)}
+              fill="#241633"
+            />
+            <ellipse cx={VPX} cy={VPY + 26} rx="150" ry="150" fill="url(#pt-far)" />
+
+            <g>{hallCeil.map((q) => <path d={q.d} fill={q.f} />)}</g>
+            <g>{hallFloor.map((q) => <path d={q.d} fill={q.f} />)}</g>
+
+            <!-- the mix path, running out of the hall toward the threshold -->
+            <path d={ribbon} fill="url(#pt-ribbon)" />
+            <g fill="#ffdca6">
+              {stones.map((s) => <rect x={s.x} y={s.y} width={s.w} height={s.h} rx={s.r} opacity={s.o} />)}
+            </g>
+
+            <!-- shelved records, both walls -->
+            <g>
+              {wallL.bays.map((q) => <path d={q.d} fill={q.f} />)}
+              {wallR.bays.map((q) => <path d={q.d} fill={q.f} />)}
+            </g>
+            <g>
+              {wallL.spines.map((q) => <path d={q.d} fill={q.f} opacity={q.o} />)}
+              {wallR.spines.map((q) => <path d={q.d} fill={q.f} opacity={q.o} />)}
+            </g>
+            <g stroke="#3a2740" stroke-width="2.4" fill="none" opacity="0.85" stroke-linecap="square">
+              {wallL.boards.map((d) => <path d={d} />)}
+              {wallR.boards.map((d) => <path d={d} />)}
+            </g>
+
+            <!-- strip light overhead -->
+            <path d={stripLight} fill="url(#pt-strip)" />
+
+            <!-- the listening stage, mid-hall -->
+            <path
+              d={`M${VPX - 15},${r2(stage.t)} L${VPX + 15},${r2(stage.t)} L${VPX + 86},${r2(stage.b)} L${VPX - 86},${r2(stage.b)} Z`}
+              fill="url(#pt-cone)"
+            />
+            <ellipse cx={VPX} cy={r2(stage.b + 6)} rx="86" ry="20" fill="#ffb257" opacity="0.14" />
+            <ellipse cx={VPX} cy={r2(stage.b)} rx="70" ry="17" fill="#2d1c37" />
+            <ellipse cx={VPX} cy={r2(stage.b - 5)} rx="70" ry="17" fill="#412a4c" />
+            <g class="disc">
+              <circle cx={VPX} cy={r2(stage.b - 32)} r="30" fill="#150e1c" />
+              <g fill="none" stroke="#6b4f7a" stroke-width="1.1" opacity="0.8">
+                <circle cx={VPX} cy={r2(stage.b - 32)} r="25" />
+                <circle cx={VPX} cy={r2(stage.b - 32)} r="20" />
+                <circle cx={VPX} cy={r2(stage.b - 32)} r="15" />
+              </g>
+              <circle cx={VPX} cy={r2(stage.b - 32)} r="9" fill="#d6002b" />
+              <circle cx={VPX} cy={r2(stage.b - 32)} r="1.8" fill="#150e1c" />
+            </g>
+
+            <!-- sound leaving the stage, swelling toward the doorway -->
+            <g class="rings" fill="none" stroke="#ffd6a0">
+              {rings.map((r) => (
+                <ellipse
+                  cx={VPX} cy={r.cy} rx={r.rx} ry={r.ry}
+                  opacity={r.o} stroke-width={r.w} style={`--rd:${r.d}s`}
+                />
+              ))}
+            </g>
+
+            <rect width="360" height="780" fill="url(#pt-haze)" />
+            <rect class="sheen" x="-360" y="0" width="360" height="780" fill="#ffe9c6" opacity="0.05" />
+          </svg>
+
+          <!-- the marks of the servers this hall is built out of -->
+          <div class="plaques">
+            {PLAQUES.map((p) => (
+              <span
+                class="plaque"
+                style={`--px:${p.x}%; --py:${p.y}%; --ps:${p.s}; --pc:${p.c}`}
+              >
+                <ServerLogo name={p.name as any} size={30} brand />
+              </span>
+            ))}
+          </div>
+
+          <!-- the doorway itself: jambs, lintel, sill -->
+          <svg class="frame" viewBox="0 0 360 780" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="pt-metal" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#150e1e" />
+                <stop offset="0.16" stop-color="#4a3757" />
+                <stop offset="0.34" stop-color="#8d76a0" />
+                <stop offset="0.5" stop-color="#5c4670" />
+                <stop offset="0.7" stop-color="#8d76a0" />
+                <stop offset="0.88" stop-color="#3d2d4c" />
+                <stop offset="1" stop-color="#150e1e" />
+              </linearGradient>
+              <linearGradient id="pt-metalv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#9d86ad" />
+                <stop offset="1" stop-color="#2f2340" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M-62,-54 H422 V834 H-62 Z M12,42 a32,32 0 0 1 32,-32 H316 a32,32 0 0 1 32,32 V738 a32,32 0 0 1 -32,32 H44 a32,32 0 0 1 -32,-32 Z"
+              fill="url(#pt-metal)" fill-rule="evenodd"
+            />
+            <!-- the outer edge catching the room's dark, and the inner lip catching the hall -->
+            <path
+              d="M-62,-54 H422 V834 H-62 Z M-26,-18 H386 V798 H-26 Z"
+              fill="#0a0710" fill-rule="evenodd" opacity="0.72"
+            />
+            <rect x="-26" y="-18" width="412" height="816" fill="none" stroke="#b49ac4" stroke-width="2.5" opacity="0.5" />
+            <rect x="12" y="10" width="336" height="760" rx="32" fill="none" stroke="#0a0710" stroke-width="7" opacity="0.85" />
+            <rect x="12" y="10" width="336" height="760" rx="32" fill="none" stroke="#ffd9a6" stroke-width="2.4" opacity="0.72" />
+            <rect x="20" y="18" width="320" height="744" rx="26" fill="none" stroke="#ffe9c6" stroke-width="1.2" opacity="0.34" />
+            <!-- side keys, drawn as pilasters standing off the jamb -->
+            <g fill="url(#pt-metalv)" stroke="#0a0710" stroke-width="2">
+              <rect x="-34" y="176" width="26" height="66" rx="10" />
+              <rect x="-34" y="262" width="26" height="102" rx="10" />
+              <rect x="342" y="224" width="26" height="132" rx="10" />
+            </g>
+          </svg>
+
+          <div class="lintel">
+            <Mark size={22} class="key" decorative />
+            <span class="lintel__word">{NAME}</span>
+            <span class="lintel__dot" aria-hidden="true"></span>
+          </div>
+
+          <div class="sill" aria-hidden="true"></div>
+        </div>
+
+        <!-- light on the room's floor, and the viewer standing in it -->
+        <svg class="spill" viewBox="0 0 1200 460" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="pt-spill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffcf94" stop-opacity="0.5" />
+              <stop offset="0.42" stop-color="#ff9d3d" stop-opacity="0.17" />
+              <stop offset="1" stop-color="#ff9d3d" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="pt-shadow" cx="0.5" cy="1" r="0.85">
+              <stop offset="0" stop-color="#05030a" stop-opacity="0.94" />
+              <stop offset="0.62" stop-color="#05030a" stop-opacity="0.72" />
+              <stop offset="1" stop-color="#05030a" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <path d="M470,0 H730 L1180,460 H20 Z" fill="url(#pt-spill)" />
+          <g fill="#ffe6bd" opacity="0.13">
+            <path d="M500,0 H520 L360,460 H300 Z" />
+            <path d="M690,0 H706 L900,460 H840 Z" />
+            <path d="M596,0 H604 L600,460 H592 Z" />
+          </g>
+          <!-- the viewer's own shadow, thrown back into the room -->
+          <ellipse cx="600" cy="470" rx="470" ry="250" fill="url(#pt-shadow)" />
+        </svg>
+
+        <!-- sleeves that have already come through -->
+        <div class="pour" aria-hidden="true">
+          {TILES.map((t) => (
+            <span
+              class="tile"
+              style={`--tx:${t.x}px; --ty:${t.y}px; --ts:${t.s}; --tr:${t.r}deg; --td:${t.d}s`}
+            >
+              {t.disc && <span class="tile__disc"></span>}
+              <svg viewBox="0 0 100 100" class="tile__art" set:html={SLEEVE_ART[t.art]} />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Headline painted on the floor inside the light; controls standing in
+           the threshold. Not a copy column beside a picture. -->
+      <div class="copy">
+        <h1 class="head">
+          <span class="head__l1">Step into the library</span>
+          <span class="head__l2">you already own.</span>
+        </h1>
+        <p class="lede">
+          A free, open source player for the <strong>Plex</strong>, <strong>Jellyfin</strong> or{' '}
+          <strong>Navidrome</strong> server already running in your house. iPhone and iPad.
+          Streamed at home, downloaded for everywhere else.
+        </p>
+
+        <div class="console">
+          <span class="console__rail" aria-hidden="true"></span>
+          <div class="console__keys">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                </svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                </svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="src" href={GITHUB_URL} rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              Read the source
+            </a>
+          </div>
+          <p class="console__meta">
+            <span>free forever</span><span>open source</span><span>no account</span><span>nothing tracking you</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Crates of downloads in the near foreground, cut by the frame. -->
+      <svg class="crate crate--l" viewBox="0 0 520 340" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+        <!-- records standing in the crate -->
+        <g>
+          <rect x="24" y="24" width="132" height="132" rx="4" fill="#e8a04a" transform="rotate(-5 90 90)" />
+          <circle cx="90" cy="90" r="30" fill="#1d1226" transform="rotate(-5 90 90)" />
+          <circle cx="90" cy="90" r="8" fill="#d6002b" transform="rotate(-5 90 90)" />
+          <rect x="150" y="14" width="132" height="140" rx="4" fill="#8f3f14" transform="rotate(-4 216 84)" />
+          <rect x="168" y="40" width="70" height="10" fill="#f0c479" transform="rotate(-4 216 84)" />
+          <rect x="168" y="58" width="44" height="7" fill="#f0c479" opacity="0.6" transform="rotate(-4 216 84)" />
+          <rect x="276" y="6" width="132" height="146" rx="4" fill="#f0c479" transform="rotate(-3 342 78)" />
+          <path d="M276,152 L408,6 L408,152 Z" fill="#b8452c" transform="rotate(-3 342 78)" />
+          <rect x="396" y="0" width="120" height="150" rx="4" fill="#5b6f8a" transform="rotate(-2 456 76)" />
+        </g>
+        <!-- the crate itself, cut by the bottom of the frame -->
+        <g fill="none" stroke="#160e1c" stroke-width="3" opacity="0.8">
+          <path d="M148,20 L160,154" /><path d="M272,12 L284,152" /><path d="M392,6 L402,150" />
+        </g>
+        <path d="M-20,150 L500,120 L520,340 L-20,340 Z" fill="#2a1b21" />
+        <path d="M-20,150 L500,120 L502,158 L-20,188 Z" fill="#432c34" />
+        <g fill="none" stroke="#5c343d" stroke-width="8">
+          <path d="M-20,214 L508,186" />
+          <path d="M-20,278 L514,252" />
+        </g>
+        <g opacity="0.42">
+          <path d="M56,246 l0,-30 l-15,0 l27,-30 l27,30 l-15,0 l0,30 Z" fill="#ffd6a0" transform="rotate(178 68 231)" />
+          <text x="112" y="248" fill="#ffd6a0" font-size="34" font-family="'Clash Display',sans-serif" letter-spacing="7">OFFLINE</text>
+        </g>
+      </svg>
+
+      <svg class="crate crate--r" viewBox="0 0 460 320" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <g>
+          <rect x="18" y="26" width="124" height="132" rx="4" fill="#4f7d74" transform="rotate(4 80 92)" />
+          <rect x="138" y="16" width="124" height="138" rx="4" fill="#9a5b8c" transform="rotate(5 200 85)" />
+          <circle cx="200" cy="85" r="27" fill="#1d1226" transform="rotate(5 200 85)" />
+          <circle cx="200" cy="85" r="7" fill="#d6002b" transform="rotate(5 200 85)" />
+          <rect x="258" y="8" width="124" height="144" rx="4" fill="#c9622c" transform="rotate(6 320 80)" />
+          <rect x="378" y="2" width="110" height="148" rx="4" fill="#e0d2b8" transform="rotate(7 433 76)" />
+        </g>
+        <path d="M-14,148 L474,176 L474,320 L-14,320 Z" fill="#241a2c" />
+        <path d="M-14,148 L474,176 L474,212 L-14,184 Z" fill="#3b2b47" />
+        <g fill="none" stroke="#4f3a5e" stroke-width="8">
+          <path d="M-14,238 L474,262" />
+          <path d="M-14,292 L474,312" />
+        </g>
+      </svg>
+
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="scroll" aria-hidden="true"><span></span>further in</div>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER ONE — the three doors the hall is built out of
+    ====================================================================== -->
+    <section class="ch ch--doors" aria-labelledby="ch-doors">
+      <div class="ch__air" aria-hidden="true"></div>
+      <header class="placard">
+        <span class="placard__no">Chamber one</span>
+        <h2 id="ch-doors">Three doors, one hall</h2>
+        <p>
+          Mozz does not host anything. It walks into the server you already run and reads
+          the library you already have — <strong>{sServers.value}</strong> {sServers.label}.
+        </p>
+      </header>
+
+      <div class="doors">
+        {SERVERS.map((s, i) => (
+          <article class="door" style={`--i:${i}; --dc:${PLAQUES[i].c}`}>
+            <span class="door__leaf" aria-hidden="true">
+              <span class="door__glow"></span>
+              <span class="door__mark"><ServerLogo name={s.name as any} size={52} brand /></span>
+              <span class="door__sill"></span>
+              <span class="door__pool"></span>
+            </span>
+            <h3>{s.name}</h3>
+            <p>{s.note}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="ch__foot">
+        Add more than one and they stop being separate servers. It is one shelf after that.
+      </p>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER TWO — the shelves, holding the real app
+    ====================================================================== -->
+    <section class="ch ch--shelf" aria-labelledby="ch-shelf">
+      <header class="placard placard--left">
+        <span class="placard__no">Chamber two</span>
+        <h2 id="ch-shelf">The shelf runs further than the room</h2>
+        <p>
+          The whole catalog is kept in a database on the device, so the wall is already
+          indexed before you reach for it. A hundred thousand tracks come back in about{' '}
+          <strong>{sSearch.value}</strong> — the list moves while you are still typing.
+        </p>
+      </header>
+
+      <div class="alcoves">
+        <span class="alcoves__board" aria-hidden="true"></span>
+        {SHELF_SHOTS.map((n, i) => (
+          <span class="alcove" style={`--i:${i}`}>
+            <span class="alcove__back" aria-hidden="true"></span>
+            <Shot name={n} sizes="(max-width: 720px) 44vw, 220px" class="alcove__shot" ariaHidden={i > 0} />
+            <span class="alcove__lip" aria-hidden="true"></span>
+          </span>
+        ))}
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER THREE — the stage you saw from the doorway, up close
+    ====================================================================== -->
+    <section class="ch ch--stage" aria-labelledby="ch-stage">
+      <div class="stage__cone" aria-hidden="true"></div>
+      <div class="stage__rings" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map((i) => <span style={`--i:${i}`}></span>)}
+      </div>
+      <div class="stage__dais" aria-hidden="true"></div>
+
+      <div class="stage__phone">
+        <Phone name="mozz-nowplaying" width={286} priority class="stage__device" />
+      </div>
+
+      <header class="placard placard--stage">
+        <span class="placard__no">Chamber three</span>
+        <h2 id="ch-stage">It plays before you have finished tapping</h2>
+        <p>
+          <strong>{sStart.value}</strong> {sStart.label}. The queue is gapless, so a record
+          that was mixed to run together still runs together, and there is a real equalizer
+          when you want to lean on it.
+        </p>
+      </header>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER FOUR — the crate room, where the doorway is closed
+    ====================================================================== -->
+    <section class="ch ch--crates" aria-labelledby="ch-crates">
+      <div class="crates__scene" aria-hidden="true">
+        <svg viewBox="0 0 1200 520" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <linearGradient id="pt-crfloor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1a1220" />
+              <stop offset="1" stop-color="#0a0710" />
+            </linearGradient>
+            <linearGradient id="pt-crlight" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffcf94" stop-opacity="0.28" />
+              <stop offset="1" stop-color="#ffcf94" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <rect width="1200" height="520" fill="url(#pt-crfloor)" />
+          <!-- the doorway, far away now and dimmed to nothing -->
+          <g opacity="0.9">
+            <rect x="548" y="120" width="104" height="212" rx="20" fill="#241834" />
+            <rect x="548" y="120" width="104" height="212" rx="20" fill="none" stroke="#5c4670" stroke-width="3" />
+            <rect x="560" y="132" width="80" height="188" rx="13" fill="#0e0916" />
+            <rect x="560" y="132" width="80" height="188" rx="13" fill="none" stroke="rgba(255,214,170,0.16)" stroke-width="1.5" />
+          </g>
+          <path d="M470,0 H730 L980,520 H220 Z" fill="url(#pt-crlight)" opacity="0.55" />
+          <rect y="392" width="1200" height="128" fill="#0a0710" opacity="0.55" />
+          <g stroke="rgba(255,205,150,0.10)" stroke-width="2">
+            <path d="M0,438 H1200" /><path d="M0,478 H1200" />
+          </g>
+          <!-- crates, lit, full of records that are already here -->
+          {[
+            { x: 120, y: 262, w: 300, h: 190, t: -3 },
+            { x: 468, y: 306, w: 262, h: 168, t: 2 },
+            { x: 782, y: 248, w: 318, h: 206, t: -2 },
+          ].map((c, i) => (
+            <g transform={`rotate(${c.t} ${c.x + c.w / 2} ${c.y + c.h / 2})`}>
+              {[0, 1, 2, 3].map((k) => {
+                const sw = c.w / 4.1;
+                return (
+                  <g transform={`rotate(${(k - 1.5) * 2.4} ${c.x + 14 + k * (c.w / 4.4) + sw / 2} ${c.y + 30})`}>
+                    <rect
+                      x={c.x + 14 + k * (c.w / 4.4)}
+                      y={c.y - sw + 34}
+                      width={sw}
+                      height={sw}
+                      rx="3"
+                      fill={SPINE[(i * 5 + k * 3) % SPINE.length]}
+                    />
+                    <rect
+                      x={c.x + 14 + k * (c.w / 4.4)}
+                      y={c.y - sw + 34}
+                      width={sw}
+                      height={sw}
+                      rx="3"
+                      fill="none"
+                      stroke="#120b18"
+                      stroke-width="2.5"
+                    />
+                  </g>
+                );
+              })}
+              <rect x={c.x} y={c.y + 26} width={c.w} height={c.h} rx="6" fill="#2a1b21" />
+              <rect x={c.x} y={c.y + 26} width={c.w} height={c.h * 0.15} rx="6" fill="#432c34" />
+              <g fill="none" stroke="#5c343d" stroke-width="6">
+                <path d={`M${c.x},${c.y + 26 + c.h * 0.5} H${c.x + c.w}`} />
+                <path d={`M${c.x},${c.y + 26 + c.h * 0.8} H${c.x + c.w}`} />
+              </g>
+              <ellipse cx={c.x + c.w / 2} cy={c.y + 26 + c.h + 8} rx={c.w / 1.9} ry="14" fill="#05030a" opacity="0.55" />
+            </g>
+          ))}
+        </svg>
+      </div>
+
+      <header class="placard placard--crates">
+        <span class="placard__no">Chamber four</span>
+        <h2 id="ch-crates">Nothing here needs the door open</h2>
+        <p>
+          Downloads were designed in, not bolted on. Take a record onto a plane and it
+          behaves exactly as it does at home — and because the catalog lives on the device,
+          browsing and searching still work with the server unreachable.
+        </p>
+      </header>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER FIVE — six niches carved into the wall
+    ====================================================================== -->
+    <section class="ch ch--niches" aria-labelledby="ch-niches">
+      <header class="placard">
+        <span class="placard__no">Chamber five</span>
+        <h2 id="ch-niches">Cut into the wall</h2>
+      </header>
+      <div class="niches">
+        {FEATURES.map((f, i) => (
+          <article class="niche" style={`--i:${i}`}>
+            <span class="niche__lamp" aria-hidden="true"></span>
+            <span class="niche__glyph" aria-hidden="true">
+              <svg viewBox="0 0 48 48" set:html={GLYPH[i]} />
+            </span>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAMBER SIX — the fixtures this building does not have
+    ====================================================================== -->
+    <section class="ch ch--absent" aria-labelledby="ch-absent">
+      <header class="placard placard--left">
+        <span class="placard__no">Chamber six</span>
+        <h2 id="ch-absent">The rooms we never built</h2>
+        <p>
+          Every other music app has these fittings somewhere in the floorplan.
+          There was never anywhere to put them here — <strong>{sFree.value}</strong> {sFree.label}.
+        </p>
+      </header>
+
+      <div class="absences">
+        {OWNERSHIP.map((o, i) => (
+          <article class="absence" style={`--i:${i}`}>
+            <span class="absence__fixture" aria-hidden="true">
+              <svg viewBox="0 0 48 48" set:html={ABSENT[i]} />
+            </span>
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <aside class="inscription">
+        <span class="inscription__chip" aria-hidden="true"></span>
+        <p>
+          One honest exception, carved where you can read it: to build a station, Mozz asks
+          MusicBrainz and ListenBrainz what sounds similar to an artist and title. That
+          request carries no name, no server address and no account, and Settings has a
+          switch that stops it.
+        </p>
+      </aside>
+    </section>
+
+    <!-- =====================================================================
+         THE WAY OUT — questions cut into the slab beside the door
+    ====================================================================== -->
+    <section class="ch ch--faq" aria-labelledby="ch-faq">
+      <header class="placard">
+        <span class="placard__no">Before you go</span>
+        <h2 id="ch-faq">Cut into the slab by the door</h2>
+      </header>
+      <div class="slab">
+        {FAQS.map((f) => (
+          <details class="q">
+            <summary>
+              <span>{f.q}</span>
+              <span class="q__mark" aria-hidden="true"></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- The doorway shrinks back to the size of a phone. -->
+    <footer class="out">
+      <div class="out__door" aria-hidden="true">
+        <span class="out__glow"></span>
+        <span class="out__frame">
+          <span class="out__screen"></span>
+        </span>
+      </div>
+      <Mark size={34} class="out__key" decorative />
+      <p class="out__word">{NAME}</p>
+      <p class="out__line">
+        One app for your music, wherever it lives. Free forever, open source under GPL-3.0
+        with an App Store Exception. iPhone and iPad today; an Apple TV app is planned.
+      </p>
+      <p class="out__links">
+        <a href={GITHUB_URL} rel="noopener">Source on GitHub</a>
+        <span aria-hidden="true">·</span>
+        {APP_STORE_URL
+          ? <a href={APP_STORE_URL}>Download on the App Store</a>
+          : <span class="out__pending">App Store listing pending</span>}
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  /* ---------------------------------------------------------------------
+     MATERIALS. One room, lit by one doorway, so the palette is a single
+     warm light falling through a cold dark space.
+  --------------------------------------------------------------------- */
+  .pt {
+    --ink-0: #05030a;
+    --ink-1: #0a0710;
+    --ink-2: #120c1a;
+    --wall: #1a1220;
+    --amber: #ffb257;
+    --amber-hi: #ffe0b0;
+    --amber-lo: #8f3f14;
+    --ember: #ff8a3d;
+    --red: #d6002b;
+    --red-body: #b00023;
+    --cream: #f8ede2;
+    --body: #cbb9ae;
+    --muted: #9b8a84;
+    --line: rgba(255, 214, 170, 0.14);
+
+    --bar: 41px;
+    --hero-h: max(calc(100svh - var(--bar)), 640px);
+    --portal-h: clamp(320px, 60svh, 660px);
+    --portal-w: calc(var(--portal-h) * 0.4615);
+    --floor: 66%;
+
+    background: var(--ink-1);
+    color: var(--body);
+    font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+    overflow-x: clip;
+  }
+
+  .pt :is(h1, h2, h3) {
+    font-family: 'Clash Display', system-ui, sans-serif;
+    color: var(--cream);
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+  .pt p { margin: 0; }
+  .pt strong { color: var(--amber-hi); font-weight: 700; }
+
+  /* =====================================================================
+     FIRST VIEWPORT
+  ===================================================================== */
+  .hero {
+    position: relative;
+    height: var(--hero-h);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--ink-1);
+  }
+
+  /* the air of the viewer's room */
+  .sky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(120% 78% at 50% 74%, rgba(255, 157, 61, 0.20), transparent 62%),
+      radial-gradient(60% 42% at 50% 62%, rgba(255, 207, 148, 0.16), transparent 70%),
+      linear-gradient(180deg, #07050d 0%, #0e0916 46%, #16101f 72%, #0a0710 100%);
+  }
+
+  .scenery {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* A real perspective plane: the boards converge on the doorway by
+     construction, at every viewport aspect. */
+  .floor {
+    position: absolute;
+    z-index: 2;
+    top: var(--floor);
+    left: 50%;
+    width: 460%;
+    height: calc(var(--hero-h) * 0.86);
+    transform-origin: 50% 0%;
+    transform: translateX(-50%) perspective(700px) rotateX(66deg);
+    background:
+      radial-gradient(52% 60% at 50% 0%, rgba(255, 178, 87, 0.26), transparent 66%),
+      linear-gradient(180deg, #150e1e 0%, #0b0711 58%, #07050c 100%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 56%, transparent 96%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 56%, transparent 96%);
+  }
+  .floor__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 118px, rgba(255, 205, 150, 0.16) 118px 120px),
+      repeating-linear-gradient(0deg, transparent 0 82px, rgba(255, 205, 150, 0.10) 82px 84px);
+  }
+
+  /* Everything that must line up with the doorway. */
+  .core {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: calc(100% - var(--floor));
+    transform: translateX(-50%);
+    width: var(--portal-w);
+    height: var(--portal-h);
+  }
+
+  .halo {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    transform: translate(-50%, -50%);
+    width: 320%;
+    height: 132%;
+    background: radial-gradient(closest-side, rgba(255, 178, 87, 0.46), rgba(255, 138, 61, 0.16) 54%, transparent 78%);
+    filter: blur(26px);
+    z-index: 0;
+  }
+
+  .portal {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .hall {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: clamp(18px, 5.4%, 34px);
+    box-shadow:
+      0 0 120px rgba(255, 157, 61, 0.42),
+      0 40px 140px rgba(0, 0, 0, 0.78);
+  }
+
+  .frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 3;
+    pointer-events: none;
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.65));
+  }
+
+  /* server marks, hung deep in the hall */
+  .plaques { position: absolute; inset: 0; z-index: 2; }
+  .plaque {
+    position: absolute;
+    left: var(--px);
+    top: var(--py);
+    transform: translate(-50%, -50%) scale(var(--ps));
+    display: grid;
+    place-items: center;
+    padding: 0.42rem;
+    border-radius: 10px;
+    background: rgba(10, 7, 16, 0.62);
+    border: 1px solid color-mix(in srgb, var(--pc) 46%, transparent);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--pc) 40%, transparent);
+  }
+  .plaque :global(svg) { display: block; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--pc) 70%, transparent)); }
+
+  /* the key in the lintel */
+  .lintel {
+    position: absolute;
+    z-index: 4;
+    top: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.34rem 0.8rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #1b1424, #090610);
+    border: 1px solid rgba(255, 214, 170, 0.22);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 214, 170, 0.16);
+    white-space: nowrap;
+  }
+  .lintel :global(.key) {
+    filter: drop-shadow(0 0 8px rgba(214, 0, 43, 0.85));
+  }
+  .lintel__word {
+    font-family: 'Clash Display', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--amber-hi);
+  }
+  .lintel__dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 10px var(--amber);
+  }
+
+  .sill {
+    position: absolute;
+    z-index: 4;
+    left: -9%;
+    right: -9%;
+    bottom: -1.1%;
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--amber-hi) 22%, #fff6e6 50%, var(--amber-hi) 78%, transparent);
+    box-shadow: 0 0 34px rgba(255, 207, 148, 0.75);
+  }
+
+  /* the light on the room's floor, and the viewer's own shadow in it */
+  .spill {
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240vw;
+    max-width: none;
+    height: calc(var(--hero-h) * 0.34);
+    display: block;
+    pointer-events: none;
+  }
+
+  /* sleeves that have already come through */
+  .pour {
+    position: absolute;
+    z-index: 6;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .tile {
+    position: absolute;
+    left: var(--tx);
+    top: var(--ty);
+    width: 112px;
+    height: 112px;
+    margin: -56px 0 0 -56px;
+    transform: rotate(var(--tr)) scale(var(--ts));
+    filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.6));
+  }
+  .tile__art {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    outline: 1px solid rgba(255, 214, 170, 0.22);
+    outline-offset: -1px;
+  }
+  .tile__disc {
+    position: absolute;
+    z-index: 1;
+    right: -34%;
+    top: 8%;
+    width: 84%;
+    height: 84%;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, var(--red) 0 17%, #191020 17% 22%, #241830 22% 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.14);
+  }
+
+  /* crates of downloads, cut by the frame */
+  .crate {
+    position: absolute;
+    z-index: 7;
+    bottom: -3%;
+    display: block;
+    pointer-events: none;
+    filter: drop-shadow(0 -10px 40px rgba(0, 0, 0, 0.6));
+  }
+  .crate--l { left: -6%; bottom: -7%; width: min(33vw, 430px); }
+  .crate--r { right: -7%; bottom: -6%; width: min(28vw, 360px); opacity: 0.9; }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    pointer-events: none;
+    background:
+      radial-gradient(140% 100% at 50% 56%, transparent 44%, rgba(4, 2, 8, 0.72) 100%),
+      linear-gradient(180deg, rgba(4, 2, 8, 0.66), transparent 26%);
+  }
+
+  .scroll {
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .scroll span {
+    width: 34px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber));
+  }
+
+  /* ---------------------------------------------------------------------
+     The words are part of the room: the headline is painted on the floor
+     inside the light the doorway throws, and the buttons are the desk
+     standing in the threshold.
+  --------------------------------------------------------------------- */
+  /* A pool of shadow on the floor so the words read over anything behind. */
+  .copy::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -8% -14% -12%;
+    background: radial-gradient(
+      62% 68% at 50% 56%,
+      rgba(7, 4, 12, 0.9),
+      rgba(7, 4, 12, 0.62) 52%,
+      rgba(7, 4, 12, 0) 78%
+    );
+  }
+  .copy {
+    position: absolute;
+    z-index: 8;
+    left: 50%;
+    bottom: clamp(2.1rem, 5vh, 3.2rem);
+    transform: translateX(-50%);
+    width: min(1020px, 92vw);
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.7rem, 1.6vh, 1.15rem);
+  }
+
+  .head {
+    display: grid;
+    gap: 0.06em;
+    font-weight: 600;
+    line-height: 0.94;
+    transform-origin: 50% 100%;
+    transform: perspective(1100px) rotateX(17deg);
+    text-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.55),
+      0 18px 46px rgba(0, 0, 0, 0.9),
+      0 0 62px rgba(255, 157, 61, 0.28);
+  }
+  .head__l1 {
+    font-size: clamp(1.6rem, 4.3vw, 3.5rem);
+    color: color-mix(in srgb, var(--cream) 76%, var(--amber));
+  }
+  .head__l2 {
+    font-size: clamp(2.1rem, 5.8vw, 4.9rem);
+    color: var(--cream);
+  }
+
+  .lede {
+    max-width: 58ch;
+    font-size: clamp(0.92rem, 1.18vw, 1.08rem);
+    line-height: 1.55;
+    color: var(--body);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.95);
+  }
+
+  .console {
+    position: relative;
+    width: min(600px, 94vw);
+    padding: clamp(0.7rem, 1.5vw, 0.95rem) clamp(0.75rem, 1.6vw, 1.05rem) 0.7rem;
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, rgba(38, 27, 48, 0.94), rgba(12, 8, 18, 0.96));
+    border: 1px solid rgba(255, 214, 170, 0.2);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 224, 176, 0.2),
+      0 26px 60px rgba(0, 0, 0, 0.75),
+      0 0 44px rgba(255, 157, 61, 0.16);
+    backdrop-filter: blur(3px);
+  }
+  .console__rail {
+    position: absolute;
+    left: 50%;
+    top: -9px;
+    transform: translateX(-50%);
+    width: 46%;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(255, 214, 170, 0.5), transparent);
+  }
+  .console__keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+
+  .store,
+  .src {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-radius: 12px;
+    font-family: 'Satoshi', system-ui, sans-serif;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .store {
+    padding: 0.62rem 1.15rem;
+    background: linear-gradient(180deg, var(--red) 0%, var(--red-body) 100%);
+    color: #fff4f5;
+    font-weight: 700;
+    font-size: 1.02rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 26px rgba(200, 0, 40, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+  .store svg { width: 22px; height: 22px; fill: currentColor; flex: none; }
+  .store span { display: grid; text-align: left; line-height: 1.06; }
+  .store small { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.86; font-weight: 500; }
+  .store.is-pending {
+    background: linear-gradient(180deg, rgba(200, 0, 40, 0.34), rgba(134, 0, 0, 0.4));
+    color: #ffd6dc;
+    border: 1px dashed rgba(255, 214, 220, 0.5);
+    box-shadow: none;
+    cursor: default;
+  }
+  .src {
+    padding: 0.62rem 1.05rem;
+    color: var(--amber-hi);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: rgba(255, 214, 170, 0.06);
+    border: 1px solid rgba(255, 214, 170, 0.28);
+  }
+  .src svg { width: 17px; height: 17px; fill: currentColor; }
+  .src:hover { background: rgba(255, 214, 170, 0.13); border-color: rgba(255, 214, 170, 0.5); }
+  .store:hover:not(.is-pending) { transform: translateY(-2px); }
+  .console :is(a):focus-visible {
+    outline: 2px solid var(--amber-hi);
+    outline-offset: 3px;
+  }
+
+  .console__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1rem;
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(255, 214, 170, 0.14);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .console__meta span { position: relative; }
+  .console__meta span + span::before {
+    content: '';
+    position: absolute;
+    left: -0.55rem;
+    top: 50%;
+    width: 3px; height: 3px;
+    margin-top: -1.5px;
+    border-radius: 50%;
+    background: var(--amber-lo);
+  }
+
+  /* =====================================================================
+     CHAMBERS — the same building, further in
+  ===================================================================== */
+  .ch {
+    position: relative;
+    padding: clamp(3.6rem, 9vh, 7.5rem) clamp(1.1rem, 5vw, 3.5rem);
+    isolation: isolate;
+  }
+  .ch__air {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(80% 60% at 50% 0%, rgba(255, 157, 61, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .pt .ch__foot {
+    max-width: 46ch;
+    margin: clamp(3rem, 7vh, 4.6rem) auto 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .placard {
+    position: relative;
+    max-width: 54ch;
+    margin: 0 auto clamp(2rem, 5vh, 3.4rem);
+    text-align: center;
+    display: grid;
+    gap: 0.85rem;
+    justify-items: center;
+  }
+  .placard--left { margin-inline: 0 auto; text-align: left; justify-items: start; }
+  .placard__no {
+    font-size: 0.66rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--amber-lo);
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(255, 214, 170, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 214, 170, 0.04);
+  }
+  .placard h2 {
+    font-size: clamp(1.7rem, 3.6vw, 2.9rem);
+    line-height: 1.02;
+    font-weight: 600;
+  }
+  .placard p {
+    font-size: clamp(0.95rem, 1.1vw, 1.06rem);
+    line-height: 1.6;
+    color: var(--body);
+  }
+
+  /* chamber one — three doors */
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.4rem, 4vw, 3.4rem);
+    max-width: 940px;
+    margin: 0 auto;
+    perspective: 1500px;
+    perspective-origin: 50% 40%;
+  }
+  .door {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    text-align: center;
+    transform-style: preserve-3d;
+  }
+  /* the leaf is a doorway of its own, echoing the big one */
+  .door__leaf {
+    position: relative;
+    display: block;
+    width: min(184px, 78%);
+    aspect-ratio: 9 / 16.5;
+    margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
+    border-radius: 20px 20px 4px 4px;
+    transform-origin: 50% 90%;
+    transform: rotateY(calc((var(--i) - 1) * -17deg));
+    background:
+      radial-gradient(120% 70% at 50% 78%, color-mix(in srgb, var(--dc) 22%, transparent), transparent 68%),
+      linear-gradient(180deg, #241832 0%, #150e1f 60%, #0c0813 100%);
+    border: 1px solid rgba(255, 214, 170, 0.2);
+    box-shadow:
+      inset 0 0 0 6px rgba(10, 7, 16, 0.7),
+      inset 0 26px 40px rgba(0, 0, 0, 0.7),
+      0 34px 60px rgba(0, 0, 0, 0.6);
+  }
+  .door__glow {
+    position: absolute;
+    left: 50%;
+    bottom: -6%;
+    transform: translateX(-50%);
+    width: 150%;
+    height: 62%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--dc) 38%, transparent), transparent 72%);
+    filter: blur(16px);
+    pointer-events: none;
+  }
+  .door__mark {
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+  }
+  .door__mark :global(svg) {
+    display: block;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--dc) 70%, transparent));
+  }
+  .door__sill {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 6px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--dc), transparent);
+    opacity: 0.85;
+  }
+  .door__pool {
+    position: absolute;
+    left: 50%;
+    bottom: -26px;
+    transform: translateX(-50%);
+    width: 132%;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--dc) 26%, transparent), transparent 74%);
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  .door h3 { font-size: 1.24rem; font-weight: 600; }
+  .door p { font-size: 0.92rem; line-height: 1.55; color: var(--muted); max-width: 24ch; }
+
+  /* chamber two — the shelf */
+  .ch--shelf { padding-bottom: clamp(4rem, 10vh, 8rem); }
+  .ch--shelf .placard { max-width: 50ch; }
+  .alcoves {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.6rem, 1.6vw, 1.3rem);
+    width: 124%;
+    margin-left: -12%;
+    padding: 0 0 34px;
+    align-items: flex-end;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .alcoves__board {
+    position: absolute;
+    left: 0; right: 0; bottom: 14px;
+    height: 20px;
+    background: linear-gradient(180deg, #6a4a52 0 3px, #3a2740 3px, #170f20 100%);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.7), 0 -2px 22px rgba(255, 178, 87, 0.16);
+  }
+  .alcove {
+    position: relative;
+    flex: 0 0 clamp(112px, 14vw, 196px);
+    padding: 20px 12px 34px;
+  }
+  .alcove__back {
+    position: absolute;
+    inset: 0 0 14px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #0a0610 0%, #150e1f 38%, #241831 100%);
+    box-shadow:
+      inset 0 18px 30px rgba(0, 0, 0, 0.9),
+      inset 1px 0 0 rgba(255, 214, 170, 0.07),
+      inset -1px 0 0 rgba(255, 214, 170, 0.07);
+  }
+  .alcove__back::after {
+    content: '';
+    position: absolute;
+    left: 14%; right: 14%;
+    top: 4px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(255, 224, 176, 0.75), transparent);
+    box-shadow: 0 4px 18px rgba(255, 178, 87, 0.55);
+  }
+  .alcove :global(picture) { position: relative; display: block; }
+  .alcove :global(.alcove__shot) {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 18px 26px rgba(0, 0, 0, 0.8), 0 0 26px rgba(255, 178, 87, 0.12);
+  }
+  .alcove__lip {
+    position: absolute;
+    left: 0; right: 0; bottom: 34px;
+    height: 5px;
+    background: linear-gradient(180deg, rgba(255, 214, 170, 0.32), transparent);
+  }
+
+  /* chamber three — the stage */
+  .ch--stage {
+    display: grid;
+    justify-items: center;
+    gap: clamp(1.6rem, 4vh, 3rem);
+    padding-top: clamp(4.5rem, 12vh, 9rem);
+    overflow: hidden;
+  }
+  .stage__cone {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: min(560px, 78vw);
+    height: 68%;
+    clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+    background: linear-gradient(180deg, rgba(255, 240, 210, 0.2), rgba(255, 178, 87, 0));
+    z-index: 0;
+    pointer-events: none;
+  }
+  .stage__rings {
+    position: absolute;
+    left: 50%;
+    top: clamp(300px, 46%, 520px);
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .stage__rings span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(180px + var(--i) * 190px);
+    height: calc(46px + var(--i) * 50px);
+    margin: calc((-23px - var(--i) * 25px)) 0 0 calc((-90px - var(--i) * 95px));
+    border: 1px solid rgba(255, 214, 170, calc(0.3 - var(--i) * 0.05));
+    border-radius: 50%;
+  }
+  .stage__dais {
+    position: absolute;
+    left: 50%;
+    top: clamp(320px, 48%, 540px);
+    transform: translate(-50%, -50%);
+    width: min(520px, 84vw);
+    height: 120px;
+    border-radius: 50%;
+    background:
+      radial-gradient(closest-side, rgba(255, 178, 87, 0.22), transparent 76%),
+      linear-gradient(180deg, #2c1c38, #150e1e);
+    box-shadow: 0 40px 70px rgba(0, 0, 0, 0.6);
+    z-index: 0;
+  }
+  .stage__phone { position: relative; z-index: 2; }
+  .stage__phone :global(.stage__device) {
+    --phone-bezel: linear-gradient(160deg, #4a3654, #17101f 62%);
+    --phone-rim: rgba(255, 214, 170, 0.34);
+    --phone-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), 0 0 70px rgba(255, 157, 61, 0.24);
+  }
+  .placard--stage { position: relative; z-index: 2; }
+
+  /* chamber four — the crate room */
+  .ch--crates { padding-inline: 0; }
+  .crates__scene {
+    position: relative;
+    width: 100%;
+    height: clamp(300px, 46vh, 480px);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 100%);
+  }
+  .crates__scene svg { display: block; width: 100%; height: 100%; }
+  .placard--crates {
+    max-width: 52ch;
+    margin-top: clamp(1.6rem, 4vh, 2.6rem);
+    padding-inline: clamp(1.1rem, 5vw, 3.5rem);
+  }
+
+  /* chamber five — niches */
+  .ch--niches {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 218px, rgba(255, 214, 170, 0.05) 218px 220px),
+      linear-gradient(180deg, #0a0710, #130d1c 40%, #0a0710);
+  }
+  .niches {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.9rem, 2vw, 1.5rem);
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+  .niche {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    padding: clamp(1.5rem, 2.6vw, 2.1rem) clamp(1.2rem, 2vw, 1.6rem) clamp(1.5rem, 2.6vw, 2rem);
+    border-radius: 8px 8px 2px 2px;
+    background: linear-gradient(180deg, #0b0712 0%, #150e1f 62%, #1b1327 100%);
+    box-shadow:
+      inset 0 20px 34px rgba(0, 0, 0, 0.85),
+      inset 0 -1px 0 rgba(255, 214, 170, 0.12),
+      inset 1px 0 0 rgba(255, 214, 170, 0.06),
+      inset -1px 0 0 rgba(255, 214, 170, 0.06);
+  }
+  .niche__lamp {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 66%;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(255, 224, 176, 0.8), transparent);
+    box-shadow: 0 6px 24px rgba(255, 178, 87, 0.5);
+  }
+  .niche__glyph { color: var(--amber); }
+  .niche__glyph svg { display: block; width: 42px; height: 42px; }
+  .niche h3 { font-size: 1.1rem; font-weight: 600; }
+  .niche p { font-size: 0.92rem; line-height: 1.6; color: var(--muted); }
+
+  /* chamber six — what was never built */
+  .ch--absent .placard { max-width: 48ch; margin-left: clamp(0rem, 4vw, 3rem); }
+  .absences {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.6rem);
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .absence {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    padding: 0.2rem 1.1rem 1.6rem 1.5rem;
+    border-left: 1px solid var(--line);
+  }
+  .absence::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 24px;
+    height: 1px;
+    background: var(--amber-lo);
+  }
+  .absence__fixture {
+    display: grid;
+    place-items: center;
+    width: 66px;
+    height: 66px;
+    border: 1px dashed rgba(255, 214, 170, 0.26);
+    border-radius: 50%;
+    color: rgba(255, 214, 170, 0.55);
+    margin-top: 0.6rem;
+  }
+  .absence__fixture svg { display: block; width: 40px; height: 40px; }
+  .absence h3 { font-size: 1.04rem; font-weight: 600; }
+  .absence p { font-size: 0.9rem; line-height: 1.58; color: var(--muted); }
+
+  .inscription {
+    position: relative;
+    max-width: 68ch;
+    margin: clamp(2rem, 5vh, 3.2rem) auto 0;
+    padding: 1.3rem 1.4rem 1.3rem 3.1rem;
+    border-left: 2px solid var(--amber-lo);
+    background: linear-gradient(90deg, rgba(255, 178, 87, 0.07), transparent 70%);
+  }
+  .inscription__chip {
+    position: absolute;
+    left: 1.1rem;
+    top: 1.55rem;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: var(--amber);
+    box-shadow: 0 0 12px var(--amber);
+  }
+  .inscription p { font-size: 0.94rem; line-height: 1.65; color: var(--body); }
+
+  /* the slab by the door */
+  .slab {
+    max-width: 860px;
+    margin: 0 auto;
+    border-top: 1px solid var(--line);
+  }
+  .q { border-bottom: 1px solid var(--line); }
+  .q summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 0.2rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Clash Display', system-ui, sans-serif;
+    font-size: clamp(1rem, 1.5vw, 1.16rem);
+    font-weight: 500;
+    color: var(--cream);
+  }
+  .q summary::-webkit-details-marker { display: none; }
+  .q summary:focus-visible { outline: 2px solid var(--amber-hi); outline-offset: 3px; }
+  .q__mark {
+    position: relative;
+    flex: none;
+    width: 14px; height: 14px;
+  }
+  .q__mark::before,
+  .q__mark::after {
+    content: '';
+    position: absolute;
+    background: var(--amber);
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+  .q__mark::before { left: 0; top: 6px; width: 14px; height: 2px; }
+  .q__mark::after { left: 6px; top: 0; width: 2px; height: 14px; }
+  .q[open] .q__mark::after { transform: scaleY(0); opacity: 0; }
+  .q p {
+    padding: 0 0 1.2rem;
+    max-width: 68ch;
+    font-size: 0.96rem;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  /* the way out */
+  .out {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    padding: clamp(4rem, 12vh, 8rem) 1.2rem clamp(3rem, 8vh, 5rem);
+    text-align: center;
+    background: radial-gradient(70% 60% at 50% 8%, rgba(255, 157, 61, 0.14), transparent 70%);
+  }
+  .out__door { position: relative; width: 74px; height: 152px; margin-bottom: 0.6rem; }
+  .out__glow {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 260%; height: 150%;
+    background: radial-gradient(closest-side, rgba(255, 178, 87, 0.34), transparent 74%);
+    filter: blur(10px);
+  }
+  .out__frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(160deg, #4a3654, #170f20);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  }
+  .out__screen {
+    position: absolute;
+    inset: 5px;
+    border-radius: 8px;
+    background:
+      radial-gradient(60% 44% at 50% 46%, rgba(255, 224, 176, 0.85), rgba(255, 138, 61, 0.4) 46%, #1b1226 82%);
+  }
+  .out :global(.out__key) { filter: drop-shadow(0 0 14px rgba(214, 0, 43, 0.7)); }
+  .out__word {
+    font-family: 'Clash Display', system-ui, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber-hi);
+  }
+  .out__line { max-width: 60ch; font-size: 0.9rem; line-height: 1.62; color: var(--muted); }
+  .out__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .out__links a { color: var(--amber-hi); text-decoration: none; border-bottom: 1px solid rgba(255, 214, 170, 0.32); }
+  .out__links a:hover { border-bottom-color: var(--amber-hi); }
+  .out__links a:focus-visible { outline: 2px solid var(--amber-hi); outline-offset: 3px; }
+  .out__pending { color: var(--muted); border-bottom: 1px dashed rgba(255, 214, 170, 0.28); }
+
+  /* =====================================================================
+     MOTION — the room breathes; nothing moves that would make it hard to
+     read, and all of it is opt-in.
+  ===================================================================== */
+  @media (prefers-reduced-motion: no-preference) {
+    .motes circle {
+      animation: pt-drift 13s ease-in-out infinite alternate;
+      animation-delay: var(--md, 0s);
+    }
+    .rings ellipse {
+      transform-origin: 180px 486px;
+      animation: pt-pulse 5.2s ease-out infinite;
+      animation-delay: var(--rd, 0s);
+    }
+    .disc { animation: pt-hum 7s ease-in-out infinite; transform-origin: 180px 478px; }
+    .sheen { animation: pt-sheen 11s ease-in-out infinite; }
+    .tile { animation: pt-float 9s ease-in-out infinite alternate; animation-delay: var(--td, 0s); }
+    .lintel :global(.key) { animation: pt-key 4.4s ease-in-out infinite; }
+    .stage__rings span { animation: pt-swell 6s ease-out infinite; animation-delay: calc(var(--i) * 0.5s); }
+  }
+
+  @keyframes pt-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-16px, -22px, 0); }
+  }
+  @keyframes pt-pulse {
+    0% { opacity: 0; transform: scale(0.72); }
+    18% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.14); }
+  }
+  @keyframes pt-hum {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  @keyframes pt-sheen {
+    0%, 68% { transform: translateX(0); }
+    100% { transform: translateX(760px); }
+  }
+  @keyframes pt-float {
+    from { transform: rotate(var(--tr)) scale(var(--ts)) translateY(0); }
+    to { transform: rotate(var(--tr)) scale(var(--ts)) translateY(-14px); }
+  }
+  @keyframes pt-key {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(214, 0, 43, 0.6)); }
+    50% { filter: drop-shadow(0 0 16px rgba(214, 0, 43, 1)); }
+  }
+  @keyframes pt-swell {
+    0% { opacity: 0.55; transform: scale(0.86); }
+    100% { opacity: 0; transform: scale(1.1); }
+  }
+
+  /* =====================================================================
+     SMALLER ROOMS — the world stays a world; it just gets narrower.
+  ===================================================================== */
+  @media (max-width: 1080px) {
+    .niches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .absences { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .doors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; max-width: 620px; }
+    .door { transform: none; }
+    .door__leaf { width: min(140px, 92%); }
+    .ch--shelf .placard,
+    .ch--absent .placard { margin-inline: auto; text-align: center; justify-items: center; }
+  }
+
+  @media (max-width: 820px) {
+    .pt { --portal-h: clamp(270px, 44svh, 460px); --floor: 60%; }
+    .head { transform: perspective(1400px) rotateX(11deg); }
+    .crate--l { width: 46vw; left: -17%; bottom: -9%; }
+    .crate--r { width: 40vw; right: -18%; bottom: -8%; opacity: 0.6; }
+    .scroll { display: none; }
+    .alcoves { width: 160%; margin-left: -30%; }
+  }
+
+  @media (max-width: 640px) {
+    .pt {
+      --hero-h: max(calc(100svh - var(--bar)), 600px);
+      --portal-h: clamp(240px, 43svh, 400px);
+      --floor: 58%;
+    }
+    .copy { gap: 0.5rem; bottom: 0.75rem; }
+    .tile { width: 84px; height: 84px; margin: -42px 0 0 -42px; }
+    .tile:nth-child(n + 6) { display: none; }
+    .lede { font-size: 0.86rem; line-height: 1.45; max-width: 38ch; }
+    .console { width: 100%; padding: 0.55rem 0.6rem 0.5rem; border-radius: 14px; }
+    .console__keys { gap: 0.45rem; }
+    .store { flex: 1 1 auto; justify-content: center; padding: 0.5rem 0.7rem; font-size: 0.92rem; }
+    .src { flex: 1 1 auto; justify-content: center; padding: 0.5rem 0.7rem; font-size: 0.86rem; }
+    .console__meta { margin-top: 0.5rem; padding-top: 0.45rem; font-size: 0.56rem; gap: 0.25rem 0.7rem; }
+    .plaque { padding: 0.3rem; }
+    .stage__dais { width: 92vw; }
+    .niches { grid-template-columns: 1fr; }
+    .absences { grid-template-columns: 1fr; }
+    .doors { gap: 0.6rem; }
+    .door__leaf { width: min(104px, 96%); }
+    .door p { font-size: 0.82rem; }
+  }
+
+  @media (max-width: 420px) {
+    .head__l1 { font-size: 1.45rem; }
+    .head__l2 { font-size: 1.95rem; }
+    .console__meta span:nth-child(n + 3) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pt *,
+    .pt *::before,
+    .pt *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>

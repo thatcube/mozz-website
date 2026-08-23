@@ -1,0 +1,1881 @@
+---
+/**
+ * VARIANT — SUBWAY  ·  "Offline Night Train"
+ *
+ * THESIS
+ * Every other page argues about servers. This one argues about a moment: the
+ * train pulls out of the station, the bars die, and the record keeps playing.
+ * That is the whole product in one image, so the page is built as one image —
+ * a night carriage in strong one-point perspective, drawn entirely in SVG,
+ * with the interface printed into the carriage itself.
+ *
+ * COMPOSITION
+ * The hero is a single cinematic plate that fills the viewport. One enormous
+ * window runs three quarters of the way across it. Outside, the station the
+ * listener just left is a shrinking rectangle of warm light; nearer the camera
+ * the tunnel has already swallowed the signal. Inside, the downloaded records
+ * are lit posters above the windows and a lamp run overhead. The playback UI
+ * is not a phone pasted on the right — it is the size of a carriage door,
+ * rendered as the reflection standing in the glass. The headline lives on an
+ * illuminated transit panel bolted into the wall, not floating above the art.
+ *
+ * The rest of the page is the rest of the journey: platform, tunnel, the stops
+ * along the line, the departure board, the notices by the doors, the network
+ * map, passenger information, terminus. Sections are places, not cards.
+ *
+ * TRUTH
+ * Every claim comes from src/data/site.ts. No invented artists, albums, track
+ * times, ratings or counts appear anywhere — the album art on this page is
+ * abstract on purpose, and the "now playing" title describes the idea rather
+ * than pretending to be a record.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  APP_STORE_URL,
+  GITHUB_URL,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+} from '../../data/site';
+
+/* ---------------------------------------------------------------------------
+   PERSPECTIVE
+   One vanishing point, one helper. `on(nearY, x)` takes a height measured on
+   the near plane (the left edge of the frame, x = 0) and returns where that
+   same height sits at depth x. `band()` turns two near-plane heights into the
+   quad they sweep out between two depths — which is every surface in the
+   carriage: ceiling, poster rail, window, seat back, floor.
+--------------------------------------------------------------------------- */
+const R = (n: number) => Math.round(n * 10) / 10;
+
+const VP = { x: 1370, y: 470 };
+const on = (nearY: number, x: number) => R(nearY + (VP.y - nearY) * (x / VP.x));
+const band = (a: number, b: number, x0 = -20, x1 = 1150) =>
+  `${x0},${on(a, x0)} ${x1},${on(a, x1)} ${x1},${on(b, x1)} ${x0},${on(b, x0)}`;
+/** How much a near-plane length has shrunk by the time it reaches depth x. */
+const sc = (x: number) => R((VP.x - x) / VP.x * 100) / 100;
+
+/** Near-plane heights, in viewBox units, measured at x = 0. */
+const Y = {
+  ceil: 100,
+  postTop: 120,
+  postBot: 248,
+  winTop: 276,
+  winBot: 760,
+  seatTop: 806,
+  seatBase: 952,
+  floor: 1012,
+};
+
+const FAR = 1150;   // where the side wall meets the end vestibule
+const END = 1292;   // the far face of the vestibule
+
+/* The end wall and the near right-hand wall, which closes the composition. */
+const endWall = `${FAR},${on(Y.ceil, FAR)} ${END},${on(Y.ceil, END)} ${END},${on(Y.floor, END)} ${FAR},${on(Y.floor, FAR)}`;
+const rightWall = `${END},${on(Y.ceil, END)} 1620,140 1620,920 ${END},${on(Y.floor, END)}`;
+const ceilZone = `-20,-40 1620,-40 1620,140 ${END},${on(Y.ceil, END)} -20,${on(Y.ceil, -20)}`;
+const floorZone = `-20,1040 1620,1040 1620,920 ${END},${on(Y.floor, END)} -20,${on(Y.floor, -20)}`;
+
+/* Downloaded records, lit like advertising above the windows. Widths decay
+   with depth because the poster rail is running away from the camera. */
+const POSTERS = [
+  { x0: -20, x1: 250, c: 0 },
+  { x0: 292, x1: 512, c: 1 },
+  { x0: 548, x1: 726, c: 2 },
+  { x0: 758, x1: 900, c: 3 },
+  { x0: 928, x1: 1044, c: 4 },
+];
+
+/** Strip-light run down the middle of the ceiling. */
+const LAMPS = [-30, 130, 300, 462, 606, 730, 838, 928, 1002, 1062];
+
+/** Tunnel ribs, receding toward the mouth we came in by. */
+const RIBS = [70, 130, 210, 310, 430, 570, 730, 910, 1110];
+
+/** Mullions dividing the long window. */
+const MULLIONS = [128, 372, 578, 752, 896, 1014];
+
+/* ---------------------------------------------------------------------------
+   COVER ART
+   Abstract, generated, never a real record. Six palettes, six constructions.
+--------------------------------------------------------------------------- */
+type Kind = 'arc' | 'bars' | 'orbit' | 'wave' | 'grid' | 'split';
+
+const COVERS: { kind: Kind; a: string; b: string }[] = [
+  { kind: 'orbit', a: '#ffb347', b: '#2a1b3d' },
+  { kind: 'bars', a: '#63d3ea', b: '#0d2733' },
+  { kind: 'arc', a: '#ff5f7e', b: '#31121f' },
+  { kind: 'wave', a: '#4ee0a4', b: '#0f2a24' },
+  { kind: 'grid', a: '#c9d4ff', b: '#171a33' },
+  { kind: 'split', a: '#ffd9a0', b: '#331f12' },
+];
+
+function cover(i: number): string {
+  const { kind, a, b } = COVERS[i % COVERS.length];
+  const base = `<rect width="100" height="100" fill="${b}"/>`;
+  if (kind === 'orbit')
+    return `${base}<circle cx="50" cy="50" r="31" fill="none" stroke="${a}" stroke-width="3" opacity=".85"/><circle cx="50" cy="50" r="19" fill="none" stroke="${a}" stroke-width="3" opacity=".5"/><circle cx="50" cy="50" r="6" fill="${a}"/>`;
+  if (kind === 'bars')
+    return `${base}<g fill="${a}"><rect x="16" y="52" width="9" height="30"/><rect x="30" y="34" width="9" height="48"/><rect x="44" y="20" width="9" height="62"/><rect x="58" y="42" width="9" height="40"/><rect x="72" y="60" width="9" height="22"/></g>`;
+  if (kind === 'arc')
+    return `${base}<path d="M8 84a42 42 0 0 1 84 0" fill="none" stroke="${a}" stroke-width="7"/><path d="M26 84a24 24 0 0 1 48 0" fill="none" stroke="${a}" stroke-width="4" opacity=".55"/>`;
+  if (kind === 'wave')
+    return `${base}<path d="M0 58q12-24 25 0t25 0 25 0 25 0" fill="none" stroke="${a}" stroke-width="4"/><path d="M0 74q12-24 25 0t25 0 25 0 25 0" fill="none" stroke="${a}" stroke-width="4" opacity=".45"/>`;
+  if (kind === 'grid')
+    return `${base}<g fill="${a}"><rect x="16" y="16" width="20" height="20"/><rect x="42" y="16" width="20" height="20" opacity=".45"/><rect x="68" y="16" width="14" height="20" opacity=".7"/><rect x="16" y="42" width="20" height="20" opacity=".6"/><rect x="42" y="42" width="40" height="20"/><rect x="16" y="68" width="66" height="14" opacity=".35"/></g>`;
+  return `${base}<path d="M0 100 100 0v100Z" fill="${a}" opacity=".9"/><path d="M0 100 62 38 100 76v24Z" fill="${b}" opacity=".55"/>`;
+}
+
+/* ---------------------------------------------------------------------------
+   THE SAME CARRIAGE, STOOD UP
+   A phone is not a letterbox, so the portrait plate is a second drawing rather
+   than the wide one squeezed. Same vanishing-point maths, taller near plane,
+   fewer objects — the window still runs the width of the frame.
+--------------------------------------------------------------------------- */
+const VPT = { x: 330, y: 640 };
+const onT = (nearY: number, x: number) => R(nearY + (VPT.y - nearY) * (x / VPT.x));
+const bandT = (a: number, b: number, x0 = -20, x1 = 280) =>
+  `${x0},${onT(a, x0)} ${x1},${onT(a, x1)} ${x1},${onT(b, x1)} ${x0},${onT(b, x0)}`;
+const scT = (x: number) => R((VPT.x - x) / VPT.x * 100) / 100;
+
+const T = {
+  ceil: 150,
+  postTop: 176,
+  postBot: 322,
+  winTop: 356,
+  winBot: 986,
+  seatTop: 1030,
+  seatBase: 1210,
+  floor: 1330,
+};
+
+const TFAR = 280;
+const TEND = 322;
+const tEndWall = `${TFAR},${onT(T.ceil, TFAR)} ${TEND},${onT(T.ceil, TEND)} ${TEND},${onT(T.floor, TEND)} ${TFAR},${onT(T.floor, TFAR)}`;
+const tRightWall = `${TEND},${onT(T.ceil, TEND)} 580,430 580,1010 ${TEND},${onT(T.floor, TEND)}`;
+const tCeilZone = `-20,-40 580,-40 580,430 ${TEND},${onT(T.ceil, TEND)} -20,${onT(T.ceil, -20)}`;
+const tFloorZone = `-20,1540 580,1540 580,1010 ${TEND},${onT(T.floor, TEND)} -20,${onT(T.floor, -20)}`;
+
+const TPOSTERS = [
+  { x0: -20, x1: 112, c: 0 },
+  { x0: 142, x1: 230, c: 2 },
+  { x0: 248, x1: 278, c: 3 },
+];
+const TLAMPS = [-10, 88, 170, 232, 274, 302];
+const TRIBS = [50, 100, 170, 260, 370, 500];
+const TMULLIONS = [96, 200, 262];
+
+/** Short, plain versions of the server notes, for the platform sign. */
+const SERVER_LINE: Record<string, string> = {
+  Plex: 'Sign in and pick a library',
+  Jellyfin: 'Quick Connect or a password',
+  Navidrome: 'Any Subsonic server works',
+};
+---
+
+<Layout
+  title="Mozz — the signal ends at the tunnel, your music doesn't"
+  description="A free, open source music player for your own Plex, Jellyfin or Navidrome library. Download a record and it keeps playing when the bars run out. No account, no tracking, no subscription."
+  themeColor="#04060b"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
+    />
+  </Fragment>
+
+  <main class="sub">
+    <VariantBar slug="subway" tone="neutral" />
+
+    <!-- ====================================================================
+         HERO — the carriage. One plate, drawn to the edges of the viewport.
+         The interface is architecture here: signage, reflection, panel.
+    ==================================================================== -->
+    <header class="hero">
+      <div class="hero__stage" aria-hidden="true">
+
+        <!-- WIDE PLATE ------------------------------------------------- -->
+        <svg class="art art--wide" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sw-ceil" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#070b14" />
+              <stop offset="1" stop-color="#111a2b" />
+            </linearGradient>
+            <linearGradient id="sw-floor" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#070a12" />
+              <stop offset=".72" stop-color="#0e1522" />
+              <stop offset="1" stop-color="#1a2437" />
+            </linearGradient>
+            <linearGradient id="sw-wall" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#0b111d" />
+              <stop offset="1" stop-color="#162034" />
+            </linearGradient>
+            <linearGradient id="sw-seat" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#26314e" />
+              <stop offset="1" stop-color="#0c1220" />
+            </linearGradient>
+            <linearGradient id="sw-night" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#010205" />
+              <stop offset=".62" stop-color="#050a14" />
+              <stop offset="1" stop-color="#0d1626" />
+            </linearGradient>
+            <radialGradient id="sw-station" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="#ffd9a0" stop-opacity=".95" />
+              <stop offset=".38" stop-color="#ffb347" stop-opacity=".38" />
+              <stop offset="1" stop-color="#ffb347" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="sw-lamp" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="#dbe8ff" stop-opacity=".55" />
+              <stop offset="1" stop-color="#dbe8ff" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="sw-spill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffd9a0" stop-opacity=".22" />
+              <stop offset="1" stop-color="#ffd9a0" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="sw-sheen" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#9fc4ff" stop-opacity=".16" />
+              <stop offset=".45" stop-color="#9fc4ff" stop-opacity="0" />
+              <stop offset="1" stop-color="#9fc4ff" stop-opacity=".07" />
+            </linearGradient>
+            <linearGradient id="sw-right" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#1a2740" />
+              <stop offset=".45" stop-color="#0d1524" />
+              <stop offset="1" stop-color="#060a12" />
+            </linearGradient>
+            <linearGradient id="sw-doorglass" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffd9a0" stop-opacity=".26" />
+              <stop offset=".55" stop-color="#7fa6e0" stop-opacity=".14" />
+              <stop offset="1" stop-color="#7fa6e0" stop-opacity=".03" />
+            </linearGradient>
+            {COVERS.map((c, i) => (
+              <linearGradient id={'sw-p' + i} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color={c.a} stop-opacity=".92" />
+                <stop offset="1" stop-color={c.b} stop-opacity=".95" />
+              </linearGradient>
+            ))}
+            <clipPath id="sw-win">
+              <polygon points={band(Y.winTop, Y.winBot)} />
+            </clipPath>
+          </defs>
+
+          <!-- night beyond every surface -->
+          <rect width="1600" height="1000" fill="#04060b" />
+
+          <!-- the long window, and the world going past it ---------------- -->
+          <g clip-path="url(#sw-win)">
+            <rect x="-20" y="200" width="1660" height="500" fill="url(#sw-night)" />
+            <!-- tunnel wall: close, curved, lit only by us -->
+            <path d="M-20 246 Q 420 320 1218 448 L1218 496 Q 420 640 -20 792 Z" fill="#0a1120" opacity=".9" />
+            <path d="M-20 246 Q 420 320 1218 448" fill="none" stroke="#33456a" stroke-width="2.5" opacity=".7" />
+            <path d="M-20 792 Q 420 640 1218 496" fill="none" stroke="#2a3a5c" stroke-width="2" opacity=".6" />
+            <!-- the station we just left, shrinking -->
+            <circle cx="1218" cy="472" r="190" fill="url(#sw-station)" />
+            <rect x="1150" y="455" width="132" height="34" fill="#ffcf8a" opacity=".5" />
+            <rect x="1150" y="447" width="132" height="5" fill="#fff0d4" opacity=".8" />
+            <!-- tunnel ribs racing back toward it -->
+            {RIBS.map((s, i) => (
+              <path
+                d={'M' + (1218 - s) + ',' + R(472 - s * 0.52) + ' Q' + R(1218 - s * 0.82) + ',472 ' + (1218 - s) + ',' + R(472 + s * 0.52)}
+                fill="none"
+                stroke="#6f89b8"
+                stroke-width={R(1 + i * 0.55)}
+                opacity={R(0.5 - i * 0.04)}
+              />
+            ))}
+            <!-- cable runs and the odd safety lamp -->
+            <path d="M-20 392 Q 500 430 1218 462" fill="none" stroke="#2b3a55" stroke-width="3" opacity=".7" />
+            <path d="M-20 470 Q 520 486 1218 474" fill="none" stroke="#2b3a55" stroke-width="2.4" opacity=".55" />
+            <path d="M-20 560 Q 540 528 1218 484" fill="none" stroke="#243149" stroke-width="2" opacity=".5" />
+            {[40, 300, 600, 840, 1010].map((x, i) => (
+              <circle cx={x} cy={R(430 + i * 9)} r={R(7 - i * 1.1)} fill="#ff9d2e" opacity=".8" />
+            ))}
+            <!-- speed streaks; motion only when motion is welcome -->
+            <g class="streaks" stroke="#8fb4ee" stroke-linecap="round">
+              {[318, 366, 512, 604, 652].map((y, i) => (
+                <line
+                  class={'streak streak--' + i}
+                  x1={R(-300 + i * 268)} y1={y} x2={R(-20 + i * 268)} y2={R(y + 4)}
+                  stroke-width={R(3 - i * 0.3)}
+                  opacity={R(0.42 - i * 0.045)}
+                />
+              ))}
+            </g>
+            <!-- glass: sheen, and the lamp run standing in the reflection -->
+            <polygon points={band(Y.winTop, Y.winBot)} fill="url(#sw-sheen)" />
+            {LAMPS.map((x) => (
+              <rect
+                x={R(x - 62 * sc(x))} y={R(on(Y.winTop + 150, x) - 5 * sc(x))}
+                width={R(124 * sc(x))} height={R(10 * sc(x))}
+                rx={R(5 * sc(x))} fill="#cfe0ff" opacity=".13"
+              />
+            ))}
+          </g>
+          <polygon points={band(Y.winTop, Y.winBot)} fill="none" stroke="#3c4d6d" stroke-width="2" />
+
+          <!-- mullions -->
+          {MULLIONS.map((x) => (
+            <rect
+              x={R(x - 7 * sc(x))} y={on(Y.winTop, x)}
+              width={R(14 * sc(x))} height={R(on(Y.winBot, x) - on(Y.winTop, x))}
+              fill="#151d2e" stroke="#31405c" stroke-width="1"
+            />
+          ))}
+
+          <!-- ceiling and floor close the box -->
+          <polygon points={ceilZone} fill="url(#sw-ceil)" />
+          <polygon points={floorZone} fill="url(#sw-floor)" />
+          <polygon points={rightWall} fill="url(#sw-right)" />
+          <!-- the doors on our own side, closed, station light still on them -->
+          <polygon points="1344.5,399.6 1390.4,356.3 1390.4,626.7 1344.5,568" fill="#0f1828" stroke="#2c3c5c" stroke-width="1.4" />
+          <polygon points="1400.2,347 1446.2,303.8 1446.2,698 1400.2,639.3" fill="#0f1828" stroke="#2c3c5c" stroke-width="1.4" />
+          <polygon points="1351,415 1384,384 1384,497 1351,486" fill="url(#sw-doorglass)" />
+          <polygon points="1406,362 1440,331 1440,566 1406,548" fill="url(#sw-doorglass)" />
+          <!-- hand poles, catching the strip light -->
+          <line x1="1488.8" y1="263.6" x2="1488.8" y2="751.4" stroke="#54688d" stroke-width="7" opacity=".55" />
+          <line x1="1486" y1="263.6" x2="1486" y2="751.4" stroke="#a8c2ee" stroke-width="2" opacity=".38" />
+          <line x1="1574.1" y1="183.3" x2="1574.1" y2="861.3" stroke="#54688d" stroke-width="9" opacity=".4" />
+          <polygon points={rightWall} fill="none" stroke="#243252" stroke-width="1.5" />
+
+          <!-- the vestibule at the end, doors lit from the platform -->
+          <polygon points={endWall} fill="#0c1322" />
+          <rect x="1176" y="424" width="38" height="118" rx="3" fill="#101a2c" stroke="#33456a" stroke-width="1.2" />
+          <rect x="1222" y="424" width="38" height="118" rx="3" fill="#101a2c" stroke="#33456a" stroke-width="1.2" />
+          <rect x="1180" y="430" width="30" height="54" fill="#ffcf8a" opacity=".3" />
+          <rect x="1226" y="430" width="30" height="54" fill="#ffcf8a" opacity=".3" />
+          <polygon points={endWall} fill="none" stroke="#2b3a58" stroke-width="1.5" />
+
+          <!-- upper wall, poster rail, lower wall -->
+          <polygon points={band(Y.ceil, Y.postTop)} fill="#0b111d" />
+          <polygon points={band(Y.postTop, Y.postBot)} fill="url(#sw-wall)" />
+          <polygon points={band(Y.postBot, Y.winTop)} fill="#0a1018" />
+          <polygon points={band(Y.winBot, Y.floor)} fill="url(#sw-wall)" />
+          <polygon points={band(Y.seatTop, Y.seatBase)} fill="url(#sw-seat)" />
+          <polygon points={band(Y.seatTop, Y.seatTop + 12)} fill="#c80028" opacity=".5" />
+
+          <!-- seat divisions, running away -->
+          {[70, 300, 500, 664, 796, 900, 984].map((x) => (
+            <line
+              x1={x} y1={on(Y.seatTop, x)} x2={x} y2={on(Y.seatBase, x)}
+              stroke="#050810" stroke-width={R(6 * sc(x))} opacity=".8"
+            />
+          ))}
+          <!-- cushion lip, and the light the strip run drops on the floor -->
+          <polygon points={band(Y.seatBase - 30, Y.seatBase)} fill="#2a3550" />
+          <polygon points={band(Y.seatBase - 30, Y.seatBase - 22)} fill="#9fc4ff" opacity=".1" />
+          {LAMPS.map((x) => (
+            <ellipse
+              cx={x} cy={on(Y.floor + 46, x)}
+              rx={R(168 * sc(x))} ry={R(30 * sc(x))}
+              fill="url(#sw-lamp)" opacity=".45"
+            />
+          ))}
+
+          <!-- downloaded records, lit above the windows -->
+          {POSTERS.map((p) => {
+            const cx = (p.x0 + p.x1) / 2;
+            const top = on(Y.postTop + 14, cx);
+            const bot = on(Y.postBot - 14, cx);
+            const rr = R(((bot - top) / 2) * 0.58);
+            const tx = R(p.x1 - 30 * sc(p.x1));
+            return (
+              <g>
+                <polygon points={band(Y.postBot - 14, Y.postBot + 52, p.x0 + 16, p.x1 - 16)} fill="url(#sw-spill)" />
+                <polygon points={band(Y.postTop + 6, Y.postBot - 6, p.x0 + 8, p.x1 - 8)} fill="#060a12" stroke="#2c3b58" stroke-width="1.4" />
+                <polygon points={band(Y.postTop + 14, Y.postBot - 14, p.x0 + 16, p.x1 - 16)} fill={'url(#sw-p' + p.c + ')'} />
+                <circle cx={cx} cy={R((top + bot) / 2)} r={rr} fill="none" stroke="#04060b" stroke-width={R(rr * 0.22)} opacity=".55" />
+                <circle cx={cx} cy={R((top + bot) / 2)} r={R(rr * 0.3)} fill="#04060b" opacity=".7" />
+                <circle cx={tx} cy={R(bot - 16 * sc(p.x1))} r={R(11 * sc(p.x1))} fill="#4ee0a4" />
+                <path
+                  d={'M' + R(tx - 5 * sc(p.x1)) + ',' + R(bot - 16 * sc(p.x1)) + ' l' + R(3.5 * sc(p.x1)) + ',' + R(4 * sc(p.x1)) + ' l' + R(6 * sc(p.x1)) + ',-' + R(7.5 * sc(p.x1))}
+                  fill="none" stroke="#04231a" stroke-width={R(2.6 * sc(p.x1))} stroke-linecap="round" stroke-linejoin="round"
+                />
+              </g>
+            );
+          })}
+
+          <!-- strip lights -->
+          {LAMPS.map((x) => (
+            <g>
+              <ellipse cx={x} cy={on(40, x)} rx={R(150 * sc(x))} ry={R(60 * sc(x))} fill="url(#sw-lamp)" />
+              <rect
+                x={R(x - 66 * sc(x))} y={R(on(40, x) - 8 * sc(x))}
+                width={R(132 * sc(x))} height={R(16 * sc(x))}
+                rx={R(8 * sc(x))} fill="#eef4ff" opacity=".9"
+              />
+            </g>
+          ))}
+
+          <!-- stanchions -->
+          {[884, 1042].map((x) => (
+            <rect
+              x={R(x - 5 * sc(x))} y={on(Y.ceil + 10, x)}
+              width={R(10 * sc(x))} height={R(on(Y.floor, x) - on(Y.ceil + 10, x))}
+              fill="#2b3549" opacity=".9"
+            />
+          ))}
+          <rect x="1466" y="-20" width="26" height="1040" fill="#141c2c" />
+          <rect x="1466" y="-20" width="6" height="1040" fill="#28344c" />
+        </svg>
+
+        <!-- PORTRAIT PLATE ---------------------------------------------- -->
+        <svg class="art art--tall" viewBox="0 0 560 1500" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sw-t-ceil" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#070b14" />
+              <stop offset="1" stop-color="#111a2b" />
+            </linearGradient>
+            <linearGradient id="sw-t-floor" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#070a12" />
+              <stop offset="1" stop-color="#1a2437" />
+            </linearGradient>
+            <linearGradient id="sw-t-wall" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#0b111d" />
+              <stop offset="1" stop-color="#162034" />
+            </linearGradient>
+            <linearGradient id="sw-t-night" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#010205" />
+              <stop offset="1" stop-color="#0d1626" />
+            </linearGradient>
+            <radialGradient id="sw-t-station" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="#ffd9a0" stop-opacity=".95" />
+              <stop offset=".4" stop-color="#ffb347" stop-opacity=".34" />
+              <stop offset="1" stop-color="#ffb347" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="sw-t-lamp" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="#dbe8ff" stop-opacity=".5" />
+              <stop offset="1" stop-color="#dbe8ff" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="sw-t-sheen" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#9fc4ff" stop-opacity=".15" />
+              <stop offset=".5" stop-color="#9fc4ff" stop-opacity="0" />
+              <stop offset="1" stop-color="#9fc4ff" stop-opacity=".08" />
+            </linearGradient>
+            {COVERS.map((c, i) => (
+              <linearGradient id={'sw-t-p' + i} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color={c.a} stop-opacity=".92" />
+                <stop offset="1" stop-color={c.b} stop-opacity=".95" />
+              </linearGradient>
+            ))}
+            <clipPath id="sw-t-win">
+              <polygon points={bandT(T.winTop, T.winBot)} />
+            </clipPath>
+          </defs>
+
+          <rect width="560" height="1500" fill="#04060b" />
+
+          <g clip-path="url(#sw-t-win)">
+            <rect x="-20" y="300" width="620" height="720" fill="url(#sw-t-night)" />
+            <circle cx="292" cy="642" r="150" fill="url(#sw-t-station)" />
+            <rect x="262" y="626" width="60" height="30" fill="#ffcf8a" opacity=".45" />
+            <rect x="262" y="620" width="60" height="4" fill="#fff0d4" opacity=".8" />
+            {TRIBS.map((s, i) => (
+              <path
+                d={'M' + R(292 - s) + ',' + R(642 - s * 0.6) + ' Q' + R(292 - s * 0.8) + ',642 ' + R(292 - s) + ',' + R(642 + s * 0.6)}
+                fill="none"
+                stroke="#6f89b8"
+                stroke-width={R(1 + i * 0.6)}
+                opacity={R(0.46 - i * 0.05)}
+              />
+            ))}
+            <path d="M-20 520 Q 150 580 292 630" fill="none" stroke="#2b3a55" stroke-width="3" opacity=".65" />
+            <path d="M-20 700 Q 160 690 292 652" fill="none" stroke="#243149" stroke-width="2.2" opacity=".5" />
+            {[20, 120, 210, 262].map((x, i) => (
+              <circle cx={x} cy={R(600 + i * 12)} r={R(6 - i * 1.1)} fill="#ff9d2e" opacity=".8" />
+            ))}
+            <g class="streaks" stroke="#8fb4ee" stroke-linecap="round">
+              {[430, 520, 760, 860].map((y, i) => (
+                <line
+                  class={'streak streak--' + i}
+                  x1="-180" y1={y} x2="40" y2={R(y + 5)}
+                  stroke-width={R(2.4 - i * 0.3)}
+                  opacity={R(0.28 - i * 0.04)}
+                />
+              ))}
+            </g>
+            <polygon points={bandT(T.winTop, T.winBot)} fill="url(#sw-t-sheen)" />
+            {TLAMPS.map((x) => (
+              <rect
+                x={R(x - 40 * scT(x))} y={R(onT(T.winTop + 210, x) - 5 * scT(x))}
+                width={R(80 * scT(x))} height={R(10 * scT(x))}
+                rx={R(5 * scT(x))} fill="#cfe0ff" opacity=".12"
+              />
+            ))}
+          </g>
+          <polygon points={bandT(T.winTop, T.winBot)} fill="none" stroke="#3c4d6d" stroke-width="2" />
+
+          {TMULLIONS.map((x) => (
+            <rect
+              x={R(x - 6 * scT(x))} y={onT(T.winTop, x)}
+              width={R(12 * scT(x))} height={R(onT(T.winBot, x) - onT(T.winTop, x))}
+              fill="#151d2e" stroke="#31405c" stroke-width="1"
+            />
+          ))}
+
+          <polygon points={tCeilZone} fill="url(#sw-t-ceil)" />
+          <polygon points={tFloorZone} fill="url(#sw-t-floor)" />
+          <polygon points={tRightWall} fill="url(#sw-right)" />
+          <polygon points="368.4,592.4 414.9,556.8 414.9,783.9 368.4,720.3" fill="#0f1828" stroke="#2c3c5c" stroke-width="1.3" />
+          <polygon points="425.2,548.9 471.6,513.2 471.6,861.6 425.2,798" fill="#0f1828" stroke="#2c3c5c" stroke-width="1.3" />
+          <polygon points="374,604 409,577 409,672 374,662" fill="url(#sw-doorglass)" />
+          <polygon points="431,561 466,534 466,700 431,688" fill="url(#sw-doorglass)" />
+          <line x1="463.9" y1="519.1" x2="463.9" y2="851" stroke="#54688d" stroke-width="6" opacity=".5" />
+          <line x1="549" y1="453.7" x2="549" y2="967.6" stroke="#54688d" stroke-width="8" opacity=".38" />
+          <polygon points={tRightWall} fill="none" stroke="#243252" stroke-width="1.5" />
+
+          <polygon points={tEndWall} fill="#0c1322" />
+          <rect x="288" y="600" width="14" height="86" rx="2" fill="#101a2c" stroke="#33456a" stroke-width="1" />
+          <rect x="305" y="600" width="14" height="86" rx="2" fill="#101a2c" stroke="#33456a" stroke-width="1" />
+          <rect x="290" y="604" width="10" height="40" fill="#ffcf8a" opacity=".3" />
+          <rect x="307" y="604" width="10" height="40" fill="#ffcf8a" opacity=".3" />
+          <polygon points={tEndWall} fill="none" stroke="#2b3a58" stroke-width="1.4" />
+
+          <polygon points={bandT(T.ceil, T.postTop)} fill="#0b111d" />
+          <polygon points={bandT(T.postTop, T.postBot)} fill="url(#sw-t-wall)" />
+          <polygon points={bandT(T.postBot, T.winTop)} fill="#0a1018" />
+          <polygon points={bandT(T.winBot, T.floor)} fill="url(#sw-t-wall)" />
+          <polygon points={bandT(T.seatTop, T.seatBase)} fill="#141d31" />
+          <polygon points={bandT(T.seatTop, T.seatTop + 14)} fill="#c80028" opacity=".5" />
+
+          {[40, 150, 226, 268].map((x) => (
+            <line
+              x1={x} y1={onT(T.seatTop, x)} x2={x} y2={onT(T.seatBase, x)}
+              stroke="#050810" stroke-width={R(6 * scT(x))} opacity=".8"
+            />
+          ))}
+          <polygon points={bandT(T.seatBase - 34, T.seatBase)} fill="#2a3550" />
+          <polygon points={bandT(T.seatBase - 34, T.seatBase - 26)} fill="#9fc4ff" opacity=".1" />
+          {TLAMPS.map((x) => (
+            <ellipse
+              cx={x} cy={onT(T.floor + 54, x)}
+              rx={R(150 * scT(x))} ry={R(30 * scT(x))}
+              fill="url(#sw-lamp)" opacity=".4"
+            />
+          ))}
+
+          {TPOSTERS.map((p) => {
+            const cx = (p.x0 + p.x1) / 2;
+            const top = onT(T.postTop + 12, cx);
+            const bot = onT(T.postBot - 12, cx);
+            const rr = R(((bot - top) / 2) * 0.56);
+            return (
+              <g>
+                <polygon points={bandT(T.postTop + 5, T.postBot - 5, p.x0 + 6, p.x1 - 6)} fill="#060a12" stroke="#2c3b58" stroke-width="1.2" />
+                <polygon points={bandT(T.postTop + 12, T.postBot - 12, p.x0 + 12, p.x1 - 12)} fill={'url(#sw-t-p' + p.c + ')'} />
+                <circle cx={cx} cy={R((top + bot) / 2)} r={rr} fill="none" stroke="#04060b" stroke-width={R(rr * 0.22)} opacity=".55" />
+                <circle cx={R(p.x1 - 22 * scT(p.x1))} cy={R(bot - 12 * scT(p.x1))} r={R(9 * scT(p.x1))} fill="#4ee0a4" />
+              </g>
+            );
+          })}
+
+          {TLAMPS.map((x) => (
+            <g>
+              <ellipse cx={x} cy={onT(70, x)} rx={R(110 * scT(x))} ry={R(46 * scT(x))} fill="url(#sw-t-lamp)" />
+              <rect
+                x={R(x - 46 * scT(x))} y={R(onT(70, x) - 7 * scT(x))}
+                width={R(92 * scT(x))} height={R(14 * scT(x))}
+                rx={R(7 * scT(x))} fill="#eef4ff" opacity=".9"
+              />
+            </g>
+          ))}
+          <rect x="512" y="-20" width="20" height="1540" fill="#141c2c" />
+          <rect x="512" y="-20" width="5" height="1540" fill="#28344c" />
+        </svg>
+
+        <div class="stage__vig"></div>
+      </div>
+
+      <p class="sr">
+        Illustration: the inside of a night train. A long window runs the width
+        of the picture. Far away, the station just left behind is a shrinking
+        rectangle of warm light; nearer, the tunnel has taken the signal. Inside
+        the carriage, downloaded records glow as lit posters above the seats.
+      </p>
+
+      <div class="hero__ui">
+        <!-- carriage plate -->
+        <div class="lockup">
+          <Mark size={30} decorative />
+          <span class="lockup__name">Mozz</span>
+          <span class="lockup__rule" aria-hidden="true"></span>
+          <span class="lockup__tag">Night service</span>
+        </div>
+
+        <!-- line diagram above the doors -->
+        <aside class="route" aria-label="Lines on this service">
+          <p class="route__hd">Above the doors</p>
+          <ul class="route__lines">
+            <li class="route__line route__line--radio">
+              <span class="route__dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <span class="route__nm">Radio</span>
+              <span class="route__sub">seeded from a track you already own</span>
+            </li>
+            <li class="route__line route__line--mix">
+              <span class="route__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="route__nm">Weekly mixes</span>
+              <span class="route__sub">built from your own library, once a week</span>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- the interface, standing in the glass at carriage-door scale -->
+        <figure class="np">
+          <div class="np__matrix" aria-hidden="true">
+            <span>NOW PLAYING</span><b></b><span>FROM YOUR OWN SERVER</span><b></b>
+            <span>DOWNLOADED FOR THE TUNNEL</span><b></b><span>GAPLESS</span>
+          </div>
+          <div class="np__body">
+            <div class="np__art">
+              <svg viewBox="0 0 100 100" aria-hidden="true" set:html={cover(0)}></svg>
+              <span class="np__dl"><i aria-hidden="true"></i>On device</span>
+            </div>
+            <div class="np__meta">
+              <p class="np__title">Whatever you keep on your server</p>
+              <p class="np__sub">The file you own, played as it is — not re-encoded on the way to you.</p>
+              <div class="np__bar" aria-hidden="true"><i></i></div>
+              <ul class="np__tags">
+                <li>Downloaded</li>
+                <li>Gapless</li>
+                <li>Equalizer</li>
+              </ul>
+              <div class="np__transport" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M18 6v12M16 12 6 6v12z" /></svg>
+                <svg viewBox="0 0 24 24" class="is-play"><path d="M8 5v14l11-7z" /></svg>
+                <svg viewBox="0 0 24 24"><path d="M6 6v12M8 12l10-6v12z" /></svg>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <!-- the platform, receding -->
+        <aside class="far" aria-label="The station left behind">
+          <p class="far__hd">The station you just left</p>
+          <ul class="far__servers">
+            {SERVERS.map((s) => (
+              <li>
+                <ServerLogo name={s.name} size={20} brand />
+                <span class="far__nm">{s.name}</span>
+                <span class="far__note">{SERVER_LINE[s.name]}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="far__signal">
+            <span class="far__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="far__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="far__bars" aria-hidden="true"><i></i><i></i></span>
+            <span class="far__bars" aria-hidden="true"><i></i></span>
+            <span class="far__none">no signal</span>
+          </div>
+          <p class="far__line">Signal goes. The download stays.</p>
+        </aside>
+
+        <!-- the illuminated panel bolted to the wall -->
+        <div class="board">
+          <p class="board__eyebrow">Night service · your library · all stations</p>
+          <h1 class="board__h">
+            The signal ends at the tunnel.
+            <em>Your music doesn't.</em>
+          </h1>
+          <p class="board__lede">
+            Mozz plays the music on your own Plex, Jellyfin or Navidrome server.
+            Download a record and it behaves underground exactly as it does at
+            home. Free forever, open source, and there is no Mozz account to
+            lose reception to.
+          </p>
+          <div class="board__actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+          <p class="board__fine">iPhone and iPad today. An Apple TV app is planned.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         PLATFORM — three lines arriving at one platform.
+    ==================================================================== -->
+    <section class="seg seg--platform" aria-labelledby="s-platform">
+      <div class="wrap">
+        <p class="seg__num">01 · Platform</p>
+        <h2 id="s-platform">Three lines. One platform.</h2>
+        <p class="seg__lede">
+          Point Mozz at the machine you already run. Plex, Jellyfin and
+          Navidrome arrive on separate lines and stop at the same platform, so
+          two servers browse like one collection instead of two apps.
+        </p>
+      </div>
+
+      <div class="wrap">
+        <svg class="plat__rails" viewBox="0 0 1160 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M96 0 V52 Q96 84 128 84 H1064" fill="none" stroke="#e5a00d" stroke-width="4" vector-effect="non-scaling-stroke" />
+          <path d="M580 0 V60 Q580 92 612 92 H1064" fill="none" stroke="#00a4dc" stroke-width="4" vector-effect="non-scaling-stroke" />
+          <path d="M1064 0 V100 H1064" fill="none" stroke="#1a72b8" stroke-width="4" vector-effect="non-scaling-stroke" />
+          <path d="M40 108 H1120" fill="none" stroke="#3c4d6d" stroke-width="2" vector-effect="non-scaling-stroke" />
+        </svg>
+
+        <ul class="plat__list">
+          {SERVERS.map((s) => (
+            <li class="plat__stop">
+              <span class="plat__logo"><ServerLogo name={s.name} size={34} brand /></span>
+              <h3>{s.name}</h3>
+              <p>{s.note}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="plat__foot">
+          Add more than one and they browse as a single library. Mozz is the
+          player; the server stays yours.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         TUNNEL — the moment the page is named after.
+    ==================================================================== -->
+    <section class="seg seg--tunnel" aria-labelledby="s-tunnel">
+      <svg class="tun__ribs" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="1600" height="700" fill="#04060b" />
+        {[90, 170, 270, 390, 530, 690, 870, 1070, 1290].map((s, i) => (
+          <path
+            d={'M' + R(1500 - s) + ',' + R(350 - s * 0.46) + ' Q' + R(1500 - s * 0.84) + ',350 ' + R(1500 - s) + ',' + R(350 + s * 0.46)}
+            fill="none" stroke="#3d5075" stroke-width={R(1.2 + i * 0.5)} opacity={R(0.42 - i * 0.035)}
+          />
+        ))}
+        <path d="M0 244 Q 700 300 1500 342" fill="none" stroke="#1e2a40" stroke-width="3" />
+        <path d="M0 452 Q 720 400 1500 358" fill="none" stroke="#1e2a40" stroke-width="2.4" />
+      </svg>
+
+      <div class="wrap tun__body">
+        <p class="seg__num">Between stations</p>
+        <h2 id="s-tunnel">The bars die. The record doesn't.</h2>
+        <p class="seg__lede">
+          Downloads were designed in from the first commit, not bolted on later.
+          The catalogue lives in a database on the device, so browsing, search
+          and playback all keep working with the server completely unreachable.
+        </p>
+
+        <div class="tun__meter" role="img" aria-label="Signal falling from four bars to none as the train enters the tunnel">
+          <span class="tun__b"><i></i><i></i><i></i><i></i></span>
+          <span class="tun__b"><i></i><i></i><i></i></span>
+          <span class="tun__b"><i></i><i></i></span>
+          <span class="tun__b"><i></i></span>
+          <span class="tun__b tun__b--dead"></span>
+          <span class="tun__label">entering tunnel</span>
+        </div>
+
+        <p class="tun__shelfhd">On the device, already:</p>
+        <ul class="tun__shelf">
+          {COVERS.map((_, i) => (
+            <li>
+              <svg viewBox="0 0 100 100" aria-hidden="true" set:html={cover(i)}></svg>
+              <span class="tun__tick" aria-hidden="true"></span>
+            </li>
+          ))}
+        </ul>
+        <p class="tun__cap">
+          Artwork here is abstract on purpose — the records are yours, and Mozz
+          has never seen them.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STOPS — the features, as a line rather than a grid of cards.
+    ==================================================================== -->
+    <section class="seg seg--stops" aria-labelledby="s-stops">
+      <div class="wrap">
+        <p class="seg__num">02 · Stops on this line</p>
+        <h2 id="s-stops">Everything the service calls at.</h2>
+        <ol class="stops">
+          {FEATURES.map((f) => (
+            <li class="stop">
+              <span class="stop__dot" aria-hidden="true"></span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         DEPARTURE BOARD — the measured numbers, and nothing else.
+    ==================================================================== -->
+    <section class="seg seg--dep" aria-labelledby="s-dep">
+      <div class="wrap">
+        <h2 id="s-dep" class="dep__hd">Departure board</h2>
+        <div class="dep">
+          <div class="dep__strip" aria-hidden="true"></div>
+          <dl class="dep__rows">
+            {STATS.map((s) => (
+              <div class="dep__row">
+                <dt>{s.value}</dt>
+                <dd>{s.label}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="dep__note">Measured on device, not estimated.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         NOTICES — the ownership argument, as the enamel plate by the doors.
+    ==================================================================== -->
+    <section class="seg seg--notice" aria-labelledby="s-notice">
+      <div class="wrap">
+        <p class="seg__num">03 · Passenger notices</p>
+        <h2 id="s-notice">Four things this service will never do.</h2>
+        <ul class="notices">
+          {OWNERSHIP.map((o) => (
+            <li class="notice">
+              <span class="notice__glyph" aria-hidden="true"></span>
+              <div>
+                <h3>{o.title}</h3>
+                <p>{o.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         NETWORK MAP — radio and the weekly mixes, drawn as lines off your
+         own library rather than a black box someone else operates.
+    ==================================================================== -->
+    <section class="seg seg--map" aria-labelledby="s-map">
+      <div class="wrap">
+        <p class="seg__num">04 · Network map</p>
+        <h2 id="s-map">Where a track can take you.</h2>
+        <p class="seg__lede">
+          Every line on this map starts in your own collection. Radio grows a
+          station out of a track you already own, and the weekly mixes are just
+          another route through the same records.
+        </p>
+
+        <figure class="map">
+          <div class="map__scroll" tabindex="0" role="group" aria-label="Network map, scrollable">
+            <svg viewBox="0 0 1160 560" role="img" aria-label="A transit map. A main line labelled Your library runs across the middle. A red Radio line branches upward, a green Downloads line and an amber Weekly mixes line branch downward.">
+              <line x1="90" y1="300" x2="1080" y2="300" stroke="#cfd8ea" stroke-width="10" stroke-linecap="round" />
+              <text x="92" y="256" class="map__t map__t--big" fill="#f0f4fc">Your library</text>
+              <text x="1080" y="262" class="map__t map__t--sm" fill="#7c879d" text-anchor="end">your whole catalogue</text>
+
+              <path d="M330 300 V204 Q330 176 358 176 H900" fill="none" stroke="#ff3d63" stroke-width="8" stroke-linecap="round" />
+              <path d="M150 300 V400 Q150 428 178 428 H470" fill="none" stroke="#4ee0a4" stroke-width="8" stroke-linecap="round" />
+              <path d="M690 300 V400 Q690 428 718 428 H1010" fill="none" stroke="#ffb347" stroke-width="8" stroke-linecap="round" />
+
+              {[150, 330, 510, 690, 870, 1050].map((x) => (
+                <circle cx={x} cy="300" r="10" fill="#04060b" stroke="#cfd8ea" stroke-width="5" />
+              ))}
+              {[520, 700].map((x) => (
+                <circle cx={x} cy="176" r="9" fill="#04060b" stroke="#ff3d63" stroke-width="5" />
+              ))}
+              <circle cx="900" cy="176" r="13" fill="#04060b" stroke="#ff3d63" stroke-width="6" />
+              <circle cx="470" cy="428" r="13" fill="#04060b" stroke="#4ee0a4" stroke-width="6" />
+              <circle cx="1010" cy="428" r="13" fill="#04060b" stroke="#ffb347" stroke-width="6" />
+
+              <text x="358" y="150" class="map__t map__t--big" fill="#ff3d63">Radio</text>
+              <text x="924" y="182" class="map__t map__t--sm" fill="#7c879d">MusicBrainz + ListenBrainz</text>
+              <text x="690" y="266" class="map__t map__t--sm" fill="#7c879d" text-anchor="middle">what you actually play</text>
+
+              <text x="178" y="474" class="map__t map__t--big" fill="#4ee0a4">Downloads</text>
+              <text x="178" y="502" class="map__t map__t--sm" fill="#7c879d">plays with the server unreachable</text>
+
+              <text x="718" y="474" class="map__t map__t--big" fill="#ffb347">Weekly mixes</text>
+              <text x="718" y="502" class="map__t map__t--sm" fill="#7c879d">a fresh route through your own records</text>
+            </svg>
+          </div>
+          <figcaption class="map__cap">
+            <strong>The one honest caveat.</strong> To work out what sounds
+            similar, Mozz sends an artist name, a track title and sometimes a
+            MusicBrainz ID to MetaBrainz. It carries no name, no server address
+            and no account, and you can switch it off in Settings.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PASSENGER INFORMATION — the questions, on the panel by the door.
+    ==================================================================== -->
+    <section class="seg seg--info" aria-labelledby="s-info">
+      <div class="wrap">
+        <p class="seg__num">Passenger information</p>
+        <h2 id="s-info">Before you board.</h2>
+        <div class="info">
+          {FAQS.map((f) => (
+            <details class="info__q">
+              <summary>
+                <span>{f.q}</span>
+                <span class="info__plus" aria-hidden="true"></span>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         TERMINUS — the last panel on the last wall.
+    ==================================================================== -->
+    <section class="seg seg--term" aria-labelledby="s-term">
+      <div class="wrap">
+        <div class="term">
+          <p class="term__eyebrow">Terminus · all change</p>
+          <h2 id="s-term">End of the line. Start of the record.</h2>
+          <p class="term__lede">
+            Free forever, open source under GPL-3.0. No account to make, nothing
+            to cancel, and nothing that stops working when the tunnel does.
+          </p>
+          <div class="board__actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="ghost" href={GITHUB_URL}>Read the source</a>
+          </div>
+          <p class="board__fine">
+            The App Store listing does not exist yet, so this button is honest
+            about it rather than pretending to work.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="wrap foot__in">
+        <span class="foot__mark"><Mark size={26} decorative /> Mozz</span>
+        <p>One app for your music, wherever it lives. Free forever. Open source.</p>
+        <a href={GITHUB_URL}>GPL-3.0 on GitHub</a>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  /* ==========================================================================
+     SUBWAY — palette, type, and the two structural primitives: the full-bleed
+     hero stage, and the `.wrap` column every station shares.
+     ========================================================================== */
+  :global(html) {
+    background: #04060b;
+    color-scheme: dark;
+    overflow-x: clip;
+  }
+  :global(body) {
+    background: #04060b;
+  }
+
+  .sub {
+    --n0: #04060b;
+    --n1: #080c15;
+    --n2: #0d131f;
+    --n3: #131b2b;
+    --ink: #f0f4fc;
+    --body: #b7c2d6;
+    --muted: #8492a8;
+    --amber: #ffb347;
+    --amber2: #ffd9a0;
+    --red: #c80028;
+    --redL: #ff5a7a;
+    --green: #4ee0a4;
+    --line: rgba(150, 175, 215, 0.16);
+    --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+    font-family: 'General Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: var(--n0);
+    color: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    width: min(1160px, 100% - 3rem);
+    margin-inline: auto;
+  }
+
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  h1, h2, h3 {
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  p { margin: 0; }
+
+  /* ---------------------------------------------------------------- HERO -- */
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 2.6rem);
+    display: flex;
+    isolation: isolate;
+  }
+  .hero__stage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .art--tall { display: none; }
+  .stage__vig {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(130% 100% at 64% 46%, rgba(4, 6, 11, 0) 26%, rgba(2, 4, 9, 0.78) 100%),
+      linear-gradient(to top, rgba(2, 4, 9, 0.82), rgba(2, 4, 9, 0) 42%);
+    pointer-events: none;
+  }
+
+  .hero__ui {
+    position: relative;
+    z-index: 1;
+    flex: 0 1 auto;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: 1.1rem 1.25rem;
+    width: min(1440px, 100% - 4rem);
+    margin-inline: auto;
+    padding: clamp(1.9rem, 3.4vh, 3rem) 0 clamp(1.4rem, 2.6vh, 2rem);
+  }
+
+  /* carriage plate ------------------------------------------------------- */
+  .lockup {
+    grid-column: 1 / 5;
+    grid-row: 1;
+    align-self: start;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 0.9rem 0.5rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: linear-gradient(160deg, rgba(16, 24, 40, 0.78), rgba(5, 8, 14, 0.86));
+    backdrop-filter: blur(6px);
+    justify-self: start;
+  }
+  .lockup__name {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+  }
+  .lockup__rule {
+    width: 1px;
+    height: 18px;
+    background: var(--line);
+  }
+  .lockup__tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  /* line diagram above the doors ----------------------------------------- */
+  .route {
+    grid-column: 8 / 13;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    max-width: 24rem;
+    padding: 0.6rem 0.95rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: linear-gradient(160deg, rgba(14, 21, 36, 0.72), rgba(4, 7, 13, 0.8));
+    backdrop-filter: blur(6px);
+    transform: perspective(1400px) rotateY(-6deg);
+    transform-origin: right center;
+  }
+  .route__hd {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.55rem;
+  }
+  .route__lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .route__line { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.7rem; align-items: center; }
+  .route__dots { display: inline-flex; align-items: center; gap: 0; }
+  .route__dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--n0);
+    border: 2px solid currentColor;
+    position: relative;
+  }
+  .route__dots i + i { margin-left: 14px; }
+  .route__dots i + i::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 14px;
+    height: 2px;
+    background: currentColor;
+    transform: translateY(-1px);
+  }
+  .route__line--radio { color: var(--redL); }
+  .route__line--mix { color: var(--amber); }
+  .route__nm { color: var(--ink); font-weight: 600; font-size: 0.9rem; }
+  .route__sub {
+    grid-column: 2;
+    color: var(--muted);
+    font-size: 0.73rem;
+    line-height: 1.3;
+  }
+
+  /* the interface, standing in the glass --------------------------------- */
+  .np {
+    grid-column: 1 / 8;
+    grid-row: 2;
+    align-self: center;
+    margin: -2vh 0 0;
+    padding: 0.7rem 0.7rem 0.4rem;
+    border: 1px solid rgba(159, 196, 255, 0.24);
+    border-top-color: rgba(200, 224, 255, 0.4);
+    border-radius: 4px;
+    background: linear-gradient(152deg, rgba(20, 31, 52, 0.68), rgba(5, 9, 17, 0.86));
+    backdrop-filter: blur(10px) saturate(120%);
+    box-shadow:
+      0 34px 90px -34px rgba(0, 0, 0, 0.95),
+      inset 0 1px 0 rgba(200, 224, 255, 0.16);
+    transform: perspective(1600px) rotateY(-7deg);
+    transform-origin: left center;
+    position: relative;
+    overflow: hidden;
+  }
+  .np::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(118deg, rgba(190, 215, 255, 0.15) 0 14%, rgba(190, 215, 255, 0) 38%);
+    pointer-events: none;
+  }
+  .np__matrix {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.35rem 0.6rem 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    white-space: nowrap;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(159, 196, 255, 0.14);
+  }
+  .np__matrix b { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.6; flex: none; }
+  .np__body {
+    display: grid;
+    grid-template-columns: minmax(104px, 148px) 1fr;
+    gap: clamp(0.9rem, 2.2vw, 1.7rem);
+    align-items: center;
+    padding: 0.85rem 0.5rem 0.7rem;
+  }
+  .np__art { position: relative; }
+  .np__art svg {
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+    border-radius: 2px;
+    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.9);
+  }
+  .np__dl {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.24rem 0.5rem;
+    border-radius: 2px;
+    background: rgba(4, 6, 11, 0.78);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .np__dl i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .np__title {
+    color: var(--ink);
+    font-size: clamp(1.25rem, 2.1vw, 1.72rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  .np__sub {
+    margin-top: 0.4rem;
+    color: var(--body);
+    font-size: clamp(0.85rem, 1.1vw, 0.96rem);
+    line-height: 1.45;
+    max-width: 34ch;
+  }
+  .np__bar {
+    margin-top: 0.85rem;
+    height: 3px;
+    background: rgba(190, 215, 255, 0.18);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .np__bar i { display: block; height: 100%; width: 38%; background: var(--ink); }
+  .np__tags {
+    list-style: none;
+    margin: 0.7rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .np__tags li {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--body);
+    padding: 0.24rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .np__transport {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-top: 0.85rem;
+    color: rgba(200, 220, 255, 0.72);
+  }
+  .np__transport svg { width: 20px; height: 20px; fill: currentColor; }
+  .np__transport .is-play { width: 27px; height: 27px; fill: var(--amber2); }
+
+  /* the platform, receding ----------------------------------------------- */
+  .far {
+    grid-column: 9 / 13;
+    grid-row: 2;
+    align-self: center;
+    justify-self: end;
+    max-width: 22rem;
+    padding: 0.85rem 1rem 0.95rem;
+    border: 1px solid rgba(255, 179, 71, 0.24);
+    border-radius: 3px;
+    background: linear-gradient(160deg, rgba(18, 15, 10, 0.8), rgba(4, 6, 11, 0.88));
+    backdrop-filter: blur(6px);
+    transform: perspective(1400px) rotateY(9deg) scale(0.97);
+    transform-origin: right center;
+  }
+  .far__hd {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .far__servers { list-style: none; margin: 0.7rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+  .far__servers li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 0.1rem 0.6rem;
+    align-items: center;
+  }
+  .far__nm { color: var(--ink); font-weight: 600; font-size: 0.92rem; }
+  .far__note { grid-column: 2; color: var(--muted); font-size: 0.74rem; line-height: 1.3; }
+  .far__signal {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.55rem;
+    margin-top: 0.8rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 179, 71, 0.16);
+  }
+  .far__bars { display: inline-flex; align-items: flex-end; gap: 2px; }
+  .far__bars i { width: 3px; background: var(--amber); border-radius: 1px; }
+  .far__bars i:nth-child(1) { height: 5px; }
+  .far__bars i:nth-child(2) { height: 9px; }
+  .far__bars i:nth-child(3) { height: 13px; }
+  .far__bars i:nth-child(4) { height: 17px; }
+  .far__bars:nth-of-type(2) { opacity: 0.72; }
+  .far__bars:nth-of-type(3) { opacity: 0.5; }
+  .far__bars:nth-of-type(4) { opacity: 0.3; }
+  .far__none {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .far__line {
+    margin-top: 0.7rem;
+    color: var(--amber2);
+    font-size: 0.92rem;
+    line-height: 1.32;
+  }
+
+  /* the illuminated panel ------------------------------------------------ */
+  .board {
+    grid-column: 1 / 8;
+    grid-row: 3;
+    align-self: end;
+    position: relative;
+    padding: clamp(1.1rem, 2vw, 1.35rem) clamp(1.4rem, 3vw, 2.4rem) clamp(1rem, 1.8vw, 1.25rem);
+    border: 1px solid rgba(150, 175, 215, 0.22);
+    border-top-color: rgba(205, 225, 255, 0.34);
+    border-radius: 3px;
+    background: linear-gradient(158deg, rgba(15, 23, 38, 0.9), rgba(4, 7, 13, 0.95));
+    backdrop-filter: blur(8px);
+    box-shadow:
+      0 44px 100px -38px rgba(0, 0, 0, 0.95),
+      0 0 120px -34px rgba(255, 179, 71, 0.22);
+  }
+  .board::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), var(--redL) 34%, rgba(255, 90, 122, 0) 88%);
+  }
+  .board::after {
+    content: '';
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: -34px;
+    height: 34px;
+    background: linear-gradient(rgba(255, 214, 160, 0.14), rgba(255, 214, 160, 0));
+    filter: blur(7px);
+    pointer-events: none;
+  }
+  .board__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .board__h {
+    margin-top: 0.7rem;
+    font-size: clamp(2rem, 3.5vw, 3.05rem);
+    line-height: 1.03;
+    letter-spacing: -0.038em;
+  }
+  .board__h em { display: block; font-style: normal; color: var(--amber2); }
+  .board__lede {
+    margin-top: 0.85rem;
+    max-width: 48ch;
+    color: var(--body);
+    font-size: clamp(0.96rem, 1.2vw, 1.04rem);
+    line-height: 1.55;
+  }
+  .board__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1.1rem;
+  }
+  .board__fine {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  /* buttons -------------------------------------------------------------- */
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1.5rem 0.85rem 1.2rem;
+    border-radius: 3px;
+    background: var(--red);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 20px 44px -20px rgba(200, 0, 40, 0.9);
+  }
+  .store svg { width: 24px; height: 24px; fill: currentColor; flex: none; }
+  .store span { display: flex; flex-direction: column; line-height: 1.08; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+  .store small { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
+  .store.is-pending {
+    background: rgba(200, 0, 40, 0.16);
+    border: 1px solid rgba(255, 90, 122, 0.5);
+    color: #ffc7d0;
+    box-shadow: none;
+    cursor: default;
+  }
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.9rem 1.3rem;
+    border: 1px solid rgba(160, 185, 225, 0.32);
+    border-radius: 3px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .ghost:hover { border-color: var(--amber); color: var(--amber); }
+</style>
+
+<style>
+  /* ==========================================================================
+     STATIONS — every section is a place on the line, so they share a rhythm
+     (number, name, then the thing itself) and never a card.
+     ========================================================================== */
+  .seg {
+    position: relative;
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    border-top: 1px solid var(--line);
+  }
+  .seg__num {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .seg h2 {
+    margin-top: 0.9rem;
+    font-size: clamp(1.85rem, 3.8vw, 2.9rem);
+    line-height: 1.06;
+  }
+  .seg__lede {
+    margin-top: 1.1rem;
+    max-width: 54ch;
+    color: var(--body);
+    font-size: clamp(1rem, 1.4vw, 1.14rem);
+    line-height: 1.6;
+  }
+
+  /* platform ------------------------------------------------------------- */
+  .plat__rails { display: block; width: 100%; height: 110px; margin-top: 3rem; opacity: 0.9; }
+  .plat__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+  }
+  .plat__stop { padding: 1.8rem clamp(1rem, 2vw, 1.6rem) 1.6rem; border-left: 1px solid var(--line); }
+  .plat__stop:first-child { border-left: 0; padding-left: 0; }
+  .plat__logo { display: block; margin-bottom: 0.9rem; }
+  .plat__stop h3 { font-size: 1.2rem; }
+  .plat__stop p { margin-top: 0.5rem; color: var(--body); font-size: 0.95rem; line-height: 1.55; }
+  .plat__foot {
+    margin-top: 1.8rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    max-width: 52ch;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  /* tunnel --------------------------------------------------------------- */
+  .seg--tunnel { border-top: 0; overflow: hidden; background: #04060b; }
+  .tun__ribs { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.85; }
+  .tun__body { position: relative; }
+  .tun__meter { display: flex; align-items: flex-end; gap: 0.75rem; margin-top: 2.4rem; }
+  .tun__b { display: inline-flex; align-items: flex-end; gap: 2px; }
+  .tun__b i { width: 4px; background: var(--amber); border-radius: 1px; }
+  .tun__b i:nth-child(1) { height: 6px; }
+  .tun__b i:nth-child(2) { height: 11px; }
+  .tun__b i:nth-child(3) { height: 16px; }
+  .tun__b i:nth-child(4) { height: 21px; }
+  .tun__b:nth-of-type(2) { opacity: 0.7; }
+  .tun__b:nth-of-type(3) { opacity: 0.48; }
+  .tun__b:nth-of-type(4) { opacity: 0.28; }
+  .tun__b--dead { position: relative; width: 16px; height: 16px; }
+  .tun__b--dead::before,
+  .tun__b--dead::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 7px;
+    height: 2px;
+    background: var(--muted);
+  }
+  .tun__b--dead::before { transform: rotate(45deg); }
+  .tun__b--dead::after { transform: rotate(-45deg); }
+  .tun__label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 0.1rem;
+  }
+  .tun__shelfhd {
+    margin-top: 2.6rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .tun__shelf {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0 0 0.75rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(132px, 1fr);
+    gap: clamp(0.7rem, 1.6vw, 1.1rem);
+    overflow-x: auto;
+  }
+  .tun__shelf li { position: relative; }
+  .tun__shelf svg {
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+    border-radius: 2px;
+    box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.95);
+  }
+  .tun__tick {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(4, 6, 11, 0.72);
+  }
+  .tun__tick::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: 2.5px solid #04231a;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(42deg);
+  }
+  .tun__cap { margin-top: 1rem; color: var(--muted); font-size: 0.85rem; max-width: 48ch; line-height: 1.5; }
+
+  /* stops ---------------------------------------------------------------- */
+  .stops { list-style: none; position: relative; margin: 3rem 0 0; padding: 0 0 0 3.2rem; max-width: 46rem; }
+  .stops::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 1.9rem;
+    bottom: 2rem;
+    width: 2px;
+    background: linear-gradient(var(--amber), #63d3ea 46%, var(--green));
+    opacity: 0.6;
+  }
+  .stop { position: relative; padding: 1.6rem 0; border-bottom: 1px solid var(--line); }
+  .stop:last-child { border-bottom: 0; }
+  .stop__dot {
+    position: absolute;
+    left: -3.2rem;
+    top: 1.95rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--n0);
+    border: 4px solid var(--ink);
+    box-sizing: border-box;
+  }
+  .stop h3 { font-size: clamp(1.15rem, 2vw, 1.45rem); }
+  .stop p { margin-top: 0.55rem; color: var(--body); line-height: 1.6; }
+
+  /* departure board ------------------------------------------------------ */
+  .dep__hd { font-size: clamp(1.85rem, 3.8vw, 2.9rem); }
+  .dep {
+    margin-top: 2.4rem;
+    border: 1px solid rgba(255, 179, 71, 0.26);
+    border-radius: 3px;
+    background: linear-gradient(#0a0f19, #06090f);
+    box-shadow: 0 0 90px -34px rgba(255, 179, 71, 0.45);
+    overflow: hidden;
+  }
+  .dep__strip {
+    height: 7px;
+    background: repeating-linear-gradient(90deg, rgba(255, 179, 71, 0.7) 0 8px, rgba(255, 179, 71, 0) 8px 17px);
+  }
+  .dep__rows { margin: 0; }
+  .dep__row {
+    display: grid;
+    grid-template-columns: minmax(110px, 20%) 1fr;
+    gap: 0.4rem 1.4rem;
+    align-items: baseline;
+    padding: 1.15rem clamp(1rem, 3vw, 2rem);
+    border-top: 1px solid rgba(255, 179, 71, 0.14);
+  }
+  .dep__row dt {
+    font-family: var(--mono);
+    font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+    color: var(--amber);
+    letter-spacing: -0.02em;
+  }
+  .dep__row dd { margin: 0; color: var(--body); font-size: clamp(0.95rem, 1.3vw, 1.05rem); }
+  .dep__note {
+    padding: 1rem clamp(1rem, 3vw, 2rem) 1.2rem;
+    border-top: 1px solid rgba(255, 179, 71, 0.14);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* notices -------------------------------------------------------------- */
+  .notices {
+    list-style: none;
+    margin: 2.6rem 0 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: linear-gradient(#0c1220, #070b13);
+  }
+  .notice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.2rem;
+    padding: 1.6rem clamp(1rem, 3vw, 2rem);
+    border-top: 1px solid var(--line);
+  }
+  .notice:first-child { border-top: 0; }
+  .notice__glyph {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin-top: 0.2rem;
+    border: 2.5px solid var(--redL);
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+  .notice__glyph::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 1px;
+    width: 2.5px;
+    height: 23px;
+    background: var(--redL);
+    transform: rotate(45deg);
+  }
+  .notice h3 { font-size: 1.2rem; }
+  .notice p { margin-top: 0.45rem; color: var(--body); line-height: 1.6; max-width: 58ch; }
+
+  /* network map ---------------------------------------------------------- */
+  .map { margin: 2.8rem 0 0; }
+  .map__scroll { overflow-x: auto; padding-bottom: 0.5rem; }
+  .map__scroll:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
+  .map__scroll svg { display: block; width: 100%; min-width: 880px; height: auto; }
+  .map__t { font-family: 'General Sans', ui-sans-serif, system-ui, sans-serif; font-weight: 600; }
+  .map__t--big { font-size: 23px; letter-spacing: -0.4px; }
+  .map__t--sm { font-size: 16px; font-weight: 500; }
+  .map__cap {
+    margin-top: 1.6rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    max-width: 62ch;
+    color: var(--body);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .map__cap strong { color: var(--ink); }
+
+  /* passenger information ------------------------------------------------ */
+  .info { margin-top: 2.4rem; border-top: 1px solid var(--line); }
+  .info__q { border-bottom: 1px solid var(--line); }
+  .info__q summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.3rem 0;
+    color: var(--ink);
+    font-size: clamp(1.05rem, 1.9vw, 1.28rem);
+    font-weight: 500;
+  }
+  .info__q summary::-webkit-details-marker { display: none; }
+  .info__q summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .info__plus { position: relative; width: 18px; height: 18px; flex: none; }
+  .info__plus::before,
+  .info__plus::after { content: ''; position: absolute; background: var(--amber); }
+  .info__plus::before { left: 0; right: 0; top: 8px; height: 2px; }
+  .info__plus::after { top: 0; bottom: 0; left: 8px; width: 2px; transition: transform 0.2s ease; }
+  .info__q[open] .info__plus::after { transform: scaleY(0); }
+  .info__q p { margin: 0 0 1.5rem; max-width: 62ch; color: var(--body); line-height: 1.65; }
+
+  /* terminus ------------------------------------------------------------- */
+  .seg--term { border-top: 0; }
+  .term {
+    position: relative;
+    padding: clamp(2rem, 4vw, 3.2rem) clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid rgba(150, 175, 215, 0.22);
+    border-top-color: rgba(205, 225, 255, 0.34);
+    border-radius: 3px;
+    background: linear-gradient(158deg, rgba(15, 23, 38, 0.95), rgba(4, 7, 13, 1));
+    box-shadow: 0 0 130px -40px rgba(255, 179, 71, 0.3);
+  }
+  .term::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), var(--redL) 34%, rgba(255, 90, 122, 0) 88%);
+  }
+  .term__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .term h2 { margin-top: 0.9rem; font-size: clamp(1.9rem, 4.2vw, 3.2rem); line-height: 1.04; }
+  .term__lede { margin-top: 1.1rem; max-width: 50ch; color: var(--body); line-height: 1.6; }
+
+  /* footer --------------------------------------------------------------- */
+  .foot { border-top: 1px solid var(--line); padding: 2.4rem 0 3.4rem; }
+  .foot__in { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.6rem; }
+  .foot__mark { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--ink); font-weight: 600; }
+  .foot p { color: var(--muted); font-size: 0.9rem; flex: 1 1 18rem; }
+  .foot a { color: var(--body); font-size: 0.9rem; }
+
+  /* ---------------------------------------------------------------- RESPONSIVE */
+  @media (max-width: 1180px) {
+    .hero__ui { width: min(100%, 100% - 3rem); }
+    .np { grid-column: 1 / 9; }
+    .far { grid-column: 9 / 13; }
+    .board { grid-column: 1 / 10; }
+  }
+
+  @media (max-width: 900px) {
+    .art--wide { display: none; }
+    .art--tall { display: block; }
+    .stage__vig {
+      background:
+        radial-gradient(120% 60% at 50% 34%, rgba(4, 6, 11, 0) 20%, rgba(2, 4, 9, 0.7) 100%),
+        linear-gradient(to top, rgba(2, 4, 9, 0.88), rgba(2, 4, 9, 0.15) 55%);
+    }
+    .hero__ui {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      width: min(100%, 100% - 2.4rem);
+      padding: 4.6rem 0 2.6rem;
+    }
+    .route { display: none; }
+    .lockup { order: 1; }
+    .np { order: 2; }
+    .board { order: 3; }
+    .far { order: 4; }
+    .np, .far, .board {
+      transform: none;
+      max-width: none;
+      margin: 0;
+      align-self: stretch;
+      justify-self: stretch;
+      width: 100%;
+      min-width: 0;
+    }
+    .np { background: linear-gradient(152deg, rgba(20, 31, 52, 0.6), rgba(5, 9, 17, 0.78)); }
+    .board { background: linear-gradient(158deg, rgba(15, 23, 38, 0.82), rgba(4, 7, 13, 0.9)); }
+    .np__body { grid-template-columns: 108px 1fr; }
+    .np__sub { display: none; }
+    .far { justify-self: stretch; }
+    .far__servers { grid-template-columns: repeat(3, 1fr); display: grid; gap: 0.5rem 0.8rem; }
+    .far__servers li { grid-template-columns: 1fr; }
+    .far__note { display: none; }
+    .far__nm { font-size: 0.85rem; }
+    .plat__list { grid-template-columns: 1fr; }
+    .plat__stop { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; padding-right: 0; }
+    .plat__stop:first-child { border-top: 0; }
+    .plat__rails { height: 78px; }
+  }
+
+  @media (max-width: 560px) {
+    .wrap { width: min(100%, 100% - 2.2rem); }
+    .board__h { font-size: clamp(1.9rem, 8.4vw, 2.5rem); }
+    .np__matrix { font-size: 0.54rem; letter-spacing: 0.14em; gap: 0.5rem; }
+    .stops { padding-left: 2.6rem; }
+    .stop__dot { left: -2.6rem; width: 22px; height: 22px; }
+    .stops::before { left: 10px; }
+    .dep__row { grid-template-columns: 1fr; }
+    .store, .ghost { width: 100%; justify-content: center; }
+  }
+
+  /* ---------------------------------------------------------------- MOTION */
+  @media (prefers-reduced-motion: no-preference) {
+    .streak { animation: rush 2.4s linear infinite; }
+    .streak--1 { animation-duration: 3.1s; animation-delay: -0.7s; }
+    .streak--2 { animation-duration: 2.7s; animation-delay: -1.4s; }
+    .streak--3 { animation-duration: 3.6s; animation-delay: -0.3s; }
+    .streak--4 { animation-duration: 2.9s; animation-delay: -1.9s; }
+    @keyframes rush {
+      from { transform: translateX(0); }
+      to { transform: translateX(1620px); }
+    }
+    .np__bar i { animation: creep 26s linear infinite; }
+    @keyframes creep {
+      from { width: 24%; }
+      to { width: 78%; }
+    }
+    .np__dl i { animation: pulse 3.2s ease-in-out infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+  }
+</style>

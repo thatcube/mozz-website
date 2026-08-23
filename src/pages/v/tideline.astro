@@ -1,0 +1,1589 @@
+---
+/**
+ * VARIANT — TIDELINE
+ *
+ * A single ocean cutaway, seen from the waterline. The lighthouse is the
+ * listener's server; the sea beneath it is their library. Records settle into
+ * strata, weekly mixes travel as a charted current, and downloaded albums glow
+ * in a sheltered reef close to the viewer.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'A sea of your music.';
+
+const SPINES = [
+  { x: 30, y: 458, w: 96, h: 126, c: '#ca735b' },
+  { x: 136, y: 468, w: 72, h: 116, c: '#e2b96b' },
+  { x: 218, y: 448, w: 114, h: 136, c: '#587c83' },
+  { x: 342, y: 476, w: 84, h: 108, c: '#b55b5e' },
+  { x: 436, y: 454, w: 110, h: 130, c: '#d9a75a' },
+  { x: 556, y: 466, w: 70, h: 118, c: '#446f78' },
+  { x: 636, y: 440, w: 132, h: 144, c: '#a85650' },
+  { x: 778, y: 470, w: 88, h: 114, c: '#d4c18b' },
+  { x: 876, y: 452, w: 106, h: 132, c: '#5e8990' },
+  { x: 992, y: 476, w: 76, h: 108, c: '#be6550' },
+  { x: 1078, y: 448, w: 116, h: 136, c: '#c89d52' },
+  { x: 1204, y: 466, w: 84, h: 118, c: '#4d7580' },
+  { x: 1298, y: 456, w: 104, h: 128, c: '#a85c68' },
+  { x: 1412, y: 472, w: 100, h: 112, c: '#d8b86f' },
+  { x: 1522, y: 446, w: 90, h: 138, c: '#557e86' },
+];
+
+const DEEP_SPINES = [
+  { x: -40, w: 178, c: '#274f5a' },
+  { x: 148, w: 126, c: '#815460' },
+  { x: 284, w: 190, c: '#6d765f' },
+  { x: 484, w: 104, c: '#a3674e' },
+  { x: 598, w: 166, c: '#385f69' },
+  { x: 774, w: 142, c: '#8d604d' },
+  { x: 926, w: 198, c: '#526f69' },
+  { x: 1134, w: 118, c: '#855060' },
+  { x: 1262, w: 174, c: '#9a7650' },
+  { x: 1446, w: 194, c: '#315866' },
+];
+
+const SOURCE_POSITIONS: Record<string, string> = {
+  Plex: 'lens',
+  Jellyfin: 'buoy buoy--west',
+  Navidrome: 'buoy buoy--east',
+};
+---
+
+<Layout
+  title={`${NAME} — a sea of your music`}
+  description="A free, open source iPhone and iPad music player for your Plex, Jellyfin or Navidrome library. Stream it, download it, and take it anywhere without an account, tracking or a subscription."
+  themeColor="#071a24"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="tideline">
+    <VariantBar slug="tideline" tone="neutral" />
+
+    <header class="hero">
+      <svg
+        class="hero__scene"
+        viewBox="0 0 1600 1000"
+        preserveAspectRatio="none"
+        role="img"
+        aria-labelledby="sea-title sea-desc"
+      >
+        <title id="sea-title">Your music as a vast ocean</title>
+        <desc id="sea-desc">
+          At the waterline, a lighthouse broadcasts from a small headland. Below
+          it, a whole music library forms colorful geological layers. A bright
+          current crosses the collection and downloaded records rest in a
+          sheltered glowing reef in the foreground.
+        </desc>
+        <defs>
+          <linearGradient id="tl-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#b7d7d3" />
+            <stop offset=".62" stop-color="#deebe2" />
+            <stop offset="1" stop-color="#f3d49b" />
+          </linearGradient>
+          <linearGradient id="tl-sea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#176171" />
+            <stop offset=".3" stop-color="#0c4657" />
+            <stop offset=".67" stop-color="#072d3d" />
+            <stop offset="1" stop-color="#041923" />
+          </linearGradient>
+          <linearGradient id="tl-beam" x1="1" y1=".5" x2="0" y2=".5">
+            <stop offset="0" stop-color="#ffe1a1" stop-opacity=".86" />
+            <stop offset=".68" stop-color="#ffe9b8" stop-opacity=".42" />
+            <stop offset="1" stop-color="#fff4d7" stop-opacity=".02" />
+          </linearGradient>
+          <linearGradient id="tl-depth" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#39b5ae" stop-opacity="0" />
+            <stop offset=".5" stop-color="#69dfc4" stop-opacity=".2" />
+            <stop offset="1" stop-color="#39b5ae" stop-opacity="0" />
+          </linearGradient>
+          <radialGradient id="tl-reef-glow" cx=".44" cy=".56" r=".55">
+            <stop offset="0" stop-color="#ffbe5c" stop-opacity=".78" />
+            <stop offset=".32" stop-color="#d35d3d" stop-opacity=".38" />
+            <stop offset="1" stop-color="#061c27" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="tl-rock" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#173d45" />
+            <stop offset="1" stop-color="#061b25" />
+          </linearGradient>
+          <pattern id="tl-ripples" width="100" height="26" patternUnits="userSpaceOnUse">
+            <path d="M0 13 Q25 0 50 13 T100 13" fill="none" stroke="#cfebe3" stroke-width="1.4" opacity=".16" />
+          </pattern>
+          <filter id="tl-soft" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="12" />
+          </filter>
+          <filter id="tl-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Air, horizon, and lighthouse beam. -->
+        <rect x="-20" y="-20" width="1640" height="342" fill="url(#tl-sky)" />
+        <circle cx="305" cy="92" r="54" fill="#fff7dc" opacity=".54" />
+        <path d="M1245 170 L-80 25 L-80 286 L1245 214 Z" fill="url(#tl-beam)" />
+        <path d="M1245 170 L-80 25" fill="none" stroke="#fff4cb" stroke-width="2" opacity=".52" />
+        <path d="M1245 214 L-80 286" fill="none" stroke="#d79e42" stroke-width="1.4" opacity=".38" />
+        <g fill="none" stroke="#2d6467" stroke-width="1.5" opacity=".2">
+          <path d="M72 83 C260 36 392 104 564 62 S862 50 1026 82" />
+          <path d="M-22 248 C186 196 348 252 528 210 S838 192 1094 232" />
+        </g>
+
+        <!-- Distant headland and lighthouse. -->
+        <path d="M1090 306 Q1190 258 1288 270 Q1408 282 1620 226 L1620 338 L1070 338 Z" fill="#173c3f" />
+        <path d="M1265 282 L1296 282 L1305 122 L1256 122 Z" fill="#eee7d4" />
+        <path d="M1258 190 L1301 190 L1304 162 L1255 162 Z" fill="#be5b43" />
+        <path d="M1256 122 L1305 122 L1297 105 L1264 105 Z" fill="#16363a" />
+        <rect x="1246" y="98" width="69" height="12" rx="2" fill="#16363a" />
+        <rect x="1263" y="111" width="35" height="36" rx="3" fill="#ffc95f" />
+        <circle cx="1280.5" cy="129" r="29" fill="#ffd779" opacity=".23" filter="url(#tl-soft)" />
+        <path d="M1274 282 L1287 282 L1284 234 L1276 234 Z" fill="#18363a" />
+        <path d="M1205 290 C1234 265 1260 270 1284 282" fill="none" stroke="#789279" stroke-width="9" opacity=".55" />
+
+        <!-- The living waterline. -->
+        <rect x="-20" y="316" width="1640" height="704" fill="url(#tl-sea)" />
+        <rect x="-20" y="316" width="1640" height="704" fill="url(#tl-ripples)" />
+        <path
+          class="surface-line"
+          d="M-40 318 C10 300 60 336 112 318 S215 300 270 318 S375 336 430 318 S535 300 590 318 S695 336 750 318 S855 300 910 318 S1015 336 1070 318 S1175 300 1230 318 S1335 336 1390 318 S1510 300 1640 318"
+          fill="none"
+          stroke="#ebf4dd"
+          stroke-width="8"
+        />
+        <path d="M-40 330 C80 312 170 346 285 328 S500 310 620 330 S840 347 960 327 S1180 308 1300 329 S1500 346 1640 326" fill="none" stroke="#7fd0c4" stroke-width="2" opacity=".58" />
+
+        <!-- Hanging light shafts reveal the upper library. -->
+        <g opacity=".34">
+          <path d="M150 322 L360 322 L475 665 L62 665 Z" fill="url(#tl-depth)" />
+          <path d="M690 322 L860 322 L958 680 L604 680 Z" fill="url(#tl-depth)" />
+          <path d="M1120 322 L1260 322 L1385 646 L1068 646 Z" fill="url(#tl-depth)" />
+        </g>
+
+        <!-- Album-spine shelf: a library made physical, not a cloud. -->
+        <g class="shelf shelf--upper">
+          <path d="M-20 590 Q400 575 810 594 T1620 584" fill="none" stroke="#5e8c8c" stroke-width="11" opacity=".55" />
+          {SPINES.map((spine, i) => (
+            <g>
+              <rect x={spine.x} y={spine.y} width={spine.w} height={spine.h} rx="3" fill={spine.c} opacity=".84" />
+              <rect x={spine.x + 9} y={spine.y + 12} width={Math.max(10, spine.w - 18)} height="5" rx="2" fill="#f3e4bd" opacity=".52" />
+              <rect x={spine.x + 9} y={spine.y + 27} width={Math.max(12, spine.w * .48)} height="3" rx="1.5" fill="#f3e4bd" opacity=".35" />
+              <path
+                d={`M${spine.x + 10} ${spine.y + spine.h - 25} q${spine.w * .12} -12 ${spine.w * .24} 0 t${spine.w * .24} 0 t${spine.w * .24} 0`}
+                fill="none"
+                stroke="#f5ead0"
+                stroke-width="2"
+                opacity={i % 2 ? '.42' : '.62'}
+              />
+            </g>
+          ))}
+        </g>
+
+        <!-- A bright weekly current charts a changing route through the shelf. -->
+        <path
+          class="mix-current mix-current--halo"
+          d="M-60 656 C180 558 318 718 532 642 S876 526 1060 646 S1370 746 1660 592"
+          fill="none"
+          stroke="#55e0c0"
+          stroke-width="18"
+          opacity=".1"
+          filter="url(#tl-soft)"
+        />
+        <path
+          class="mix-current"
+          d="M-60 656 C180 558 318 718 532 642 S876 526 1060 646 S1370 746 1660 592"
+          fill="none"
+          stroke="#72efd0"
+          stroke-width="3"
+          stroke-dasharray="2 13"
+          stroke-linecap="round"
+        />
+        <g fill="#b8fbe9" filter="url(#tl-glow)">
+          <circle cx="282" cy="638" r="4" />
+          <circle cx="742" cy="598" r="4" />
+          <circle cx="1124" cy="676" r="4" />
+          <circle cx="1450" cy="678" r="4" />
+        </g>
+
+        <!-- Deeper catalog strata, larger and more abstract with depth. -->
+        <path d="M-30 740 C260 716 480 755 780 733 S1280 752 1630 720" fill="none" stroke="#315965" stroke-width="18" opacity=".7" />
+        <g opacity=".62">
+          {DEEP_SPINES.map((spine, i) => (
+            <g transform={`translate(${spine.x} 0)`}>
+              <rect x="0" y={760 + (i % 3) * 8} width={spine.w} height={188 - (i % 2) * 12} rx="4" fill={spine.c} />
+              <line x1="18" y1={790 + (i % 3) * 8} x2={spine.w - 18} y2={790 + (i % 3) * 8} stroke="#d3d5b6" stroke-width="5" opacity=".33" />
+              <line x1="18" y1={808 + (i % 3) * 8} x2={spine.w * .58} y2={808 + (i % 3) * 8} stroke="#d3d5b6" stroke-width="3" opacity=".22" />
+            </g>
+          ))}
+        </g>
+
+        <!-- Download reef in the near foreground. -->
+        <ellipse cx="378" cy="840" rx="355" ry="250" fill="url(#tl-reef-glow)" />
+        <path d="M-70 1015 C20 850 126 856 192 814 C250 776 302 766 362 800 C422 834 472 768 540 786 C634 812 664 924 748 1020 Z" fill="url(#tl-rock)" />
+        <path d="M128 1008 C158 930 178 832 264 814 C344 797 374 866 444 849 C522 830 562 886 604 1008 Z" fill="#0c2e37" />
+        <path d="M194 920 C242 878 288 872 334 902 C380 862 442 870 492 921 L492 1008 L194 1008 Z" fill="#143f45" />
+        <g class="reef-records">
+          <rect x="225" y="887" width="52" height="94" rx="3" fill="#d78556" />
+          <rect x="286" y="871" width="58" height="110" rx="3" fill="#d8b75e" />
+          <rect x="354" y="892" width="52" height="89" rx="3" fill="#4ea09a" />
+          <rect x="416" y="865" width="61" height="116" rx="3" fill="#b75a63" />
+          <g fill="#fff1c6" opacity=".6">
+            <rect x="234" y="900" width="34" height="4" rx="2" />
+            <rect x="297" y="886" width="36" height="4" rx="2" />
+            <rect x="363" y="906" width="34" height="4" rx="2" />
+            <rect x="427" y="880" width="39" height="4" rx="2" />
+          </g>
+          <path d="M226 952 q13 -18 26 0 t26 0 M288 948 q14 -16 28 0 t28 0 M355 951 q13 -14 26 0 t26 0 M418 944 q15 -19 30 0 t30 0" fill="none" stroke="#fff1c6" stroke-width="2" opacity=".55" />
+        </g>
+
+        <!-- Near rock and kelp deliberately occlude the scene. -->
+        <path d="M-50 1020 C-4 878 54 824 126 854 C190 881 160 956 224 1020 Z" fill="#03141d" />
+        <path d="M1400 1020 C1398 920 1444 858 1506 878 C1572 900 1598 846 1648 824 L1650 1020 Z" fill="#03141d" />
+        <g fill="none" stroke="#2f7770" stroke-width="13" stroke-linecap="round" opacity=".7">
+          <path d="M92 1004 C56 946 120 910 80 842 C54 798 90 748 116 720" />
+          <path d="M1510 1008 C1472 944 1530 898 1492 844 C1460 796 1518 762 1534 706" />
+          <path d="M1565 1008 C1538 950 1590 914 1570 868" />
+        </g>
+
+        <!-- Buoys for the other two real sources. -->
+        <g>
+          <path d="M300 324 L300 366" stroke="#153b42" stroke-width="4" />
+          <path d="M275 354 L325 354 L314 386 L286 386 Z" fill="#df6f4e" />
+          <path d="M275 354 L325 354" stroke="#f4e8ce" stroke-width="8" />
+          <path d="M955 324 L955 372" stroke="#153b42" stroke-width="4" />
+          <path d="M930 360 L980 360 L969 392 L941 392 Z" fill="#d5a748" />
+          <path d="M930 360 L980 360" stroke="#f4e8ce" stroke-width="8" />
+        </g>
+
+        <!-- Air and depth particles. -->
+        <g fill="#d9f5ec" opacity=".44">
+          <circle cx="182" cy="405" r="3" /><circle cx="196" cy="388" r="1.5" />
+          <circle cx="510" cy="705" r="2.5" /><circle cx="525" cy="680" r="1.7" />
+          <circle cx="846" cy="420" r="2" /><circle cx="858" cy="397" r="1.5" />
+          <circle cx="1190" cy="752" r="3" /><circle cx="1204" cy="726" r="1.5" />
+          <circle cx="1380" cy="520" r="2.5" /><circle cx="1392" cy="496" r="1.5" />
+        </g>
+      </svg>
+
+      <div class="brand-flag">
+        <Mark size={27} decorative />
+        <span>{NAME}</span>
+        <i aria-hidden="true"></i>
+        <small>private waters</small>
+      </div>
+
+      <div class="chart-copy">
+        <p class="chart-kicker"><span>Chart 01</span> Your library, sounded</p>
+        <h1>{HEADLINE}</h1>
+        <p class="lede">
+          Mozz brings the music on your Plex, Jellyfin or Navidrome server to
+          iPhone and iPad — streamed at home or downloaded for the crossing.
+        </p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <div class="server-sources" aria-label="Supported music servers">
+        {SERVERS.map((server) => (
+          <div class={`source ${SOURCE_POSITIONS[server.name]}`} title={server.name}>
+            <span class="source__disc"><ServerLogo name={server.name} size={24} brand /></span>
+            <span class="source__name">{server.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mix-label">
+        <span class="route-dot" aria-hidden="true"></span>
+        <span><b>Weekly mix</b><small>changing current</small></span>
+      </div>
+      <div class="reef-label">
+        <span>Downloaded</span>
+        <b>safe in your pocket</b>
+      </div>
+      <a class="soundings" href="#currents">
+        <span>Take a sounding</span>
+        <i aria-hidden="true"></i>
+      </a>
+    </header>
+
+    <section class="currents" id="currents" aria-labelledby="currents-title">
+      <div class="depth-rule" aria-hidden="true">
+        <span>0m</span><i></i><span>20m</span><i></i><span>40m</span><i></i><span>60m</span>
+      </div>
+      <svg class="current-map" viewBox="0 0 1440 940" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <filter id="current-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="20" /></filter>
+        </defs>
+        <path d="M-100 180 C220 20 430 300 694 188 S1060 12 1540 238" fill="none" stroke="#48cfb9" stroke-width="58" opacity=".06" filter="url(#current-blur)" />
+        <path class="route-line route-line--one" d="M-100 180 C220 20 430 300 694 188 S1060 12 1540 238" fill="none" stroke="#6de3cc" stroke-width="3" stroke-dasharray="3 17" stroke-linecap="round" />
+        <path class="route-line route-line--two" d="M1540 566 C1270 430 1064 730 772 560 S268 412 -80 720" fill="none" stroke="#3ba59e" stroke-width="2" stroke-dasharray="2 14" stroke-linecap="round" opacity=".7" />
+        <g fill="none" stroke="#4d8090" opacity=".23">
+          <path d="M-50 360 C260 274 530 414 770 342 S1210 262 1500 386" />
+          <path d="M-50 620 C280 532 490 680 790 604 S1220 540 1500 660" />
+          <path d="M-50 820 C220 746 510 876 820 800 S1250 744 1500 836" />
+        </g>
+        <g fill="#8eecda">
+          <circle cx="210" cy="142" r="5" /><circle cx="694" cy="188" r="5" /><circle cx="1122" cy="112" r="5" />
+        </g>
+      </svg>
+
+      <div class="currents__intro">
+        <p class="depth-label">Current / 20 metres</p>
+        <h2 id="currents-title">Every week, a new route through what you own.</h2>
+        <p>
+          Weekly mixes move through the collection like a current, while radio
+          follows real listening similarity. Discovery never replaces your
+          library; it leads you back into it.
+        </p>
+      </div>
+
+      <div class="soundings-list">
+        <article class="sounding sounding--one">
+          <span class="sounding__fix">A</span>
+          <h3>{FEATURES[0].title}</h3>
+          <p>{FEATURES[0].body}</p>
+        </article>
+        <article class="sounding sounding--two">
+          <span class="sounding__fix">B</span>
+          <h3>{FEATURES[4].title}</h3>
+          <p>{FEATURES[4].body}</p>
+        </article>
+        <article class="sounding sounding--three">
+          <span class="sounding__fix">C</span>
+          <h3>{FEATURES[2].title}</h3>
+          <p>{FEATURES[2].body}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pocket" aria-labelledby="pocket-title">
+      <div class="pocket__art" aria-hidden="true">
+        <div class="reef reef--left"></div>
+        <div class="reef reef--right"></div>
+        <div class="vault">
+          <span style="--h: 78%; --c: #c86d50"></span>
+          <span style="--h: 92%; --c: #ddb45d"></span>
+          <span style="--h: 70%; --c: #5a9793"></span>
+          <span style="--h: 86%; --c: #a45662"></span>
+          <span style="--h: 74%; --c: #d28d55"></span>
+          <span style="--h: 96%; --c: #4f7e88"></span>
+        </div>
+        <i class="glow glow--one"></i>
+        <i class="glow glow--two"></i>
+      </div>
+      <div class="pocket__copy">
+        <p class="depth-label">Sheltered reef / 48 metres</p>
+        <h2 id="pocket-title">Your favorites travel below the weather.</h2>
+        <p>{FEATURES[1].body}</p>
+        <p>
+          The full catalog stays on the device, so browsing and searching still
+          work when the server cannot be reached. Stream when connected. Keep
+          the records you choose in your pocket for everywhere else.
+        </p>
+        <div class="pocket__legend">
+          <span><i class="legend-line"></i> on-device catalog</span>
+          <span><i class="legend-square"></i> downloaded audio</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="trench" aria-labelledby="trench-title">
+      <svg class="trench__contours" viewBox="0 0 1440 940" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="#315161" stroke-width="1.4" opacity=".5">
+          <path d="M-80 120 C310 2 520 218 820 104 S1240 12 1520 132" />
+          <path d="M-80 232 C290 118 510 328 822 216 S1220 124 1520 246" />
+          <path d="M-80 348 C250 244 490 446 816 330 S1230 238 1520 360" />
+          <path d="M-80 470 C258 360 502 562 824 448 S1226 354 1520 480" />
+          <path d="M-80 598 C260 480 500 690 820 572 S1230 478 1520 610" />
+          <path d="M-80 734 C258 610 510 824 824 700 S1220 608 1520 744" />
+          <path d="M-80 876 C260 744 500 962 820 834 S1220 744 1520 882" />
+        </g>
+        <path d="M720 0 C610 176 612 324 720 470 C828 616 832 752 720 940" fill="none" stroke="#c80028" stroke-width="2" stroke-dasharray="2 12" opacity=".76" />
+      </svg>
+
+      <div class="trench__head">
+        <p class="depth-label">Continental shelf / 80 metres</p>
+        <h2 id="trench-title">Nothing hidden under the surface.</h2>
+        <p>
+          Free forever and open source. Mozz exists between your server and your
+          ears, without building a business in the water between them.
+        </p>
+      </div>
+
+      <div class="markers">
+        {OWNERSHIP.map((item, index) => (
+          <article class={`marker marker--${index + 1}`}>
+            <span class="marker__line" aria-hidden="true"></span>
+            <span class="marker__depth">0{index + 1}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="seabed" aria-labelledby="seabed-title">
+      <div class="seabed__rings" aria-hidden="true">
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <div class="seabed__lockup">
+        <Mark size={44} decorative />
+        <span>{NAME}</span>
+      </div>
+      <p class="depth-label">The seabed / yours</p>
+      <h2 id="seabed-title">{TAGLINE}</h2>
+      <p class="seabed__sub">{SUBLINE}</p>
+      <div class="seabed__actions">
+        {APP_STORE_URL ? (
+          <a class="store store--light" href={APP_STORE_URL}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+        ) : (
+          <span class="store store--light is-pending" aria-disabled="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Coming to the</small>App Store</span>
+          </span>
+        )}
+        <a class="source-link source-link--light" href={GITHUB_URL}>Explore on GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="fineprint">
+        For recommendations, Mozz can send an artist name, track title or
+        MusicBrainz ID to MetaBrainz. Never your name, account or server address.
+        Switch it off in Settings.
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    scroll-behavior: smooth;
+    background: #041923;
+  }
+
+  :global(body) {
+    margin: 0;
+    color: #dceee9;
+    background: #041923;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  :global(*:focus-visible) {
+    outline: 3px solid #ffd171;
+    outline-offset: 4px;
+  }
+
+  .tideline {
+    --ink: #071a24;
+    --deep: #041923;
+    --water: #0b3b4a;
+    --current: #72efd0;
+    --foam: #dceee9;
+    --beacon: #ffd171;
+    --coral: #dc704e;
+    overflow: hidden;
+    background: var(--deep);
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 42px);
+    height: 880px;
+    max-height: 1040px;
+    isolation: isolate;
+    overflow: hidden;
+    background: #0a3542;
+  }
+
+  .hero__scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .surface-line {
+    animation: surface-drift 7s ease-in-out infinite alternate;
+  }
+
+  .mix-current {
+    animation: current-run 16s linear infinite;
+  }
+
+  .brand-flag {
+    position: absolute;
+    top: 4.4%;
+    left: clamp(1.25rem, 3.2vw, 3.5rem);
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    color: #18383a;
+    font-weight: 700;
+    letter-spacing: -.025em;
+  }
+
+  .brand-flag > span {
+    font-size: 1.2rem;
+  }
+
+  .brand-flag > i {
+    width: 2.5rem;
+    height: 1px;
+    margin-inline: .2rem;
+    background: currentColor;
+    opacity: .38;
+  }
+
+  .brand-flag small {
+    font: 500 .62rem/1 'DM Mono', monospace;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .chart-copy {
+    position: absolute;
+    top: 10.5%;
+    left: clamp(1.5rem, 7vw, 7rem);
+    width: min(650px, 47vw);
+    color: #102d31;
+    transform: rotate(-1.1deg);
+    transform-origin: left center;
+  }
+
+  .chart-copy::before,
+  .chart-copy::after {
+    content: '';
+    position: absolute;
+    left: -1.2rem;
+    width: calc(100% + 2.4rem);
+    height: 1px;
+    background: #345c5b;
+    opacity: .32;
+  }
+
+  .chart-copy::before { top: -1rem; }
+  .chart-copy::after { bottom: -1rem; }
+
+  .chart-kicker,
+  .depth-label {
+    margin: 0 0 .75rem;
+    font: 500 .7rem/1.3 'DM Mono', monospace;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .chart-kicker {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    color: #365b5b;
+  }
+
+  .chart-kicker span {
+    padding: .35rem .48rem;
+    border: 1px solid currentColor;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2 {
+    font-family: 'Bodoni Moda', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -.055em;
+  }
+
+  h1 {
+    max-width: 620px;
+    margin-bottom: .72rem;
+    font-size: clamp(4rem, 6.8vw, 7.3rem);
+    line-height: .78;
+  }
+
+  .lede {
+    max-width: 570px;
+    margin-bottom: 1rem;
+    font-size: clamp(.82rem, 1.1vw, 1rem);
+    line-height: 1.55;
+    font-weight: 600;
+  }
+
+  .actions,
+  .seabed__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    min-height: 48px;
+    padding: .42rem 1rem;
+    border: 1px solid #102d31;
+    color: #f7efe0;
+    background: #102d31;
+    box-shadow: 5px 5px 0 rgba(16, 45, 49, .16);
+    text-decoration: none;
+    font-weight: 700;
+    transform: rotate(.6deg);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+
+  a.store:hover {
+    transform: rotate(0) translateY(-2px);
+    box-shadow: 7px 7px 0 rgba(16, 45, 49, .2);
+  }
+
+  .store svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: grid;
+    font-size: .92rem;
+    line-height: 1.05;
+  }
+
+  .store small {
+    font-size: .55rem;
+    font-weight: 500;
+    letter-spacing: .03em;
+  }
+
+  .store.is-pending {
+    cursor: not-allowed;
+  }
+
+  .store.is-pending::after {
+    content: 'pending';
+    align-self: flex-start;
+    margin-left: .15rem;
+    padding-top: .15rem;
+    color: #ffd171;
+    font: 500 .48rem/1 'DM Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .source-link {
+    color: #102d31;
+    font: 700 .75rem/1.2 'DM Mono', monospace;
+    text-underline-offset: .32rem;
+    text-decoration-thickness: 1px;
+  }
+
+  .source-link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .server-sources {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .source {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    gap: .28rem;
+    color: #17363c;
+  }
+
+  .source__disc {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(10, 43, 48, .34);
+    border-radius: 50%;
+    background: rgba(244, 239, 216, .91);
+    box-shadow: 0 7px 18px rgba(3, 24, 31, .18);
+  }
+
+  .source__name {
+    padding: .2rem .35rem;
+    color: #dceee9;
+    background: rgba(5, 33, 43, .82);
+    font: 500 .54rem/1 'DM Mono', monospace;
+    letter-spacing: .05em;
+  }
+
+  .lens {
+    top: 10.5%;
+    left: 78%;
+  }
+
+  .lens .source__disc {
+    width: 48px;
+    height: 48px;
+    border-color: rgba(255, 209, 113, .75);
+    background: rgba(255, 239, 192, .92);
+    box-shadow: 0 0 34px rgba(255, 195, 77, .8);
+  }
+
+  .buoy--west {
+    top: 35.4%;
+    left: 16.2%;
+  }
+
+  .buoy--east {
+    top: 36%;
+    left: 57.2%;
+  }
+
+  .mix-label,
+  .reef-label {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    pointer-events: none;
+  }
+
+  .mix-label {
+    top: 64%;
+    right: 12%;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    color: #baf6e7;
+  }
+
+  .mix-label::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 7rem;
+    height: 1px;
+    background: currentColor;
+    opacity: .5;
+  }
+
+  .route-dot {
+    width: 8px;
+    height: 8px;
+    border: 2px solid #72efd0;
+    border-radius: 50%;
+    box-shadow: 0 0 16px #72efd0;
+  }
+
+  .mix-label > span:last-child {
+    display: grid;
+  }
+
+  .mix-label b,
+  .reef-label b {
+    font-size: .65rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .mix-label small {
+    color: #80aeb1;
+    font-size: .52rem;
+  }
+
+  .reef-label {
+    left: 38%;
+    bottom: 7%;
+    display: grid;
+    color: #ffd487;
+  }
+
+  .reef-label::before {
+    content: '';
+    position: absolute;
+    right: calc(100% + .7rem);
+    bottom: .35rem;
+    width: 5rem;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .reef-label span {
+    color: #b6d4d0;
+    font-size: .55rem;
+    text-transform: uppercase;
+  }
+
+  .soundings {
+    position: absolute;
+    right: 3rem;
+    bottom: 2.2rem;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    color: #d7ede6;
+    font: 500 .62rem/1 'DM Mono', monospace;
+    letter-spacing: .12em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .soundings i {
+    display: block;
+    width: 1px;
+    height: 2.4rem;
+    background: currentColor;
+    animation: sounding 2s ease-in-out infinite;
+  }
+
+  .currents {
+    position: relative;
+    min-height: 940px;
+    padding: 7rem clamp(1.5rem, 6vw, 6rem);
+    background:
+      radial-gradient(circle at 74% 24%, rgba(55, 153, 150, .13), transparent 28%),
+      linear-gradient(#073141, #062735);
+    isolation: isolate;
+  }
+
+  .current-map {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .route-line {
+    animation: current-run 18s linear infinite;
+  }
+
+  .route-line--two {
+    animation-direction: reverse;
+    animation-duration: 23s;
+  }
+
+  .depth-rule {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6d9aa1;
+    font: 400 .55rem/1 'DM Mono', monospace;
+  }
+
+  .depth-rule i {
+    width: 1px;
+    flex: 1;
+    margin-block: .7rem;
+    background: linear-gradient(#507e87 50%, transparent 50%) 0 0 / 1px 8px;
+  }
+
+  .currents__intro {
+    width: min(690px, 54vw);
+    margin-left: 7vw;
+  }
+
+  .depth-label {
+    color: #72b1b3;
+  }
+
+  .currents h2,
+  .pocket h2,
+  .trench h2,
+  .seabed h2 {
+    margin-bottom: 1.35rem;
+    font-size: clamp(3rem, 6vw, 6rem);
+    line-height: .95;
+  }
+
+  .currents__intro > p:last-child,
+  .pocket__copy > p,
+  .trench__head > p:last-child {
+    max-width: 650px;
+    color: #a9c7c7;
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    line-height: 1.75;
+  }
+
+  .soundings-list {
+    position: relative;
+    min-height: 520px;
+    margin-top: 2.5rem;
+  }
+
+  .sounding {
+    position: absolute;
+    width: min(350px, 28vw);
+  }
+
+  .sounding::before {
+    content: '';
+    position: absolute;
+    top: .62rem;
+    right: calc(100% + .8rem);
+    width: 4rem;
+    height: 1px;
+    background: #72efd0;
+    opacity: .45;
+  }
+
+  .sounding--one { top: 1.5rem; left: 15%; }
+  .sounding--two { top: 13.5rem; left: 52%; }
+  .sounding--three { top: 23rem; left: 24%; }
+
+  .sounding__fix,
+  .marker__depth {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-bottom: .8rem;
+    border: 1px solid #5cd4bf;
+    border-radius: 50%;
+    color: #8ff0dc;
+    font: 500 .62rem/1 'DM Mono', monospace;
+  }
+
+  .sounding h3,
+  .marker h3 {
+    margin-bottom: .6rem;
+    color: #e0efeb;
+    font: 600 clamp(1.15rem, 1.6vw, 1.5rem)/1.2 'Manrope', sans-serif;
+    letter-spacing: -.035em;
+  }
+
+  .sounding p,
+  .marker p {
+    color: #8fb1b4;
+    font-size: .9rem;
+    line-height: 1.65;
+  }
+
+  .pocket {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 860px;
+    padding: 7rem clamp(1.5rem, 7vw, 8rem);
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 28% 58%, rgba(225, 115, 61, .24), transparent 29%),
+      linear-gradient(#062735, #051f2b);
+  }
+
+  .pocket__art {
+    position: absolute;
+    inset: 0;
+  }
+
+  .reef {
+    position: absolute;
+    bottom: -8%;
+    background: #061720;
+    filter: drop-shadow(0 -1px 0 rgba(86, 137, 133, .2));
+  }
+
+  .reef--left {
+    left: -10%;
+    width: 68%;
+    height: 72%;
+    clip-path: polygon(0 30%, 15% 18%, 31% 26%, 42% 10%, 55% 22%, 66% 16%, 82% 32%, 100% 23%, 100% 100%, 0 100%);
+  }
+
+  .reef--right {
+    right: -9%;
+    width: 50%;
+    height: 58%;
+    clip-path: polygon(0 28%, 18% 10%, 38% 26%, 54% 5%, 73% 22%, 100% 14%, 100% 100%, 0 100%);
+    opacity: .78;
+  }
+
+  .vault {
+    position: absolute;
+    left: 9%;
+    bottom: 9%;
+    display: flex;
+    align-items: end;
+    gap: .75rem;
+    width: min(530px, 44vw);
+    height: 340px;
+    padding: 2.5rem 2.8rem;
+    border: 2px solid rgba(255, 192, 93, .26);
+    border-bottom: 0;
+    border-radius: 48% 48% 0 0 / 22% 22% 0 0;
+    background: radial-gradient(circle at 50% 64%, rgba(241, 139, 67, .22), rgba(10, 43, 50, .84) 66%);
+    box-shadow: inset 0 0 70px rgba(242, 141, 64, .14), 0 0 90px rgba(211, 89, 51, .1);
+  }
+
+  .vault span {
+    position: relative;
+    width: 15%;
+    height: var(--h);
+    border-radius: 3px 3px 0 0;
+    background: var(--c);
+    box-shadow: inset 0 12px 0 rgba(255,255,255,.14);
+  }
+
+  .vault span::before,
+  .vault span::after {
+    content: '';
+    position: absolute;
+    left: 14%;
+    right: 14%;
+    height: 4px;
+    border-radius: 4px;
+    background: #fff1c7;
+    opacity: .48;
+  }
+
+  .vault span::before { top: 13%; }
+  .vault span::after { top: 19%; right: 45%; }
+
+  .glow {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffd171;
+    box-shadow: 0 0 24px 7px rgba(255, 177, 81, .35);
+  }
+
+  .glow--one { left: 24%; bottom: 47%; animation: drift 6s ease-in-out infinite; }
+  .glow--two { left: 39%; bottom: 33%; animation: drift 7s ease-in-out -2s infinite; }
+
+  .pocket__copy {
+    position: relative;
+    z-index: 2;
+    width: min(620px, 44vw);
+    margin-left: auto;
+    padding-left: 3rem;
+  }
+
+  .pocket__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: 2rem;
+    color: #8eafb1;
+    font: 500 .62rem/1 'DM Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .pocket__legend span {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .legend-line {
+    width: 2.1rem;
+    height: 2px;
+    background: #70dfc7;
+  }
+
+  .legend-square {
+    width: .7rem;
+    height: .7rem;
+    background: #d87952;
+  }
+
+  .trench {
+    position: relative;
+    min-height: 960px;
+    padding: 8rem clamp(1.5rem, 8vw, 8rem);
+    background: linear-gradient(#051f2b, #03151f);
+    isolation: isolate;
+  }
+
+  .trench__contours {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .trench__head {
+    width: min(720px, 54vw);
+  }
+
+  .markers {
+    position: relative;
+    min-height: 570px;
+    margin-top: 3rem;
+  }
+
+  .marker {
+    position: absolute;
+    width: min(340px, 29vw);
+  }
+
+  .marker--1 { top: 0; left: 7%; }
+  .marker--2 { top: 6rem; right: 5%; }
+  .marker--3 { top: 18rem; left: 18%; }
+  .marker--4 { top: 25rem; right: 12%; }
+
+  .marker__line {
+    position: absolute;
+    top: .8rem;
+    width: clamp(2rem, 8vw, 8rem);
+    height: 1px;
+    background: #c80028;
+    opacity: .7;
+  }
+
+  .marker:nth-child(odd) .marker__line {
+    left: calc(100% + 1rem);
+  }
+
+  .marker:nth-child(even) .marker__line {
+    right: calc(100% + 1rem);
+  }
+
+  .marker__depth {
+    border-color: #a93446;
+    color: #e16976;
+  }
+
+  .seabed {
+    position: relative;
+    display: flex;
+    min-height: 740px;
+    padding: 7rem 1.5rem 4rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: #020e15;
+  }
+
+  .seabed__rings {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .seabed__rings i {
+    position: absolute;
+    width: min(84vw, 940px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(93, 155, 157, .16);
+    border-radius: 50%;
+  }
+
+  .seabed__rings i:nth-child(2) { width: min(64vw, 710px); }
+  .seabed__rings i:nth-child(3) { width: min(44vw, 480px); }
+  .seabed__rings i:nth-child(4) { width: min(24vw, 250px); border-color: rgba(200, 0, 40, .35); }
+
+  .seabed__lockup {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 2.2rem;
+    color: #eff7f4;
+    font: 700 1.5rem/1 'Manrope', sans-serif;
+  }
+
+  .seabed h2 {
+    position: relative;
+    max-width: 940px;
+    margin-bottom: .8rem;
+  }
+
+  .seabed__sub {
+    margin-bottom: 2rem;
+    color: #91b0b3;
+    font-size: 1.1rem;
+  }
+
+  .store--light {
+    color: #071a24;
+    background: #e9f2ed;
+    border-color: #e9f2ed;
+    box-shadow: 5px 5px 0 rgba(200, 0, 40, .4);
+  }
+
+  .source-link--light {
+    color: #dceee9;
+  }
+
+  .fineprint {
+    position: relative;
+    max-width: 680px;
+    margin: 4rem auto 0;
+    color: #5f8187;
+    font-size: .7rem;
+    line-height: 1.65;
+  }
+
+  @keyframes surface-drift {
+    to { transform: translateX(-34px); }
+  }
+
+  @keyframes current-run {
+    to { stroke-dashoffset: -240; }
+  }
+
+  @keyframes sounding {
+    0%, 100% { transform: scaleY(.65); transform-origin: top; opacity: .5; }
+    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); opacity: .45; }
+    50% { transform: translate(18px, -24px); opacity: 1; }
+  }
+
+  @media (max-width: 800px) {
+    .hero {
+      min-height: calc(100svh - 40px);
+      height: 820px;
+      max-height: none;
+    }
+
+    .brand-flag {
+      top: 2.8%;
+      left: 1rem;
+    }
+
+    .brand-flag > i,
+    .brand-flag small {
+      display: none;
+    }
+
+    .chart-copy {
+      top: 8.5%;
+      left: 1rem;
+      width: 68%;
+      transform: rotate(-.5deg);
+    }
+
+    .chart-copy::before,
+    .chart-copy::after {
+      left: -.35rem;
+      width: calc(100% + .7rem);
+    }
+
+    .chart-kicker {
+      gap: .45rem;
+      margin-bottom: .55rem;
+      font-size: .52rem;
+    }
+
+    .chart-kicker span {
+      padding: .24rem .3rem;
+    }
+
+    h1 {
+      font-size: clamp(3.2rem, 14vw, 4.25rem);
+      line-height: .82;
+    }
+
+    .lede {
+      margin-bottom: .7rem;
+      font-size: .7rem;
+      line-height: 1.42;
+    }
+
+    .actions {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .store {
+      min-height: 42px;
+      padding: .32rem .65rem;
+    }
+
+    .store svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    .store span { font-size: .76rem; }
+    .store small { font-size: .47rem; }
+    .store.is-pending::after { display: none; }
+    .source-link { font-size: .61rem; }
+
+    .lens {
+      top: 11%;
+      left: 80.8%;
+    }
+
+    .lens .source__disc {
+      width: 39px;
+      height: 39px;
+    }
+
+    .buoy--west {
+      top: 35.5%;
+      left: 12.5%;
+    }
+
+    .buoy--east {
+      top: 36.1%;
+      left: 55%;
+    }
+
+    .source__disc {
+      width: 34px;
+      height: 34px;
+    }
+
+    .source__name {
+      display: none;
+    }
+
+    .mix-label {
+      top: 63%;
+      right: .8rem;
+    }
+
+    .mix-label::after {
+      width: 2rem;
+    }
+
+    .reef-label {
+      left: auto;
+      right: 1rem;
+      bottom: 8%;
+      text-align: right;
+    }
+
+    .reef-label::before {
+      right: auto;
+      left: calc(100% + .5rem);
+      width: 2rem;
+    }
+
+    .soundings {
+      right: 1rem;
+      bottom: 1rem;
+    }
+
+    .soundings span {
+      display: none;
+    }
+
+    .currents {
+      min-height: 1120px;
+      padding: 5.5rem 1.5rem 4rem 3rem;
+    }
+
+    .depth-rule {
+      left: .65rem;
+    }
+
+    .currents__intro,
+    .trench__head {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .currents h2,
+    .pocket h2,
+    .trench h2,
+    .seabed h2 {
+      font-size: clamp(2.65rem, 12vw, 4rem);
+    }
+
+    .soundings-list {
+      min-height: 660px;
+      margin-top: 3rem;
+    }
+
+    .sounding {
+      position: relative;
+      top: auto;
+      left: auto;
+      right: auto;
+      width: 88%;
+      margin: 0 0 4rem 2rem;
+    }
+
+    .sounding:nth-child(even) {
+      margin-left: auto;
+    }
+
+    .sounding::before {
+      width: 2rem;
+    }
+
+    .pocket {
+      display: block;
+      min-height: 980px;
+      padding: 5.5rem 1.5rem;
+    }
+
+    .pocket__copy {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .vault {
+      left: 6%;
+      bottom: 3%;
+      width: 88%;
+      height: 340px;
+      padding: 2rem 1.7rem;
+    }
+
+    .reef--left {
+      width: 120%;
+      height: 48%;
+    }
+
+    .reef--right {
+      display: none;
+    }
+
+    .glow--one { left: 25%; bottom: 31%; }
+    .glow--two { left: 70%; bottom: 19%; }
+
+    .trench {
+      min-height: 1220px;
+      padding: 6rem 1.5rem;
+    }
+
+    .markers {
+      min-height: 760px;
+      margin-top: 4rem;
+    }
+
+    .marker {
+      position: relative;
+      top: auto;
+      left: auto;
+      right: auto;
+      width: 82%;
+      margin-bottom: 3.7rem;
+    }
+
+    .marker:nth-child(even) {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .marker:nth-child(odd) .marker__line,
+    .marker:nth-child(even) .marker__line {
+      top: .8rem;
+      width: 2rem;
+    }
+
+    .marker:nth-child(odd) .marker__line {
+      left: calc(100% + .65rem);
+    }
+
+    .marker:nth-child(even) .marker__line {
+      right: calc(100% + .65rem);
+    }
+
+    .seabed {
+      min-height: 720px;
+    }
+
+    .seabed__rings i { width: 150vw; }
+    .seabed__rings i:nth-child(2) { width: 112vw; }
+    .seabed__rings i:nth-child(3) { width: 76vw; }
+    .seabed__rings i:nth-child(4) { width: 40vw; }
+
+    .seabed__actions {
+      flex-direction: column;
+    }
+
+    .fineprint {
+      margin-top: 3rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero {
+      height: 804px;
+    }
+
+    .chart-copy {
+      top: 7.2%;
+      width: 71%;
+    }
+
+    .brand-flag {
+      top: 1.7%;
+    }
+
+    .brand-flag > span {
+      font-size: 1rem;
+    }
+
+    .lens {
+      top: 9.6%;
+    }
+
+    .mix-label {
+      top: 64.5%;
+    }
+
+    .mix-label b {
+      font-size: .55rem;
+    }
+
+    .mix-label small {
+      font-size: .46rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) { scroll-behavior: auto; }
+    .surface-line,
+    .mix-current,
+    .route-line,
+    .soundings i,
+    .glow {
+      animation: none;
+    }
+
+    .store {
+      transition: none;
+    }
+  }
+</style>

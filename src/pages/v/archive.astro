@@ -1,0 +1,2381 @@
+---
+/**
+ * VARIANT — INFINITE ARCHIVE
+ *
+ * THESIS: Your self-hosted library is a monumental place, not a content feed.
+ * The page looks straight down its central aisle: Plex, Jellyfin and Navidrome
+ * are collection wings, while Mozz is the navigation instrument at your hands.
+ *
+ * SIGNATURE: a projective SVG shelf system generates hundreds of album spines
+ * around a single luminous vanishing point. The perspective survives the narrow
+ * mobile crop because the art compresses rather than being replaced by a stack.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const VP = { x: 800, y: 255 };
+const SHELF_ROWS = [
+  [44, 166],
+  [180, 296],
+  [310, 430],
+  [446, 580],
+  [596, 748],
+  [764, 910],
+] as const;
+const SPINE_COLORS = [
+  '#733b32',
+  '#273e38',
+  '#a87942',
+  '#454e5e',
+  '#6b583d',
+  '#3f272a',
+  '#d0b574',
+  '#24362e',
+] as const;
+
+const projectPoint = (t: number, outerY: number) => ({
+  x: VP.x * (1 - t),
+  y: VP.y + (outerY - VP.y) * t,
+});
+
+const SPINES = SHELF_ROWS.flatMap(([top, bottom], row) =>
+  Array.from({ length: 24 }, (_, column) => {
+    const t1 = 0.085 + column * 0.0435;
+    const t2 = t1 + 0.034;
+    const p1 = projectPoint(t1, top + 8);
+    const p2 = projectPoint(t2, top + 8);
+    const p3 = projectPoint(t2, bottom - 9);
+    const p4 = projectPoint(t1, bottom - 9);
+    return {
+      d: `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} L${p2.x.toFixed(1)},${p2.y.toFixed(1)} L${p3.x.toFixed(1)},${p3.y.toFixed(1)} L${p4.x.toFixed(1)},${p4.y.toFixed(1)} Z`,
+      fill: SPINE_COLORS[(column + row * 3) % SPINE_COLORS.length],
+      shine: (column + row) % 7 === 0,
+    };
+  }),
+);
+
+const BAY_LINES = [0.14, 0.24, 0.38, 0.56, 0.78, 1.02].map((t) => {
+  const top = projectPoint(t, 34);
+  const bottom = projectPoint(t, 920);
+  return { x: top.x, y1: top.y, y2: bottom.y };
+});
+
+const DRAWERS = Array.from({ length: 42 }, (_, i) => ({
+  code: `${String.fromCharCode(65 + (i % 7))}·${String(i + 1).padStart(2, '0')}`,
+  open: i === 17,
+}));
+
+const applePath =
+  'M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z';
+---
+
+<Layout
+  title={`${NAME} — every shelf, one music player`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play your own library from Plex, Jellyfin or Navidrome, streamed or downloaded, without tracking or a subscription."
+  themeColor="#0b0c0a"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;600&family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600;6..96,700&family=Spline+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="archive">
+    <VariantBar slug="archive" tone="warm" />
+
+    <!-- The whole first viewport is one authored room. -->
+    <header class="hero" aria-labelledby="archive-title">
+      <svg
+        class="vault"
+        viewBox="0 0 1600 920"
+        preserveAspectRatio="none"
+        role="img"
+        aria-label="A first-person view down an immense cathedral-like archive of album shelves. Thousands of album spines recede toward a bright central doorway, with a brass navigation desk in the foreground."
+      >
+        <defs>
+          <linearGradient id="ar-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#070807" />
+            <stop offset="0.55" stop-color="#11130f" />
+            <stop offset="1" stop-color="#19140f" />
+          </linearGradient>
+          <radialGradient id="ar-lamp" cx="50%" cy="30%" r="42%">
+            <stop offset="0" stop-color="#f7edc6" stop-opacity=".98" />
+            <stop offset=".08" stop-color="#d6f4df" stop-opacity=".62" />
+            <stop offset=".28" stop-color="#a3c6ad" stop-opacity=".15" />
+            <stop offset="1" stop-color="#0b0c0a" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="ar-floor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#17221c" />
+            <stop offset=".55" stop-color="#101711" />
+            <stop offset="1" stop-color="#21160f" />
+          </linearGradient>
+          <linearGradient id="ar-wall" x1="0" y1=".5" x2="1" y2=".5">
+            <stop offset="0" stop-color="#0b0b09" />
+            <stop offset=".64" stop-color="#211c14" />
+            <stop offset="1" stop-color="#3b2c1c" />
+          </linearGradient>
+          <linearGradient id="ar-wall-right" x1="1" y1=".5" x2="0" y2=".5">
+            <stop offset="0" stop-color="#0b0b09" />
+            <stop offset=".64" stop-color="#211c14" />
+            <stop offset="1" stop-color="#3b2c1c" />
+          </linearGradient>
+          <linearGradient id="ar-brass" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#6f4b24" />
+            <stop offset=".42" stop-color="#e1b967" />
+            <stop offset=".62" stop-color="#8b612e" />
+            <stop offset="1" stop-color="#3e2817" />
+          </linearGradient>
+          <linearGradient id="ar-desk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3d2b1c" />
+            <stop offset=".12" stop-color="#17130f" />
+            <stop offset="1" stop-color="#070807" />
+          </linearGradient>
+          <filter id="ar-soft">
+            <feGaussianBlur stdDeviation="18" />
+          </filter>
+          <filter id="ar-route-glow">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <pattern id="ar-floor-grid" width="34" height="34" patternUnits="userSpaceOnUse">
+            <path d="M34 0H0V34" fill="none" stroke="#d7bd82" stroke-opacity=".08" stroke-width="1" />
+          </pattern>
+        </defs>
+
+        <rect width="1600" height="920" fill="url(#ar-bg)" />
+        <ellipse cx="800" cy="275" rx="410" ry="330" fill="url(#ar-lamp)" filter="url(#ar-soft)" />
+
+        <!-- ceiling and converging ribs -->
+        <path d="M0 0H1600L902 248H698Z" fill="#090a08" />
+        <g fill="none" stroke="#685137" stroke-width="7" opacity=".72">
+          <path d="M0 18L800 255L1600 18" />
+          <path d="M0 108L800 255L1600 108" />
+          <path d="M0 202L800 255L1600 202" />
+        </g>
+        <g fill="none" stroke="url(#ar-brass)" opacity=".72">
+          <path d="M208 0L800 255L1392 0" stroke-width="4" />
+          <path d="M482 0L800 255L1118 0" stroke-width="3" />
+        </g>
+
+        <!-- the aisle floor -->
+        <path d="M696 244H904L1500 920H100Z" fill="url(#ar-floor)" />
+        <path d="M696 244H904L1500 920H100Z" fill="url(#ar-floor-grid)" />
+        <g fill="none" stroke="#cfaa63" stroke-opacity=".22" stroke-width="2">
+          <path d="M800 255L100 920" />
+          <path d="M800 255L390 920" />
+          <path d="M800 255L650 920" />
+          <path d="M800 255L950 920" />
+          <path d="M800 255L1210 920" />
+          <path d="M800 255L1500 920" />
+          <path d="M714 350H886" />
+          <path d="M644 435H956" />
+          <path d="M546 555H1054" />
+          <path d="M408 720H1192" />
+        </g>
+
+        <!-- deep shelf planes -->
+        <path d="M0 0L708 236L690 515L0 920Z" fill="url(#ar-wall)" />
+        <path d="M1600 0L892 236L910 515L1600 920Z" fill="url(#ar-wall-right)" />
+
+        <!-- album spines, projectively generated and mirrored -->
+        <g class="spines">
+          {SPINES.map((spine) => (
+            <path
+              d={spine.d}
+              fill={spine.fill}
+              opacity={spine.shine ? '.98' : '.76'}
+              stroke={spine.shine ? '#ead79d' : '#0a0a08'}
+              stroke-width={spine.shine ? '1.3' : '.65'}
+            />
+          ))}
+        </g>
+        <g class="spines" transform="translate(1600 0) scale(-1 1)">
+          {SPINES.map((spine, i) => (
+            <path
+              d={spine.d}
+              fill={SPINE_COLORS[(i + 3) % SPINE_COLORS.length]}
+              opacity={spine.shine ? '.98' : '.76'}
+              stroke={spine.shine ? '#ead79d' : '#0a0a08'}
+              stroke-width={spine.shine ? '1.3' : '.65'}
+            />
+          ))}
+        </g>
+
+        <!-- shelf rails -->
+        <g fill="none" stroke="url(#ar-brass)" stroke-linecap="square">
+          {SHELF_ROWS.map(([top]) => <path d={`M800 255L-24 ${top}`} stroke-width="7" />)}
+          <path d="M800 255L-24 920" stroke-width="10" />
+          {BAY_LINES.map((line) => (
+            <path d={`M${line.x.toFixed(1)} ${line.y1.toFixed(1)}V${line.y2.toFixed(1)}`} stroke-width="6" />
+          ))}
+        </g>
+        <g fill="none" stroke="url(#ar-brass)" stroke-linecap="square" transform="translate(1600 0) scale(-1 1)">
+          {SHELF_ROWS.map(([top]) => <path d={`M800 255L-24 ${top}`} stroke-width="7" />)}
+          <path d="M800 255L-24 920" stroke-width="10" />
+          {BAY_LINES.map((line) => (
+            <path d={`M${line.x.toFixed(1)} ${line.y1.toFixed(1)}V${line.y2.toFixed(1)}`} stroke-width="6" />
+          ))}
+        </g>
+
+        <!-- monumental arch at the vanishing point -->
+        <path
+          d="M684 442V274Q684 132 800 108Q916 132 916 274V442"
+          fill="none"
+          stroke="#141610"
+          stroke-width="38"
+        />
+        <path
+          d="M684 442V274Q684 132 800 108Q916 132 916 274V442"
+          fill="none"
+          stroke="url(#ar-brass)"
+          stroke-width="7"
+        />
+        <path d="M724 440V284Q724 192 800 168Q876 192 876 284V440Z" fill="#d9eed8" opacity=".12" />
+        <ellipse cx="800" cy="290" rx="98" ry="160" fill="url(#ar-lamp)" opacity=".65" />
+
+        <!-- catalog routes moving underfoot -->
+        <g class="floor-routes" fill="none" filter="url(#ar-route-glow)">
+          <path class="route route--radio" pathLength="100" d="M776 292C710 440 590 632 340 920" stroke="#c80028" stroke-width="8" />
+          <path class="route route--mix" pathLength="100" d="M824 292C900 438 1040 625 1290 920" stroke="#89d9b4" stroke-width="8" />
+        </g>
+
+        <!-- foreground navigation desk -->
+        <path d="M92 790L1508 790L1600 920H0Z" fill="url(#ar-desk)" />
+        <path d="M92 790L1508 790" stroke="url(#ar-brass)" stroke-width="9" />
+        <path d="M0 912H1600" stroke="#bb8741" stroke-width="4" opacity=".55" />
+      </svg>
+
+      <div class="archive-seal" aria-label="Mozz music archive">
+        <Mark size={24} decorative />
+        <span>{NAME}</span>
+        <small>Music archive</small>
+      </div>
+
+      <div class="hero-placard">
+        <p>Navigation instrument · iPhone + iPad</p>
+        <h1 id="archive-title">Every shelf.<br />One music player.</h1>
+        <span>Mozz plays your own library — streamed or downloaded.</span>
+      </div>
+
+      <div class="hero-wings" aria-label="Supported collection wings">
+        {SERVERS.map((server, i) => (
+          <div class={`wing-sign wing-sign--${i + 1}`}>
+            <ServerLogo name={server.name} size={22} brand />
+            <span>{server.name}</span>
+            <small>Collection wing</small>
+          </div>
+        ))}
+      </div>
+
+      <div class="route-signal route-signal--radio" aria-hidden="true">
+        <span>R</span> Radio route
+      </div>
+      <div class="route-signal route-signal--mix" aria-hidden="true">
+        <span>W</span> Weekly mixes
+      </div>
+
+      <div class="navigator">
+        <div class="navigator-brand">
+          <Mark size={48} decorative />
+          <div>
+            <small>Archive navigator</small>
+            <strong>{NAME}</strong>
+            <p>{TAGLINE}</p>
+          </div>
+        </div>
+
+        <div class="navigator-screen">
+          <span class="screen-kicker">Your own music</span>
+          <div class="screen-route" aria-hidden="true">
+            <i></i><b></b><i></i><b></b><i></i>
+          </div>
+          <span class="screen-status">Plex · Jellyfin · Navidrome / Subsonic</span>
+        </div>
+
+        <div class="navigator-actions">
+          {APP_STORE_URL ? (
+            <a class="store-button" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={applePath}></path></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store-button is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={applePath}></path></svg>
+              <span><small>App Store listing</small>Pending</span>
+            </span>
+          )}
+          <a class="source-button" href={GITHUB_URL}>Open source ↗</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- COLLECTION CONCOURSE -->
+    <section class="wing-room" id="collection-wings" aria-labelledby="wings-title">
+      <div class="room-vault" aria-hidden="true"></div>
+      <div class="hanging-sign">
+        <small>Collection concourse</small>
+        <h2 id="wings-title">Three wings. One catalog.</h2>
+        <p>Point Mozz at the music server you already run.</p>
+      </div>
+
+      <div class="wing-doors">
+        {SERVERS.map((server, i) => (
+          <article class={`wing-door wing-door--${i + 1}`}>
+            <div class="door-lintel">
+              <ServerLogo name={server.name} size={38} brand />
+              <h3>{server.name}</h3>
+              <span>Music collection</span>
+            </div>
+            <div class="door-depth" aria-hidden="true">
+              {Array.from({ length: 18 }, (_, n) => (
+                <i style={`--h:${42 + (n % 6) * 8}%;--z:${(n % 4) * -8}px`}></i>
+              ))}
+            </div>
+            <p>{server.note}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="floor-inscription">
+        Mozz mirrors the whole catalog into an on-device database, so browsing and
+        search stay immediate even when the server cannot be reached.
+      </p>
+    </section>
+
+    <!-- CATALOG DRAWER ROOM -->
+    <section class="catalog-room" aria-labelledby="catalog-title">
+      <div class="catalog-heading">
+        <small>Finding room · local index</small>
+        <h2 id="catalog-title">The catalog moves while you type.</h2>
+        <p>{FEATURES[2].body}</p>
+      </div>
+
+      <div class="catalog-wall" aria-hidden="true">
+        <div class="drawer-grid">
+          {DRAWERS.map((drawer) => (
+            <span class:list={['drawer', { 'drawer--open': drawer.open }]}>
+              <i></i><b>{drawer.code}</b><em></em>
+            </span>
+          ))}
+        </div>
+        <div class="search-slip">
+          <small>On-device finding aid</small>
+          <strong>100,000 tracks</strong>
+          <span>about 16 milliseconds</span>
+          <div class="slip-line"></div>
+          <p>Results return before the drawer can open.</p>
+        </div>
+      </div>
+
+      <div class="catalog-runner" aria-hidden="true">
+        <span></span><i></i><span></span><i></i><span></span>
+      </div>
+    </section>
+
+    <!-- OFFLINE CHECKOUT ROOM -->
+    <section class="checkout-room" aria-labelledby="checkout-title">
+      <div class="checkout-sign">
+        <small>Offline checkout · take the shelves with you</small>
+        <h2 id="checkout-title">Check a stack out to your phone.</h2>
+        <p>{FEATURES[1].body}</p>
+      </div>
+
+      <div class="checkout-table" aria-label="A stack of albums being transferred into a phone for offline listening">
+        <div class="album-stack" aria-hidden="true">
+          <span class="sleeve sleeve--1"><i></i><b>01</b></span>
+          <span class="sleeve sleeve--2"><i></i><b>02</b></span>
+          <span class="sleeve sleeve--3"><i></i><b>03</b></span>
+          <span class="sleeve sleeve--4"><i></i><b>04</b></span>
+          <span class="checkout-band">Your music</span>
+        </div>
+
+        <div class="transfer-lane" aria-hidden="true">
+          <span>Checkout</span>
+          <i></i><i></i><i></i><b>→</b>
+        </div>
+
+        <div class="phone-dock" aria-hidden="true">
+          <div class="phone-shell">
+            <span class="dynamic-island"></span>
+            <Mark size={28} decorative />
+            <small>Downloaded</small>
+            <div class="phone-record"></div>
+            <div class="phone-lines"><i></i><i></i><i></i></div>
+            <div class="downloaded"><b>✓</b> Ready offline</div>
+          </div>
+          <span class="dock-label">iPhone / iPad</span>
+        </div>
+      </div>
+
+      <p class="checkout-note">
+        The catalog stays on the device. Browse, search and play downloads with
+        the server unreachable; streaming is ready whenever it comes back.
+      </p>
+    </section>
+
+    <!-- ROUTE HALL -->
+    <section class="route-room" aria-labelledby="routes-title">
+      <svg class="route-map" viewBox="0 0 1600 840" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="ar-route-room-glow" cx=".5" cy=".28" r=".6">
+            <stop offset="0" stop-color="#355548" stop-opacity=".55" />
+            <stop offset="1" stop-color="#0b0d0a" stop-opacity="0" />
+          </radialGradient>
+          <filter id="ar-route-room-filter">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        <rect width="1600" height="840" fill="#0b0d0a" />
+        <ellipse cx="800" cy="220" rx="680" ry="440" fill="url(#ar-route-room-glow)" />
+        <path d="M650 0L770 282L180 840H0V0Z" fill="#191b15" />
+        <path d="M950 0L830 282L1420 840H1600V0Z" fill="#191b15" />
+        <path d="M770 282H830L1420 840H180Z" fill="#161b16" />
+        <g fill="none" stroke="#b68d4d" stroke-opacity=".28" stroke-width="3">
+          <path d="M800 282L180 840" />
+          <path d="M800 282L520 840" />
+          <path d="M800 282L1080 840" />
+          <path d="M800 282L1420 840" />
+          <path d="M734 360H866" />
+          <path d="M634 480H966" />
+          <path d="M482 662H1118" />
+        </g>
+        <g fill="none" filter="url(#ar-route-room-filter)">
+          <path class="route route--radio" pathLength="100" d="M775 295C660 450 480 630 250 840" stroke="#c80028" stroke-width="12" />
+          <path class="route route--mix" pathLength="100" d="M825 295C945 450 1118 630 1350 840" stroke="#89d9b4" stroke-width="12" />
+        </g>
+      </svg>
+
+      <div class="route-room-sign">
+        <small>Listening routes · depart continuously</small>
+        <h2 id="routes-title">There is always another way through.</h2>
+      </div>
+
+      <article class="route-board route-board--radio">
+        <span class="route-letter">R</span>
+        <div>
+          <small>Continuous route</small>
+          <h3>Radio</h3>
+          <p>{FEATURES[4].body}</p>
+        </div>
+      </article>
+
+      <article class="route-board route-board--mix">
+        <span class="route-letter">W</span>
+        <div>
+          <small>Refreshes weekly</small>
+          <h3>Weekly mixes</h3>
+          <p>A fresh route through the music already waiting on your shelves.</p>
+        </div>
+      </article>
+
+      <div class="route-marker" aria-hidden="true">
+        <span>YOU ARE HERE</span>
+        <Mark size={32} decorative />
+      </div>
+    </section>
+
+    <!-- OWNERSHIP LEDGER -->
+    <section class="ledger-room" aria-labelledby="ledger-title">
+      <div class="ledger-desk">
+        <header>
+          <span class="ledger-mark"><Mark size={34} decorative /></span>
+          <div>
+            <small>Permanent collection policy</small>
+            <h2 id="ledger-title">The archive belongs to you.</h2>
+          </div>
+          <b>FREE / OPEN</b>
+        </header>
+
+        <div class="ledger-lines">
+          {OWNERSHIP.map((item, i) => (
+            <article>
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <i aria-hidden="true">✓</i>
+            </article>
+          ))}
+        </div>
+
+        <p class="honest-note">
+          Recommendations are optional. When enabled, Mozz sends an artist name,
+          track title and/or MusicBrainz ID to MusicBrainz and ListenBrainz to find
+          similar music — never your name, server address or account.
+        </p>
+      </div>
+    </section>
+
+    <!-- FINAL CHECKOUT DESK -->
+    <section class="final-desk" aria-labelledby="final-title">
+      <div class="final-lamp" aria-hidden="true"></div>
+      <div class="final-lockup">
+        <Mark size={54} decorative />
+        <span>{NAME}</span>
+      </div>
+      <p class="final-stamp">One app for your music, wherever it lives.</p>
+      <h2 id="final-title">Your shelves are ready.</h2>
+      <p class="final-subline">{SUBLINE} No account, tracking, subscription or lock-in.</p>
+
+      <div class="final-actions">
+        {APP_STORE_URL ? (
+          <a class="store-button store-button--light" href={APP_STORE_URL}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={applePath}></path></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+        ) : (
+          <span class="store-button store-button--light is-pending" aria-disabled="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={applePath}></path></svg>
+            <span><small>App Store listing</small>Pending</span>
+          </span>
+        )}
+        <a class="source-button source-button--light" href={GITHUB_URL}>Browse the source ↗</a>
+      </div>
+
+      <footer>
+        <span>Music player for iPhone and iPad</span>
+        <span>Plex · Jellyfin · Navidrome / Subsonic</span>
+        <span>GPL-3.0 with App Store Exception</span>
+      </footer>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #0b0c0a;
+    scroll-behavior: smooth;
+  }
+
+  :global(body) {
+    background: #0b0c0a;
+  }
+
+  .archive {
+    --ink: #0b0c0a;
+    --mahogany: #3f211c;
+    --felt: #15231d;
+    --brass: #c79a50;
+    --vellum: #eee1bf;
+    --route: #89d9b4;
+    --red: #c80028;
+    --line: rgba(226, 193, 126, 0.24);
+    position: relative;
+    overflow-x: clip;
+    color: var(--vellum);
+    background: var(--ink);
+    font-family: 'Spline Sans', ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+    isolation: isolate;
+  }
+
+  .archive h1,
+  .archive h2,
+  .archive h3,
+  .archive p {
+    margin: 0;
+  }
+
+  .archive h1,
+  .archive h2,
+  .archive h3 {
+    font-family: 'Bodoni Moda', Didot, 'Times New Roman', serif;
+    font-weight: 600;
+    line-height: 0.98;
+  }
+
+  .archive a {
+    color: inherit;
+  }
+
+  .archive a:focus-visible,
+  .archive summary:focus-visible {
+    outline: 3px solid #fff2bd;
+    outline-offset: 4px;
+  }
+
+  /* -------------------------------------------------------------- HERO */
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 43px);
+    height: min(920px, calc(100svh - 43px));
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .vault {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .archive-seal {
+    position: absolute;
+    z-index: 5;
+    top: 1.2rem;
+    left: 1.4rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 0.55rem;
+    padding: 0.5rem 0.7rem;
+    color: #f4e6c2;
+    background: rgba(7, 8, 7, 0.74);
+    border: 1px solid rgba(226, 185, 102, 0.34);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+  }
+
+  .archive-seal :global(.mozz-mark) {
+    grid-row: 1 / 3;
+  }
+
+  .archive-seal > span {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .archive-seal small,
+  .hero-placard > p,
+  .hero-placard > span,
+  .navigator small,
+  .wing-sign small {
+    font: 500 0.58rem/1.2 'Azeret Mono', ui-monospace, monospace;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .archive-seal small {
+    color: #b69e74;
+  }
+
+  .hero-placard {
+    position: absolute;
+    z-index: 4;
+    top: 6.5%;
+    left: 50%;
+    width: min(42rem, 56vw);
+    transform: translateX(-50%);
+    padding: 0.85rem 1.5rem 1rem;
+    text-align: center;
+    color: #171008;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,.2), transparent 18% 82%, rgba(54,26,8,.18)),
+      #c69a53;
+    border: 3px double #3f2915;
+    box-shadow:
+      0 0 0 4px rgba(19, 13, 8, 0.9),
+      0 0 0 5px rgba(216, 176, 98, 0.5),
+      0 20px 40px rgba(0, 0, 0, 0.48);
+    clip-path: polygon(2% 0, 98% 0, 100% 50%, 98% 100%, 2% 100%, 0 50%);
+  }
+
+  .hero-placard > p {
+    color: #4d3219;
+  }
+
+  .hero-placard h1 {
+    margin-top: 0.35rem;
+    font-size: clamp(2rem, 4.2vw, 4rem);
+    letter-spacing: -0.045em;
+  }
+
+  .hero-placard > span {
+    display: block;
+    margin-top: 0.5rem;
+    color: #402812;
+  }
+
+  .hero-wings {
+    display: contents;
+  }
+
+  .wing-sign {
+    position: absolute;
+    z-index: 4;
+    top: 33%;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 0 0.5rem;
+    min-width: 9.5rem;
+    padding: 0.55rem 0.7rem;
+    color: var(--vellum);
+    background: #15130e;
+    border: 1px solid #8b6739;
+    box-shadow: 0 7px 24px rgba(0, 0, 0, 0.5), inset 0 0 0 2px #262016;
+  }
+
+  .wing-sign :global(.server-logo) {
+    grid-row: 1 / 3;
+  }
+
+  .wing-sign > span {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .wing-sign small {
+    margin-top: 0.2rem;
+    color: #a48d68;
+  }
+
+  .wing-sign--1 {
+    left: 7%;
+    transform: perspective(500px) rotateY(24deg) rotateZ(1deg);
+  }
+
+  .wing-sign--2 {
+    right: 7%;
+    transform: perspective(500px) rotateY(-24deg) rotateZ(-1deg);
+  }
+
+  .wing-sign--3 {
+    top: 38%;
+    left: 50%;
+    min-width: 7rem;
+    transform: translateX(-50%) scale(0.72);
+  }
+
+  .route-signal {
+    position: absolute;
+    z-index: 3;
+    top: 56%;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.34rem 0.55rem;
+    color: #ead8ad;
+    background: rgba(12, 14, 11, 0.84);
+    border: 1px solid rgba(231, 195, 118, 0.3);
+    font: 500 0.59rem/1 'Azeret Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .route-signal span {
+    display: grid;
+    width: 1.25rem;
+    aspect-ratio: 1;
+    place-items: center;
+    color: #fff;
+    background: var(--red);
+  }
+
+  .route-signal--radio {
+    left: 27%;
+    transform: rotate(-6deg);
+  }
+
+  .route-signal--mix {
+    right: 25%;
+    transform: rotate(6deg);
+  }
+
+  .route-signal--mix span {
+    color: #102018;
+    background: var(--route);
+  }
+
+  .navigator {
+    position: absolute;
+    z-index: 6;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.9fr) minmax(18rem, 1.35fr) minmax(15rem, 0.9fr);
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: center;
+    min-height: clamp(7.5rem, 18vh, 10.2rem);
+    padding: 1.35rem max(2rem, 6vw) 1.1rem;
+    color: #f0e2bf;
+    background:
+      linear-gradient(180deg, rgba(55, 41, 29, 0.92), rgba(8, 9, 8, 0.98)),
+      #11110e;
+    border-top: 4px double #9d733c;
+    box-shadow: 0 -24px 55px rgba(0, 0, 0, 0.52);
+    clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%);
+  }
+
+  .navigator-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .navigator-brand > div {
+    min-width: 0;
+  }
+
+  .navigator-brand small {
+    display: block;
+    color: #9e8965;
+  }
+
+  .navigator-brand strong {
+    display: block;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .navigator-brand p {
+    margin-top: 0.25rem;
+    overflow: hidden;
+    color: #c8b994;
+    font-size: 0.78rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navigator-screen {
+    padding: 0.8rem 1rem;
+    background: #09100c;
+    border: 1px solid #4d5a48;
+    box-shadow: inset 0 0 28px rgba(109, 209, 158, 0.08), 0 8px 22px rgba(0,0,0,.3);
+  }
+
+  .screen-kicker,
+  .screen-status {
+    display: block;
+    overflow: hidden;
+    color: #b6dfc6;
+    font: 500 0.58rem/1.2 'Azeret Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .screen-status {
+    margin-top: 0.5rem;
+    color: #758b7d;
+  }
+
+  .screen-route {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto;
+    align-items: center;
+    margin-top: 0.55rem;
+  }
+
+  .screen-route i {
+    width: 0.55rem;
+    aspect-ratio: 1;
+    border: 2px solid #9ce5bf;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(156, 229, 191, 0.48);
+  }
+
+  .screen-route b {
+    height: 2px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #9ce5bf 0 45%, transparent 45% 60%, #9ce5bf 60%);
+    background-size: 18px 100%;
+    animation: screen-route 1.2s linear infinite;
+  }
+
+  .navigator-actions,
+  .final-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    align-items: stretch;
+  }
+
+  .store-button,
+  .source-button {
+    display: inline-flex;
+    min-height: 3.15rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(238, 225, 191, 0.42);
+    transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  }
+
+  .store-button {
+    gap: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    color: #18130d;
+    background: #eee1bf;
+  }
+
+  .store-button svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: currentColor;
+    flex: none;
+  }
+
+  .store-button > span {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .store-button small {
+    font-size: 0.49rem;
+    font-weight: 500;
+  }
+
+  a.store-button:hover {
+    background: #fff3ce;
+    transform: translateY(-2px);
+  }
+
+  .store-button.is-pending {
+    color: #b6aa8a;
+    background: rgba(238, 225, 191, 0.06);
+    border-style: dashed;
+    cursor: default;
+  }
+
+  .source-button {
+    padding: 0.7rem 0.85rem;
+    color: #e6d6af;
+    font: 500 0.65rem/1.1 'Azeret Mono', monospace;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .source-button:hover {
+    color: #16110b;
+    background: #d2ab68;
+    transform: translateY(-2px);
+  }
+
+  .route {
+    stroke-dasharray: 1 8;
+    stroke-linecap: round;
+    animation: route-flow 2.6s linear infinite;
+  }
+
+  .route--mix {
+    animation-direction: reverse;
+    animation-duration: 3.4s;
+  }
+
+  /* -------------------------------------------------- SHARED ROOM SIGNAGE */
+  .hanging-sign,
+  .catalog-heading,
+  .checkout-sign,
+  .route-room-sign {
+    position: relative;
+    z-index: 4;
+    width: min(46rem, calc(100% - 3rem));
+    margin-inline: auto;
+    padding: 1rem 1.5rem 1.2rem;
+    text-align: center;
+    color: #211509;
+    background: #c49a58;
+    border: 4px double #4d321b;
+    box-shadow: 0 12px 36px rgba(0,0,0,.4);
+  }
+
+  .hanging-sign::before,
+  .hanging-sign::after,
+  .checkout-sign::before,
+  .checkout-sign::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    width: 2px;
+    height: 4rem;
+    background: #83643a;
+  }
+
+  .hanging-sign::before,
+  .checkout-sign::before { left: 17%; }
+  .hanging-sign::after,
+  .checkout-sign::after { right: 17%; }
+
+  .hanging-sign small,
+  .catalog-heading small,
+  .checkout-sign small,
+  .route-room-sign small,
+  .route-board small,
+  .ledger-desk small {
+    font: 600 0.63rem/1.2 'Azeret Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hanging-sign h2,
+  .catalog-heading h2,
+  .checkout-sign h2,
+  .route-room-sign h2 {
+    margin-top: 0.35rem;
+    font-size: clamp(2rem, 4vw, 3.7rem);
+    letter-spacing: -0.04em;
+  }
+
+  .hanging-sign p,
+  .catalog-heading p,
+  .checkout-sign p {
+    margin-top: 0.55rem;
+    font-size: 0.94rem;
+  }
+
+  /* ------------------------------------------------------- SERVER WINGS */
+  .wing-room {
+    position: relative;
+    min-height: 900px;
+    padding: 8rem max(1rem, 5vw) 5rem;
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, rgba(84,61,35,.15) 1px, transparent 1px) 50% 0 / 11vw 100%,
+      radial-gradient(ellipse at 50% 24%, #313b2d 0, #151914 36%, #090a08 76%);
+  }
+
+  .room-vault {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(118deg, transparent 0 34%, rgba(199,154,80,.15) 34.2% 34.5%, transparent 34.8%),
+      linear-gradient(242deg, transparent 0 34%, rgba(199,154,80,.15) 34.2% 34.5%, transparent 34.8%);
+    pointer-events: none;
+  }
+
+  .wing-doors {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.8rem, 3vw, 3rem);
+    width: min(1220px, 100%);
+    margin: 6rem auto 0;
+    perspective: 1000px;
+  }
+
+  .wing-door {
+    position: relative;
+    min-width: 0;
+    padding: 1.1rem 1.1rem 1.25rem;
+    color: #e9dab7;
+    background:
+      linear-gradient(90deg, #241c13, #42301e 12%, #191610 15% 85%, #42301e 88%, #241c13);
+    border: 1px solid #74552f;
+    border-radius: 48% 48% 0 0 / 16% 16% 0 0;
+    box-shadow:
+      inset 0 0 0 6px #15120e,
+      inset 0 0 0 8px #624729,
+      0 34px 55px rgba(0,0,0,.46);
+  }
+
+  .wing-door--1 { transform: rotateY(9deg); transform-origin: right; }
+  .wing-door--3 { transform: rotateY(-9deg); transform-origin: left; }
+
+  .door-lintel {
+    display: flex;
+    min-height: 7rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.7rem;
+    text-align: center;
+  }
+
+  .door-lintel h3 {
+    margin-top: 0.45rem;
+    font-size: clamp(1.35rem, 2.4vw, 2.1rem);
+  }
+
+  .door-lintel span {
+    margin-top: 0.25rem;
+    color: #a89068;
+    font: 500 0.57rem/1.2 'Azeret Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .door-depth {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    min-height: 20rem;
+    padding: 1rem;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(179,222,195,.18), transparent 24%),
+      #080a08;
+    border: 1px solid #685039;
+    box-shadow: inset 0 20px 40px #050605, inset 0 0 35px rgba(124,168,137,.12);
+    perspective: 450px;
+  }
+
+  .door-depth i {
+    align-self: end;
+    height: var(--h);
+    background: linear-gradient(90deg, #2b312a, #806342 55%, #312b22);
+    border-top: 1px solid #b79458;
+    transform: translateZ(var(--z));
+  }
+
+  .wing-door > p {
+    min-height: 4rem;
+    padding: 0.8rem 0.35rem 0;
+    color: #b8a887;
+    font-size: 0.79rem;
+    text-align: center;
+  }
+
+  .floor-inscription {
+    position: relative;
+    z-index: 2;
+    width: min(54rem, calc(100% - 2rem));
+    margin: 4rem auto 0;
+    padding-top: 1rem;
+    color: #98866a;
+    border-top: 1px solid var(--line);
+    font: 500 0.72rem/1.7 'Azeret Mono', monospace;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  /* -------------------------------------------------------- CATALOG ROOM */
+  .catalog-room {
+    position: relative;
+    min-height: 980px;
+    padding: 6rem max(1rem, 4vw);
+    background:
+      radial-gradient(circle at 20% 20%, rgba(157,102,45,.13), transparent 30%),
+      linear-gradient(#17130e, #0b0c0a);
+    border-top: 1px solid #3f2e1a;
+    border-bottom: 1px solid #3f2e1a;
+  }
+
+  .catalog-heading {
+    width: min(50rem, calc(100% - 2rem));
+    color: #ebdcb7;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-left: 5px double #a77b3e;
+    box-shadow: none;
+  }
+
+  .catalog-heading p {
+    max-width: 65ch;
+    color: #aa9a7a;
+  }
+
+  .catalog-wall {
+    position: relative;
+    width: min(1220px, 100%);
+    margin: 4rem auto 0;
+    padding: clamp(1rem, 2.5vw, 2.2rem);
+    background: #3a2819;
+    border: 8px solid #18110b;
+    outline: 2px solid #79562c;
+    box-shadow: 0 34px 60px rgba(0,0,0,.55), inset 0 0 40px rgba(0,0,0,.5);
+  }
+
+  .drawer-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: clamp(0.35rem, 1vw, 0.85rem);
+  }
+
+  .drawer {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    aspect-ratio: 1.6;
+    place-items: center;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.06), transparent 24%),
+      #271b12;
+    border: 2px solid #100b08;
+    box-shadow:
+      inset 0 0 0 1px #604222,
+      inset 0 -7px 12px rgba(0,0,0,.35),
+      0 4px 4px rgba(0,0,0,.3);
+    transition: transform 180ms ease;
+  }
+
+  .drawer i {
+    position: absolute;
+    top: 19%;
+    width: 28%;
+    height: 18%;
+    border: 2px solid #9a7139;
+    border-bottom-width: 5px;
+    border-radius: 50% 50% 20% 20%;
+  }
+
+  .drawer b {
+    position: absolute;
+    right: 12%;
+    bottom: 10%;
+    left: 12%;
+    overflow: hidden;
+    color: #9b845b;
+    font: 500 clamp(0.34rem, .65vw, .56rem)/1.4 'Azeret Mono', monospace;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .drawer em {
+    position: absolute;
+    top: 52%;
+    width: 8%;
+    aspect-ratio: 1;
+    background: #090705;
+    border-radius: 50%;
+  }
+
+  .drawer--open {
+    z-index: 2;
+    transform: translateY(28%) scale(1.04);
+    box-shadow:
+      inset 0 0 0 1px #604222,
+      0 22px 18px rgba(0,0,0,.72);
+  }
+
+  .search-slip {
+    position: absolute;
+    z-index: 4;
+    top: 42%;
+    left: 50%;
+    width: min(23rem, 78%);
+    transform: rotate(-2deg) translate(-45%, -25%);
+    padding: 1.2rem 1.4rem;
+    color: #21160d;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 24px, rgba(87,63,30,.12) 24px 25px),
+      #eadbb1;
+    box-shadow: 0 18px 30px rgba(0,0,0,.48);
+  }
+
+  .search-slip small {
+    font: 600 0.58rem/1 'Azeret Mono', monospace;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .search-slip strong,
+  .search-slip > span {
+    display: block;
+  }
+
+  .search-slip strong {
+    margin-top: 0.75rem;
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: .95;
+  }
+
+  .search-slip > span {
+    color: #87542e;
+    font: 600 0.75rem/1.4 'Azeret Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .slip-line {
+    margin: 1rem 0 0.7rem;
+    border-top: 1px solid #866a3a;
+  }
+
+  .search-slip p {
+    font-size: .85rem;
+  }
+
+  .catalog-runner {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto;
+    align-items: center;
+    width: min(50rem, 84%);
+    margin: 5rem auto 0;
+  }
+
+  .catalog-runner span {
+    width: 1rem;
+    aspect-ratio: 1;
+    background: var(--route);
+    border: 3px solid #142219;
+    border-radius: 50%;
+    box-shadow: 0 0 16px rgba(137,217,180,.4);
+  }
+
+  .catalog-runner i {
+    height: 3px;
+    background: repeating-linear-gradient(90deg, var(--route) 0 8px, transparent 8px 14px);
+    animation: screen-route 1.4s linear infinite;
+  }
+
+  /* ------------------------------------------------------- CHECKOUT ROOM */
+  .checkout-room {
+    position: relative;
+    min-height: 1040px;
+    padding: 8rem max(1rem, 4vw) 5rem;
+    overflow: hidden;
+    background:
+      linear-gradient(rgba(8,9,7,.25), rgba(8,9,7,.78)),
+      repeating-linear-gradient(90deg, #141711 0 12vw, #0d0f0c 12vw 24vw);
+  }
+
+  .checkout-sign {
+    color: #1d130b;
+  }
+
+  .checkout-table {
+    position: relative;
+    width: min(1180px, 100%);
+    min-height: 540px;
+    margin: 6rem auto 0;
+    background:
+      linear-gradient(100deg, transparent 0 52%, rgba(199,154,80,.08) 52.2%, transparent 52.5%),
+      linear-gradient(180deg, #2c2015, #100d09);
+    border-top: 8px solid #8c6332;
+    border-bottom: 16px solid #080807;
+    box-shadow: 0 34px 70px rgba(0,0,0,.58), inset 0 1px #d0a75d;
+    perspective: 900px;
+  }
+
+  .album-stack {
+    position: absolute;
+    top: 14%;
+    left: 7%;
+    width: 39%;
+    height: 66%;
+    transform: rotateY(8deg) rotateZ(-2deg);
+  }
+
+  .sleeve {
+    position: absolute;
+    width: 48%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #2f332a;
+    border: 2px solid #b18b4b;
+    box-shadow: 10px 14px 22px rgba(0,0,0,.42);
+  }
+
+  .sleeve::before,
+  .sleeve::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .sleeve::before {
+    inset: 16%;
+    background: repeating-radial-gradient(circle, #191b17 0 4px, #333a31 5px 7px);
+    border: 2px solid #70664c;
+  }
+
+  .sleeve::after {
+    inset: 42%;
+    background: var(--disc, #9e5437);
+  }
+
+  .sleeve i {
+    position: absolute;
+    inset: 7%;
+    border: 1px solid rgba(232,216,176,.28);
+  }
+
+  .sleeve b {
+    position: absolute;
+    z-index: 2;
+    right: 8%;
+    bottom: 6%;
+    color: #ead9ae;
+    font: 500 .65rem/1 'Azeret Mono', monospace;
+  }
+
+  .sleeve--1 { top: 0; left: 0; --disc: #c80028; }
+  .sleeve--2 { top: 12%; left: 16%; --disc: #5f8a75; }
+  .sleeve--3 { top: 24%; left: 32%; --disc: #b1854b; }
+  .sleeve--4 { top: 36%; left: 48%; --disc: #71525f; }
+
+  .checkout-band {
+    position: absolute;
+    z-index: 6;
+    top: 66%;
+    left: 10%;
+    width: 83%;
+    padding: .6rem;
+    color: #251208;
+    background: #c79a50;
+    font: 600 .62rem/1 'Azeret Mono', monospace;
+    letter-spacing: .14em;
+    text-align: center;
+    text-transform: uppercase;
+    transform: rotate(-5deg);
+  }
+
+  .transfer-lane {
+    position: absolute;
+    top: 42%;
+    left: 46%;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    width: 22%;
+    align-items: center;
+    color: #9fddbb;
+    transform: rotate(-5deg);
+  }
+
+  .transfer-lane > span {
+    position: absolute;
+    bottom: 1.4rem;
+    left: 0;
+    color: #8da08f;
+    font: 500 .56rem/1 'Azeret Mono', monospace;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .transfer-lane i {
+    width: .7rem;
+    aspect-ratio: 1;
+    border: 2px solid var(--route);
+    border-radius: 50%;
+    animation: transfer 1.5s ease-in-out infinite;
+  }
+
+  .transfer-lane i:nth-of-type(2) { animation-delay: .2s; }
+  .transfer-lane i:nth-of-type(3) { animation-delay: .4s; }
+
+  .transfer-lane b {
+    font-size: 2rem;
+  }
+
+  .phone-dock {
+    position: absolute;
+    right: 7%;
+    bottom: 3%;
+    display: flex;
+    width: 26%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .phone-shell {
+    position: relative;
+    display: flex;
+    width: min(210px, 100%);
+    aspect-ratio: .49;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.4rem 1rem 1.1rem;
+    color: #e7efdf;
+    background:
+      radial-gradient(circle at 50% 34%, rgba(200,0,40,.34), transparent 34%),
+      linear-gradient(160deg, #17211a, #080a08);
+    border: 7px solid #2a2d28;
+    border-radius: 2.4rem;
+    box-shadow: 0 28px 42px rgba(0,0,0,.58), inset 0 0 0 1px #5c6259;
+    transform: rotateY(-7deg);
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: .75rem;
+    width: 32%;
+    height: .7rem;
+    background: #010201;
+    border-radius: 999px;
+  }
+
+  .phone-shell > small {
+    margin-top: .65rem;
+    color: #99b6a0;
+    font: 500 .55rem/1 'Azeret Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .phone-record {
+    width: 58%;
+    aspect-ratio: 1;
+    margin-top: 1.2rem;
+    background:
+      radial-gradient(circle, #c80028 0 7%, #1b1f1b 8% 15%, transparent 16%),
+      repeating-radial-gradient(circle, #191d19 0 4px, #303730 5px 6px);
+    border-radius: 50%;
+    box-shadow: 0 0 24px rgba(200,0,40,.2);
+  }
+
+  .phone-lines {
+    width: 76%;
+    margin-top: 1.15rem;
+  }
+
+  .phone-lines i {
+    display: block;
+    height: .32rem;
+    margin-top: .42rem;
+    background: #33453a;
+    border-radius: 1rem;
+  }
+
+  .phone-lines i:nth-child(2) { width: 72%; }
+  .phone-lines i:nth-child(3) { width: 48%; }
+
+  .downloaded {
+    margin-top: auto;
+    color: #bce5c8;
+    font: 500 .58rem/1 'Azeret Mono', monospace;
+  }
+
+  .downloaded b {
+    display: inline-grid;
+    width: 1.2rem;
+    aspect-ratio: 1;
+    margin-right: .3rem;
+    place-items: center;
+    color: #0a140d;
+    background: var(--route);
+    border-radius: 50%;
+  }
+
+  .dock-label {
+    width: 130%;
+    padding: .55rem;
+    color: #c8af7a;
+    background: #17120d;
+    border: 1px solid #674a29;
+    font: 500 .58rem/1 'Azeret Mono', monospace;
+    letter-spacing: .1em;
+    text-align: center;
+    text-transform: uppercase;
+    transform: perspective(300px) rotateX(28deg);
+  }
+
+  .checkout-note {
+    width: min(52rem, calc(100% - 2rem));
+    margin: 3rem auto 0;
+    color: #9c8d70;
+    font: 500 .72rem/1.7 'Azeret Mono', monospace;
+    text-align: center;
+  }
+
+  /* ---------------------------------------------------------- ROUTE ROOM */
+  .route-room {
+    position: relative;
+    min-height: 900px;
+    overflow: hidden;
+    background: #0b0d0a;
+  }
+
+  .route-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .route-room-sign {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    color: #e9dcb8;
+    background: #161812;
+    border-color: #85643a;
+    transform: translateX(-50%);
+  }
+
+  .route-board {
+    position: absolute;
+    z-index: 4;
+    top: 40%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .8rem;
+    width: min(25rem, 34vw);
+    padding: 1rem;
+    color: #e7d7ae;
+    background: rgba(15, 16, 13, .94);
+    border: 1px solid #78592f;
+    box-shadow: 0 18px 36px rgba(0,0,0,.48);
+  }
+
+  .route-board--radio {
+    left: 7%;
+    transform: perspective(700px) rotateY(12deg) rotateZ(-1deg);
+  }
+
+  .route-board--mix {
+    right: 7%;
+    transform: perspective(700px) rotateY(-12deg) rotateZ(1deg);
+  }
+
+  .route-letter {
+    display: grid;
+    width: 2.7rem;
+    aspect-ratio: 1;
+    place-items: center;
+    color: #fff;
+    background: var(--red);
+    font: 600 1rem/1 'Azeret Mono', monospace;
+  }
+
+  .route-board--mix .route-letter {
+    color: #0c1710;
+    background: var(--route);
+  }
+
+  .route-board small {
+    color: #9b8d6f;
+  }
+
+  .route-board h3 {
+    margin-top: .15rem;
+    font-size: 1.8rem;
+  }
+
+  .route-board p {
+    margin-top: .5rem;
+    color: #a99d81;
+    font-size: .78rem;
+    line-height: 1.5;
+  }
+
+  .route-marker {
+    position: absolute;
+    bottom: 9%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .65rem .85rem;
+    color: #1c1208;
+    background: #c79a50;
+    border: 3px double #46301a;
+    box-shadow: 0 14px 28px rgba(0,0,0,.5);
+    transform: translateX(-50%);
+  }
+
+  .route-marker span {
+    font: 600 .58rem/1 'Azeret Mono', monospace;
+    letter-spacing: .12em;
+  }
+
+  /* --------------------------------------------------------- LEDGER ROOM */
+  .ledger-room {
+    padding: clamp(5rem, 9vw, 8rem) max(1rem, 5vw);
+    background:
+      radial-gradient(circle at 50% 0, rgba(190,143,70,.13), transparent 36%),
+      repeating-linear-gradient(90deg, #0d0e0b 0 10vw, #0a0b09 10vw 20vw);
+  }
+
+  .ledger-desk {
+    width: min(1080px, 100%);
+    margin-inline: auto;
+    color: #22180f;
+    background:
+      linear-gradient(rgba(255,255,255,.12), transparent 10%),
+      #d5c397;
+    border: 10px solid #3b291a;
+    outline: 2px solid #936b38;
+    box-shadow: 0 35px 70px rgba(0,0,0,.58);
+  }
+
+  .ledger-desk > header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.3rem 1.5rem;
+    border-bottom: 3px double #715c3b;
+  }
+
+  .ledger-mark {
+    padding: .45rem;
+    background: #1b1711;
+    border: 1px solid #6f5330;
+  }
+
+  .ledger-desk header small {
+    color: #745b38;
+  }
+
+  .ledger-desk header h2 {
+    margin-top: .2rem;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+  }
+
+  .ledger-desk header > b {
+    padding: .55rem .65rem;
+    color: #8c1725;
+    border: 3px double #8c1725;
+    font: 600 .64rem/1 'Azeret Mono', monospace;
+    letter-spacing: .12em;
+    transform: rotate(-3deg);
+  }
+
+  .ledger-lines article {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(8rem, .42fr) minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(77,59,34,.38);
+  }
+
+  .ledger-lines article > span {
+    color: #876c42;
+    font: 500 .66rem/1 'Azeret Mono', monospace;
+  }
+
+  .ledger-lines h3 {
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
+  }
+
+  .ledger-lines p {
+    color: #53452f;
+    font-size: .86rem;
+  }
+
+  .ledger-lines i {
+    display: grid;
+    width: 1.7rem;
+    aspect-ratio: 1;
+    place-items: center;
+    color: #23523c;
+    border: 2px solid #376d51;
+    border-radius: 50%;
+    font-style: normal;
+  }
+
+  .honest-note {
+    padding: 1rem 1.5rem 1.2rem;
+    color: #68583d;
+    font: 500 .64rem/1.6 'Azeret Mono', monospace;
+  }
+
+  /* ---------------------------------------------------------- FINAL DESK */
+  .final-desk {
+    position: relative;
+    display: flex;
+    min-height: 720px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 1.5rem 0;
+    overflow: hidden;
+    color: #ecdfbe;
+    text-align: center;
+    background:
+      linear-gradient(90deg, transparent 49.85%, rgba(195,151,76,.22) 50%, transparent 50.15%),
+      radial-gradient(ellipse at 50% 20%, #455044 0, #1b201a 31%, #080907 72%);
+  }
+
+  .final-lamp {
+    position: absolute;
+    top: -10rem;
+    left: 50%;
+    width: min(58rem, 100vw);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(240,220,170,.3), rgba(137,217,180,.08) 30%, transparent 68%);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .final-lockup {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+  }
+
+  .final-lockup > span {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .final-stamp {
+    position: relative;
+    margin-top: 1.25rem !important;
+    color: #bca77f;
+    font: 500 .68rem/1.4 'Azeret Mono', monospace;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+
+  .final-desk h2 {
+    position: relative;
+    margin-top: 1rem;
+    font-size: clamp(3rem, 7vw, 6.6rem);
+    letter-spacing: -.05em;
+  }
+
+  .final-subline {
+    position: relative;
+    max-width: 42rem;
+    margin-top: 1rem !important;
+    color: #b6a88a;
+  }
+
+  .final-actions {
+    position: relative;
+    margin-top: 2rem;
+    justify-content: center;
+  }
+
+  .store-button--light {
+    min-width: 10rem;
+  }
+
+  .source-button--light {
+    min-width: 10rem;
+  }
+
+  .final-desk footer {
+    display: flex;
+    width: min(1100px, calc(100% - 2rem));
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding: 1.2rem 0;
+    color: #7f765f;
+    border-top: 1px solid rgba(199,154,80,.2);
+    font: 500 .56rem/1.4 'Azeret Mono', monospace;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+  }
+
+  @keyframes route-flow {
+    to { stroke-dashoffset: -18; }
+  }
+
+  @keyframes screen-route {
+    to { background-position: 18px 0; }
+  }
+
+  @keyframes transfer {
+    0%, 100% { opacity: .25; transform: scale(.75); }
+    50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px var(--route); }
+  }
+
+  /* ---------------------------------------------------------- RESPONSIVE */
+  @media (max-width: 860px) {
+    .archive-seal {
+      top: .75rem;
+      left: .75rem;
+    }
+
+    .navigator {
+      grid-template-columns: minmax(11rem, .8fr) minmax(15rem, 1.2fr);
+    }
+
+    .navigator-actions {
+      display: none;
+    }
+
+    .drawer-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .ledger-lines article {
+      grid-template-columns: 2rem minmax(8rem, .45fr) minmax(0, 1fr) auto;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      height: calc(100svh - 43px);
+      min-height: 720px;
+      max-height: 900px;
+    }
+
+    .archive-seal {
+      padding: .35rem .45rem;
+    }
+
+    .archive-seal :global(.mozz-mark) {
+      width: 19px;
+      height: 19px;
+    }
+
+    .archive-seal > span {
+      font-size: .82rem;
+    }
+
+    .archive-seal small {
+      font-size: .43rem;
+    }
+
+    .hero-placard {
+      top: 7.5%;
+      width: calc(100% - 2rem);
+      padding: .65rem 1rem .8rem;
+    }
+
+    .hero-placard h1 {
+      font-size: clamp(2rem, 11vw, 2.8rem);
+      line-height: .92;
+    }
+
+    .hero-placard > p,
+    .hero-placard > span {
+      font-size: .45rem;
+    }
+
+    .hero-wings {
+      position: absolute;
+      z-index: 5;
+      top: 40%;
+      right: .35rem;
+      left: .35rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .25rem;
+    }
+
+    .wing-sign,
+    .wing-sign--1,
+    .wing-sign--2,
+    .wing-sign--3 {
+      position: static;
+      min-width: 0;
+      padding: .4rem .3rem;
+      transform: none;
+    }
+
+    .wing-sign :global(.server-logo) {
+      width: 15px;
+      height: 15px;
+    }
+
+    .wing-sign > span {
+      overflow: hidden;
+      font-size: .68rem;
+      text-overflow: ellipsis;
+    }
+
+    .wing-sign small {
+      font-size: .38rem;
+      letter-spacing: .04em;
+    }
+
+    .route-signal {
+      top: 51%;
+      padding: .26rem .34rem;
+      font-size: .43rem;
+    }
+
+    .route-signal--radio { left: 8%; }
+    .route-signal--mix { right: 7%; }
+
+    .navigator {
+      grid-template-columns: 1fr;
+      gap: .7rem;
+      min-height: 15.8rem;
+      padding: 1rem 1.2rem .8rem;
+      clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
+    }
+
+    .navigator-brand {
+      justify-content: center;
+    }
+
+    .navigator-brand :global(.mozz-mark) {
+      width: 37px;
+      height: 37px;
+    }
+
+    .navigator-brand strong {
+      font-size: 1.35rem;
+    }
+
+    .navigator-brand p {
+      font-size: .68rem;
+    }
+
+    .navigator-screen {
+      padding: .65rem .75rem;
+    }
+
+    .navigator-actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    .store-button,
+    .source-button {
+      min-height: 2.7rem;
+    }
+
+    .store-button {
+      padding: .45rem .65rem;
+    }
+
+    .source-button {
+      padding: .55rem .6rem;
+      font-size: .54rem;
+    }
+
+    .hanging-sign,
+    .catalog-heading,
+    .checkout-sign,
+    .route-room-sign {
+      width: calc(100% - 1.4rem);
+      padding: .8rem 1rem 1rem;
+    }
+
+    .hanging-sign h2,
+    .catalog-heading h2,
+    .checkout-sign h2,
+    .route-room-sign h2 {
+      font-size: clamp(1.8rem, 9vw, 2.55rem);
+    }
+
+    .hanging-sign p,
+    .catalog-heading p,
+    .checkout-sign p {
+      font-size: .75rem;
+    }
+
+    .wing-room {
+      min-height: 760px;
+      padding: 6rem .35rem 3rem;
+    }
+
+    .hanging-sign::before,
+    .hanging-sign::after,
+    .checkout-sign::before,
+    .checkout-sign::after {
+      height: 2.5rem;
+    }
+
+    .wing-doors {
+      gap: .22rem;
+      margin-top: 4.5rem;
+    }
+
+    .wing-door,
+    .wing-door--1,
+    .wing-door--3 {
+      padding: .35rem;
+      border-radius: 48% 48% 0 0 / 11% 11% 0 0;
+      transform: none;
+    }
+
+    .door-lintel {
+      min-height: 6.4rem;
+      padding-top: .5rem;
+    }
+
+    .door-lintel :global(.server-logo) {
+      width: 26px;
+      height: 26px;
+    }
+
+    .door-lintel h3 {
+      font-size: .88rem;
+    }
+
+    .door-lintel span {
+      font-size: .38rem;
+      letter-spacing: .04em;
+    }
+
+    .door-depth {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      min-height: 13rem;
+      padding: .45rem;
+    }
+
+    .door-depth i:nth-child(n + 13) {
+      display: none;
+    }
+
+    .wing-door > p {
+      min-height: 3.7rem;
+      padding: .55rem .05rem 0;
+      font-size: .49rem;
+      line-height: 1.35;
+    }
+
+    .floor-inscription {
+      margin-top: 2.5rem;
+      font-size: .5rem;
+    }
+
+    .catalog-room {
+      min-height: 790px;
+      padding: 4rem .5rem;
+    }
+
+    .catalog-heading {
+      padding-left: .85rem;
+    }
+
+    .drawer-grid {
+      grid-template-columns: repeat(6, 1fr);
+      gap: .22rem;
+    }
+
+    .catalog-wall {
+      margin-top: 3rem;
+      padding: .65rem;
+      border-width: 5px;
+    }
+
+    .drawer {
+      aspect-ratio: 1.25;
+    }
+
+    .drawer:nth-child(n + 37) {
+      display: none;
+    }
+
+    .drawer i {
+      border-width: 1px;
+      border-bottom-width: 3px;
+    }
+
+    .search-slip {
+      top: 38%;
+      width: 76%;
+      padding: .8rem .9rem;
+    }
+
+    .search-slip strong {
+      font-size: 2rem;
+    }
+
+    .search-slip > span,
+    .search-slip p {
+      font-size: .58rem;
+    }
+
+    .catalog-runner {
+      margin-top: 3rem;
+    }
+
+    .checkout-room {
+      min-height: 850px;
+      padding: 6rem .35rem 3rem;
+    }
+
+    .checkout-table {
+      min-height: 470px;
+      margin-top: 4.5rem;
+    }
+
+    .album-stack {
+      top: 17%;
+      left: 2%;
+      width: 50%;
+      height: 60%;
+    }
+
+    .sleeve {
+      width: 52%;
+    }
+
+    .transfer-lane {
+      top: 46%;
+      left: 42%;
+      width: 21%;
+    }
+
+    .transfer-lane > span {
+      display: none;
+    }
+
+    .transfer-lane i {
+      width: .4rem;
+    }
+
+    .transfer-lane b {
+      font-size: 1.2rem;
+    }
+
+    .phone-dock {
+      right: 2%;
+      bottom: 5%;
+      width: 38%;
+    }
+
+    .phone-shell {
+      padding: 2rem .6rem .8rem;
+      border-width: 5px;
+      border-radius: 1.8rem;
+    }
+
+    .phone-record {
+      margin-top: .75rem;
+    }
+
+    .phone-lines {
+      margin-top: .7rem;
+    }
+
+    .downloaded {
+      font-size: .45rem;
+    }
+
+    .dock-label {
+      font-size: .42rem;
+    }
+
+    .checkout-note {
+      margin-top: 2rem;
+      font-size: .52rem;
+    }
+
+    .route-room {
+      min-height: 760px;
+    }
+
+    .route-room-sign {
+      top: 7%;
+    }
+
+    .route-board {
+      top: 40%;
+      grid-template-columns: auto 1fr;
+      gap: .5rem;
+      width: 45%;
+      padding: .65rem;
+    }
+
+    .route-board--radio {
+      left: 2%;
+      transform: rotate(-1.5deg);
+    }
+
+    .route-board--mix {
+      right: 2%;
+      transform: rotate(1.5deg);
+    }
+
+    .route-letter {
+      width: 1.7rem;
+      font-size: .7rem;
+    }
+
+    .route-board small {
+      font-size: .42rem;
+      letter-spacing: .04em;
+    }
+
+    .route-board h3 {
+      font-size: 1.05rem;
+    }
+
+    .route-board p {
+      grid-column: 1 / -1;
+      font-size: .53rem;
+    }
+
+    .route-marker {
+      bottom: 8%;
+    }
+
+    .ledger-room {
+      padding: 4rem .65rem;
+    }
+
+    .ledger-desk {
+      border-width: 6px;
+    }
+
+    .ledger-desk > header {
+      grid-template-columns: auto 1fr;
+      padding: 1rem;
+    }
+
+    .ledger-desk header > b {
+      grid-column: 1 / -1;
+      justify-self: start;
+      margin-left: 3.6rem;
+    }
+
+    .ledger-desk header h2 {
+      font-size: 1.8rem;
+    }
+
+    .ledger-lines article {
+      grid-template-columns: 1.5rem 1fr auto;
+      gap: .55rem;
+      padding: 1rem;
+    }
+
+    .ledger-lines h3 {
+      font-size: 1.15rem;
+    }
+
+    .ledger-lines p {
+      grid-column: 2 / -1;
+      font-size: .7rem;
+    }
+
+    .ledger-lines i {
+      width: 1.35rem;
+    }
+
+    .honest-note {
+      padding: .9rem 1rem;
+      font-size: .52rem;
+    }
+
+    .final-desk {
+      min-height: 700px;
+      padding-inline: 1rem;
+    }
+
+    .final-desk h2 {
+      font-size: 3.2rem;
+    }
+
+    .final-lockup > span {
+      font-size: 2.4rem;
+    }
+
+    .final-actions {
+      flex-wrap: wrap;
+    }
+
+    .final-desk footer {
+      display: grid;
+      justify-content: center;
+      font-size: .47rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .route,
+    .screen-route b,
+    .catalog-runner i,
+    .transfer-lane i {
+      animation: none !important;
+    }
+
+    .archive a {
+      transition: none !important;
+    }
+  }
+</style>
