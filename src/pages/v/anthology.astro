@@ -1,0 +1,1789 @@
+---
+/**
+ * VARIANT — ANTHOLOGY
+ *
+ * The synthesis that leads with POSTER: one full-measure MOZZ carries the sheet
+ * and every section below is another plate off the same press — heavy rules,
+ * billing lists, hairlines, one spot red.
+ *
+ * The other three favourites are all here, weighted underneath it:
+ *   UMBRA   — the hero wordmark is graded, red at the frame edges, falling
+ *             through deep red to ground black directly behind the phone, and
+ *             the same fall-off becomes the transition between chapters.
+ *   ECLIPSE — the crossing, where the object passing in front turns the type
+ *             red: it happens once, in the hero, across the full measure.
+ *   COVER   — the offline chapter is a word half-hidden behind the thing that
+ *             plays it, with minimal drawn marks around it.
+ *
+ * The enormous wordmark itself appears exactly twice: the hero, and the sheet
+ * that closes the page. Everywhere else the sections hold attention with rules,
+ * inverted fields, drawings and air — reprinting the logo behind every heading
+ * turns the one strong idea into wallpaper.
+ *
+ * Payoffs further down, all in this page's own printed language: a marquee of
+ * sleeves for the weekly mix, a split against a home server rather than a
+ * player, iPhone and iPad moving as you scroll, and a wall used as decoration
+ * behind the licence.
+ *
+ * Every claim is imported from src/data/site.ts. Only the hero headline, the
+ * hero support line and the meta description are written here.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import SynPhone from '../../components/syn/SynPhone.astro';
+import SynSlate from '../../components/syn/SynSlate.astro';
+import SynMotion from '../../components/syn/SynMotion.astro';
+import { sleeve, sleeveRun, INK_LIGHT, INK_DARK, INK_RED, RECORDS } from '../../data/syn-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+  SITE,
+} from '../../data/site';
+
+const HEADLINE = 'A free player for the music on your own server.';
+const SUPPORT =
+  'Point Mozz at the Plex, Jellyfin or OpenSubsonic server you already run. Stream it at home, or download an album and play it with no signal at all.';
+
+const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'iPhone and iPad'];
+const domain = SITE.replace(/^https?:\/\//, '');
+
+/* Sleeves for the weekly marquee and the licence wall. Every record is
+   invented; the artwork is drawn in src/data/syn-art.ts. */
+const MARQUEE_ROWS = [
+  sleeveRun(10, INK_LIGHT, 'anth-a'),
+  sleeveRun(10, INK_RED, 'anth-b'),
+  sleeveRun(10, INK_DARK, 'anth-c'),
+];
+const WALL = sleeveRun(24, INK_LIGHT, 'anth-wall');
+const SLATE_COVERS = sleeveRun(12, INK_DARK, 'anth-slate');
+const HERO_ART = sleeve({ kind: 'eclipse', ink: INK_RED, seed: 'anth-hero' });
+const COVER_ART = sleeve({ kind: 'grooves', ink: INK_DARK, seed: 'anth-cover' });
+const PAIR_ART = sleeve({ kind: 'band', ink: INK_RED, seed: 'anth-pair' });
+
+/* The two halves of the product, given equal weight and equal room. */
+const BOTH = [
+  {
+    kicker: 'Plate one',
+    title: 'Streaming',
+    body: 'At home your own network carries your own library. Mozz talks straight to Plex, Jellyfin or an OpenSubsonic server, and mirrors the catalog onto the device as it goes.',
+  },
+  {
+    kicker: 'Plate two',
+    title: 'Downloads',
+    body: 'Away from it, downloaded albums hold exactly the same place in the app. Nothing is a lesser mode, and nothing waits for reception.',
+  },
+];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at your own Plex, Jellyfin, Navidrome or Subsonic server, stream at home, or download an album and play it offline."
+  themeColor="#eeeae2"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <SynMotion />
+
+  <main class="anth">
+    <VariantBar slug="anthology" tone="cool" />
+
+    <!-- ==================================================================
+         HERO — poster logic. Full-measure wordmark, graded the way umbra
+         grades it, with the phone standing in the black it makes.
+    =================================================================== -->
+    <header class="sheet hero">
+      <div class="press" aria-hidden="true">
+        <span class="halftone"></span>
+        <svg class="cone" viewBox="0 0 400 400" aria-hidden="true">
+          <g fill="none" stroke="#d8002d">
+            <circle cx="200" cy="200" r="192" stroke-width="10" />
+            <circle cx="200" cy="200" r="168" stroke-width="18" />
+          </g>
+          <circle cx="200" cy="200" r="146" fill="#d8002d" />
+          <g fill="none" stroke="#eeeae2" stroke-width="5">
+            <circle cx="200" cy="200" r="128" />
+            <circle cx="200" cy="200" r="108" />
+            <circle cx="200" cy="200" r="88" />
+          </g>
+          <circle cx="200" cy="200" r="56" fill="#eeeae2" />
+          <circle cx="200" cy="200" r="44" fill="#14101a" />
+        </svg>
+      </div>
+
+      <div class="billing">
+        <span class="bill-mark">
+          <Mark size={22} decorative />
+          <b>{NAME}</b>
+          <i aria-hidden="true"></i>
+          <span>self-hosted music player</span>
+        </span>
+        <span class="bill-fine">{SUBLINE.toLowerCase()} · gpl-3.0 · no account</span>
+      </div>
+
+      <div class="measure">
+        <svg class="wordmark" viewBox="0 0 1000 214" role="img" aria-label={NAME}>
+          <defs>
+            <linearGradient id="anth-fall" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#d8002d"></stop>
+              <stop offset="0.36" stop-color="#c00126"></stop>
+              <stop offset="0.6" stop-color="#7d0019"></stop>
+              <stop offset="0.86" stop-color="#14101a"></stop>
+              <stop offset="1" stop-color="#5c0014"></stop>
+            </linearGradient>
+          </defs>
+          <text
+            x="500"
+            y="196"
+            text-anchor="middle"
+            textLength="1000"
+            lengthAdjust="spacingAndGlyphs">MOZZ</text
+          >
+        </svg>
+      </div>
+
+      <div class="stage">
+        <div class="stage-say">
+          <ul class="bill-list" role="list">
+            {BILL.map((item) => <li>{item}</li>)}
+          </ul>
+
+          <h1>{HEADLINE}</h1>
+          <p class="lede">{SUPPORT}</p>
+          <p class="tagline">{TAGLINE}</p>
+
+          <div class="actions">
+            <a class="btn solid" href={GITHUB_URL}>Source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+
+        <!-- The phone stands in the black the gradient makes: it does not sit
+             on top of a lit letterform, it occupies the part of the word the
+             light has already left. -->
+        <div class="stage-phone">
+          <SynPhone
+            width="clamp(180px, 17vw, 268px)"
+            art={HERO_ART}
+            title="Second Shadow"
+            artist="Halo North"
+            label="An iPhone running Mozz, playing a downloaded album from a home server."
+          />
+        </div>
+      </div>
+
+      <div class="colophon">
+        <span class="works">
+          <span class="works-label">Works with</span>
+          <span class="server"><ServerLogo name="Plex" size={15} />Plex</span>
+          <span class="server"><ServerLogo name="Jellyfin" size={15} />Jellyfin</span>
+          <span class="server"><ServerLogo name="Navidrome" size={15} />Navidrome</span>
+          <span class="server">Subsonic</span>
+        </span>
+        <span class="folio">Sheet 01 · {domain}</span>
+      </div>
+    </header>
+
+    <!-- The umbra fall-off, used as the join between chapters. -->
+    <div class="fall" aria-hidden="true"></div>
+
+    <!-- ==================================================================
+         SERVERS — three plates, one per family.
+    =================================================================== -->
+    <section class="sheet servers" aria-labelledby="anth-servers">
+      <div class="rule-head">
+        <h2 id="anth-servers">Point it at what you already run</h2>
+        <span class="folio">Sheet 02</span>
+      </div>
+
+      <ol class="plates" role="list">
+        {
+          SERVERS.map((server, i) => (
+            <li class="plate" data-syn-reveal style={`--syn-delay:${i * 90}ms`}>
+              <span class="plate-no">{String(i + 1).padStart(2, '0')}</span>
+              <span class="plate-logo">
+                <ServerLogo name={server.name} size={34} />
+              </span>
+              <h3>{server.name}</h3>
+              <p>{server.note}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="plate-note">
+        Subsonic and OpenSubsonic servers work through the same connection. Navidrome is the tested
+        target; other compatible servers are best-effort.
+      </p>
+    </section>
+
+    <!-- ==================================================================
+         STREAMING AND OFFLINE — co-equal, one plate each, joined by the
+         same fall-off the wordmark uses.
+    =================================================================== -->
+    <section class="both" aria-labelledby="anth-both">
+      <div class="sheet both-inner">
+        <div class="rule-head">
+          <h2 id="anth-both">Two ways to listen, weighted the same</h2>
+          <span class="folio">Sheet 03</span>
+        </div>
+
+        <div class="both-grid">
+          {
+            BOTH.map((item, i) => (
+              <article class="half" data-syn-reveal style={`--syn-delay:${i * 120}ms`}>
+                <span class="kicker">{item.kicker}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         COVER PAYOFF — the wordmark half-hidden behind the thing that
+         plays it, with the minimal drawn marks around it.
+    =================================================================== -->
+    <section class="cover" aria-labelledby="anth-cover" data-syn-reveal>
+      <div class="cover-stage">
+        <span class="cover-word" aria-hidden="true">OFFLINE</span>
+
+        <svg class="mark-arc" viewBox="0 0 46 84" aria-hidden="true">
+          <path
+            d="M6 10a44 44 0 0 1 0 64M20 21a28 28 0 0 1 0 42M34 32a13 13 0 0 1 0 20"
+            fill="none"
+            stroke="#d8002d"
+            stroke-width="2.6"
+            stroke-linecap="round"></path>
+        </svg>
+
+        <svg class="mark-star" viewBox="0 0 40 40" aria-hidden="true">
+          <path
+            d="M20 0c1.1 11.3 8.7 18.9 20 20-11.3 1.1-18.9 8.7-20 20-1.1-11.3-8.7-18.9-20-20 11.3-1.1 18.9-8.7 20-20Z"
+            fill="#14101a"></path>
+        </svg>
+
+        <svg class="mark-bars" viewBox="0 0 34 26" aria-hidden="true">
+          <rect x="0" y="6" width="6" height="20" fill="#14101a" opacity="0.72"></rect>
+          <rect x="10" y="0" width="6" height="26" fill="#d8002d"></rect>
+          <rect x="20" y="11" width="6" height="15" fill="#14101a" opacity="0.72"></rect>
+          <rect x="30" y="17" width="4" height="9" fill="#d8002d" opacity="0.7"></rect>
+        </svg>
+
+        <div class="cover-phone">
+          <SynPhone
+            width="clamp(196px, 18vw, 274px)"
+            art={COVER_ART}
+            title="No Signal"
+            artist="Quiet Motor"
+            source="Downloaded to this iPhone"
+            chip="No connection needed"
+            progress={64}
+            elapsed="2:31"
+            remaining="−1:09"
+            label="An iPhone playing a downloaded album with no connection, standing in front of the Mozz wordmark."
+          />
+        </div>
+      </div>
+
+      <div class="cover-say">
+        <span class="kicker">Offline</span>
+        <h2 id="anth-cover">{FEATURES[1].title}</h2>
+        <p>{FEATURES[1].body}</p>
+        <p class="cover-second">{FEATURES[0].body}</p>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         SPLIT PAYOFF — a hard seam, but split against the machine in your
+         house rather than against a player.
+    =================================================================== -->
+    <section class="split" aria-labelledby="anth-split">
+      <div class="field field-red">
+        <svg class="rack" viewBox="0 0 260 300" role="img" aria-label="A home server with four drives, the machine your library lives on">
+          <rect x="26" y="18" width="208" height="264" rx="10" fill="#14101a"></rect>
+          <rect x="38" y="30" width="184" height="240" rx="6" fill="#eeeae2" opacity="0.06"></rect>
+          {
+            [0, 1, 2, 3].map((i) => (
+              <g transform={`translate(0 ${44 + i * 58})`}>
+                <rect x="46" y="0" width="168" height="46" rx="5" fill="#eeeae2" opacity="0.9" />
+                <rect x="56" y="12" width="96" height="6" rx="3" fill="#14101a" opacity="0.5" />
+                <rect x="56" y="26" width="58" height="6" rx="3" fill="#14101a" opacity="0.28" />
+                <circle cx="196" cy="23" r="6" fill="#d8002d" />
+              </g>
+            ))
+          }
+          <rect x="88" y="282" width="84" height="8" rx="4" fill="#14101a" opacity="0.6"></rect>
+        </svg>
+
+      </div>
+
+      <div class="field field-paper">
+        <div class="split-say">
+          <span class="kicker">The split</span>
+          <h2 id="anth-split">Your machine on one side. Nobody on the other.</h2>
+          <p>
+            The line down this page is the only party in the arrangement. On the left is hardware
+            you own, in a room you have been in. On the right is the app that reads it.
+          </p>
+          <ul class="split-list" role="list">
+            {
+              OWNERSHIP.slice(0, 3).map((item) => (
+                <li>
+                  <b>{item.title}</b>
+                  <span>{item.body}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         ECLIPSE PAYOFF — the measured facts, crossing a colossal wordmark
+         that turns red where they pass over it.
+    =================================================================== -->
+    <section class="eclipse" aria-labelledby="anth-stats">
+      <div class="stats-label">
+        <h2 id="anth-stats">Measured</h2>
+        <span class="folio">Sheet 05</span>
+      </div>
+
+      <dl class="stats">
+        {
+          STATS.map((stat, i) => (
+            <div class="stat" data-syn-reveal style={`--syn-delay:${i * 80}ms`}>
+              <dt>{stat.value}</dt>
+              <dd>{stat.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <!-- ==================================================================
+         FEATURES — the index, set as an anthology contents page.
+    =================================================================== -->
+    <section class="sheet index" aria-labelledby="anth-features">
+      <div class="rule-head">
+        <h2 id="anth-features">What is actually in it</h2>
+        <span class="folio">Sheet 06</span>
+      </div>
+
+      <ol class="entries" role="list">
+        {
+          FEATURES.map((feature, i) => (
+            <li class="entry" data-syn-reveal style={`--syn-delay:${(i % 3) * 80}ms`}>
+              <span class="entry-no">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ==================================================================
+         PAIR PAYOFF — iPhone and iPad, moving as the section passes.
+    =================================================================== -->
+    <section class="pair" aria-labelledby="anth-pair" data-syn-track>
+      <div class="sheet pair-inner">
+        <div class="rule-head">
+          <h2 id="anth-pair">One library, two sizes of glass</h2>
+          <span class="folio">Sheet 07</span>
+        </div>
+
+        <p class="pair-lede">
+          The same catalog, the same downloads and the same queue on iPhone and iPad. iOS and
+          iPadOS 17 or later, written in SwiftUI.
+        </p>
+
+        <div class="pair-stage">
+          <div class="pair-slate">
+            <SynSlate
+              width="clamp(320px, 46vw, 720px)"
+              covers={SLATE_COVERS}
+              label="An iPad showing the Mozz library: a sidebar of albums, artists, playlists, downloads and Mozz Weekly beside a grid of album covers."
+            />
+          </div>
+          <div class="pair-phone">
+            <SynPhone
+              width="clamp(122px, 13vw, 202px)"
+              art={PAIR_ART}
+              title="Every Room"
+              artist="June Current"
+              source="Playing from your server"
+              progress={31}
+              label="An iPhone playing the same library from the same server."
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         MARQUEE PAYOFF — the featured section. Simplified to this page's
+         two inks, and used for the weekly mix rather than as a hero.
+    =================================================================== -->
+    <section class="marquee" aria-labelledby="anth-weekly">
+      <div class="marquee-rows" aria-hidden="true">
+        {
+          MARQUEE_ROWS.map((row, r) => (
+            <div class={`row row-${r}`}>
+              <div class="track">
+                {[...row, ...row].map((art) => (
+                  <span class="mq-cover" set:html={art} />
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="marquee-card" data-syn-reveal>
+        <span class="kicker">Featured</span>
+        <h2 id="anth-weekly">{FEATURES[5].title}</h2>
+        <p>{FEATURES[5].body}</p>
+        <p class="marquee-second">{FEATURES[4].body}</p>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         OWNERSHIP — the licence, with a wall of sleeves used as nothing
+         more than the paper it is printed over.
+    =================================================================== -->
+    <section class="own" aria-labelledby="anth-own">
+      <div class="own-wall" aria-hidden="true">
+        {WALL.map((art) => <span class="own-cover" set:html={art} />)}
+      </div>
+
+      <div class="sheet own-inner">
+        <div class="rule-head">
+          <h2 id="anth-own">{SUBLINE}</h2>
+          <span class="folio">Sheet 09</span>
+        </div>
+
+        <ol class="own-grid" role="list">
+          {
+            OWNERSHIP.map((item, i) => (
+              <li data-syn-reveal style={`--syn-delay:${i * 70}ms`}>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         FAQ
+    =================================================================== -->
+    <section class="sheet faq" aria-labelledby="anth-faq">
+      <div class="rule-head">
+        <h2 id="anth-faq">Questions, answered plainly</h2>
+        <span class="folio">Sheet 10</span>
+      </div>
+
+      <div class="faq-list">
+        {
+          FAQS.map((item) => (
+            <details>
+              <summary>
+                <span>{item.q}</span>
+                <i aria-hidden="true"></i>
+              </summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         CLOSE — the last plate, printed the way the first one was.
+    =================================================================== -->
+    <footer class="close">
+      <div class="sheet close-inner">
+        <svg class="wordmark close-word" viewBox="0 0 1000 214" role="img" aria-label={NAME}>
+          <defs>
+            <linearGradient id="anth-close" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#eeeae2"></stop>
+              <stop offset="0.36" stop-color="#d8002d"></stop>
+              <stop offset="0.64" stop-color="#d8002d"></stop>
+              <stop offset="1" stop-color="#eeeae2"></stop>
+            </linearGradient>
+          </defs>
+          <text
+            x="500"
+            y="196"
+            text-anchor="middle"
+            textLength="1000"
+            lengthAdjust="spacingAndGlyphs">MOZZ</text
+          >
+        </svg>
+
+        <div class="close-say">
+          <p class="close-tag">{TAGLINE}</p>
+          <div class="actions">
+            <a class="btn solid" href={GITHUB_URL}>Read the source</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+
+        <div class="close-foot">
+          <span class="bill-mark">
+            <Mark size={20} decorative />
+            <b>{NAME}</b>
+            <i aria-hidden="true"></i>
+            <span>{RECORDS.length} sleeves on this page, every one invented</span>
+          </span>
+          <span class="folio">No account · no tracking · GPL-3.0 · {domain}</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #eeeae2;
+  }
+</style>
+
+<style>
+  .anth {
+    --paper: #eeeae2;
+    --paper-lit: #f7f4ee;
+    --ink: #14101a;
+    --red: #d8002d;
+    --deep: #7d0019;
+    --pad: clamp(18px, 4.4vw, 62px);
+
+    position: relative;
+    overflow-x: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .sheet {
+    position: relative;
+    width: 100%;
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: clamp(44px, 7vh, 88px) var(--pad);
+  }
+
+  /* ---------------- shared print furniture ---------------- */
+
+  .billing,
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    align-items: center;
+    justify-content: space-between;
+    font-size: clamp(10px, 0.92vw, 12.5px);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .billing {
+    padding-bottom: 0.55rem;
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .colophon {
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 3px solid var(--ink);
+  }
+
+  .bill-mark {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .bill-mark b {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: 1.5em;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+  }
+
+  .bill-mark i {
+    width: 16px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  .bill-mark span,
+  .bill-fine {
+    font-weight: 600;
+    opacity: 0.66;
+  }
+
+  .folio {
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    white-space: nowrap;
+  }
+
+  .kicker {
+    display: block;
+    font-size: clamp(10px, 0.9vw, 12px);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .rule-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .rule-head h2 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(30px, 4.6vw, 68px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: 0.004em;
+    text-transform: uppercase;
+    max-width: 20ch;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.68rem 1.15rem;
+    font-size: clamp(12px, 1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .btn.solid {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 5px 5px 0 var(--red);
+    transition:
+      transform 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  .btn.solid:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--red);
+  }
+
+  .btn.ghost {
+    border: 2px solid var(--ink);
+  }
+
+  .btn.is-pending {
+    border-style: dashed;
+    opacity: 0.75;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  a:focus-visible,
+  summary:focus-visible,
+  [aria-disabled]:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---------------- hero ---------------- */
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding-top: clamp(20px, 3.4vh, 34px);
+    padding-bottom: clamp(18px, 3vh, 32px);
+    isolation: isolate;
+  }
+
+  .press {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .cone {
+    position: absolute;
+    right: -16%;
+    top: 4%;
+    width: min(56vh, 42%);
+    aspect-ratio: 1;
+    opacity: 0.14;
+  }
+
+  .halftone {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, rgba(216, 0, 45, 0.5) 1.5px, transparent 1.7px);
+    background-size: 8px 8px;
+    -webkit-mask-image: linear-gradient(158deg, rgba(0, 0, 0, 0.5) 2%, transparent 42%);
+    mask-image: linear-gradient(158deg, rgba(0, 0, 0, 0.5) 2%, transparent 42%);
+  }
+
+  .hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .measure {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(10px, 2.2vh, 26px);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .wordmark {
+    width: 100%;
+    height: auto;
+  }
+
+  .wordmark text {
+    font-family: 'Big Shoulders Display', 'Haettenschweiler', 'Arial Narrow', sans-serif;
+    font-weight: 900;
+    font-size: 268px;
+    fill: url(#anth-fall);
+  }
+
+  .close-word text {
+    fill: url(#anth-close);
+  }
+
+  /* The say block and the phone share the line under the wordmark; the phone
+     is pulled back up into the part of the word the light has left. */
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: start;
+    margin-top: clamp(0.6rem, 1.6vh, 1.2rem);
+  }
+
+  .stage-phone {
+    position: relative;
+    z-index: 3;
+    margin-top: clamp(-250px, -17.5vw, -110px);
+    margin-right: clamp(0px, 3vw, 60px);
+    --syn-bezel: #0a070d;
+    --syn-screen: #14101a;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-font: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: 0 34px 74px -30px rgba(20, 16, 26, 0.72);
+  }
+
+  .bill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(15px, 2.1vw, 30px);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .bill-list li:not(:last-child)::after {
+    content: '✳';
+    margin-left: 1rem;
+    font-size: 0.66em;
+    vertical-align: 0.14em;
+    color: var(--red);
+  }
+
+  .stage h1 {
+    max-width: 20ch;
+    margin-top: clamp(1rem, 3.2vh, 2.4rem);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(30px, 4.6vw, 72px);
+    font-weight: 800;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .lede {
+    max-width: 52ch;
+    margin-top: clamp(0.7rem, 1.6vh, 1.2rem);
+    font-size: clamp(13.5px, 1.05vw, 16.5px);
+    line-height: 1.45;
+  }
+
+  .tagline {
+    margin-top: clamp(0.9rem, 2.4vh, 1.7rem);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(18px, 1.7vw, 27px);
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .stage .actions {
+    margin-top: clamp(0.8rem, 2vh, 1.3rem);
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.85rem;
+    align-items: center;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    font-size: clamp(11px, 0.9vw, 13px);
+  }
+
+  .works-label {
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  .server {
+    display: inline-flex;
+    gap: 0.34rem;
+    align-items: center;
+  }
+
+  /* ---------------- the fall-off between chapters ---------------- */
+
+  .fall {
+    height: clamp(58px, 9vh, 118px);
+    background: linear-gradient(180deg, var(--paper), var(--red) 62%, var(--ink));
+  }
+
+  /* ---------------- servers ---------------- */
+
+  .servers {
+    background: var(--ink);
+    color: var(--paper);
+    max-width: none;
+  }
+
+  .servers .rule-head {
+    border-bottom-color: var(--paper);
+  }
+
+  .plates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: clamp(1rem, 2.4vw, 2.4rem);
+    margin: clamp(1.6rem, 3.4vh, 2.8rem) 0 0;
+    padding: 0;
+  }
+
+  .plate {
+    padding: clamp(1.1rem, 2vw, 1.7rem);
+    border: 2px solid rgba(238, 234, 226, 0.28);
+    background: rgba(238, 234, 226, 0.03);
+  }
+
+  .plate-no {
+    display: block;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(30px, 3.2vw, 46px);
+    font-weight: 900;
+    line-height: 0.8;
+    color: var(--red);
+  }
+
+  .plate-logo {
+    display: block;
+    margin: 1.1rem 0 0.8rem;
+    color: var(--paper);
+  }
+
+  .plate h3 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(22px, 2vw, 32px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .plate p {
+    margin-top: 0.5rem;
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.5;
+    opacity: 0.72;
+  }
+
+  .plate-note {
+    max-width: 62ch;
+    margin-top: clamp(1.3rem, 2.6vh, 2rem);
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.28);
+    font-size: clamp(12.5px, 0.95vw, 14.5px);
+    line-height: 1.55;
+    opacity: 0.66;
+  }
+
+  /* ---------------- both ---------------- */
+
+  .both {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .both-inner {
+    padding-top: 0;
+  }
+
+  .both .rule-head {
+    border-bottom-color: var(--red);
+  }
+
+  .both-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 0;
+    margin-top: clamp(1.4rem, 3vh, 2.4rem);
+  }
+
+  .half {
+    padding: clamp(1.4rem, 2.6vw, 2.6rem) clamp(1.2rem, 2.4vw, 2.4rem);
+    border: 1px solid rgba(238, 234, 226, 0.24);
+  }
+
+  .half:first-child {
+    background: var(--red);
+    color: var(--paper);
+    border-color: var(--red);
+  }
+
+  .half:first-child .kicker {
+    color: var(--ink);
+  }
+
+  .half h3 {
+    margin-top: 0.5rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(34px, 4.4vw, 62px);
+    font-weight: 900;
+    line-height: 0.86;
+    text-transform: uppercase;
+  }
+
+  .half p {
+    max-width: 46ch;
+    margin-top: 0.9rem;
+    font-size: clamp(13.5px, 1.02vw, 16px);
+    line-height: 1.5;
+    opacity: 0.86;
+  }
+
+  /* ---------------- cover payoff ---------------- */
+
+  .cover {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 4rem);
+    align-items: center;
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 128px) var(--pad);
+  }
+
+  .cover-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(320px, 52vh, 560px);
+    overflow: clip;
+  }
+
+  .cover-word {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -52%);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(74px, 13.5vw, 232px);
+    font-weight: 900;
+    line-height: 0.72;
+    letter-spacing: 0.005em;
+    color: var(--red);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .cover-phone {
+    position: relative;
+    z-index: 2;
+    transform: rotate(-9deg);
+    --syn-bezel: #0a070d;
+    --syn-screen: #14101a;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-font: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: -18px 34px 72px -26px rgba(20, 16, 26, 0.6);
+  }
+
+  .mark-arc,
+  .mark-star,
+  .mark-bars {
+    position: absolute;
+    z-index: 3;
+    height: auto;
+  }
+
+  .mark-arc {
+    right: 6%;
+    bottom: 16%;
+    width: clamp(26px, 2.6vw, 40px);
+    animation: anth-breathe 9s ease-in-out infinite;
+  }
+
+  .mark-star {
+    left: 8%;
+    top: 8%;
+    width: clamp(16px, 1.6vw, 24px);
+    animation: anth-twinkle 6.5s ease-in-out infinite;
+  }
+
+  .mark-bars {
+    left: 5%;
+    bottom: 18%;
+    width: clamp(24px, 2.2vw, 34px);
+  }
+
+  @keyframes anth-breathe {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: translateX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(5px);
+    }
+  }
+
+  @keyframes anth-twinkle {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(0.85) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(45deg);
+    }
+  }
+
+  .cover-say h2 {
+    margin-top: 0.6rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(30px, 4vw, 60px);
+    font-weight: 800;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+
+  .cover-say p {
+    max-width: 42ch;
+    margin-top: 1rem;
+    font-size: clamp(13.5px, 1.02vw, 16px);
+    line-height: 1.55;
+  }
+
+  .cover-second {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(20, 16, 26, 0.2);
+    opacity: 0.72;
+  }
+
+  /* ---------------- split payoff ---------------- */
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    overflow: clip;
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(48px, 8vh, 104px) clamp(20px, 3.4vw, 56px);
+  }
+
+  .field-red {
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .field-paper {
+    background: var(--paper);
+  }
+
+  /* The drawing crosses the seam, so the two fields read as one picture
+     rather than two columns. */
+  .rack {
+    width: min(74%, 300px);
+    height: auto;
+    transform: translateX(clamp(10px, 4vw, 64px));
+    filter: drop-shadow(0 26px 44px rgba(20, 16, 26, 0.35));
+  }
+
+  .split-say {
+    position: relative;
+    z-index: 2;
+    max-width: 44rem;
+  }
+
+  .split-say h2 {
+    margin-top: 0.5rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(28px, 3.6vw, 56px);
+    font-weight: 800;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+
+  .split-say > p {
+    max-width: 44ch;
+    margin-top: 0.9rem;
+    font-size: clamp(13.5px, 1vw, 16px);
+    line-height: 1.55;
+  }
+
+  .split-list {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1.4rem 0 0;
+    padding: 0;
+  }
+
+  .split-list li {
+    display: grid;
+    gap: 0.2rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .split-list b {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(17px, 1.5vw, 24px);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .split-list span {
+    font-size: clamp(12.5px, 0.95vw, 14.5px);
+    line-height: 1.5;
+    opacity: 0.78;
+  }
+
+  /* ---------------- eclipse payoff ---------------- */
+
+  /* One inverted band. The numbers are the only thing in it. */
+  .eclipse {
+    position: relative;
+    width: 100%;
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: clamp(46px, 7vh, 86px) var(--pad);
+  }
+
+  .stats-label {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .stats-label h2 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(24px, 2.6vw, 40px);
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 0;
+    margin: 0;
+  }
+
+  .stat {
+    padding: clamp(1rem, 2vw, 1.8rem) clamp(0.7rem, 1.4vw, 1.4rem);
+    border-bottom: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .stat + .stat {
+    border-left: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .stat:nth-child(odd) dt {
+    color: var(--red);
+  }
+
+  .stat dt {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(38px, 4.6vw, 68px);
+    font-weight: 900;
+    line-height: 0.82;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat dd {
+    margin: 0.5rem 0 0;
+    font-size: clamp(12px, 0.92vw, 14px);
+    line-height: 1.4;
+    opacity: 0.72;
+  }
+
+  /* ---------------- index ---------------- */
+
+  .entries {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+    gap: 0;
+    margin: clamp(1.4rem, 3vh, 2.4rem) 0 0;
+    padding: 0;
+  }
+
+  .entry {
+    display: flex;
+    gap: 1rem;
+    padding: clamp(1.1rem, 2vw, 1.7rem) clamp(0.6rem, 1.4vw, 1.4rem);
+    border-bottom: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .entry-no {
+    flex: none;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(22px, 2.2vw, 34px);
+    font-weight: 900;
+    line-height: 0.9;
+    color: var(--red);
+  }
+
+  .entry h3 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(20px, 1.9vw, 30px);
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .entry p {
+    margin-top: 0.45rem;
+    font-size: clamp(12.5px, 0.95vw, 15px);
+    line-height: 1.5;
+    opacity: 0.76;
+  }
+
+  /* ---------------- pair payoff ---------------- */
+
+  .pair {
+    background: var(--ink);
+    color: var(--paper);
+    overflow: clip;
+  }
+
+  .pair .rule-head {
+    border-bottom-color: var(--paper);
+  }
+
+  .pair-lede {
+    max-width: 50ch;
+    margin-top: 1.1rem;
+    font-size: clamp(13.5px, 1.02vw, 16px);
+    line-height: 1.55;
+    opacity: 0.74;
+  }
+
+  .pair-stage {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.4rem, 2vw, 2rem);
+    margin-top: clamp(1.8rem, 4vh, 3.4rem);
+    padding-bottom: clamp(0.6rem, 2vh, 2rem);
+  }
+
+  /* The two devices ride --syn-p, which the shared script updates as this
+     section crosses the window: the slate settles, the phone rises. */
+  .pair-slate {
+    flex: none;
+    --syn-bezel: #eeeae2;
+    --syn-screen: #14101a;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-rim: rgba(20, 16, 26, 0.35);
+    --syn-font: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: 0 44px 90px -40px rgba(0, 0, 0, 0.8);
+    transform: translateY(calc((0.5 - var(--syn-p, 0.5)) * 46px))
+      rotate(calc((0.5 - var(--syn-p, 0.5)) * 2.4deg));
+  }
+
+  .pair-phone {
+    flex: none;
+    margin-left: clamp(-56px, -4vw, -18px);
+    --syn-bezel: #0a070d;
+    --syn-screen: #14101a;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-font: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: 0 30px 62px -26px rgba(0, 0, 0, 0.9);
+    transform: translateY(calc((var(--syn-p, 0.5) - 0.5) * 78px));
+  }
+
+  /* ---------------- marquee payoff ---------------- */
+
+  .marquee {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    padding: clamp(56px, 9vh, 116px) var(--pad);
+    background: var(--paper);
+  }
+
+  .marquee-rows {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(8px, 1.2vw, 18px);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .row {
+    overflow: hidden;
+  }
+
+  .track {
+    display: flex;
+    gap: clamp(8px, 1.2vw, 18px);
+    width: max-content;
+    animation: anth-drift 78s linear infinite;
+  }
+
+  .row-1 .track {
+    animation-duration: 96s;
+    animation-direction: reverse;
+  }
+
+  .row-2 .track {
+    animation-duration: 112s;
+  }
+
+  .mq-cover {
+    display: block;
+    width: clamp(88px, 11vw, 168px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    flex: none;
+  }
+
+  .mq-cover :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes anth-drift {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .marquee-card {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 44rem);
+    padding: clamp(1.4rem, 3vw, 2.6rem);
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--red);
+  }
+
+  .marquee-card h2 {
+    margin-top: 0.55rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(30px, 4vw, 58px);
+    font-weight: 900;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .marquee-card p {
+    margin-top: 0.9rem;
+    font-size: clamp(13.5px, 1.02vw, 16px);
+    line-height: 1.55;
+  }
+
+  .marquee-second {
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(20, 16, 26, 0.2);
+    opacity: 0.72;
+  }
+
+  /* ---------------- ownership, over a wall used as paper ---------------- */
+
+  .own {
+    position: relative;
+    overflow: clip;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .own-wall {
+    position: absolute;
+    inset: -6%;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    opacity: 0.14;
+    filter: grayscale(1) contrast(1.2);
+    transform: rotate(-4deg) scale(1.16);
+    pointer-events: none;
+  }
+
+  .own-cover {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .own-cover :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .own-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .own .rule-head {
+    border-bottom-color: var(--red);
+  }
+
+  .own-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(1rem, 2.2vw, 2rem);
+    margin: clamp(1.6rem, 3.4vh, 2.8rem) 0 0;
+    padding: 0;
+  }
+
+  .own-grid li {
+    padding-top: 0.8rem;
+    border-top: 3px solid var(--red);
+  }
+
+  .own-grid h3 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(24px, 2.4vw, 38px);
+    font-weight: 900;
+    line-height: 0.94;
+    text-transform: uppercase;
+  }
+
+  .own-grid p {
+    margin-top: 0.5rem;
+    font-size: clamp(12.5px, 0.95vw, 15px);
+    line-height: 1.5;
+    opacity: 0.76;
+  }
+
+  /* ---------------- faq ---------------- */
+
+  .faq-list {
+    margin-top: clamp(1.2rem, 2.6vh, 2rem);
+    border-top: 1px solid rgba(20, 16, 26, 0.24);
+  }
+
+  details {
+    border-bottom: 1px solid rgba(20, 16, 26, 0.24);
+  }
+
+  summary {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(0.9rem, 1.8vh, 1.3rem) 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(19px, 2vw, 31px);
+    font-weight: 700;
+    line-height: 1.04;
+    text-transform: uppercase;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary i {
+    position: relative;
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  summary i::before,
+  summary i::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 3px;
+    background: var(--red);
+    transform: translateY(-50%);
+  }
+
+  summary i::after {
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 180ms ease;
+  }
+
+  details[open] summary i::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  details p {
+    max-width: 68ch;
+    padding: 0 0 clamp(1rem, 2vh, 1.5rem);
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.78;
+  }
+
+  /* ---------------- close ---------------- */
+
+  .close {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .close-inner {
+    padding-top: clamp(40px, 6vh, 78px);
+  }
+
+  .close-word {
+    border-bottom: 1px solid rgba(238, 234, 226, 0.4);
+  }
+
+  .close-say {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: clamp(1.2rem, 2.6vh, 2rem);
+  }
+
+  .close-tag {
+    max-width: 22ch;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-size: clamp(24px, 3.2vw, 46px);
+    font-weight: 800;
+    line-height: 0.94;
+    text-transform: uppercase;
+  }
+
+  .close .btn.solid {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .close .btn.ghost {
+    border-color: var(--paper);
+  }
+
+  .close-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: clamp(1.6rem, 3.4vh, 2.6rem);
+    padding-top: 0.8rem;
+    border-top: 3px solid var(--paper);
+    font-size: clamp(10px, 0.86vw, 12px);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ---------------- narrow ---------------- */
+
+  @media (max-width: 1080px) {
+    .cover {
+      grid-template-columns: 1fr;
+    }
+
+
+    .split {
+      grid-template-columns: 1fr;
+    }
+
+    .rack {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      min-height: auto;
+    }
+
+    .stage {
+      grid-template-columns: 1fr;
+    }
+
+    .stage-phone {
+      justify-self: center;
+      margin: clamp(0.8rem, 4vw, 1.6rem) 0 0;
+    }
+
+    .bill-list {
+      font-size: 17px;
+    }
+
+    .pair-stage {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pair-phone {
+      margin-left: 0;
+      margin-top: clamp(-70px, -9vw, -30px);
+    }
+
+    .cover-word {
+      font-size: clamp(60px, 17vw, 120px);
+    }
+
+    .own-wall {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      transform: translateX(-6%);
+    }
+
+    .ew-lit {
+      animation: none;
+      clip-path: inset(0 20% 0 20%);
+    }
+
+    .mark-arc,
+    .mark-star {
+      animation: none;
+      opacity: 0.85;
+    }
+
+    .btn.solid,
+    .btn.solid:hover {
+      transform: none;
+      transition: none;
+    }
+
+    .pair-slate,
+    .pair-phone {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,435 @@
+---
+/**
+ * The Mozz phone, drawn rather than photographed.
+ *
+ * There are no screenshot masters in this checkout — src/data/screenshots.json
+ * points at files that do not exist here — so Shot.astro and Phone.astro would
+ * throw at build. The four synthesis pages draw the interface instead, exactly
+ * as the hero studies do.
+ *
+ * The hardware is the real iPhone ratio, 71.6 x 147.6 mm. A stretched phone has
+ * already been rejected once; that number is not a guess and must not drift.
+ *
+ * Everything visual is a custom property so the same handset can be black in
+ * one page and paper-white in the next without re-solving the geometry:
+ *
+ *   --syn-pw       rendered width of the hardware (any CSS length, incl. clamp)
+ *   --syn-bezel    the shell
+ *   --syn-screen   the glass
+ *   --syn-fg       type on the glass
+ *   --syn-red      the accent
+ *   --syn-shadow   the drop shadow
+ */
+export interface Props {
+  /** Any CSS length. Drives every internal dimension. */
+  width?: string;
+  /** Inline SVG string for the artwork, from src/data/syn-art.ts. */
+  art: string;
+  title: string;
+  artist: string;
+  /** The line above the artwork — where the music is coming from. */
+  source?: string;
+  /** The badge under the transport. */
+  chip?: string;
+  elapsed?: string;
+  remaining?: string;
+  /** 0–100. */
+  progress?: number;
+  class?: string;
+  /** Description for assistive tech. Omit to mark the phone decorative. */
+  label?: string | null;
+}
+
+const {
+  width = 'clamp(230px, 21vw, 320px)',
+  art,
+  title,
+  artist,
+  source = 'Playing from your server',
+  chip = 'Downloaded · plays offline',
+  elapsed = '1:47',
+  remaining = '−2:25',
+  progress = 42,
+  class: className = '',
+  label = null,
+} = Astro.props;
+---
+
+<div
+  class:list={['syn-phone', className]}
+  style={`--syn-pw:${width}`}
+  role={label ? 'img' : undefined}
+  aria-label={label ?? undefined}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <div class="syn-shell">
+    <span class="syn-island"></span>
+
+    <div class="syn-screen">
+      <div class="syn-status">
+        <span>9:41</span>
+        <span class="syn-glyphs">
+          <svg viewBox="0 0 18 12" focusable="false"
+            ><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" fill="currentColor"></path></svg
+          >
+          <svg viewBox="0 0 26 12" focusable="false"
+            ><rect
+              x="0.7"
+              y="0.7"
+              width="21"
+              height="10.6"
+              rx="3.2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"></rect><rect
+              x="2.6"
+              y="2.6"
+              width="14"
+              height="6.8"
+              rx="1.8"
+              fill="currentColor"></rect><path
+              d="M23.6 4.2v3.6a2.1 2.1 0 0 0 0-3.6z"
+              fill="currentColor"></path></svg
+          >
+        </span>
+      </div>
+
+      <div class="syn-head">
+        <svg class="syn-chev" viewBox="0 0 16 16" focusable="false"
+          ><path
+            d="M3 6l5 5 5-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path></svg
+        >
+        <span class="syn-from">{source}</span>
+        <span class="syn-eq"><i></i><i></i><i></i></span>
+      </div>
+
+      <div class="syn-art" set:html={art}></div>
+
+      <div class="syn-meta">
+        <strong>{title}</strong>
+        <span>{artist}</span>
+      </div>
+
+      <div class="syn-rail"><i style={`width:${progress}%`}></i></div>
+      <div class="syn-times"><span>{elapsed}</span><span>{remaining}</span></div>
+
+      <div class="syn-ctrl">
+        <svg viewBox="0 0 20 20" focusable="false"
+          ><path d="M17 3.5v13L7.5 10z" fill="currentColor"></path><rect
+            x="3"
+            y="3.5"
+            width="2.4"
+            height="13"
+            rx="1"
+            fill="currentColor"></rect></svg
+        >
+        <span class="syn-play"
+          ><svg viewBox="0 0 20 20" focusable="false"
+            ><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.2" fill="currentColor"></rect><rect
+              x="11.1"
+              y="4.4"
+              width="3.3"
+              height="11.2"
+              rx="1.2"
+              fill="currentColor"></rect></svg
+          ></span
+        >
+        <svg viewBox="0 0 20 20" focusable="false"
+          ><path d="M3 3.5v13L12.5 10z" fill="currentColor"></path><rect
+            x="14.6"
+            y="3.5"
+            width="2.4"
+            height="13"
+            rx="1"
+            fill="currentColor"></rect></svg
+        >
+      </div>
+
+      <div class="syn-chip">
+        <svg viewBox="0 0 16 16" focusable="false"
+          ><circle cx="8" cy="8" r="7" fill="var(--syn-red, #d8002d)"></circle><path
+            d="M4.8 8.2 7 10.4l4-4.6"
+            fill="none"
+            stroke="var(--syn-screen, #14101a)"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path></svg
+        >
+        <span>{chip}</span>
+      </div>
+
+      <span class="syn-home"></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .syn-phone {
+    width: var(--syn-pw);
+    flex: none;
+  }
+
+  .syn-shell {
+    position: relative;
+    width: 100%;
+    /* The real handset: 71.6 mm x 147.6 mm. Do not round this. */
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--syn-pw) * 0.032);
+    border-radius: calc(var(--syn-pw) * 0.152);
+    background: var(--syn-bezel, #0a070d);
+    box-shadow:
+      inset 0 0 0 1px var(--syn-rim, rgba(255, 255, 255, 0.14)),
+      var(--syn-shadow, 0 40px 80px -34px rgba(0, 0, 0, 0.72));
+    isolation: isolate;
+  }
+
+  .syn-island {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: calc(var(--syn-pw) * 0.058);
+    width: 29%;
+    height: calc(var(--syn-pw) * 0.072);
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: #06040a;
+  }
+
+  .syn-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: calc(var(--syn-pw) * 0.055) calc(var(--syn-pw) * 0.058) calc(var(--syn-pw) * 0.03);
+    border-radius: calc(var(--syn-pw) * 0.122);
+    overflow: hidden;
+    background: var(--syn-screen, #14101a);
+    color: var(--syn-fg, #fdf6ec);
+    /* One type scale for the whole interface, derived from the hardware. */
+    font-size: calc(var(--syn-pw) / 21);
+    font-family: var(--syn-font, 'Helvetica Neue', Arial, sans-serif);
+    line-height: 1.2;
+  }
+
+  .syn-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 1.5em;
+    font-size: 0.66em;
+    font-weight: 700;
+    opacity: 0.78;
+  }
+
+  .syn-glyphs {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .syn-glyphs svg {
+    height: 0.72em;
+    width: auto;
+  }
+
+  .syn-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.9em;
+    font-size: 0.6em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.66;
+  }
+
+  .syn-chev {
+    width: 1.2em;
+    height: 1.2em;
+    flex: none;
+  }
+
+  .syn-from {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .syn-eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.16em;
+    height: 1em;
+    flex: none;
+  }
+
+  .syn-eq i {
+    width: 0.18em;
+    height: 100%;
+    background: var(--syn-red, #d8002d);
+    transform-origin: 50% 100%;
+    animation: syn-pump 1.1s ease-in-out infinite alternate;
+  }
+
+  .syn-eq i:nth-child(2) {
+    animation-duration: 0.76s;
+  }
+
+  .syn-eq i:nth-child(3) {
+    animation-duration: 1.42s;
+  }
+
+  @keyframes syn-pump {
+    from {
+      transform: scaleY(0.28);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .syn-art {
+    margin-top: 0.85em;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0.5em;
+    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.34);
+  }
+
+  .syn-art :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .syn-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.16em;
+    margin-top: 1.05em;
+  }
+
+  .syn-meta strong {
+    font-size: 1.06em;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .syn-meta span {
+    font-size: 0.72em;
+    opacity: 0.6;
+  }
+
+  .syn-rail {
+    position: relative;
+    margin-top: 0.95em;
+    height: 0.2em;
+    border-radius: 999px;
+  }
+
+  .syn-rail::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0.22;
+  }
+
+  .syn-rail i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: block;
+    border-radius: 999px;
+    background: var(--syn-red, #d8002d);
+  }
+
+  .syn-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.42em;
+    font-size: 0.58em;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.55;
+  }
+
+  .syn-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4em;
+    margin-top: 0.75em;
+  }
+
+  .syn-ctrl svg {
+    width: 1.25em;
+    height: 1.25em;
+    opacity: 0.86;
+  }
+
+  .syn-play {
+    display: grid;
+    place-items: center;
+    width: 2.3em;
+    height: 2.3em;
+    border-radius: 50%;
+    background: var(--syn-red, #d8002d);
+    color: var(--syn-screen, #14101a);
+  }
+
+  .syn-play svg {
+    width: 1.05em;
+    height: 1.05em;
+    opacity: 1;
+  }
+
+  .syn-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    margin-top: auto;
+    margin-bottom: 0.5em;
+    padding: 0.36em 0.6em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--syn-fg, #fdf6ec) 12%, transparent);
+    font-size: 0.58em;
+    letter-spacing: 0.03em;
+  }
+
+  .syn-chip svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+
+  .syn-home {
+    width: 34%;
+    height: 0.2em;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .syn-eq i {
+      animation: none;
+      transform: scaleY(0.62);
+    }
+
+    .syn-eq i:nth-child(2) {
+      transform: scaleY(1);
+    }
+
+    .syn-eq i:nth-child(3) {
+      transform: scaleY(0.4);
+    }
+  }
+</style>
