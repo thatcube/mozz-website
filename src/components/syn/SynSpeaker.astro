@@ -1,0 +1,99 @@
+---
+/**
+ * A HomePod, drawn.
+ *
+ * For the one beat the four synthesis pages need a picture of: asking out loud
+ * and having your own library answer. The speaker has no apps of its own, so
+ * the drawing is deliberately plain — a mesh body and the light on top — and
+ * the arcs leaving it are the request going somewhere.
+ *
+ * Takes its colours from the page: `currentColor` for the body and
+ * `--syn-red` for the light, so it sits in cream, red or black equally well.
+ */
+export interface Props {
+  class?: string;
+  label?: string | null;
+}
+
+const { class: className = '', label = null } = Astro.props;
+const uid = 'syn-mesh';
+---
+
+<svg
+  class:list={['syn-speaker', className]}
+  viewBox="0 0 260 240"
+  role={label ? 'img' : 'presentation'}
+  aria-label={label ?? undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <defs>
+    <pattern id={uid} width="7" height="7" patternUnits="userSpaceOnUse">
+      <circle cx="3.5" cy="3.5" r="1.5" fill="currentColor" opacity="0.34"></circle>
+    </pattern>
+  </defs>
+
+  <!-- the body -->
+  <rect x="66" y="46" width="128" height="176" rx="60" fill="currentColor"></rect>
+  <rect x="66" y="46" width="128" height="176" rx="60" fill={`url(#${uid})`}></rect>
+
+  <!-- the light on top -->
+  <ellipse cx="130" cy="72" rx="46" ry="17" fill="var(--syn-red, #d8002d)"></ellipse>
+  <path
+    d="M104 72c5-7 12-7 17 0s12 7 17 0 12-7 17 0"
+    fill="none"
+    stroke="var(--syn-speaker-glass, #fdf6ec)"
+    stroke-width="4"
+    stroke-linecap="round"></path>
+
+  <!-- the request, leaving -->
+  <g fill="none" stroke="var(--syn-red, #d8002d)" stroke-width="5" stroke-linecap="round">
+    <path class="w1" d="M212 96a56 56 0 0 1 0 78"></path>
+    <path class="w2" d="M232 76a86 86 0 0 1 0 118"></path>
+    <path class="w3" d="M48 96a56 56 0 0 0 0 78"></path>
+    <path class="w4" d="M28 76a86 86 0 0 0 0 118"></path>
+  </g>
+</svg>
+
+<style>
+  .syn-speaker {
+    width: 100%;
+    height: auto;
+  }
+
+  .w1,
+  .w2,
+  .w3,
+  .w4 {
+    animation: syn-call 3.4s ease-in-out infinite;
+  }
+
+  .w2,
+  .w4 {
+    animation-delay: 0.5s;
+  }
+
+  @keyframes syn-call {
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    45% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .w1,
+    .w2,
+    .w3,
+    .w4 {
+      animation: none;
+    }
+
+    .w2,
+    .w4 {
+      opacity: 0.4;
+    }
+  }
+</style>

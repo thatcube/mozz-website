@@ -34,6 +34,7 @@ import ServerLogo from '../../components/ServerLogo.astro';
 import SynPhone from '../../components/syn/SynPhone.astro';
 import SynSlate from '../../components/syn/SynSlate.astro';
 import SynMotion from '../../components/syn/SynMotion.astro';
+import SynSpeaker from '../../components/syn/SynSpeaker.astro';
 import { sleeve, sleeveRun, INK_LIGHT, INK_DARK, INK_RED } from '../../data/syn-art';
 import {
   NAME,
@@ -401,6 +402,27 @@ const BOTH = [
     </section>
 
     <!-- ==================================================================
+         VOICE — the library answering without being touched.
+    =================================================================== -->
+    <section class="voice" aria-labelledby="un-voice">
+      <div class="wrap voice-wrap">
+        <div class="voice-art" data-syn-reveal>
+          <SynSpeaker label="A HomePod, with the request leaving it on both sides." />
+        </div>
+
+        <div class="voice-say">
+          <div class="voice-top">
+            <span class="kicker">Out loud</span>
+            <span class="ref">04 / union</span>
+          </div>
+          <h2 id="un-voice">{FEATURES[7].title}</h2>
+          <p>{FEATURES[7].body}</p>
+          <p class="voice-line">&ldquo;Play Second Shadow.&rdquo;</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
          MARQUEE PAYOFF — radio and the weekly mix, as a featured band.
     =================================================================== -->
     <section class="marquee" aria-labelledby="un-weekly">
@@ -456,7 +478,7 @@ const BOTH = [
       <div class="wrap own-inner">
         <div class="head-rule">
           <h2 id="un-own">{SUBLINE}</h2>
-          <span class="ref">04 / union</span>
+          <span class="ref">05 / union</span>
         </div>
 
         <ol class="own-grid" role="list">
@@ -479,7 +501,7 @@ const BOTH = [
       <div class="wrap">
         <div class="head-rule">
           <h2 id="un-faq">Questions</h2>
-          <span class="ref">05 / union</span>
+          <span class="ref">06 / union</span>
         </div>
 
         <div class="faq-list">
@@ -1377,6 +1399,65 @@ const BOTH = [
       rotate(calc((var(--syn-p, 0.5) - 0.5) * -3deg));
   }
 
+  /* ---------------- voice ---------------- */
+
+  .voice {
+    background: var(--paper);
+  }
+
+  .voice-wrap {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 4.4rem);
+    align-items: center;
+  }
+
+  .voice-art {
+    width: clamp(150px, 19vw, 250px);
+    color: var(--ink);
+    --syn-speaker-glass: var(--paper);
+  }
+
+  .voice-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.2rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .voice-say h2 {
+    margin-top: 0.7rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 108%;
+    font-size: clamp(26px, 3.2vw, 48px);
+    line-height: 1;
+    letter-spacing: -0.034em;
+  }
+
+  .voice-say > p {
+    max-width: 48ch;
+    margin-top: 1rem;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.74;
+  }
+
+  .voice-line {
+    margin-top: 1.2rem !important;
+    padding-top: 1.1rem;
+    border-top: 2px solid var(--red);
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 106%;
+    font-size: clamp(19px, 2.2vw, 34px) !important;
+    letter-spacing: -0.03em;
+    opacity: 1 !important;
+  }
+
   /* ---------------- marquee payoff ---------------- */
 
   .marquee {
@@ -1800,6 +1881,11 @@ const BOTH = [
 
     .own-wall {
       grid-template-columns: repeat(6, 1fr);
+    }
+
+    .voice-wrap {
+      grid-template-columns: 1fr;
+      justify-items: start;
     }
   }
 

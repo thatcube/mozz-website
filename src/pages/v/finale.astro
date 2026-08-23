@@ -34,6 +34,7 @@ import ServerLogo from '../../components/ServerLogo.astro';
 import SynPhone from '../../components/syn/SynPhone.astro';
 import SynSlate from '../../components/syn/SynSlate.astro';
 import SynMotion from '../../components/syn/SynMotion.astro';
+import SynSpeaker from '../../components/syn/SynSpeaker.astro';
 import { sleeve, sleeveRun, INK_LIGHT, INK_DARK, INK_RED } from '../../data/syn-art';
 import {
   NAME,
@@ -281,6 +282,26 @@ const BOTH = [
               label="An iPhone playing the same library from the same server."
             />
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         VOICE — the library answering without being touched.
+    =================================================================== -->
+    <section class="band voice" aria-labelledby="fi-voice">
+      <div class="head-rule">
+        <h2 id="fi-voice">{FEATURES[7].title}</h2>
+        <span class="ref">04 / finale</span>
+      </div>
+
+      <div class="voice-row">
+        <div class="voice-art" data-syn-reveal>
+          <SynSpeaker label="A HomePod, with the request leaving it on both sides." />
+        </div>
+        <div class="voice-say" data-syn-reveal style="--syn-delay:120ms">
+          <p class="voice-line">&ldquo;Play Second Shadow.&rdquo;</p>
+          <p>{FEATURES[7].body}</p>
         </div>
       </div>
     </section>
@@ -1149,6 +1170,39 @@ const BOTH = [
     transform: translateY(calc((var(--syn-p, 0.5) - 0.5) * 92px));
   }
 
+  /* ---------------- voice ---------------- */
+
+  .voice-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 4.2rem);
+    align-items: center;
+    margin-top: clamp(1.6rem, 3.4vh, 2.8rem);
+  }
+
+  .voice-art {
+    width: clamp(148px, 18.5vw, 244px);
+    color: var(--cream);
+    --syn-speaker-glass: var(--void);
+  }
+
+  .voice-line {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 110, 'wght' 800;
+    font-size: clamp(24px, 3.2vw, 46px);
+    line-height: 1;
+    letter-spacing: -0.036em;
+    color: var(--red);
+  }
+
+  .voice-say > p + p {
+    max-width: 50ch;
+    margin-top: 1rem;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.74;
+  }
+
   /* ---------------- cover payoff ---------------- */
 
   .cover {
@@ -1773,6 +1827,23 @@ const BOTH = [
   @media (max-width: 860px) {
     .finale {
       --cx: 50%;
+
+      /* The fall-off is measured in pixels around the app, so it has to be
+         re-scaled for a narrow frame or the whole word goes to ground. */
+      --umb-l: 98px;
+      --umb-ls: 22px;
+      --umb-r: 96px;
+      --umb-rs: 24px;
+
+      --deep-l: 148px;
+      --deep-ls: 32px;
+      --deep-r: 146px;
+      --deep-rs: 34px;
+
+      --pen-l: 146px;
+      --pen-ls: 40px;
+      --pen-r: 168px;
+      --pen-rs: 40px;
     }
 
     /* Rows rather than layers. The word and the app share the second row, so
@@ -1796,6 +1867,7 @@ const BOTH = [
 
     .stage {
       grid-row: 2;
+      grid-column: 1;
       position: relative;
       inset: auto;
       min-height: clamp(370px, 118vw, 560px);
@@ -1806,11 +1878,14 @@ const BOTH = [
     .wl span {
       bottom: 50%;
       transform: translate(-50%, 50%);
-      font-size: 46vw;
+      font-size: 54vw;
     }
 
     .hero-phone {
       grid-row: 2;
+      /* Both share row two on purpose; without an explicit column the app
+         auto-places into a second one and squeezes the sentence. */
+      grid-column: 1;
       align-self: center;
       justify-self: center;
       position: relative;
@@ -1840,6 +1915,11 @@ const BOTH = [
 
     .own-wall {
       grid-template-columns: repeat(5, 1fr);
+    }
+
+    .voice-row {
+      grid-template-columns: 1fr;
+      justify-items: start;
     }
   }
 
