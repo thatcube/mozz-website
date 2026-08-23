@@ -107,13 +107,24 @@ const WALL = [
           antialiased pixel edge is the other half of that problem.
         -->
         <svg class="eclipse" viewBox="-7 -7 46 46" aria-hidden="true" focusable="false">
-          <!-- the light behind -->
+          <defs>
+            <!--
+              The mark is a stencil, not a sticker: the disc is solid and the zz
+              and the smile are cut clean out of it, so the only thing filling
+              them is whatever is behind — which is the sun.
+            -->
+            <mask id="sz-stencil" maskUnits="userSpaceOnUse" x="-10" y="-10" width="52" height="52">
+              <path d={DISC} fill="#fff"></path>
+              <path d={FACE} fill="#000"></path>
+            </mask>
+          </defs>
+
+          <!-- the source. It is red because the light coming off it is red. -->
           <path class="sun" d={DISC}></path>
 
-          <!-- the body crossing it: the mark, in shadow but still lit -->
+          <!-- the body crossing it, lit only through its own face -->
           <g transform="translate(-4 -3)">
-            <path class="body" d={DISC}></path>
-            <path class="face" d={FACE}></path>
+            <rect class="body" x="-10" y="-10" width="52" height="52" mask="url(#sz-stencil)"></rect>
           </g>
         </svg>
 
@@ -655,10 +666,11 @@ const WALL = [
     border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(216, 0, 44, 0.62) 0 11%,
-      rgba(200, 0, 40, 0.3) 18%,
-      rgba(150, 0, 30, 0.13) 30%,
-      transparent 58%
+      rgba(255, 60, 96, 0.5) 0 10%,
+      rgba(216, 0, 44, 0.42) 16%,
+      rgba(180, 0, 36, 0.18) 27%,
+      rgba(120, 0, 24, 0.07) 40%,
+      transparent 62%
     );
   }
 
@@ -683,12 +695,15 @@ const WALL = [
     shape-rendering: crispEdges;
   }
 
-  .eclipse .sun { fill: var(--cream); }
+  /* Hotter than the brand red, because it is the thing emitting it. */
+  .eclipse .sun { fill: #e4002f; }
 
-  /* In shadow, but never a hole: the disc keeps its colour and the face stays
-     lit, so the mark still reads as the mark. */
-  .eclipse .body { fill: #1b040a; }
-  .eclipse .face { fill: #e4002f; }
+  /*
+   * Not black: a very dark red, so the eclipsed disc still has a body of its
+   * own and silhouettes against the bloom instead of reading as a hole cut in
+   * the page.
+   */
+  .eclipse .body { fill: #17060c; }
 
   /* --- the shadow it throws ------------------------------------------ */
 
