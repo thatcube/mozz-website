@@ -29,7 +29,7 @@ const HEADLINE = 'Press play. Learn what Mozz is by operating it.';
 const TRACKS = [
   { no: '01', title: 'What Mozz is',              tag: 'Disc one',      accent: '#c25cff', shot: 'mozz-nowplaying', len: 192 },
   { no: '02', title: 'Three server families',      tag: 'The sources',   accent: '#f2ab24', shot: 'mozz-album-warm', len: 168 },
-  { no: '03', title: 'What it does',              tag: 'Six functions', accent: '#e8425c', shot: 'mozz-album-red',  len: 260 },
+  { no: '03', title: 'What it does',              tag: 'Every function', accent: '#e8425c', shot: 'mozz-album-red',  len: 260 },
   { no: '04', title: 'Why it is yours',           tag: 'Four promises', accent: '#c07a82', shot: 'mozz-album-dark', len: 216 },
   { no: '05', title: 'The measurements',          tag: 'Four figures',  accent: '#cdd2d8', shot: 'mozz-playlist',  len: 76 },
   { no: '06', title: 'Questions',                 tag: 'Five answers',  accent: '#cfa47c', shot: 'mozz-artist',    len: 305 },
@@ -1197,7 +1197,7 @@ const totalLen = TRACKS.reduce((a, t) => a + t.len, 0);
     const hint = q('[data-role="hint"]', deck.parentElement) || document.querySelector('[data-role="hint"]');
     const ejectLabel = q('[data-field="ejectlabel"]');
     const btn = (a) => q(`.ctl[data-act="${a}"]`);
-    const perTag = ['Disc one', 'The sources', 'Six functions', 'Four promises', 'Four figures', 'Five answers'];
+    const perTag = ['Disc one', 'The sources', 'Every function', 'Four promises', 'Four figures', 'Five answers'];
 
     let cur = 0, elapsed = 0, playing = false, paused = false, open = false, timer = null;
 

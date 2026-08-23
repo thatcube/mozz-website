@@ -78,6 +78,10 @@ export const FEATURES = [
     title: 'Tuned to your ears',
     body: 'A proper equalizer, plus playback that respects the file you actually own instead of quietly re-encoding it.',
   },
+  {
+    title: 'Ask for it out loud',
+    body: 'Siri plays a song, album, artist, playlist, genre, liked songs or a mix straight from your own library — including from a HomePod, which has no apps of its own and hands the request to your iPhone to play and AirPlay back.',
+  },
 ] as const;
 
 /** The ownership argument, which is the whole point of the app. */
