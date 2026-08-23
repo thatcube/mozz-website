@@ -1,0 +1,1314 @@
+---
+/**
+ * VARIANT — BROADSIDE
+ *
+ * Mozz as the front page printed the day the listener took their music back.
+ * The signature gesture is restrained two-colour overprint: key words are ink
+ * and red at once, with the red plate settling into register on load.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your music, back in your own hands.';
+const SUPPORT = 'Mozz is a free player for the music on your own server.';
+const DECK = 'Stream at home from Plex, Jellyfin or Navidrome, then download the records you choose for no-signal listening.';
+const FEATURE_GROUPS = [
+  FEATURES.slice(0, 2),
+  FEATURES.slice(2, 5),
+  FEATURES.slice(5),
+];
+---
+
+<Layout
+  title={`${NAME} — Your music, back in your own hands`}
+  description="A loud broadsheet for Mozz, the free open-source iPhone and iPad music player for Plex, Jellyfin and Navidrome, with streaming and offline downloads treated equally."
+  themeColor="#efe9dc"
+  noindex
+>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <main class="broadside">
+    <VariantBar slug="broadside" tone="cool" />
+
+    <header class="front" aria-labelledby="broadside-title">
+      <div class="front__rule"></div>
+      <div class="front__brand">
+        <a class="lockup" href="/" aria-label="Mozz home">
+          <Mark size={34} decorative />
+          <span>{NAME}</span>
+        </a>
+        <p>Printed for listeners who run their own library</p>
+      </div>
+
+      <h1 class="masthead" aria-label="Mozz">
+        <span class="overprint" data-text="MOZZ">MOZZ</span>
+      </h1>
+
+      <div class="dateline" aria-label="Edition details">
+        <span>Self-hosted edition</span>
+        <span>No. 001</span>
+        <span>Free / GPL-3.0</span>
+        <span>No account</span>
+      </div>
+
+      <div class="front__grid">
+        <section class="headline-stack" aria-labelledby="broadside-title">
+          <p class="kicker">Front page / possession restored</p>
+          <h2 id="broadside-title"><span class="overprint" data-text={HEADLINE}>{HEADLINE}</span></h2>
+          <p class="deck deck--two">{SUPPORT}</p>
+          <p class="deck deck--three">{DECK}</p>
+        </section>
+
+        <aside class="get-box" aria-label="Where to get Mozz">
+          <p class="kicker">Where to get it</p>
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          <div class="inside-list" aria-label="Inside this edition">
+            <p class="kicker">Inside</p>
+            <ol>
+              <li><span>A1</span> Sources</li>
+              <li><span>A2</span> At home / end of line</li>
+              <li><span>A3</span> Stop press</li>
+              <li><span>B1</span> By the numbers</li>
+            </ol>
+          </div>
+        </aside>
+
+        <article class="lede-copy">
+          <p><span class="drop">Y</span>our music did not move into a new service. It stayed on the machine you already chose. Mozz is the free player that reads that library on iPhone and iPad, then lets the same collection travel when the network ends.</p>
+          <p>The arrangement is simple enough to print in a dateline: your server, your files, your pocket. Stream it at home. Download it for the line where service disappears.</p>
+        </article>
+
+        <figure class="phone-photo">
+          <div class="photo-panel">
+            <div class="phone" aria-label="Drawn iPhone showing Mozz playing a downloaded album" role="img">
+              <span class="phone-key key-one"></span>
+              <span class="phone-key key-two"></span>
+              <div class="phone-screen">
+                <div class="island"></div>
+                <div class="status"><span>9:41</span><span>▮▮▮ ▱</span></div>
+                <div class="screen-head"><small>NOW PLAYING</small><b>Self-hosted edition</b></div>
+                <svg class="album-art" viewBox="0 0 100 100" aria-hidden="true">
+                  <rect width="100" height="100" fill="#efe9dc" />
+                  <circle cx="48" cy="48" r="31" fill="none" stroke="#111010" stroke-width="5" />
+                  <path d="M8 17 H92 V38 H8 Z" fill="#c80028" />
+                  <path d="M0 77 C28 54 52 96 100 62 V100 H0 Z" fill="#111010" />
+                  <circle cx="48" cy="48" r="6" fill="#c80028" />
+                </svg>
+                <div class="track"><strong>Back in Hand</strong><span>Column Line</span></div>
+                <div class="bar"><i></i></div>
+                <div class="controls"><span>◀</span><b>▶</b><span>▶</span></div>
+                <div class="badge">downloaded · plays offline</div>
+              </div>
+            </div>
+          </div>
+          <figcaption>The Mozz phone is redrawn as a press photograph: halftone field, hard caption rule, no external image.</figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <section class="classifieds section" aria-labelledby="broadside-sources">
+      <div class="section-head boxed-head">
+        <p class="kicker">Classified listings</p>
+        <h2 id="broadside-sources">Sources</h2>
+        <div class="classified-strap" aria-label="Listings summary">
+          <span>3 listings</span>
+          <span>No charge</span>
+          <span>No account</span>
+        </div>
+        <p>Point Mozz at the server you already run. There is no Mozz server hiding in the middle of the listing.</p>
+      </div>
+      <div class="listing-grid">
+        {SERVERS.map((server) => (
+          <article class="listing">
+            <span class="listing__logo"><ServerLogo name={server.name} size={36} /></span>
+            <h3>{server.name}</h3>
+            <p>{server.note}</p>
+            <small>connect via / existing library</small>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="spread section" aria-labelledby="broadside-equal">
+      <div class="section-head">
+        <p class="kicker">Two equal columns</p>
+        <h2 id="broadside-equal"><span class="overprint" data-text="At home. At the end of the line.">At home. At the end of the line.</span></h2>
+      </div>
+      <div class="spread__columns">
+        <article>
+          <p class="kicker">At home</p>
+          <h3>Stream from the server in your building.</h3>
+          <p>Open the library on Plex, Jellyfin or Navidrome and play it in place. Mozz treats the server as the source of the collection, not as a subscription service to be replaced.</p>
+          <p>The queue, search and player stay tuned to the files you own. When the network is there, the app reads from home.</p>
+        </article>
+        <article>
+          <p class="kicker">At the end of the line</p>
+          <h3>Download the record and the signal can disappear.</h3>
+          <p>Choose what travels with you and it plays with nothing: no bars, no captive portal, no server reachable from the train.</p>
+          <p>The catalog remains searchable on device. When the network is gone, the same app reads from your pocket.</p>
+        </article>
+      </div>
+    </section>
+
+    <aside class="stop-press" aria-label="Stop press">
+      <p>Stop press</p>
+      <strong>Downloaded albums keep playing when the signal is gone.</strong>
+    </aside>
+
+    <section class="columns section" aria-labelledby="broadside-features">
+      <div class="section-head">
+        <p class="kicker">The app experience</p>
+        <h2 id="broadside-features">What the player does after the headline.</h2>
+        <p>Seven verified capabilities, set as a run of columns instead of a list of product cards.</p>
+      </div>
+      <div class="feature-columns">
+        {FEATURE_GROUPS.map((group, groupIndex) => (
+          <div class="feature-column">
+            <p class="column-label">Column {groupIndex + 1}</p>
+            {group.map((feature) => (
+              <article>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <blockquote class="pullquote">
+      <span aria-hidden="true">“</span>
+      <p>{TAGLINE}</p>
+      <span aria-hidden="true">”</span>
+    </blockquote>
+
+    <section class="numbers section" aria-labelledby="broadside-numbers">
+      <div class="section-head boxed-head">
+        <p class="kicker">By the numbers</p>
+        <h2 id="broadside-numbers">Measured, not mood.</h2>
+      </div>
+      <div class="numbers-grid">
+        {STATS.map((stat) => (
+          <article>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="leader section" aria-labelledby="broadside-terms">
+      <div class="section-head">
+        <p class="kicker">Editorial leader</p>
+        <h2 id="broadside-terms">Our terms</h2>
+        <p>The paper's position is direct: the player exists between your server and your ears, not between you and a new account.</p>
+      </div>
+      <div class="leader-copy">
+        {OWNERSHIP.map((item, index) => (
+          <article>
+            <span>{index + 1}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="readers section" aria-labelledby="broadside-readers">
+      <div class="section-head boxed-head">
+        <p class="kicker">Questions from readers</p>
+        <h2 id="broadside-readers">Letters to the desk</h2>
+      </div>
+      <div class="reader-grid">
+        {FAQS.map((item) => (
+          <article>
+            <h3>{item.q}</h3>
+            <p>{item.a}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <footer class="back-strip">
+      <div class="back-strip__lockup">
+        <Mark size={36} decorative />
+        <span>{NAME}</span>
+      </div>
+      <div>
+        <h2>{TAGLINE}</h2>
+        <p>{SUBLINE}</p>
+      </div>
+      <div class="back-strip__actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Coming to the</small>App Store</span>
+          </span>
+        )}
+        <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="colophon">Colophon: {FAQS[3].a}</p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #efe9dc;
+  }
+
+  :global(body) {
+    margin: 0;
+    color: #111010;
+    background: #efe9dc;
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  :global(*:focus-visible) {
+    outline: 4px solid #c80028;
+    outline-offset: 4px;
+  }
+
+  .broadside {
+    --paper: #efe9dc;
+    --ink: #111010;
+    --red: #c80028;
+    --rule: rgba(17,16,16,.84);
+    --soft-rule: rgba(17,16,16,.28);
+    --reg-x: 2px;
+    --reg-y: 1px;
+    --outer: clamp(.85rem, 3vw, 3rem);
+    position: relative;
+    overflow-x: clip;
+    background: var(--paper);
+  }
+
+  .front,
+  .section,
+  .back-strip,
+  .stop-press,
+  .pullquote {
+    width: min(100% - calc(var(--outer) * 2), 1840px);
+    margin-inline: auto;
+  }
+
+  .front {
+    min-height: calc(100svh - 42px);
+    padding-top: clamp(1rem, 2vw, 2rem);
+    padding-bottom: clamp(2rem, 5vw, 5rem);
+  }
+
+  .front__rule {
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .front__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: .65rem;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .lockup,
+  .back-strip__lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .lockup span,
+  .back-strip__lockup span {
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: -.02em;
+    text-transform: uppercase;
+  }
+
+  .front__brand p,
+  .kicker,
+  .dateline,
+  .source-link,
+  .store small,
+  .listing small,
+  .column-label,
+  .colophon {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .front__brand p {
+    margin: 0;
+    color: rgba(17,16,16,.62);
+  }
+
+  .masthead {
+    margin: 0;
+    border-bottom: 5px double var(--ink);
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(7rem, 20vw, 24rem);
+    font-weight: 400;
+    letter-spacing: -.055em;
+    line-height: .82;
+    text-align: center;
+  }
+
+  .overprint {
+    position: relative;
+    display: inline-block;
+    color: var(--ink);
+  }
+
+  .overprint::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    color: var(--red);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    transform: translate(var(--reg-x), var(--reg-y));
+    animation: register-settle 900ms cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .dateline {
+    display: grid;
+    grid-template-columns: 1.4fr .65fr .8fr .7fr;
+    gap: 1px;
+    border-bottom: 3px solid var(--ink);
+    background: var(--ink);
+    color: var(--ink);
+  }
+
+  .dateline span {
+    display: flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    padding-inline: .8rem;
+    background: var(--paper);
+    text-align: center;
+  }
+
+  .front__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, .58fr) minmax(360px, .68fr);
+    gap: clamp(1rem, 2vw, 2rem);
+    align-items: start;
+    padding-top: clamp(1.2rem, 2.4vw, 2.5rem);
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  .headline-stack {
+    grid-column: 1;
+  }
+
+  .headline-stack h2,
+  .section-head h2,
+  .back-strip h2 {
+    margin: 0;
+    font-family: 'Anton', Impact, sans-serif;
+    font-weight: 400;
+    letter-spacing: -.035em;
+    text-transform: uppercase;
+  }
+
+  .headline-stack h2 {
+    max-width: 9.7ch;
+    font-size: clamp(3.6rem, 5.7vw, 7rem);
+    line-height: .84;
+  }
+
+  .deck {
+    max-width: 19ch;
+    margin: clamp(.7rem, 1.3vw, 1.1rem) 0 0;
+    font-family: 'Anton', Impact, sans-serif;
+    letter-spacing: -.025em;
+    line-height: .95;
+    text-transform: uppercase;
+  }
+
+  .deck--two {
+    font-size: clamp(1.8rem, 3vw, 4rem);
+  }
+
+  .deck--three {
+    max-width: 34ch;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1.08rem, 1.45vw, 1.8rem);
+    font-weight: 600;
+    line-height: 1.08;
+    text-transform: none;
+  }
+
+  .get-box {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    padding: 1rem;
+    border: 3px solid var(--ink);
+    background: rgba(239,233,220,.8);
+    box-shadow: 8px 8px 0 rgba(200,0,40,.22);
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    min-height: 48px;
+    padding: .45rem .8rem;
+    border: 2px solid var(--ink);
+    color: var(--paper);
+    background: var(--ink);
+    text-decoration: none;
+  }
+
+  .store svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: grid;
+    font-family: 'Archivo', sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    line-height: 1.02;
+    text-transform: uppercase;
+  }
+
+  .store small {
+    font-size: .52rem;
+    opacity: .68;
+  }
+
+  .store.is-pending {
+    border-style: dashed;
+    color: rgba(17,16,16,.66);
+    background: transparent;
+    cursor: default;
+  }
+
+  .source-link {
+    display: inline-block;
+    margin-top: .9rem;
+    color: var(--ink);
+    text-underline-offset: .28rem;
+  }
+
+  .inside-list {
+    margin-top: 1.1rem;
+    padding-top: .85rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .inside-list .kicker {
+    margin-bottom: .55rem;
+    color: var(--red);
+  }
+
+  .inside-list ol {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+  }
+
+  .inside-list li {
+    display: grid;
+    grid-template-columns: 2.8rem 1fr;
+    gap: .65rem;
+    align-items: center;
+    min-height: 2.1rem;
+    padding: .35rem .45rem;
+    background: var(--paper);
+    font-family: 'Archivo', sans-serif;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .inside-list li span {
+    color: var(--red);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .lede-copy {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    border-top: 1px solid var(--ink);
+    padding-top: .8rem;
+    font-size: clamp(1.02rem, 1.15vw, 1.2rem);
+    line-height: 1.48;
+  }
+
+  .lede-copy p {
+    margin-bottom: .8rem;
+  }
+
+  .drop {
+    float: left;
+    padding: .08em .08em 0 0;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: 4.3em;
+    line-height: .78;
+  }
+
+  .phone-photo {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    margin: 0;
+  }
+
+  .photo-panel {
+    display: grid;
+    position: relative;
+    min-height: 560px;
+    padding: clamp(1rem, 2vw, 2rem);
+    place-items: center;
+    border: 1px solid var(--ink);
+    background:
+      repeating-radial-gradient(circle at 0 0, rgba(17,16,16,.26) 0 1px, transparent 1.5px 5px),
+      linear-gradient(135deg, rgba(200,0,40,.18), transparent 42%),
+      #d9d0c1;
+    overflow: hidden;
+  }
+
+  .photo-panel::before {
+    content: '';
+    position: absolute;
+    inset: clamp(.5rem, 1vw, 1rem);
+    border: 1px solid rgba(17,16,16,.4);
+    pointer-events: none;
+  }
+
+  .phone-photo figcaption {
+    margin-top: .45rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--ink);
+    font-size: .9rem;
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  .phone {
+    --pw: clamp(196px, 21vw, 300px);
+    position: relative;
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * .035);
+    border-radius: calc(var(--pw) * .148);
+    background: var(--ink);
+    box-shadow: 14px 12px 0 rgba(200,0,40,.5), 26px 24px 0 rgba(17,16,16,.16);
+    transform: rotate(-2.2deg);
+  }
+
+  .phone-key {
+    position: absolute;
+    left: -3px;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    background: var(--ink);
+  }
+
+  .key-one { top: 19%; height: 6%; }
+  .key-two { top: 29%; height: 12%; }
+
+  .phone-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--pw) * .148 - var(--pw) * .035);
+    color: var(--paper);
+    background: #111010;
+  }
+
+  .island {
+    position: absolute;
+    top: calc(var(--pw) * .027);
+    left: 50%;
+    width: 31%;
+    height: calc(var(--pw) * .07);
+    border-radius: 999px;
+    background: #030303;
+    transform: translateX(-50%);
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: calc(var(--pw) * .04) calc(var(--pw) * .07) 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: calc(var(--pw) * .028);
+  }
+
+  .screen-head {
+    display: grid;
+    gap: .1em;
+    margin-top: calc(var(--pw) * .08);
+    padding-inline: calc(var(--pw) * .08);
+  }
+
+  .screen-head small,
+  .badge {
+    font-family: 'Archivo', sans-serif;
+    font-size: calc(var(--pw) * .023);
+    letter-spacing: .12em;
+  }
+
+  .screen-head b {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: calc(var(--pw) * .056);
+    font-weight: 600;
+  }
+
+  .album-art {
+    display: block;
+    width: 78%;
+    margin: calc(var(--pw) * .07) auto 0;
+  }
+
+  .track {
+    display: grid;
+    width: 78%;
+    margin: calc(var(--pw) * .06) auto 0;
+  }
+
+  .track strong {
+    font-size: calc(var(--pw) * .052);
+    font-weight: 600;
+  }
+
+  .track span {
+    color: rgba(239,233,220,.58);
+    font-size: calc(var(--pw) * .032);
+  }
+
+  .bar {
+    width: 78%;
+    height: calc(var(--pw) * .012);
+    margin: calc(var(--pw) * .05) auto 0;
+    background: rgba(239,233,220,.24);
+  }
+
+  .bar i {
+    display: block;
+    width: 44%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: calc(var(--pw) * .08);
+    margin-top: calc(var(--pw) * .06);
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: calc(var(--pw) * .05);
+  }
+
+  .controls b {
+    display: grid;
+    width: calc(var(--pw) * .13);
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .badge {
+    display: table;
+    margin: calc(var(--pw) * .065) auto 0;
+    padding: .55em .68em;
+    border: 1px solid rgba(239,233,220,.25);
+    color: rgba(239,233,220,.74);
+    text-transform: uppercase;
+  }
+
+  .section {
+    padding-block: clamp(3rem, 6vw, 6.5rem);
+    border-top: 3px solid var(--ink);
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, .75fr);
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+    margin-bottom: clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .section-head h2 {
+    max-width: 12ch;
+    font-size: clamp(3.2rem, 7vw, 9rem);
+    line-height: .86;
+  }
+
+  .section-head p:last-child {
+    font-size: clamp(1rem, 1.2vw, 1.22rem);
+    line-height: 1.42;
+  }
+
+  .boxed-head {
+    padding: 1rem;
+    border: 2px solid var(--ink);
+  }
+
+  .classifieds .boxed-head {
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+    align-items: stretch;
+  }
+
+  .classifieds .boxed-head .kicker {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .classifieds .boxed-head h2 {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .classifieds .boxed-head > p:last-child {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+    margin: 0;
+    padding-top: .9rem;
+    border-top: 1px solid var(--ink);
+  }
+
+  .classified-strap {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: repeat(3, 1fr);
+    align-self: start;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    gap: 1px;
+  }
+
+  .classified-strap span {
+    display: grid;
+    min-height: 2.4rem;
+    place-items: center;
+    background: var(--paper);
+    color: var(--red);
+    font-family: 'Archivo', sans-serif;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .listing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    gap: 2px;
+  }
+
+  .listing {
+    min-height: 260px;
+    padding: 1rem;
+    background: var(--paper);
+  }
+
+  .listing__logo {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    place-items: center;
+    border: 2px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .listing h3 {
+    margin: 1rem 0 .55rem;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(2.2rem, 4vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    line-height: .9;
+    text-transform: uppercase;
+  }
+
+  .listing p {
+    font-size: 1.08rem;
+    line-height: 1.38;
+  }
+
+  .listing small {
+    display: block;
+    margin-top: 1.2rem;
+  }
+
+  .spread__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .spread__columns article {
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .spread__columns article + article {
+    border-left: 2px solid var(--ink);
+  }
+
+  .spread__columns h3 {
+    margin-bottom: 1rem;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(2.5rem, 5.4vw, 7rem);
+    font-weight: 400;
+    letter-spacing: -.03em;
+    line-height: .88;
+    text-transform: uppercase;
+  }
+
+  .spread__columns p:not(.kicker) {
+    font-size: clamp(1.05rem, 1.35vw, 1.32rem);
+    line-height: 1.45;
+  }
+
+  .stop-press {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-block: clamp(1.5rem, 3vw, 3rem);
+    padding: clamp(1rem, 2.4vw, 2rem);
+    border: 5px solid var(--red);
+    color: var(--red);
+    background: rgba(200,0,40,.045);
+  }
+
+  .stop-press p {
+    margin: 0;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .stop-press strong {
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(2.2rem, 5.8vw, 7.5rem);
+    font-weight: 400;
+    letter-spacing: -.025em;
+    line-height: .9;
+    text-transform: uppercase;
+  }
+
+  .feature-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 2rem);
+    align-items: start;
+  }
+
+  .feature-column {
+    border-top: 2px solid var(--ink);
+  }
+
+  .column-label {
+    margin: .65rem 0 1rem;
+    color: var(--red);
+  }
+
+  .feature-column article {
+    break-inside: avoid;
+    padding: 1rem 0 1.2rem;
+    border-bottom: 1px solid var(--soft-rule);
+  }
+
+  .feature-column h3 {
+    margin-bottom: .45rem;
+    font-family: 'Archivo', sans-serif;
+    font-size: .9rem;
+    letter-spacing: .12em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .feature-column p {
+    font-size: clamp(1rem, 1.08vw, 1.18rem);
+    line-height: 1.52;
+  }
+
+  .pullquote {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: clamp(.6rem, 2vw, 1.8rem);
+    align-items: start;
+    padding-block: clamp(2rem, 5vw, 5rem);
+    border-top: 1px solid var(--ink);
+  }
+
+  .pullquote span {
+    color: var(--red);
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(4rem, 9vw, 11rem);
+    line-height: .7;
+  }
+
+  .pullquote p {
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 8rem);
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: -.045em;
+    line-height: .95;
+  }
+
+  .numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    gap: 2px;
+  }
+
+  .numbers-grid article {
+    min-height: 230px;
+    padding: 1rem;
+    background: var(--paper);
+  }
+
+  .numbers-grid strong {
+    display: block;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(3.2rem, 6.2vw, 8rem);
+    font-weight: 400;
+    line-height: .9;
+  }
+
+  .numbers-grid span {
+    display: block;
+    margin-top: .8rem;
+    font-family: 'Archivo', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .leader-copy {
+    columns: 2 24rem;
+    column-gap: clamp(2rem, 4vw, 5rem);
+    column-rule: 2px solid var(--ink);
+  }
+
+  .leader-copy article {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1rem;
+    break-inside: avoid;
+    margin-bottom: 1.6rem;
+  }
+
+  .leader-copy article > span {
+    display: grid;
+    width: 2.2rem;
+    height: 2.2rem;
+    place-items: center;
+    border: 2px solid var(--red);
+    color: var(--red);
+    font-family: 'Anton', Impact, sans-serif;
+  }
+
+  .leader-copy h3,
+  .reader-grid h3 {
+    margin-bottom: .35rem;
+    font-family: 'Archivo', sans-serif;
+    font-size: .86rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .leader-copy p,
+  .reader-grid p {
+    font-size: clamp(1rem, 1.12vw, 1.16rem);
+    line-height: 1.52;
+  }
+
+  .reader-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+  }
+
+  .reader-grid article {
+    min-height: 250px;
+    padding: 1rem;
+    background: var(--paper);
+  }
+
+  .back-strip {
+    display: grid;
+    grid-template-columns: minmax(12rem, .45fr) minmax(0, 1fr) minmax(18rem, .7fr);
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: center;
+    margin-top: clamp(2rem, 5vw, 5rem);
+    padding-block: clamp(1.4rem, 3vw, 3rem);
+    border-top: 8px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .back-strip h2 {
+    max-width: 11ch;
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    line-height: .9;
+  }
+
+  .back-strip p:not(.colophon) {
+    margin: .45rem 0 0;
+    font-family: 'Anton', Impact, sans-serif;
+    font-size: clamp(1.1rem, 2vw, 2.2rem);
+    text-transform: uppercase;
+  }
+
+  .back-strip__actions {
+    display: grid;
+    justify-items: start;
+  }
+
+  .colophon {
+    grid-column: 1 / -1;
+    margin: 1.2rem 0 0;
+    padding-top: .8rem;
+    border-top: 1px solid var(--soft-rule);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.45;
+    text-transform: none;
+  }
+
+  @keyframes register-settle {
+    from { transform: translate(4px, 2px); }
+    to { transform: translate(var(--reg-x), var(--reg-y)); }
+  }
+
+  @media (min-width: 1700px) {
+    .front__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(360px, .58fr) minmax(480px, .68fr);
+    }
+
+    .feature-columns {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .reader-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .front__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(300px, .72fr);
+    }
+
+    .headline-stack {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .phone-photo {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+    }
+
+    .lede-copy,
+    .get-box {
+      grid-column: 1;
+    }
+
+    .lede-copy {
+      grid-row: 3;
+    }
+
+    .section-head,
+    .back-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .feature-columns,
+    .listing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .numbers-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reader-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .broadside {
+      --outer: .8rem;
+      --reg-x: 2px;
+      --reg-y: 1px;
+    }
+
+    .front__brand,
+    .dateline,
+    .front__grid,
+    .classifieds .boxed-head,
+    .spread__columns,
+    .stop-press,
+    .pullquote,
+    .numbers-grid,
+    .reader-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .front__brand {
+      align-items: flex-start;
+    }
+
+    .masthead {
+      font-size: clamp(5.6rem, 27vw, 8rem);
+      line-height: .9;
+    }
+
+    .headline-stack h2 {
+      font-size: clamp(3.4rem, 17vw, 5rem);
+    }
+
+    .phone-photo,
+    .lede-copy,
+    .get-box {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .classifieds .boxed-head .kicker,
+    .classifieds .boxed-head h2,
+    .classifieds .boxed-head > p:last-child,
+    .classified-strap {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .classified-strap {
+      grid-template-columns: 1fr;
+    }
+
+    .lede-copy,
+    .leader-copy {
+      columns: auto;
+      column-rule: 0;
+    }
+
+    .photo-panel {
+      min-height: 440px;
+    }
+
+    .spread__columns article + article {
+      border-top: 2px solid var(--ink);
+      border-left: 0;
+    }
+
+    .stop-press strong {
+      font-size: clamp(2.4rem, 13vw, 4.2rem);
+    }
+
+    .pullquote {
+      gap: .5rem;
+    }
+
+    .pullquote p {
+      font-size: clamp(2.4rem, 13vw, 4.2rem);
+    }
+
+    .numbers-grid article,
+    .reader-grid article,
+    .listing {
+      min-height: auto;
+    }
+
+    .back-strip__actions {
+      justify-items: stretch;
+    }
+
+    .store {
+      width: fit-content;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .overprint::after {
+      animation: none;
+      transform: translate(var(--reg-x), var(--reg-y));
+    }
+  }
+</style>

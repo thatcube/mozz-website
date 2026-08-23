@@ -1,0 +1,1069 @@
+---
+/**
+ * VARIANT — PATCHBAY
+ *
+ * A hard vertical rack of bolted modules. Red patch cables route signal from
+ * source to device, making the ownership argument literal: you choose the path,
+ * and no company sits between the jacks.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, STATS, FAQS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'You own the signal path.';
+const PRODUCT_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT = 'Patch in Plex, Jellyfin or Navidrome, then route the same library to streaming at home and downloads with no signal.';
+const OUTPUTS = [
+  {
+    unit: 'OUT A',
+    title: 'Home network',
+    label: 'streaming',
+    body: 'Mozz talks directly to your server over the network you already run. There is no Mozz login, relay or subscription tier between the input jack and your headphones.',
+  },
+  {
+    unit: 'OUT B',
+    title: 'No signal at all',
+    label: 'offline',
+    body: 'Download a record and the route stays closed when the server cannot be reached. Browsing, search and playback keep moving from the device itself.',
+  },
+];
+const SOCKET_X = Array.from({ length: 12 }, (_, i) => 82 + i * 54);
+const TOP_JACKS = SOCKET_X.map((x, i) => ({ x, y: 132, no: String(i + 1).padStart(2, '0') }));
+const BOTTOM_JACKS = SOCKET_X.map((x, i) => ({ x, y: 342, no: String(i + 1).padStart(2, '0') }));
+const SOURCE_GROUPS = SERVERS.map((server, i) => ({ label: server.name.toUpperCase(), x: 163 + i * 216 }));
+const OUTPUT_GROUPS = ['PHONE', 'IPAD', 'OFFLINE'].map((label, i) => ({ label, x: 163 + i * 216 }));
+const HERO_CABLES = [
+  { start: TOP_JACKS[1], end: BOTTOM_JACKS[1], d: 'M136 132 C76 206 78 276 136 342', startAngle: 108, endAngle: -28 },
+  { start: TOP_JACKS[5], end: BOTTOM_JACKS[5], d: 'M352 132 C432 206 430 276 352 342', startAngle: 136, endAngle: 28 },
+  { start: TOP_JACKS[9], end: BOTTOM_JACKS[10], d: 'M568 132 C690 204 700 286 622 342', startAngle: 138, endAngle: -18 },
+];
+
+---
+
+<Layout
+  title={`${NAME} — you own the signal path`}
+  description="A free, open-source iPhone and iPad music player for your own Plex, Jellyfin or Navidrome server. Stream at home, download for offline, with no account and no tracking."
+  themeColor="#17181b"
+  noindex
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="patchbay">
+    <VariantBar slug="patchbay" tone="neutral" />
+
+    <div class="rack">
+      <header class="unit hero-unit" aria-labelledby="pb-hero">
+        <span class="screw tl" aria-hidden="true"></span>
+        <span class="screw tr" aria-hidden="true"></span>
+        <span class="screw bl" aria-hidden="true"></span>
+        <span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top">
+          <span class="unit-label">1U MASTER</span>
+          <span class="unit-no">MZ-PB-01</span>
+        </div>
+
+        <nav class="lockbar" aria-label="Mozz">
+          <a class="lockup" href={GITHUB_URL} aria-label={`${NAME} on GitHub`}>
+            <Mark size={32} decorative />
+            <span>{NAME}</span>
+          </a>
+          <span class="engraved">FREE FOREVER / GPL-3.0</span>
+        </nav>
+
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1 id="pb-hero">{HEADLINE}</h1>
+            <p class="product-line">{PRODUCT_LINE}</p>
+            <p class="support">{SUPPORT}</p>
+            <div class="actions">
+              {APP_STORE_URL ? (
+                <a class="store" href={APP_STORE_URL}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Download on the</small>App Store</span>
+                </a>
+              ) : (
+                <span class="store is-pending" aria-disabled="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Coming to the</small>App Store</span>
+                </span>
+              )}
+              <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+
+          <figure class="patch-field" aria-label="Patchbay field routing servers to phone, iPad and offline outputs.">
+            <svg viewBox="0 0 760 520" preserveAspectRatio="xMidYMid meet" role="img">
+              <defs>
+                <linearGradient id="pb-cable" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#f13a55" />
+                  <stop offset="1" stop-color="#9d001f" />
+                </linearGradient>
+                <radialGradient id="pb-jack" cx="42%" cy="32%" r="60%">
+                  <stop offset="0" stop-color="#f4f1eb" />
+                  <stop offset="0.38" stop-color="#9a9a9d" />
+                  <stop offset="0.62" stop-color="#303137" />
+                  <stop offset="1" stop-color="#09090b" />
+                </radialGradient>
+              </defs>
+              <rect x="18" y="18" width="724" height="484" rx="16" fill="#17181b" stroke="#e4e2dd" stroke-opacity="0.2" />
+              <g class="jack-labels top-labels">
+                {SOURCE_GROUPS.map((group) => (
+                  <g>
+                    <rect class="label-plate" x={group.x - 74} y="52" width="148" height="24" rx="4" />
+                    <text x={group.x} y="68" text-anchor="middle">{group.label}</text>
+                  </g>
+                ))}
+              </g>
+              <g class="jack-row">
+                {TOP_JACKS.map((jack) => (
+                  <g transform={`translate(${jack.x} ${jack.y})`}>
+                    <circle r="17" fill="url(#pb-jack)" />
+                    <circle r="7" fill="#030304" />
+                    <text class="socket-no" y="48" text-anchor="middle">{jack.no}</text>
+                  </g>
+                ))}
+              </g>
+              <g class="jack-labels bottom-labels">
+                {OUTPUT_GROUPS.map((group) => (
+                  <g>
+                    <rect class="label-plate" x={group.x - 74} y="392" width="148" height="24" rx="4" />
+                    <text x={group.x} y="408" text-anchor="middle">{group.label}</text>
+                  </g>
+                ))}
+              </g>
+              <g class="jack-row">
+                {BOTTOM_JACKS.map((jack) => (
+                  <g transform={`translate(${jack.x} ${jack.y})`}>
+                    <circle r="17" fill="url(#pb-jack)" />
+                    <circle r="7" fill="#030304" />
+                    <text class="socket-no" y="48" text-anchor="middle">{jack.no}</text>
+                  </g>
+                ))}
+              </g>
+              <g class="hero-cables">
+                {HERO_CABLES.map((cable) => (
+                  <g>
+                    <path class="cable-outline" d={cable.d} />
+                    <path class="cable" d={cable.d} />
+                    <path class="cable-hi" d={cable.d} />
+                    <path class="pulse" d={cable.d} />
+                  </g>
+                ))}
+              </g>
+              {HERO_CABLES.map((cable) => (
+                <g>
+                  <g class="plug" transform={`translate(${cable.start.x} ${cable.start.y}) rotate(${cable.startAngle})`}>
+                    <rect x="-7" y="-43" width="14" height="44" rx="7" fill="#870018" />
+                    <rect x="-5" y="-58" width="10" height="18" rx="5" fill="#d8d4cf" />
+                  </g>
+                  <g class="plug" transform={`translate(${cable.end.x} ${cable.end.y}) rotate(${cable.endAngle})`}>
+                    <rect x="-7" y="0" width="14" height="44" rx="7" fill="#870018" />
+                    <rect x="-5" y="40" width="10" height="18" rx="5" fill="#d8d4cf" />
+                  </g>
+                </g>
+              ))}
+            </svg>
+          </figure>
+        </div>
+      </header>
+
+      <section class="unit sources-unit" aria-labelledby="pb-sources">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">2U SOURCES</span><span class="unit-no">INPUTS 01-03</span></div>
+        <div class="unit-grid intro-grid">
+          <div>
+            <h2 id="pb-sources">Patch in the server you already run.</h2>
+            <p class="unit-lede">Mozz is the player. Your server is the library. The input strips use the real server notes from the shared copy.</p>
+          </div>
+          <div class="input-strips">
+            {SERVERS.map((server, index) => (
+              <article class="input-strip">
+                <span class="channel">CH {String(index + 1).padStart(2, '0')}</span>
+                <span class="strip-logo"><ServerLogo name={server.name} size={34} /></span>
+                <div>
+                  <h3>{server.name}</h3>
+                  <p>{server.note}</p>
+                </div>
+                <span class="jack" aria-hidden="true"></span>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="unit routing-unit" aria-labelledby="pb-routing">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">3U ROUTING</span><span class="unit-no">OUTPUTS A/B</span></div>
+        <h2 id="pb-routing">Two outputs from the same source.</h2>
+        <div class="routing-grid">
+          {OUTPUTS.map((output) => (
+            <article class="route-card">
+              <span class="channel">{output.unit}</span>
+              <span class="short-cable" aria-hidden="true"></span>
+              <p class="route-label">{output.label}</p>
+              <h3>{output.title}</h3>
+              <p>{output.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="unit monitor-unit" aria-labelledby="pb-monitor">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">4U MONITOR</span><span class="unit-no">APP + METERS</span></div>
+        <div class="monitor-grid">
+          <div class="feature-bank">
+            <h2 id="pb-monitor">The app, mounted like a monitor.</h2>
+            <ol role="list">
+              {FEATURES.map((feature, index) => (
+                <li>
+                  <span class="channel">KEY {String(index + 1).padStart(2, '0')}</span>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div class="monitor-stack">
+            <div class="phone" role="img" aria-label="An iPhone mounted in the rack, showing Mozz now playing from a server.">
+              <div class="phone-screen">
+                <span class="island" aria-hidden="true"></span>
+                <div class="status" aria-hidden="true">
+                  <span>9:41</span>
+                  <span class="status-icons">
+                    <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                    <svg viewBox="0 0 26 12"><rect x="1" y="1" width="21" height="10" rx="2.5" /><path d="M23 4h2v4h-2z" /><rect x="3" y="3" width="14" height="6" rx="1" /></svg>
+                  </span>
+                </div>
+                <div class="app-head"><Mark size={20} decorative /><span>Playing from your server</span></div>
+                <div class="album-art" aria-hidden="true">
+                  <svg viewBox="0 0 240 240">
+                    <rect width="240" height="240" fill="#e4e2dd" />
+                    <rect x="0" y="0" width="92" height="240" fill="#c80028" />
+                    <circle cx="128" cy="112" r="64" fill="#17181b" />
+                    <circle cx="128" cy="112" r="24" fill="#e4e2dd" />
+                    <path d="M36 192 C88 154 143 166 198 128" fill="none" stroke="#c80028" stroke-width="10" stroke-linecap="round" />
+                    <path d="M42 208 H168" stroke="#17181b" stroke-width="5" />
+                  </svg>
+                </div>
+                <div class="track-copy"><strong>Patch Memory</strong><span>Relay Floor · Line Check</span></div>
+                <div class="scrub"><span></span></div>
+                <div class="controls-phone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 5v14M16 6 6 12l10 6z" /></svg><span><svg viewBox="0 0 24 24"><rect x="7" y="5" width="4" height="14" rx="1" /><rect x="13" y="5" width="4" height="14" rx="1" /></svg></span><svg viewBox="0 0 24 24"><path d="M6 5v14M8 6l10 6-10 6z" /></svg></div>
+                <div class="offline-badge"><span></span>downloaded · plays offline</div>
+                <span class="home-indicator" aria-hidden="true"></span>
+              </div>
+            </div>
+
+            <div class="meter-bank" aria-label="Mozz measured stats">
+              {STATS.map((stat, index) => (
+                <div class="led-meter">
+                  <span class="channel">M{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{stat.value}</strong>
+                  <em>{stat.label}</em>
+                  <svg viewBox="0 0 180 44" aria-hidden="true">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <rect x={8 + i * 14} y="12" width="8" height="20" rx="2" class={i <= 8 - index ? 'hot' : ''} />
+                    ))}
+                  </svg>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="unit terms-unit" aria-labelledby="pb-terms">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">5U TERMS</span><span class="unit-no">OWNERSHIP</span></div>
+        <div class="terms-grid">
+          <div>
+            <h2 id="pb-terms">The routing table is short.</h2>
+            <p class="unit-lede">Free forever, open source under GPL-3.0, and built around the idea that your files stay on hardware you control.</p>
+          </div>
+          <div class="terms-list">
+            {OWNERSHIP.map((item) => (
+              <article>
+                <span class="led" aria-hidden="true"></span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="unit faq-unit" aria-labelledby="pb-faq">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">6U FAQ</span><span class="unit-no">SERVICE MANUAL</span></div>
+        <h2 id="pb-faq">Service notes</h2>
+        <div class="faq-list">
+          {FAQS.map((faq, index) => (
+            <details>
+              <summary><span>Q{String(index + 1).padStart(2, '0')}</span><b>{faq.q}</b></summary>
+              <p>{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <footer class="unit output-unit" aria-labelledby="pb-output">
+        <span class="screw tl" aria-hidden="true"></span><span class="screw tr" aria-hidden="true"></span><span class="screw bl" aria-hidden="true"></span><span class="screw br" aria-hidden="true"></span>
+        <div class="unit-top"><span class="unit-label">7U OUTPUT</span><span class="unit-no">MAIN OUT</span></div>
+        <div class="output-grid">
+          <div>
+            <div class="footer-lockup"><Mark size={34} decorative /><span>{NAME}</span></div>
+            <h2 id="pb-output">{TAGLINE}</h2>
+            <p class="subline">{SUBLINE}</p>
+            <div class="actions">
+              {APP_STORE_URL ? (
+                <a class="store" href={APP_STORE_URL}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Download on the</small>App Store</span>
+                </a>
+              ) : (
+                <span class="store is-pending" aria-disabled="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Coming to the</small>App Store</span>
+                </span>
+              )}
+              <a class="source-link" href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+            </div>
+            <p class="fine-print">Recommendations can ask MusicBrainz and ListenBrainz what sounds similar to an artist and title. That request carries no name, no server address and no account, and it can be switched off in Settings.</p>
+          </div>
+          <svg class="final-cable" viewBox="0 0 360 220" aria-hidden="true">
+            <path class="cable-outline" d="M60 28 C150 76 196 122 304 196" />
+            <path class="cable" d="M60 28 C150 76 196 122 304 196" />
+            <path class="cable-hi" d="M60 28 C150 76 196 122 304 196" />
+            <path class="pulse" d="M60 28 C150 76 196 122 304 196" />
+            <circle cx="60" cy="28" r="19" fill="#111" stroke="#e4e2dd" stroke-opacity="0.5" />
+            <circle cx="60" cy="28" r="7" fill="#030304" />
+          </svg>
+        </div>
+      </footer>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #17181b; }
+  :global(body) {
+    margin: 0;
+    background: #17181b;
+    color: #e4e2dd;
+    font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .patchbay {
+    --rack: #17181b;
+    --panel: #232429;
+    --panel-hi: #2c2d33;
+    --bone: #e4e2dd;
+    --muted: rgba(228, 226, 221, 0.66);
+    --dim: rgba(228, 226, 221, 0.38);
+    --red: #c80028;
+    --red-hi: #f13855;
+    --line: rgba(228, 226, 221, 0.18);
+    min-height: 100vh;
+    background:
+      radial-gradient(80vw 60vw at 92% 0%, rgba(200, 0, 40, 0.12), transparent 58%),
+      linear-gradient(180deg, #111215, var(--rack));
+    overflow-x: clip;
+  }
+
+  .rack {
+    width: min(1380px, 100% - clamp(1rem, 4vw, 4rem));
+    margin-inline: auto;
+    padding: clamp(1rem, 3vw, 2.2rem) 0 clamp(4rem, 7vw, 6rem);
+  }
+
+  .unit {
+    position: relative;
+    margin-top: 1rem;
+    padding: clamp(1.2rem, 3vw, 2rem);
+    border-radius: 4px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.026) 0 1px, rgba(0,0,0,0.026) 1px 4px),
+      linear-gradient(180deg, var(--panel-hi), var(--panel));
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.7),
+      0 20px 50px -34px #000;
+    border: 1px solid rgba(0,0,0,0.75);
+  }
+
+  .hero-unit {
+    min-height: calc(100svh - 42px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .unit-top,
+  .channel,
+  .engraved,
+  .unit-lede,
+  .route-label,
+  .fine-print,
+  .faq-list summary span {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  .unit-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--dim);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  .screw {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f1eee8, #6e6e72 62%, #161719 100%);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  .screw::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 8px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(0,0,0,0.72);
+    transform: rotate(var(--slot, 12deg));
+  }
+
+  .tl { top: 12px; left: 12px; --slot: -18deg; }
+  .tr { top: 12px; right: 12px; --slot: 24deg; }
+  .bl { bottom: 12px; left: 12px; --slot: 8deg; }
+  .br { bottom: 12px; right: 12px; --slot: -32deg; }
+
+  .lockbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: clamp(1.2rem, 3vw, 2rem);
+  }
+
+  .lockup,
+  .footer-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--bone);
+    text-decoration: none;
+  }
+
+  .lockup span,
+  .footer-lockup span {
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    letter-spacing: -0.035em;
+  }
+
+  .engraved {
+    color: var(--dim);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-shadow: 0 -1px 0 #000, 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  .hero-grid,
+  .unit-grid,
+  .monitor-grid,
+  .terms-grid,
+  .output-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.4rem, 4vw, 4rem);
+    align-items: center;
+  }
+
+  .hero-grid {
+    flex: 1;
+    margin-top: clamp(1.1rem, 2.6vw, 2.6rem);
+  }
+
+  h1,
+  h2,
+  h3,
+  p { margin: 0; }
+
+  h1 {
+    max-width: 10.5ch;
+    color: var(--bone);
+    font-size: clamp(3.2rem, 7.8vw, 8.4rem);
+    line-height: 0.8;
+    letter-spacing: -0.075em;
+    font-weight: 700;
+  }
+
+  h2 {
+    color: var(--bone);
+    font-size: clamp(2.2rem, 5.6vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  h3 {
+    color: var(--bone);
+    font-size: clamp(1.18rem, 2.2vw, 1.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+
+  .product-line {
+    margin-top: 1rem;
+    max-width: 42rem;
+    color: #fff;
+    font-size: clamp(1.08rem, 1.55vw, 1.34rem);
+    line-height: 1.35;
+  }
+
+  .support,
+  .unit-lede,
+  .input-strip p,
+  .route-card p,
+  .feature-bank p,
+  .terms-list p,
+  .faq-list p,
+  .fine-print {
+    color: var(--muted);
+    font-size: clamp(1rem, 1.18vw, 1.08rem);
+    line-height: 1.6;
+  }
+
+  .support {
+    margin-top: 0.55rem;
+    max-width: 56ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-top: 1.25rem;
+  }
+
+  .store,
+  .source-link {
+    min-height: 3.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .store {
+    padding: 0 1.1rem;
+    background: var(--bone);
+    color: #111215;
+  }
+
+  .store svg { width: 1.45rem; height: 1.45rem; fill: currentColor; }
+  .store span { display: grid; line-height: 1.02; text-align: left; }
+  .store small {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 0.56rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .store.is-pending {
+    color: rgba(228,226,221,0.66);
+    background: rgba(228,226,221,0.07);
+    border: 1px dashed rgba(228,226,221,0.34);
+    cursor: default;
+  }
+
+  .source-link {
+    padding: 0 1rem;
+    color: var(--bone);
+    border: 1px solid var(--line);
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--red-hi);
+    outline-offset: 4px;
+  }
+
+  .patch-field {
+    margin: 0;
+    align-self: center;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #1a1b1f, #101114);
+    box-shadow: inset 0 0 0 1px var(--line), 0 30px 70px -46px #000;
+  }
+
+  .patch-field svg,
+  .final-cable {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .label-plate {
+    fill: rgba(0, 0, 0, 0.3);
+    stroke: rgba(228, 226, 221, 0.18);
+  }
+
+  .jack-labels text,
+  .socket-no {
+    fill: rgba(228,226,221,0.62);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .socket-no {
+    fill: rgba(228,226,221,0.34);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+  }
+
+  .cable-outline,
+  .cable,
+  .cable-hi,
+  .pulse {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .cable-outline { stroke: rgba(0,0,0,0.76); stroke-width: 16; }
+  .cable { stroke: url(#pb-cable); stroke-width: 9; }
+  .cable-hi { stroke: rgba(255,214,220,0.42); stroke-width: 2.2; transform: translateY(-2px); }
+  .pulse {
+    stroke: rgba(255,236,238,0.92);
+    stroke-width: 2.1;
+    stroke-dasharray: 1 26;
+    animation: signal 2.7s linear infinite;
+  }
+
+  @keyframes signal { to { stroke-dashoffset: -54; } }
+
+  .unit-lede { margin-top: 1rem; max-width: 56ch; }
+
+  .input-strips,
+  .terms-list {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .input-strip {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    gap: 0.85rem;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid var(--line);
+  }
+
+  .channel {
+    color: var(--dim);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .strip-logo {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    color: var(--bone);
+    border-radius: 4px;
+    background: #111215;
+    border: 1px solid var(--line);
+  }
+
+  .jack {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 42% 32%, #f1eee8, #77797f 42%, #0b0c0e 72%);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.8), 0 5px 10px -7px #000;
+  }
+
+  .routing-unit h2,
+  .faq-unit h2 {
+    max-width: 850px;
+  }
+
+  .routing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .route-card {
+    position: relative;
+    min-height: 340px;
+    padding: 1.2rem;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .short-cable {
+    position: relative;
+    display: block;
+    height: 110px;
+    margin: 1rem 0 1.4rem;
+  }
+
+  .short-cable::before,
+  .short-cable::after {
+    content: '';
+    position: absolute;
+  }
+
+  .short-cable::before {
+    left: 12%;
+    right: 12%;
+    top: 16px;
+    height: 72px;
+    border: 9px solid var(--red);
+    border-top: 0;
+    border-radius: 0 0 90px 90px;
+    box-shadow: inset 0 -2px 0 rgba(255,255,255,0.22), 0 0 0 5px rgba(0,0,0,0.34);
+  }
+
+  .short-cable::after {
+    left: 50%;
+    top: 50px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    animation: dot 2.4s linear infinite;
+  }
+
+  @keyframes dot {
+    0% { transform: translate(-90px, -10px); opacity: 0; }
+    20%, 80% { opacity: 1; }
+    100% { transform: translate(90px, -10px); opacity: 0; }
+  }
+
+  .route-label {
+    color: var(--red-hi);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .route-card h3 { margin-top: 0.35rem; }
+  .route-card p { margin-top: 0.9rem; }
+
+  .monitor-grid {
+    align-items: start;
+  }
+
+  .feature-bank ol {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.8rem 0 0;
+    list-style: none;
+  }
+
+  .feature-bank li {
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .feature-bank p { margin-top: 0.4rem; max-width: 68ch; }
+
+  .monitor-stack {
+    display: grid;
+    grid-template-columns: minmax(200px, auto) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .phone {
+    --pw: clamp(196px, 22vw, 320px);
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border-radius: calc(var(--pw) * 0.148);
+    background: linear-gradient(135deg, #e4e2dd, #77797f 56%, #f3f0ea);
+    box-shadow: 0 24px 54px -34px #000, 0 0 0 1px rgba(255,255,255,0.18);
+  }
+
+  .phone-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    background: #0a0b0d;
+    color: #f3f0ea;
+    font-size: calc(var(--pw) * 0.045);
+  }
+
+  .island {
+    position: absolute;
+    z-index: 3;
+    top: 2.2%;
+    left: 50%;
+    width: 30%;
+    height: 4.6%;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: #000;
+  }
+
+  .status,
+  .app-head,
+  .track-copy,
+  .controls-phone,
+  .offline-badge { position: relative; z-index: 2; }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: 5.2% 7% 0;
+    font-size: 0.56em;
+    font-weight: 700;
+  }
+
+  .status-icons { display: flex; align-items: center; gap: 0.3em; }
+  .status-icons svg { width: 1.2em; height: 0.8em; fill: currentColor; }
+  .status-icons svg:last-child { width: 1.7em; }
+  .status-icons rect:first-child { fill: none; stroke: currentColor; stroke-width: 1.4; }
+
+  .app-head {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 7% 8% 0;
+    color: rgba(243,240,234,0.6);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.4em;
+  }
+
+  .album-art {
+    width: 74%;
+    margin: 7% auto 0;
+    border-radius: 5%;
+    overflow: hidden;
+    box-shadow: 0 18px 34px -18px #000;
+  }
+
+  .album-art svg { width: 100%; display: block; }
+
+  .track-copy {
+    display: grid;
+    gap: 0.15em;
+    width: 78%;
+    margin: 7% auto 0;
+  }
+
+  .track-copy strong { font-size: 0.88em; line-height: 1; }
+  .track-copy span { font-size: 0.58em; color: rgba(243,240,234,0.54); }
+  .scrub { width: 78%; height: 0.18em; margin: 7% auto 0; border-radius: 999px; background: rgba(243,240,234,0.18); }
+  .scrub span { display: block; width: 54%; height: 100%; border-radius: inherit; background: var(--red); }
+
+  .controls-phone {
+    width: 64%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8% auto 0;
+  }
+
+  .controls-phone svg { width: 1.3em; fill: currentColor; }
+  .controls-phone span { display: grid; place-items: center; width: 2.45em; height: 2.45em; border-radius: 50%; background: var(--red); }
+  .controls-phone span svg { width: 1.2em; }
+
+  .offline-badge {
+    width: fit-content;
+    max-width: 82%;
+    margin: 8% auto 0;
+    padding: 0.5em 0.64em;
+    border-radius: 999px;
+    background: rgba(200,0,40,0.16);
+    color: rgba(243,240,234,0.72);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 0.4em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .offline-badge span { display: inline-block; width: 0.52em; height: 0.52em; margin-right: 0.4em; border-radius: 50%; background: var(--red-hi); }
+  .home-indicator { position: absolute; left: 50%; bottom: 2.1%; width: 34%; height: 0.22em; transform: translateX(-50%); border-radius: 999px; background: rgba(243,240,234,0.56); }
+
+  .meter-bank { display: grid; gap: 0.7rem; }
+  .led-meter {
+    padding: 0.9rem;
+    border-radius: 4px;
+    background: #111215;
+    border: 1px solid var(--line);
+  }
+
+  .led-meter strong {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--red-hi);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: clamp(1.6rem, 3.6vw, 2.25rem);
+    font-weight: 500;
+  }
+
+  .led-meter em {
+    display: block;
+    min-height: 2.7em;
+    color: var(--muted);
+    font-style: normal;
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .led-meter svg { width: 100%; margin-top: 0.5rem; }
+  .led-meter rect { fill: rgba(228,226,221,0.12); }
+  .led-meter rect.hot { fill: var(--red); filter: drop-shadow(0 0 4px rgba(200,0,40,0.82)); }
+
+  .terms-grid { align-items: start; }
+  .terms-list { grid-template-columns: repeat(2, 1fr); }
+  .terms-list article {
+    position: relative;
+    padding: 1rem 1rem 1rem 2.2rem;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.18);
+    border: 1px solid var(--line);
+  }
+
+  .led {
+    position: absolute;
+    left: 0.9rem;
+    top: 1.1rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 0 4px rgba(200,0,40,0.12), 0 0 18px rgba(200,0,40,0.9);
+  }
+
+  .terms-list p { margin-top: 0.45rem; }
+
+  .faq-list {
+    margin-top: 1.6rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-list details {
+    border-bottom: 1px solid var(--line);
+    background: rgba(0,0,0,0.12);
+  }
+
+  .faq-list summary {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary span { color: var(--red-hi); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .faq-list summary b { font-size: clamp(1.02rem, 1.8vw, 1.28rem); }
+  .faq-list p { padding: 0 1rem 1.1rem 6rem; max-width: 68ch; }
+
+  .output-grid { align-items: end; }
+  .footer-lockup { margin-bottom: 1.2rem; }
+  .subline { margin-top: 0.7rem; color: var(--red-hi); font-weight: 700; font-size: clamp(1.15rem, 2vw, 1.45rem); }
+  .fine-print { margin-top: 1.3rem; max-width: 72ch; color: var(--dim); font-size: 0.84rem; }
+  .final-cable { align-self: stretch; min-height: 220px; }
+
+  @media (max-width: 1000px) {
+    .hero-grid,
+    .unit-grid,
+    .monitor-grid,
+    .terms-grid,
+    .output-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .monitor-stack {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    .meter-bank {
+      width: 100%;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .rack { width: calc(100% - 1rem); }
+    .unit { padding: 1.15rem 1rem 1.35rem; }
+    .unit-top { padding-inline: 1.2rem; font-size: 0.58rem; }
+    .lockbar { align-items: flex-start; }
+    .engraved { display: none; }
+    h1 { font-size: clamp(3.1rem, 15vw, 4.6rem); max-width: 10.5ch; }
+    h2 { font-size: clamp(2.2rem, 12vw, 3.7rem); }
+    .actions { align-items: stretch; }
+    .store, .source-link { width: 100%; justify-content: center; }
+    .patch-field svg { width: 100%; max-width: 100%; transform: none; }
+    .patch-field { overflow: hidden; }
+    .input-strip { grid-template-columns: auto 1fr auto; }
+    .input-strip .channel { grid-column: 1 / -1; }
+    .strip-logo { width: 46px; height: 46px; }
+    .routing-grid,
+    .terms-list,
+    .meter-bank { grid-template-columns: 1fr; }
+    .route-card { min-height: 260px; }
+    .faq-list summary { grid-template-columns: 1fr; gap: 0.3rem; }
+    .faq-list p { padding-left: 1rem; }
+    .final-cable { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse,
+    .short-cable::after {
+      animation: none;
+    }
+
+    .short-cable::after {
+      opacity: 1;
+      transform: translate(-50%, -10px);
+    }
+  }
+</style>

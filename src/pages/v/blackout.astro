@@ -1,0 +1,1294 @@
+---
+/**
+ * VARIANT — BLACKOUT
+ *
+ * One hard red line divides the network from the blank space after it. Above the
+ * line, server chatter; below it, nothing at all except the album still playing.
+ * The entire site is a typographic trust argument in black, white and red.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = "The network stops here. The music doesn't.";
+const PRODUCT_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT =
+  'Stream at home over your own network, or download an album and play it with nothing at all.';
+
+const CHATTER = [
+  'GET /library/sections',
+  '200 OK',
+  'bitrate 1411',
+  'scan: album index',
+  'sync: queue state',
+  'GET /tracks/next',
+  'cache: artwork local',
+  'download: complete',
+  'connection: alive',
+  'last packet before line',
+];
+
+const BOTH = [
+  {
+    title: 'Streaming',
+    tag: 'above the line',
+    body: 'At home, Mozz talks to the Plex, Jellyfin or Navidrome server you already run. Your own network carries your own library, and the app makes more than one server feel like one collection.',
+  },
+  {
+    title: 'Offline',
+    tag: 'below the line',
+    body: 'Away from home, downloaded albums keep the same place in the product. The catalog is on the phone, search still answers, and playback does not wait for reception.',
+  },
+];
+---
+
+<Layout
+  title={`${NAME} — the network stops here`}
+  description="Mozz is a free player for the music on your own server. The network can stop; downloaded albums keep playing."
+  themeColor="#0b0b0d"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;800&family=Martian+Mono:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="blackout">
+    <VariantBar slug="blackout" tone="neutral" />
+
+    <!-- =====================================================================
+         HERO — above the line the network talks; below it the phone plays.
+    ====================================================================== -->
+    <header class="hero" aria-labelledby="bo-hero">
+      <div class="hero__top">
+        <div class="lockup hero__lockup">
+          <Mark size={30} decorative />
+          <span class="wordmark">{NAME}</span>
+          <span class="lockup__rule" aria-hidden="true"></span>
+          <span class="lockup__meta">server audio client</span>
+        </div>
+
+        <div class="network-field" aria-label="Server chatter before the signal stops">
+          <div class="tick-grid" aria-hidden="true">
+            {Array.from({ length: 48 }).map((_, i) => <i style={`--i:${i}`}></i>)}
+          </div>
+          <ol class="chatter" aria-hidden="true">
+            {CHATTER.map((line) => <li>{line}</li>)}
+          </ol>
+        </div>
+      </div>
+
+      <div class="hero-line" aria-hidden="true"></div>
+
+      <div class="hero__bottom">
+        <section class="hero__copy">
+          <p class="mono-tag">blackout protocol</p>
+          <h1 id="bo-hero">{HEADLINE}</h1>
+          <p class="product-line">{PRODUCT_LINE}</p>
+          <p class="support">{SUPPORT}</p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+
+        <figure class="phone" aria-label="An iPhone showing Mozz playing a downloaded album offline below the network cutoff line.">
+          <div class="phone-screen">
+            <span class="island" aria-hidden="true"></span>
+            <div class="status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="status__glyphs">
+                <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                <svg viewBox="0 0 26 12"><rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2" /><rect x="3" y="3" width="14" height="6" rx="1.4" /><path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z" /></svg>
+              </span>
+            </div>
+            <div class="phone-head">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6.2 8 11l5-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span>downloaded · plays offline</span>
+              <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            </div>
+            <div class="album-art" aria-hidden="true">
+              <svg viewBox="0 0 140 140">
+                <rect width="140" height="140" fill="#f5f4f1" />
+                <rect x="0" y="0" width="70" height="140" fill="#c80028" />
+                <rect x="70" y="0" width="70" height="140" fill="#0b0b0d" />
+                <circle cx="70" cy="70" r="38" fill="none" stroke="#f5f4f1" stroke-width="12" />
+                <circle cx="70" cy="70" r="9" fill="#c80028" />
+                <rect x="16" y="112" width="48" height="5" fill="#0b0b0d" />
+                <rect x="16" y="124" width="28" height="4" fill="#0b0b0d" />
+              </svg>
+            </div>
+            <div class="track-meta">
+              <strong>Still Playing</strong>
+              <span>On device · no service required</span>
+            </div>
+            <div class="scrub" aria-hidden="true"><i></i></div>
+            <div class="times" aria-hidden="true"><span>1:52</span><span>&minus;2:14</span></div>
+            <div class="controls" aria-hidden="true">
+              <svg viewBox="0 0 20 20"><path d="M17.4 3.4v13.2L7.6 10z" /><rect x="2.6" y="3.4" width="2.6" height="13.2" rx="1.2" /></svg>
+              <span><svg viewBox="0 0 20 20"><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.3" /><rect x="11.1" y="4.4" width="3.3" height="11.2" rx="1.3" /></svg></span>
+              <svg viewBox="0 0 20 20"><path d="M2.6 3.4v13.2L12.4 10z" /><rect x="14.8" y="3.4" width="2.6" height="13.2" rx="1.2" /></svg>
+            </div>
+            <div class="download-badge">
+              <span aria-hidden="true"></span>
+              <b>downloaded · plays offline</b>
+            </div>
+            <span class="home-indicator" aria-hidden="true"></span>
+          </div>
+        </figure>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         WHAT IT TALKS TO — three enormous type blocks, no cards.
+    ====================================================================== -->
+    <section class="section talks" aria-labelledby="bo-talks">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="mono-tag">what it talks to</p>
+          <h2 id="bo-talks">The network is only your network.</h2>
+        </div>
+        <div class="server-stack">
+          {SERVERS.map((s) => (
+            <article class="server-row">
+              <ServerLogo name={s.name} size={54} />
+              <h3>{s.name}</h3>
+              <p>{s.note}</p>
+            </article>
+          ))}
+        </div>
+        <p class="section-note">
+          Point Mozz at a server you already run. There is no Mozz server in the
+          middle, and no Mozz account sitting above your library.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         BOTH, EQUALLY — perfect symmetry.
+    ====================================================================== -->
+    <section class="section equal" aria-labelledby="bo-equal">
+      <div class="wrap">
+        <div class="section-head section-head--center">
+          <p class="mono-tag">both, equally</p>
+          <h2 id="bo-equal">Streaming is not above offline. Offline is not below streaming.</h2>
+        </div>
+        <div class="equal-grid">
+          {BOTH.map((item) => (
+            <article class="equal-block">
+              <p class="mono-tag">{item.tag}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         WHAT IT DOES — stark numbered list and colossal stats.
+    ====================================================================== -->
+    <section class="section does" aria-labelledby="bo-does">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="mono-tag">what it does</p>
+          <h2 id="bo-does">Seven functions. No ornament around them.</h2>
+        </div>
+        <ol class="feature-list">
+          {FEATURES.map((f, i) => (
+            <li>
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <dl class="stats-line">
+          {STATS.map((s) => (
+            <div>
+              <dt>{s.value}</dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         WHAT IT DOESN'T — full-bleed line repeats, ownership as the point.
+    ====================================================================== -->
+    <section class="section trust" aria-labelledby="bo-trust">
+      <div class="trust-line" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="mono-tag">what it doesn't</p>
+          <h2 id="bo-trust">The absence is the feature.</h2>
+        </div>
+        <div class="no-list">
+          {OWNERSHIP.map((o) => (
+            <article>
+              <span class="dead-rule" aria-hidden="true"></span>
+              <h3>{o.title}</h3>
+              <p>{o.body}</p>
+            </article>
+          ))}
+        </div>
+        <p class="license">GPL-3.0 · free forever · open source</p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         FAQ — mono questions, white answers.
+    ====================================================================== -->
+    <section class="section faq" aria-labelledby="bo-faq">
+      <div class="wrap faq-grid">
+        <div class="section-head">
+          <p class="mono-tag">faqs</p>
+          <h2 id="bo-faq">Plain answers.</h2>
+        </div>
+        <div class="faq-list">
+          {FAQS.map((f) => (
+            <details>
+              <summary>
+                <span>{f.q}</span>
+                <i aria-hidden="true"></i>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         FINAL CTA — the line one last time.
+    ====================================================================== -->
+    <footer class="footer" aria-labelledby="bo-final">
+      <div class="footer-line" aria-hidden="true"></div>
+      <div class="wrap footer__inner">
+        <div class="lockup footer__lockup">
+          <Mark size={34} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+        <h2 id="bo-final">{TAGLINE}</h2>
+        <p class="footer__sub">{SUBLINE}</p>
+        <div class="actions actions--footer">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="fineprint">
+          For recommendations, Mozz may ask MusicBrainz and ListenBrainz what sounds
+          similar to an artist and title. That request carries no name, no server
+          address, no account, and can be switched off in Settings.
+        </p>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #0b0b0d;
+    color-scheme: dark;
+    overflow-x: clip;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #0b0b0d;
+    color: #f5f4f1;
+    font-family: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .blackout {
+    --black: #0b0b0d;
+    --white: #f5f4f1;
+    --red: #c80028;
+    --wrap: min(1240px, 100% - 3rem);
+    position: relative;
+    overflow-x: clip;
+    background: var(--black);
+    color: var(--white);
+    line-height: 1.55;
+  }
+
+  .wrap {
+    width: var(--wrap);
+    margin-inline: auto;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  .wordmark,
+  .stats-line dt {
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+  }
+
+  .mono-tag,
+  .lockup__meta,
+  .section-note,
+  .license,
+  .fineprint,
+  .chatter,
+  .store small {
+    font-family: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.66rem;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .wordmark {
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+  }
+
+  .lockup__rule {
+    width: 34px;
+    height: 1px;
+    background: var(--white);
+  }
+
+  .lockup__meta {
+    opacity: 0.72;
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 42px);
+    display: grid;
+    grid-template-rows: minmax(160px, 27svh) 4px minmax(0, 1fr);
+    background: var(--black);
+  }
+
+  .hero__top,
+  .hero__bottom {
+    width: min(1520px, 100% - 3rem);
+    margin-inline: auto;
+  }
+
+  .hero__top {
+    position: relative;
+    display: block;
+    padding-top: clamp(1.4rem, 3vh, 2.6rem);
+    overflow: hidden;
+  }
+
+  .hero__lockup {
+    position: relative;
+    z-index: 2;
+    align-self: start;
+  }
+
+  .network-field {
+    position: absolute;
+    inset: clamp(5.4rem, 11vh, 7.2rem) 0 0;
+    overflow: hidden;
+    border-inline: 1px solid var(--white);
+    border-top: 1px solid var(--white);
+  }
+
+  .network-field::before,
+  .network-field::after {
+    content: '';
+    position: absolute;
+    background: var(--white);
+    opacity: 0.24;
+  }
+
+  .network-field::before {
+    left: 0;
+    right: 0;
+    top: 33.333%;
+    height: 1px;
+  }
+
+  .network-field::after {
+    left: 0;
+    right: 0;
+    top: 66.666%;
+    height: 1px;
+  }
+
+  .tick-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    opacity: 0.28;
+  }
+
+  .tick-grid i {
+    border-right: 1px solid var(--white);
+    border-bottom: 1px solid var(--white);
+  }
+
+  .chatter {
+    position: absolute;
+    left: clamp(0.9rem, 2vw, 1.4rem);
+    right: clamp(0.9rem, 2vw, 1.4rem);
+    top: 0.8rem;
+    bottom: auto;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--white);
+    opacity: 0.82;
+  }
+
+  .chatter li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.26rem 0;
+    border-top: 1px solid var(--white);
+  }
+
+  .chatter li::after {
+    content: 'ok';
+    color: var(--red);
+  }
+
+  .hero-line,
+  .trust-line,
+  .footer-line {
+    width: 100%;
+    height: 4px;
+    background: var(--red);
+    transform-origin: 50% 50%;
+  }
+
+  .hero-line {
+    animation: line-in 760ms cubic-bezier(0.18, 0.82, 0.22, 1) both;
+  }
+
+  @keyframes line-in {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .hero__bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(196px, 284px);
+    gap: clamp(1.4rem, 4.5vw, 4.5rem);
+    align-items: start;
+    padding-block: clamp(1.4rem, 3.2vw, 3rem) clamp(1rem, 2.2vw, 1.9rem);
+  }
+
+  .hero__copy {
+    max-width: 1050px;
+  }
+
+  .hero h1 {
+    max-width: 13ch;
+    margin-top: 0.72rem;
+    font-size: clamp(3.25rem, 6.8vw, 7.6rem);
+    text-wrap: balance;
+  }
+
+  .product-line {
+    max-width: 50rem;
+    margin-top: clamp(0.75rem, 1.4vw, 1.1rem);
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.12rem, 1.7vw, 1.55rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+  }
+
+  .support {
+    max-width: 56rem;
+    margin-top: 0.65rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+    line-height: 1.55;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: clamp(1rem, 1.9vw, 1.45rem);
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    min-height: 2.9rem;
+    padding: 0.62rem 1.05rem;
+    border: 1px solid var(--white);
+    background: var(--white);
+    color: var(--black);
+    text-decoration: none;
+  }
+
+  .store svg {
+    width: 23px;
+    height: 23px;
+    fill: currentColor;
+    flex: none;
+  }
+
+  .store span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .store small {
+    color: var(--black);
+    opacity: 0.74;
+  }
+
+  .store.is-pending {
+    border-style: dashed;
+    background: var(--black);
+    color: var(--white);
+    cursor: default;
+  }
+
+  .store.is-pending small {
+    color: var(--white);
+  }
+
+  .source-link {
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--white);
+    font-size: 0.88rem;
+  }
+
+  .source-link:hover {
+    color: var(--red);
+    border-bottom-color: var(--red);
+  }
+
+  a:focus-visible,
+  summary:focus-visible,
+  .store:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+  }
+
+  .phone {
+    --pw: clamp(190px, 18vw, 272px);
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border-radius: calc(var(--pw) * 0.148);
+    background: var(--white);
+    color: var(--white);
+    justify-self: end;
+  }
+
+  .phone-screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    overflow: hidden;
+    background: var(--black);
+    font-size: calc(var(--pw) / 20);
+    padding: 0 calc(var(--pw) * 0.055) calc(var(--pw) * 0.035);
+  }
+
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 0.7em;
+    width: 30%;
+    height: 1.08em;
+    border-radius: 999px;
+    background: var(--black);
+    transform: translateX(-50%);
+    border: 1px solid var(--white);
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.72em;
+    font-size: 0.62em;
+  }
+
+  .status__glyphs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38em;
+  }
+
+  .status svg {
+    width: 1.35em;
+    height: 0.72em;
+    fill: currentColor;
+  }
+
+  .phone-head {
+    display: flex;
+    align-items: center;
+    gap: 0.42em;
+    margin-top: 1.55em;
+    font-size: 0.54em;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .phone-head > svg {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+  }
+
+  .phone-head span:not(.eq) {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.12em;
+    height: 0.8em;
+  }
+
+  .eq i {
+    width: 0.14em;
+    background: var(--red);
+  }
+
+  .eq i:nth-child(1) { height: 45%; }
+  .eq i:nth-child(2) { height: 100%; }
+  .eq i:nth-child(3) { height: 62%; }
+
+  .album-art {
+    margin-top: 1.1em;
+    overflow: hidden;
+    border: 1px solid var(--white);
+  }
+
+  .album-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .track-meta {
+    margin-top: 1em;
+  }
+
+  .track-meta strong {
+    display: block;
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.12em;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .track-meta span {
+    display: block;
+    margin-top: 0.24em;
+    font-size: 0.68em;
+    opacity: 0.72;
+  }
+
+  .scrub {
+    height: 0.2em;
+    margin-top: 1em;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  .scrub i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.44em;
+    font-size: 0.55em;
+    opacity: 0.72;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3em;
+    margin-top: 1em;
+  }
+
+  .controls > svg {
+    width: 1.12em;
+    height: 1.12em;
+    fill: currentColor;
+  }
+
+  .controls span {
+    display: grid;
+    place-items: center;
+    width: 2.5em;
+    height: 2.5em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  .controls span svg {
+    width: 1.15em;
+    height: 1.15em;
+    fill: currentColor;
+  }
+
+  .download-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.44em;
+    margin-top: auto;
+    font-size: 0.5em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .download-badge span {
+    width: 0.9em;
+    height: 0.9em;
+    background: var(--red);
+  }
+
+  .download-badge b {
+    font-weight: 400;
+  }
+
+  .home-indicator {
+    display: block;
+    width: 34%;
+    height: 0.22em;
+    margin: 0.55em auto 0;
+    background: var(--white);
+  }
+
+  .section {
+    padding: clamp(5rem, 10vw, 9rem) 0;
+    border-top: 1px solid var(--white);
+    background: var(--black);
+  }
+
+  .section-head {
+    max-width: 82rem;
+  }
+
+  .section-head--center {
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .section h2,
+  .footer h2 {
+    margin-top: 0.9rem;
+    max-width: 12ch;
+    font-size: clamp(4rem, 11vw, 11rem);
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .section-head--center h2 {
+    max-width: 13ch;
+    margin-inline: auto;
+  }
+
+  .server-stack {
+    margin-top: clamp(3rem, 7vw, 6rem);
+    border-top: 1px solid var(--white);
+  }
+
+  .server-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 0.75fr) minmax(20rem, 0.55fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    align-items: end;
+    padding: clamp(1.7rem, 4vw, 3rem) 0;
+    border-bottom: 1px solid var(--white);
+  }
+
+  .server-row svg {
+    width: clamp(42px, 5vw, 72px);
+    height: clamp(42px, 5vw, 72px);
+  }
+
+  .server-row h3 {
+    color: var(--white);
+    font-size: clamp(4rem, 12vw, 12.5rem);
+    text-transform: uppercase;
+  }
+
+  .server-row p {
+    max-width: 42ch;
+    padding-bottom: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .section-note {
+    max-width: 68ch;
+    margin-top: 2rem;
+    line-height: 1.8;
+  }
+
+  .equal-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: clamp(1.2rem, 3vw, 3rem);
+    margin-top: clamp(3rem, 7vw, 6rem);
+    align-items: stretch;
+  }
+
+  .equal-grid::before {
+    content: '';
+    grid-column: 2;
+    grid-row: 1;
+    width: 1px;
+    background: var(--red);
+  }
+
+  .equal-block {
+    min-width: 0;
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-block: 1px solid var(--white);
+    padding: clamp(1.4rem, 3vw, 2rem) 0;
+  }
+
+  .equal-block:first-child {
+    grid-column: 1;
+  }
+
+  .equal-block:last-child {
+    grid-column: 3;
+  }
+
+  .equal-block h3 {
+    margin-top: 2rem;
+    font-size: clamp(3.6rem, 7.2vw, 7.8rem);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .equal-block p:last-child {
+    max-width: min(100%, 46ch);
+    font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+    line-height: 1.7;
+  }
+
+  .feature-list {
+    list-style: none;
+    margin: clamp(3rem, 7vw, 6rem) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--white);
+  }
+
+  .feature-list li {
+    display: grid;
+    grid-template-columns: minmax(4rem, 0.18fr) minmax(0, 1fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    padding: clamp(1.4rem, 3vw, 2.4rem) 0;
+    border-bottom: 1px solid var(--white);
+  }
+
+  .feature-list li > span {
+    color: var(--red);
+    font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+    letter-spacing: 0.16em;
+  }
+
+  .feature-list h3 {
+    font-size: clamp(2rem, 5.2vw, 5.2rem);
+    text-transform: uppercase;
+  }
+
+  .feature-list p {
+    max-width: 72ch;
+    margin-top: 0.75rem;
+    line-height: 1.68;
+  }
+
+  .stats-line {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: clamp(3rem, 7vw, 6rem);
+    border-block: 1px solid var(--white);
+    padding-block: 1.5rem;
+  }
+
+  .stats-line dt {
+    font-size: clamp(3.6rem, 10vw, 10.5rem);
+    color: var(--white);
+  }
+
+  .stats-line dd {
+    color: var(--white);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.78;
+  }
+
+  .trust {
+    position: relative;
+    padding-top: clamp(7rem, 13vw, 12rem);
+  }
+
+  .trust-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .no-list {
+    margin-top: clamp(3rem, 7vw, 6rem);
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .no-list article {
+    display: grid;
+    grid-template-columns: minmax(120px, 18vw) minmax(0, 0.65fr) minmax(20rem, 0.35fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    align-items: start;
+    padding-bottom: clamp(1.5rem, 3vw, 2.2rem);
+    border-bottom: 1px solid var(--white);
+  }
+
+  .dead-rule {
+    width: 100%;
+    height: 4px;
+    background: var(--red);
+    margin-top: 0.6rem;
+  }
+
+  .no-list h3 {
+    font-size: clamp(4rem, 11vw, 11rem);
+    text-transform: uppercase;
+  }
+
+  .no-list p {
+    line-height: 1.7;
+  }
+
+  .license {
+    margin-top: 2rem;
+    color: var(--red);
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--white);
+  }
+
+  .faq-list details {
+    border-bottom: 1px solid var(--white);
+  }
+
+  .faq-list summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.4rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.86rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .faq-list summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-list summary i {
+    position: relative;
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  .faq-list summary i::before,
+  .faq-list summary i::after {
+    content: '';
+    position: absolute;
+    background: var(--red);
+  }
+
+  .faq-list summary i::before {
+    left: 0;
+    right: 0;
+    top: 9px;
+    height: 2px;
+  }
+
+  .faq-list summary i::after {
+    top: 0;
+    bottom: 0;
+    left: 9px;
+    width: 2px;
+  }
+
+  .faq-list details[open] summary i::after {
+    transform: scaleY(0);
+  }
+
+  .faq-list p {
+    max-width: 68ch;
+    padding-bottom: 1.5rem;
+    color: var(--white);
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  .footer {
+    position: relative;
+    padding: clamp(7rem, 14vw, 13rem) 0 3rem;
+    border-top: 1px solid var(--white);
+  }
+
+  .footer-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .footer__inner {
+    display: grid;
+    justify-items: start;
+  }
+
+  .footer h2 {
+    max-width: 9ch;
+    margin-top: 2rem;
+    text-transform: uppercase;
+  }
+
+  .footer__sub {
+    margin-top: 1rem;
+    font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.6rem, 3.6vw, 4rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .actions--footer {
+    margin-top: 2rem;
+  }
+
+  .fineprint {
+    max-width: 82ch;
+    margin-top: 3rem;
+    color: var(--white);
+    opacity: 0.72;
+    line-height: 1.85;
+    text-transform: none;
+  }
+
+  @media (max-width: 1080px) {
+    .hero__bottom,
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .network-field {
+      inset: clamp(4.5rem, 9vh, 5.8rem) 0 0;
+    }
+
+    .phone {
+      justify-self: start;
+    }
+
+    .server-row {
+      grid-template-columns: auto 1fr;
+      align-items: start;
+    }
+
+    .server-row p {
+      grid-column: 2;
+    }
+
+    .stats-line {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .no-list article {
+      grid-template-columns: 1fr;
+    }
+
+    .dead-rule {
+      width: 42vw;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .blackout {
+      --wrap: min(100% - 2rem, 1240px);
+    }
+
+    .hero__top,
+    .hero__bottom {
+      width: min(100% - 2rem, 1520px);
+    }
+
+    .lockup__rule,
+    .lockup__meta {
+      display: none;
+    }
+
+    .hero {
+      grid-template-rows: minmax(165px, 22svh) 4px auto;
+    }
+
+    .hero h1,
+    .section h2,
+    .footer h2 {
+      font-size: clamp(3.35rem, 15vw, 5.2rem);
+    }
+
+    .phone {
+      --pw: clamp(150px, 44vw, 188px);
+    }
+
+    .chatter li:nth-child(n + 7) {
+      display: none;
+    }
+
+    .server-row {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
+
+    .server-row p {
+      grid-column: auto;
+    }
+
+    .server-row h3 {
+      font-size: clamp(4rem, 20vw, 7rem);
+    }
+
+    .equal-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .equal-grid::before {
+      display: none;
+    }
+
+    .equal-block,
+    .equal-block:first-child,
+    .equal-block:last-child {
+      grid-column: auto;
+      min-height: 360px;
+    }
+
+    .feature-list li {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-line {
+      grid-template-columns: 1fr;
+    }
+
+    .actions .store,
+    .actions .source-link {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-line {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+</style>

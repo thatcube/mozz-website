@@ -1,0 +1,1369 @@
+---
+/**
+ * VARIANT — LONG PLAY
+ *
+ * The site is paced like an album: every section is a track with a side number,
+ * duration and hard cue in a persistent left gutter. At the turnover the record
+ * flips, the ground inverts from black to paper, and the footer tightens into a
+ * slowly rotating run-out groove.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+const HEADLINE = 'Side A: at home. Side B: anywhere.';
+const HERO_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT = 'Drop the needle on your own Plex, Jellyfin or Navidrome library, then keep the same album with you when the network disappears.';
+const TRACKS = [
+  { id: 'lp-a1', mark: 'A1', duration: '4:12', title: 'Opening cut' },
+  { id: 'lp-a2', mark: 'A2', duration: '3:48', title: 'Sources' },
+  { id: 'lp-a3', mark: 'A3', duration: '5:26', title: 'Playing here' },
+  { id: 'lp-a4', mark: 'A4', duration: '4:54', title: 'Playing anywhere' },
+  { id: 'lp-b1', mark: 'B1', duration: '6:03', title: 'The app' },
+  { id: 'lp-b2', mark: 'B2', duration: '2:41', title: 'Measured' },
+  { id: 'lp-b3', mark: 'B3', duration: '5:08', title: 'Ownership' },
+  { id: 'lp-b4', mark: 'B4', duration: '3:33', title: 'Notes' },
+];
+const track = (id: string) => TRACKS.find((item) => item.id === id)!;
+const firstFeatures = FEATURES.slice(0, 4);
+const lastFeatures = FEATURES.slice(4);
+const recommendationPrint = FAQS[3].a;
+---
+<Layout
+  title={`${NAME} — long play for your own music`}
+  description="A free iPhone and iPad music player for your own Plex, Jellyfin or Navidrome server, paced as an album: at home on side A, anywhere on side B."
+  themeColor="#0a0a0b"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+  <main class="lp" data-side="a">
+    <VariantBar slug="longplay" tone="neutral" />
+    <aside class="gutter" aria-label="Running order">
+      <ol role="list">
+        {TRACKS.map((item) => (
+          <li data-gutter={item.id} class={item.id === 'lp-a1' ? 'is-active' : ''}>
+            <a href={`#${item.id}`}>
+              <span>{item.mark}</span>
+              <i aria-hidden="true"></i>
+              <time>{item.duration}</time>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </aside>
+    <section class="track hero" id="lp-a1" data-track="lp-a1" data-side="a" aria-labelledby="lp-a1-title">
+      <div class="track-line"><span>{track('lp-a1').mark}</span><time>{track('lp-a1').duration}</time></div>
+      <header class="hero-top">
+        <a class="lockup" href="/" aria-label={`${NAME} home`}>
+          <Mark size={30} decorative />
+          <span>{NAME}</span>
+        </a>
+        <span class="catalogue">side a · no account · gpl-3.0</span>
+      </header>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">A1 / opening cut</p>
+          <h1 id="lp-a1-title">{HEADLINE}</h1>
+          <p class="hero-line">{HERO_LINE}</p>
+          <p class="support">{SUPPORT}</p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <figure class="hero-disc" aria-hidden="true">
+          <svg viewBox="0 0 900 900" role="presentation">
+            <defs>
+              <radialGradient id="lp-disc" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#c80028" />
+                <stop offset="0.12" stop-color="#c80028" />
+                <stop offset="0.13" stop-color="#f0ece3" />
+                <stop offset="0.22" stop-color="#f0ece3" />
+                <stop offset="0.23" stop-color="#141416" />
+                <stop offset="1" stop-color="#050506" />
+              </radialGradient>
+              <filter id="lp-disc-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="34" stdDeviation="24" flood-color="#000" flood-opacity="0.55" />
+              </filter>
+            </defs>
+            <circle cx="450" cy="450" r="430" fill="url(#lp-disc)" filter="url(#lp-disc-shadow)" />
+            {Array.from({ length: 32 }, (_, i) => (
+              <circle
+                cx="450"
+                cy="450"
+                r={130 + i * 9}
+                fill="none"
+                stroke={i === 8 ? '#c80028' : 'rgba(240,236,227,0.09)'}
+                stroke-width={i === 8 ? 6 : 1.2}
+              />
+            ))}
+            <circle cx="450" cy="450" r="16" fill="#0a0a0b" />
+            <path d="M735 70 C 665 205 613 303 574 416" fill="none" stroke="#f0ece3" stroke-width="9" stroke-linecap="round" />
+            <path d="M571 416 l-23 40 l44 -14 Z" fill="#f0ece3" />
+            <circle cx="738" cy="68" r="24" fill="#f0ece3" />
+            <circle cx="738" cy="68" r="9" fill="#0a0a0b" />
+          </svg>
+        </figure>
+      </div>
+    </section>
+    <section class="track sources" id="lp-a2" data-track="lp-a2" data-side="a" aria-labelledby="lp-a2-title">
+      <div class="track-line"><span>{track('lp-a2').mark}</span><time>{track('lp-a2').duration}</time></div>
+      <div class="track-head">
+        <p class="eyebrow">A2 / sources</p>
+        <h2 id="lp-a2-title">Three inputs. One running order.</h2>
+        <p>Point {NAME} at a server you already run. Each row is a source, not a plan or a tier.</p>
+      </div>
+      <ol class="server-rows" role="list">
+        {SERVERS.map((server, index) => (
+          <li>
+            <span class="row-number">A{index + 2}</span>
+            <span class="server-logo"><ServerLogo name={server.name} size={42} /></span>
+            <h3>{server.name}</h3>
+            <p>{server.note}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+    <section class="track play-section play-home" id="lp-a3" data-track="lp-a3" data-side="a" aria-labelledby="lp-a3-title">
+      <div class="track-line"><span>{track('lp-a3').mark}</span><time>{track('lp-a3').duration}</time></div>
+      <div class="play-grid">
+        <div class="play-copy">
+          <p class="eyebrow">A3 / playing here</p>
+          <h2 id="lp-a3-title">At home, the server is the source.</h2>
+          <p>
+            The catalogue stays on your own hardware. {NAME} browses it, searches it,
+            and starts playback on the phone without putting another service between
+            you and the record.
+          </p>
+          <ul class="mono-list" role="list">
+            <li>local library over your network</li>
+            <li>search backed by an on-device database</li>
+            <li>gapless playback that treats the album as an album</li>
+          </ul>
+        </div>
+        <figure class="phone-stage">
+          <div class="phone" role="img" aria-label="An iPhone running Mozz with a badge reading playing from your server.">
+            <div class="phone-screen">
+              <span class="island" aria-hidden="true"></span>
+              <div class="status" aria-hidden="true">
+                <span>9:41</span>
+                <span class="glyphs">
+                  <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                  <svg viewBox="0 0 26 12"><rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2" /><rect x="3" y="3" width="14" height="6" rx="1.4" /><path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z" /></svg>
+                </span>
+              </div>
+              <span class="mode-badge">playing from your server</span>
+              <svg class="phone-art" viewBox="0 0 160 160" aria-hidden="true">
+                <rect width="160" height="160" fill="#f0ece3" />
+                <circle cx="82" cy="82" r="62" fill="#0a0a0b" />
+                <circle cx="82" cy="82" r="24" fill="#c80028" />
+                <circle cx="82" cy="82" r="7" fill="#f0ece3" />
+                <rect x="18" y="118" width="56" height="7" fill="#c80028" />
+                <rect x="91" y="118" width="46" height="7" fill="#0a0a0b" opacity="0.64" />
+              </svg>
+              <div class="track-meta"><strong>Kitchen Light</strong><span>Server Room · Side A</span></div>
+              <div class="scrub"><span></span></div>
+              <div class="time-row"><span>0:54</span><span>&minus;4:32</span></div>
+              <div class="controls" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path d="M17 3.5v13L7.6 10z" /><rect x="3" y="3.5" width="2.5" height="13" rx="1" /></svg>
+                <span class="play"><svg viewBox="0 0 20 20"><rect x="5.6" y="4.2" width="3.4" height="11.6" rx="1.2" /><rect x="11" y="4.2" width="3.4" height="11.6" rx="1.2" /></svg></span>
+                <svg viewBox="0 0 20 20"><path d="M3 3.5v13l9.4-6.5z" /><rect x="14.6" y="3.5" width="2.5" height="13" rx="1" /></svg>
+              </div>
+              <span class="home-indicator" aria-hidden="true"></span>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+    <section class="track play-section play-away" id="lp-a4" data-track="lp-a4" data-side="a" aria-labelledby="lp-a4-title">
+      <div class="track-line"><span>{track('lp-a4').mark}</span><time>{track('lp-a4').duration}</time></div>
+      <div class="play-grid mirror">
+        <div class="play-copy">
+          <p class="eyebrow">A4 / playing anywhere</p>
+          <h2 id="lp-a4-title">Away from home, the record keeps going.</h2>
+          <p>
+            Downloads are the same size in the composition because they are the
+            same size in the product. Keep an album on the phone and it behaves
+            like it does at home, even with no signal at all.
+          </p>
+          <ul class="mono-list" role="list">
+            <li>downloaded albums play offline</li>
+            <li>browsing and searching still work</li>
+            <li>the queue stays gapless without the server reachable</li>
+          </ul>
+        </div>
+        <figure class="phone-stage">
+          <div class="phone" role="img" aria-label="An iPhone running Mozz with a badge reading downloaded, plays offline.">
+            <div class="phone-screen">
+              <span class="island" aria-hidden="true"></span>
+              <div class="status" aria-hidden="true">
+                <span>9:41</span>
+                <span class="glyphs">
+                  <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                  <svg viewBox="0 0 26 12"><rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2" /><rect x="3" y="3" width="14" height="6" rx="1.4" /><path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z" /></svg>
+                </span>
+              </div>
+              <span class="mode-badge">downloaded · plays offline</span>
+              <svg class="phone-art" viewBox="0 0 160 160" aria-hidden="true">
+                <rect width="160" height="160" fill="#0a0a0b" />
+                <rect x="0" y="0" width="72" height="160" fill="#c80028" />
+                <circle cx="86" cy="75" r="46" fill="#f0ece3" />
+                <circle cx="86" cy="75" r="18" fill="#0a0a0b" />
+                <rect x="24" y="124" width="48" height="7" fill="#f0ece3" />
+                <rect x="88" y="124" width="38" height="7" fill="#f0ece3" opacity="0.56" />
+              </svg>
+              <div class="track-meta"><strong>No Signal Exit</strong><span>Offline Crate · Side A</span></div>
+              <div class="scrub"><span></span></div>
+              <div class="time-row"><span>2:07</span><span>&minus;2:47</span></div>
+              <div class="controls" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path d="M17 3.5v13L7.6 10z" /><rect x="3" y="3.5" width="2.5" height="13" rx="1" /></svg>
+                <span class="play"><svg viewBox="0 0 20 20"><rect x="5.6" y="4.2" width="3.4" height="11.6" rx="1.2" /><rect x="11" y="4.2" width="3.4" height="11.6" rx="1.2" /></svg></span>
+                <svg viewBox="0 0 20 20"><path d="M3 3.5v13l9.4-6.5z" /><rect x="14.6" y="3.5" width="2.5" height="13" rx="1" /></svg>
+              </div>
+              <span class="home-indicator" aria-hidden="true"></span>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+    <section class="turnover" data-turnover aria-label="Turn the record over">
+      <div class="turnover-inner">
+        <p>End side A</p>
+        <figure class="flip-disc" aria-hidden="true">
+          <span></span>
+        </figure>
+        <h2>Side B</h2>
+        <p>Flip the page. Same record, paper side up.</p>
+      </div>
+    </section>
+    <div class="side-b">
+      <section class="track app" id="lp-b1" data-track="lp-b1" data-side="b" aria-labelledby="lp-b1-title">
+        <div class="track-line"><span>{track('lp-b1').mark}</span><time>{track('lp-b1').duration}</time></div>
+        <div class="track-head wide">
+          <p class="eyebrow">B1 / the app</p>
+          <h2 id="lp-b1-title">Seven cuts, no paid tier hiding behind the sleeve.</h2>
+          <p>Every capability sits in the free app. The grid is asymmetric because the interface is not a checklist; it is a working player.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-stack primary">
+            {firstFeatures.map((feature, index) => (
+              <article>
+                <span>B1.{index + 1}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
+            ))}
+          </div>
+          <div class="feature-stack secondary">
+            {lastFeatures.map((feature, index) => (
+              <article>
+                <span>B1.{index + 5}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section class="track stats" id="lp-b2" data-track="lp-b2" data-side="b" aria-labelledby="lp-b2-title">
+        <div class="track-line"><span>{track('lp-b2').mark}</span><time>{track('lp-b2').duration}</time></div>
+        <div class="stats-head">
+          <p class="eyebrow">B2 / measured</p>
+          <h2 id="lp-b2-title">The small print gets loud.</h2>
+        </div>
+        <div class="stat-board">
+          {STATS.map((stat) => (
+            <article>
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section class="track own" id="lp-b3" data-track="lp-b3" data-side="b" aria-labelledby="lp-b3-title">
+        <div class="track-line"><span>{track('lp-b3').mark}</span><time>{track('lp-b3').duration}</time></div>
+        <div class="own-layout">
+          <div>
+            <p class="eyebrow">B3 / ownership</p>
+            <h2 id="lp-b3-title">GPL-3.0, free forever, and pointed at your own files.</h2>
+          </div>
+          <div class="own-list">
+            {OWNERSHIP.map((item) => (
+              <article>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section class="track faq" id="lp-b4" data-track="lp-b4" data-side="b" aria-labelledby="lp-b4-title">
+        <div class="track-line"><span>{track('lp-b4').mark}</span><time>{track('lp-b4').duration}</time></div>
+        <div class="track-head">
+          <p class="eyebrow">B4 / notes</p>
+          <h2 id="lp-b4-title">Questions in the run sheet.</h2>
+        </div>
+        <div class="faq-grid">
+          {FAQS.map((faq) => (
+            <details>
+              <summary>{faq.q}</summary>
+              <p>{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+      <footer class="runout" aria-labelledby="lp-runout-title">
+        <div class="runout-arcs" aria-hidden="true">
+          <span class="arc arc-one"></span>
+          <span class="arc arc-two"></span>
+          <span class="arc arc-three"></span>
+          <span class="run-label"></span>
+        </div>
+        <div class="runout-copy">
+          <a class="footer-lockup" href="/" aria-label={`${NAME} home`}>
+            <Mark size={34} decorative />
+            <span>{NAME}</span>
+          </a>
+          <h2 id="lp-runout-title">{TAGLINE}</h2>
+          <p>{SUBLINE}</p>
+          <div class="actions footer-actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="fine-print">{recommendationPrint}</p>
+        </div>
+      </footer>
+    </div>
+  </main>
+</Layout>
+<script>
+  const main = document.querySelector('.lp');
+  const gutters = Array.from(document.querySelectorAll('[data-gutter]'));
+  const tracks = Array.from(document.querySelectorAll('[data-track]'));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const setTrack = (id, side) => {
+    gutters.forEach((item) => item.classList.toggle('is-active', item.getAttribute('data-gutter') === id));
+    if (main) main.setAttribute('data-side', side || 'a');
+  };
+  const updateRunningOrder = () => {
+    const cue = window.innerHeight * 0.42;
+    let current = tracks[0];
+    for (const section of tracks) {
+      if (section.getBoundingClientRect().top <= cue) current = section;
+    }
+    if (current) setTrack(current.getAttribute('data-track'), current.getAttribute('data-side'));
+  };
+  updateRunningOrder();
+  window.addEventListener('scroll', updateRunningOrder, { passive: true });
+  window.addEventListener('resize', updateRunningOrder);
+  if ('IntersectionObserver' in window) {
+    const trackObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setTrack(entry.target.getAttribute('data-track'), entry.target.getAttribute('data-side'));
+        }
+      });
+    }, { threshold: 0.42, rootMargin: '-18% 0px -44% 0px' });
+    tracks.forEach((section) => trackObserver.observe(section));
+  }
+  if (!reduceMotion.matches && 'IntersectionObserver' in window) {
+    const turnover = document.querySelector('[data-turnover]');
+    if (turnover) {
+      const flipObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('is-flipped');
+        });
+      }, { threshold: 0.45 });
+      flipObserver.observe(turnover);
+    }
+  }
+</script>
+<style>
+  :global(html) {
+    background: #0a0a0b;
+  }
+  :global(body) {
+    margin: 0;
+    color: #f0ece3;
+    background: #0a0a0b;
+    font-family: 'Syne', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  .lp {
+    --black: #0a0a0b;
+    --black-2: #121214;
+    --paper: #f0ece3;
+    --ink: #0f0f10;
+    --red: #c80028;
+    --muted: rgba(240, 236, 227, 0.66);
+    --paper-muted: rgba(15, 15, 16, 0.62);
+    --hair: rgba(240, 236, 227, 0.16);
+    --paper-hair: rgba(15, 15, 16, 0.16);
+    --gutter: clamp(4.8rem, 10vw, 9rem);
+    --pad: clamp(1.35rem, 4vw, 4.5rem);
+    --measure: min(1180px, calc(100% - var(--pad) * 2));
+    position: relative;
+    overflow-x: clip;
+    isolation: isolate;
+    background: var(--black);
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: 'Syne', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.06em;
+    text-wrap: balance;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:focus-visible,
+  .store:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+  }
+  .gutter {
+    position: fixed;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    width: var(--gutter);
+    border-right: 1px solid var(--hair);
+    background: rgba(10, 10, 11, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--muted);
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease;
+  }
+  .lp[data-side='b'] .gutter {
+    border-color: var(--paper-hair);
+    background: rgba(240, 236, 227, 0.82);
+    color: var(--paper-muted);
+  }
+  .gutter ol {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.7rem;
+    height: 100%;
+    margin: 0;
+    padding: 1rem 0.72rem;
+    list-style: none;
+  }
+  .gutter a {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2rem;
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    font-size: clamp(0.62rem, 0.86vw, 0.78rem);
+    letter-spacing: -0.02em;
+  }
+  .gutter i {
+    height: 1px;
+    background: currentColor;
+    opacity: 0.32;
+  }
+  .gutter li.is-active a {
+    color: var(--red);
+  }
+  .gutter li.is-active i {
+    opacity: 1;
+    background: var(--red);
+  }
+  .track {
+    position: relative;
+    padding: clamp(4rem, 8vw, 8rem) var(--pad) clamp(4rem, 8vw, 8rem) calc(var(--gutter) + var(--pad));
+    background: var(--black);
+    color: var(--paper);
+  }
+  .side-b .track,
+  .side-b .runout {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .track-line {
+    display: none;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.1rem;
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    color: var(--red);
+  }
+  .track-line::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.38;
+  }
+  .track-line time {
+    order: 3;
+    color: currentColor;
+  }
+  .eyebrow,
+  .catalogue,
+  .row-number,
+  .mono-list,
+  .feature-stack span,
+  .fine-print,
+  .mode-badge,
+  .status,
+  .time-row {
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .eyebrow,
+  .catalogue {
+    color: var(--red);
+    font-size: 0.78rem;
+  }
+  .track-head {
+    width: var(--measure);
+    max-width: 58rem;
+    margin-inline: auto;
+  }
+  .track-head.wide {
+    max-width: 72rem;
+  }
+  .track-head h2,
+  .play-copy h2,
+  .stats-head h2,
+  .own-layout h2,
+  .runout h2 {
+    margin-top: 0.7rem;
+    font-size: clamp(3rem, 8vw, 8.6rem);
+  }
+  .track-head p,
+  .play-copy p,
+  .own-layout p,
+  .runout-copy > p {
+    max-width: 52ch;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.45vw, 1.22rem);
+  }
+  .side-b .track-head p,
+  .side-b .play-copy p,
+  .side-b .own-layout p,
+  .side-b .runout-copy > p {
+    color: var(--paper-muted);
+  }
+  .lockup,
+  .footer-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.04em;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem 1.1rem;
+  }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    padding: 0.72rem 1.12rem;
+    border: 1px solid var(--paper);
+    background: var(--paper);
+    color: var(--black);
+    font-weight: 800;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+  a.store:hover {
+    transform: translateY(-2px);
+    background: #fff;
+  }
+  .side-b .store {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .store svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+  .store span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+    text-align: left;
+  }
+  .store small {
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+  .store.is-pending {
+    border-style: dashed;
+    background: transparent;
+    color: var(--muted);
+    cursor: default;
+  }
+  .side-b .store.is-pending {
+    color: var(--paper-muted);
+  }
+  .source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.8rem;
+    font-weight: 800;
+    border-bottom: 1px solid currentColor;
+  }
+  .source-link:hover {
+    color: var(--red);
+  }
+  /* -------------------------------------------------------------- A1 */
+  .hero {
+    min-height: calc(100svh - 42px);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    background:
+      radial-gradient(88% 70% at 100% 100%, rgba(200, 0, 40, 0.17), transparent 60%),
+      var(--black);
+  }
+  .hero-top {
+    width: var(--measure);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .hero-grid {
+    width: var(--measure);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(22rem, 0.82fr);
+    gap: clamp(3rem, 7vw, 8rem);
+    align-items: center;
+  }
+  .hero-copy {
+    max-width: 58rem;
+  }
+  .hero h1 {
+    max-width: 16ch;
+    margin-top: 0.55rem;
+    font-size: clamp(3.7rem, 5.8vw, 7.8rem);
+    line-height: 0.86;
+  }
+  .hero-line {
+    max-width: 56rem;
+    margin-top: 0.9rem;
+    font-size: clamp(1.35rem, 2.2vw, 2.45rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+  .support {
+    max-width: 44rem;
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: clamp(0.98rem, 1.25vw, 1.14rem);
+  }
+  .hero .actions {
+    margin-top: 1.45rem;
+  }
+  .hero-disc {
+    width: min(39vw, 38rem);
+    margin: 0;
+    justify-self: end;
+    transform: translate(16%, 8%);
+  }
+  .hero-disc svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* -------------------------------------------------------------- A2 */
+  .sources {
+    border-top: 1px solid var(--hair);
+  }
+  .server-rows {
+    width: var(--measure);
+    margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--hair);
+  }
+  .server-rows li {
+    display: grid;
+    grid-template-columns: 4rem 4.6rem minmax(10rem, 0.38fr) minmax(0, 1fr);
+    gap: clamp(1rem, 2vw, 2rem);
+    align-items: center;
+    padding: clamp(1.5rem, 3vw, 2.2rem) 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .row-number {
+    color: var(--red);
+  }
+  .server-logo {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    border: 1px solid var(--hair);
+    border-radius: 50%;
+  }
+  .server-rows h3 {
+    font-size: clamp(2.5rem, 6vw, 6.3rem);
+  }
+  .server-rows p {
+    max-width: 44ch;
+    color: var(--muted);
+  }
+  /* ---------------------------------------------------------- A3 / A4 */
+  .play-section {
+    border-top: 1px solid var(--hair);
+  }
+  .play-grid {
+    width: var(--measure);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(17rem, 0.72fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .play-grid.mirror {
+    grid-template-columns: minmax(17rem, 0.72fr) minmax(0, 0.9fr);
+  }
+  .play-grid.mirror .play-copy {
+    grid-column: 2;
+  }
+  .play-grid.mirror .phone-stage {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .mono-list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1.8rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  .mono-list li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+  }
+  .mono-list li::before {
+    content: '—';
+    color: var(--red);
+  }
+  .phone-stage {
+    display: grid;
+    place-items: center;
+    margin: 0;
+  }
+  .phone {
+    --pw: clamp(196px, 24vw, 318px);
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border-radius: calc(var(--pw) * 0.148);
+    background: linear-gradient(145deg, #44444b, #0d0d10 48%, #2c2c32);
+    box-shadow:
+      0 36px 70px -30px rgba(0, 0, 0, 0.78),
+      inset 0 0 0 1px rgba(240, 236, 227, 0.18);
+  }
+  .phone-screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 calc(var(--pw) * 0.06) calc(var(--pw) * 0.055);
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    overflow: hidden;
+    background: var(--black);
+    color: var(--paper);
+    font-size: calc(var(--pw) / 18);
+  }
+  .island {
+    position: absolute;
+    top: 0.74em;
+    left: 50%;
+    width: 31%;
+    height: 1.1em;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: #000;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8em 0.2em 0;
+    font-size: 0.58em;
+    opacity: 0.72;
+  }
+  .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+  }
+  .glyphs svg:first-child {
+    width: 1.1em;
+    height: 0.75em;
+    fill: currentColor;
+  }
+  .glyphs svg:last-child {
+    width: 1.55em;
+    height: 0.75em;
+    fill: currentColor;
+  }
+  .mode-badge {
+    display: grid;
+    place-items: center;
+    margin-top: 2.4em;
+    padding: 0.58em 0.6em;
+    border: 1px solid rgba(240, 236, 227, 0.18);
+    border-radius: 999px;
+    color: rgba(240, 236, 227, 0.72);
+    font-size: 0.52em;
+  }
+  .phone-art {
+    display: block;
+    width: 100%;
+    margin-top: 1.15em;
+    border-radius: 0.45em;
+    box-shadow: 0 1.2em 2.5em rgba(0, 0, 0, 0.42);
+  }
+  .track-meta {
+    margin-top: 1em;
+  }
+  .track-meta strong {
+    display: block;
+    font-size: 1.08em;
+    line-height: 1.12;
+  }
+  .track-meta span {
+    display: block;
+    margin-top: 0.22em;
+    font-size: 0.66em;
+    color: rgba(240, 236, 227, 0.54);
+  }
+  .scrub {
+    height: 0.24em;
+    margin-top: 1.1em;
+    border-radius: 999px;
+    background: rgba(240, 236, 227, 0.18);
+    overflow: hidden;
+  }
+  .scrub span {
+    display: block;
+    width: 44%;
+    height: 100%;
+    background: var(--red);
+  }
+  .play-away .scrub span {
+    width: 58%;
+  }
+  .time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.55em;
+    font-size: 0.5em;
+    color: rgba(240, 236, 227, 0.44);
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3em;
+    margin-top: auto;
+    padding-top: 1.2em;
+  }
+  .controls svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: currentColor;
+    opacity: 0.84;
+  }
+  .play {
+    display: grid;
+    place-items: center;
+    width: 2.35em;
+    height: 2.35em;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--paper);
+  }
+  .play svg {
+    width: 1.05em;
+    height: 1.05em;
+    opacity: 1;
+  }
+  .home-indicator {
+    display: block;
+    width: 32%;
+    height: 0.2em;
+    margin: 0.9em auto 0;
+    border-radius: 999px;
+    background: rgba(240, 236, 227, 0.32);
+  }
+  /* ---------------------------------------------------------- turnover */
+  .turnover {
+    position: relative;
+    z-index: 1;
+    min-height: 70svh;
+    display: grid;
+    place-items: center;
+    padding: clamp(4rem, 9vw, 8rem) var(--pad) clamp(4rem, 9vw, 8rem) calc(var(--gutter) + var(--pad));
+    overflow: hidden;
+    background: var(--red);
+    color: var(--paper);
+  }
+  .turnover-inner {
+    display: grid;
+    place-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+    text-align: center;
+  }
+  .turnover p {
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .turnover h2 {
+    font-size: clamp(5rem, 18vw, 18rem);
+    line-height: 0.78;
+  }
+  .flip-disc {
+    width: clamp(9rem, 18vw, 16rem);
+    aspect-ratio: 1;
+    margin: 0;
+    perspective: 900px;
+  }
+  .flip-disc span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, var(--paper) 0 4%, var(--red) 4.5% 26%, var(--paper) 26.5% 30%, #0a0a0b 31% 100%);
+    box-shadow: 0 30px 50px -28px rgba(0, 0, 0, 0.7);
+    transform: rotateY(0deg);
+    transform-style: preserve-3d;
+    transition: transform 900ms cubic-bezier(0.18, 0.82, 0.22, 1);
+  }
+  .turnover.is-flipped .flip-disc span {
+    transform: rotateY(180deg);
+  }
+  /* -------------------------------------------------------------- B1 */
+  .feature-grid {
+    width: var(--measure);
+    margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.72fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .feature-stack {
+    display: grid;
+    gap: 1px;
+    background: var(--paper-hair);
+    align-self: start;
+  }
+  .feature-stack article {
+    padding: clamp(1.35rem, 2.6vw, 2rem);
+    background: var(--paper);
+  }
+  .feature-stack span {
+    display: block;
+    color: var(--red);
+    font-size: 0.78rem;
+  }
+  .feature-stack h3 {
+    margin-top: 0.7rem;
+    font-size: clamp(1.5rem, 3vw, 3.1rem);
+  }
+  .feature-stack p {
+    max-width: 52ch;
+    margin-top: 0.75rem;
+    color: var(--paper-muted);
+  }
+  .feature-stack.primary article:first-child {
+    padding-top: clamp(2rem, 4vw, 3rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .feature-stack.primary article:first-child h3 {
+    font-size: clamp(2.4rem, 5vw, 5.2rem);
+  }
+  /* -------------------------------------------------------------- B2 */
+  .stats {
+    overflow: hidden;
+  }
+  .stats-head {
+    width: var(--measure);
+    margin-inline: auto;
+  }
+  .stat-board {
+    width: min(1540px, calc(100% - var(--pad) * 2));
+    margin: clamp(2rem, 5vw, 4rem) auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--paper-hair);
+    border-left: 1px solid var(--paper-hair);
+  }
+  .stat-board article {
+    min-height: clamp(16rem, 24vw, 26rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.2rem, 2.6vw, 2rem);
+    border-right: 1px solid var(--paper-hair);
+    border-bottom: 1px solid var(--paper-hair);
+  }
+  .stat-board strong {
+    font-family: 'Syne', ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(4.6rem, 10vw, 12rem);
+    line-height: 0.76;
+    letter-spacing: -0.08em;
+    color: var(--red);
+  }
+  .stat-board span {
+    max-width: 16ch;
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    text-transform: uppercase;
+    color: var(--paper-muted);
+  }
+  /* -------------------------------------------------------------- B3 */
+  .own-layout {
+    width: var(--measure);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .own-list {
+    display: grid;
+    gap: 0;
+    border-top: 3px solid var(--red);
+  }
+  .own-list article {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.38fr) minmax(0, 1fr);
+    gap: 1.2rem;
+    padding: clamp(1.2rem, 2.4vw, 1.8rem) 0;
+    border-bottom: 1px solid var(--paper-hair);
+  }
+  .own-list h3 {
+    color: var(--red);
+    font-size: clamp(1.3rem, 2.2vw, 2rem);
+    letter-spacing: -0.04em;
+  }
+  .own-list p {
+    color: var(--paper-muted);
+  }
+  /* -------------------------------------------------------------- B4 */
+  .faq-grid {
+    width: var(--measure);
+    margin: clamp(2rem, 5vw, 4rem) auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(2rem, 5vw, 5rem);
+  }
+  .faq details {
+    border-top: 1px solid var(--paper-hair);
+  }
+  .faq details:last-child,
+  .faq details:nth-last-child(2) {
+    border-bottom: 1px solid var(--paper-hair);
+  }
+  .faq summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 800;
+    font-size: clamp(1.05rem, 1.8vw, 1.32rem);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::after {
+    content: '+';
+    color: var(--red);
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+  }
+  .faq details[open] summary::after {
+    content: '–';
+  }
+  .faq p {
+    max-width: 66ch;
+    padding: 0 0 1.35rem;
+    color: var(--paper-muted);
+  }
+  /* ------------------------------------------------------------ runout */
+  .runout {
+    position: relative;
+    min-height: 84svh;
+    display: grid;
+    align-items: end;
+    padding: clamp(5rem, 10vw, 9rem) var(--pad) clamp(3rem, 6vw, 5rem) calc(var(--gutter) + var(--pad));
+    overflow: hidden;
+  }
+  .runout-arcs {
+    position: absolute;
+    right: -18vw;
+    bottom: -28vw;
+    width: min(94vw, 62rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    animation: lp-run 30s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes lp-run {
+    to { transform: rotate(360deg); }
+  }
+  .arc {
+    position: absolute;
+    inset: var(--inset);
+    border: 1px solid rgba(15, 15, 16, 0.18);
+    border-radius: 50%;
+  }
+  .arc-one { --inset: 0; }
+  .arc-two { --inset: 11%; border-width: 2px; }
+  .arc-three { --inset: 23%; border-color: rgba(200, 0, 40, 0.42); }
+  .run-label {
+    position: absolute;
+    inset: 38%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, var(--paper) 0 5%, transparent 5.5%),
+      radial-gradient(circle at 50% 50%, var(--red) 0 58%, #9e001f 100%);
+  }
+  .runout-copy {
+    position: relative;
+    z-index: 1;
+    width: var(--measure);
+    margin-inline: auto;
+    display: grid;
+    justify-items: start;
+  }
+  .runout h2 {
+    max-width: 10ch;
+    margin-top: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(4.2rem, 10vw, 12rem);
+  }
+  .footer-actions {
+    margin-top: 1.6rem;
+  }
+  .fine-print {
+    max-width: 82ch;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--paper-hair);
+    color: var(--paper-muted);
+    font-size: 0.72rem;
+    line-height: 1.52;
+  }
+  /* --------------------------------------------------------- responsive */
+  @media (min-width: 96rem) {
+    .lp {
+      --measure: min(1540px, calc(100% - var(--pad) * 2));
+    }
+    .hero-disc {
+      width: min(34vw, 42rem);
+    }
+  }
+  @media (max-width: 70rem) {
+    .gutter {
+      display: none;
+    }
+    .track,
+    .turnover,
+    .runout {
+      padding-left: var(--pad);
+    }
+    .track-line {
+      display: flex;
+      width: var(--measure);
+      margin-inline: auto;
+    }
+    .hero-grid,
+    .play-grid,
+    .play-grid.mirror,
+    .feature-grid,
+    .own-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .play-grid.mirror .play-copy,
+    .play-grid.mirror .phone-stage {
+      grid-column: auto;
+      grid-row: auto;
+    }
+    .hero-disc {
+      justify-self: center;
+      width: min(78vw, 30rem);
+      transform: translate(4%, 0);
+    }
+    .server-rows li {
+      grid-template-columns: 3rem 4rem minmax(0, 1fr);
+    }
+    .server-rows p {
+      grid-column: 3;
+    }
+    .stat-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .faq-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .faq details:nth-last-child(2) {
+      border-bottom: 0;
+    }
+  }
+  @media (max-width: 42rem) {
+    .lp {
+      --pad: 1rem;
+      font-size: 16px;
+    }
+    .hero-top {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .hero h1 {
+      max-width: 12.6ch;
+      font-size: clamp(3.05rem, 11.2vw, 4.7rem);
+    }
+    .hero-disc {
+      width: min(65vw, 17rem);
+      transform: translate(0, 0);
+    }
+    .track-head h2,
+    .play-copy h2,
+    .stats-head h2,
+    .own-layout h2,
+    .runout h2 {
+      font-size: clamp(2.8rem, 13vw, 5.2rem);
+    }
+    .server-rows li {
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+    }
+    .server-logo {
+      display: none;
+    }
+    .server-rows h3,
+    .server-rows p {
+      grid-column: 2;
+    }
+    .phone {
+      --pw: clamp(196px, 70vw, 258px);
+    }
+    .stat-board {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .stat-board article {
+      min-height: 12rem;
+    }
+    .own-list article {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.45rem;
+    }
+    .actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .store,
+    .source-link {
+      justify-content: center;
+      width: 100%;
+    }
+    .runout-arcs {
+      right: -24vw;
+      bottom: -16vw;
+      width: 88vw;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flip-disc span,
+    .runout-arcs,
+    .store,
+    .gutter,
+    .lp[data-side='b'] .gutter {
+      animation: none !important;
+      transition: none !important;
+    }
+    .turnover .flip-disc span,
+    .turnover.is-flipped .flip-disc span {
+      transform: rotateY(180deg);
+    }
+    .runout-arcs {
+      transform: none;
+    }
+  }
+</style>

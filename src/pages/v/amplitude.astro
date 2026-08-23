@@ -1,0 +1,972 @@
+---
+/**
+ * VARIANT — AMPLITUDE
+ *
+ * One red waveform runs from the first viewport to the run-out. The whole page is
+ * a sparse poster: giant type, timecodes, hairline rules, and a single signal
+ * whose loud, repeated, flat and tightening moments carry the story.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME, TAGLINE, SUBLINE, SERVERS, FEATURES, OWNERSHIP, STATS, FAQS,
+  GITHUB_URL, APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'All of it, at full amplitude.';
+const HERO_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT = 'Stream at home from the server you already run. Download the same music for the places where nothing connects.';
+
+const wave = (count: number, base: number, swing: number, phase: number) =>
+  Array.from({ length: count }, (_, i) => {
+    const slow = Math.sin((i + phase) * 0.48) * 0.5 + 0.5;
+    const fast = Math.sin((i + phase) * 1.73) * 0.5 + 0.5;
+    const notch = i % 9 === 0 ? -0.24 : i % 7 === 0 ? 0.2 : 0;
+    return Math.min(0.98, Math.max(0.05, base + swing * (slow * 0.7 + fast * 0.3 - 0.5) + notch));
+  });
+const taper = (count: number) => Array.from({ length: count }, (_, i) => Math.max(0.025, 0.74 * Math.pow(1 - i / (count - 1), 1.55)));
+const pairedBurst = wave(26, 0.64, 0.7, 8);
+const flatline = Array.from({ length: 34 }, () => 0.012);
+
+const WAVE_CHUNKS = [
+  { name: 'hero', bars: wave(34, 0.76, 0.48, 1) },
+  { name: 'sources', bars: wave(30, 0.46, 0.52, 4) },
+  { name: 'stream', bars: pairedBurst },
+  { name: 'offline', bars: pairedBurst },
+  { name: 'features', bars: wave(42, 0.38, 0.34, 14) },
+  { name: 'flatline', bars: flatline },
+  { name: 'asked', bars: wave(28, 0.3, 0.26, 19) },
+  { name: 'runout', bars: taper(30) },
+];
+
+const LISTEN_PAIR = [
+  {
+    time: '01:14',
+    key: 'STREAM',
+    title: 'Same waveform at home.',
+    body: 'Over your own network, Mozz is just the player at the end of the signal path. Your server keeps the library; the phone gives it a clean, immediate front end.',
+    badge: 'playing from your server',
+  },
+  {
+    time: '01:52',
+    key: 'OFFLINE',
+    title: 'Same waveform with nothing.',
+    body: 'Download the record and the section repeats at the same scale. No signal changes the network state, not the music state: the album keeps playing from the device.',
+    badge: 'downloaded · plays offline',
+  },
+];
+---
+
+<Layout
+  title={`${NAME} — all of it, at full amplitude`}
+  description="A free player for the music on your own Plex, Jellyfin or Navidrome server. Stream at home, download for offline, and keep your library yours."
+  themeColor="#faf9f7"
+  noindex
+>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <main class="amplitude" data-amplitude-page>
+    <VariantBar slug="amplitude" tone="cool" />
+
+    <div class="wavefield" aria-hidden="true">
+      <div class="wave-track">
+        {WAVE_CHUNKS.map((chunk) => (
+          <div class={`wave-chunk ${chunk.name}`} data-wave-chunk>
+            {chunk.bars.map((bar) => (
+              <span class="wave-bar" style={`--amp:${bar}`}></span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <header class="hero poster-section" aria-labelledby="amplitude-title">
+      <div class="identity">
+        <a class="lockup" href="/" aria-label="Mozz home">
+          <Mark size={30} decorative />
+          <span>{NAME}</span>
+        </a>
+        <p>00:00 / self-hosted music player</p>
+      </div>
+      <div class="section-time">00:00</div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="amplitude-title">{HEADLINE}</h1>
+          <p class="hero-line">{HERO_LINE}</p>
+          <p class="support">{SUPPORT}</p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="phone" style="--pw:clamp(180px, 17vw, 260px)" role="img" aria-label="An iPhone showing Mozz with waveform album art">
+          <span class="phone-key key-one"></span>
+          <span class="phone-key key-two"></span>
+          <div class="phone-screen">
+            <div class="island"></div>
+            <div class="status"><span>9:41</span><span>5G</span></div>
+            <div class="phone-label">playing from your server</div>
+            <svg class="phone-art" viewBox="0 0 240 240" aria-hidden="true">
+              <rect width="240" height="240" fill="#faf9f7" />
+              {[0,1,2,3,4,5,6,7,8,9,10,11].map((i) => (
+                <rect x="112" y={12 + i * 18} width={(i % 3 === 0 ? 105 : i % 3 === 1 ? 68 : 92)} height="8" fill="#c80028" transform={`translate(${-(i % 3 === 0 ? 52 : i % 3 === 1 ? 34 : 46)} 0)`} />
+              ))}
+              <line x1="120" y1="0" x2="120" y2="240" stroke="#0d0d0f" stroke-width="2" />
+            </svg>
+            <div class="track"><strong>Full Amplitude</strong><span>Local Library</span></div>
+            <div class="scrub"><i></i></div>
+            <div class="transport"><span>‹‹</span><b>▶</b><span>››</span></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="sources poster-section" aria-labelledby="amp-sources">
+      <div class="section-time">00:41</div>
+      <div class="section-head">
+        <p>00:41 SOURCES</p>
+        <h2 id="amp-sources">Three inputs. One library.</h2>
+      </div>
+      <div class="server-rows">
+        {SERVERS.map((server, i) => (
+          <article class="server-row">
+            <span class="row-time">00:{String(41 + i * 6).padStart(2, '0')}</span>
+            <ServerLogo name={server.name} size={52} />
+            <h3>{server.name}</h3>
+            <p>{server.note}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {LISTEN_PAIR.map((item) => (
+      <section class="listen poster-section" aria-labelledby={`amp-${item.key.toLowerCase()}`}>
+        <div class="section-time">{item.time}</div>
+        <div class="listen-copy">
+          <p>{item.time} {item.key}</p>
+          <h2 id={`amp-${item.key.toLowerCase()}`}>{item.title}</h2>
+          <p>{item.body}</p>
+        </div>
+        <div class="listen-device" aria-hidden="true">
+          <div class="burst">
+            {pairedBurst.map((bar) => (<span style={`--amp:${bar}`}></span>))}
+          </div>
+          <div class="mini-phone">
+            <span>{item.badge}</span>
+            <b>FULL<br />AMP</b>
+            <i></i>
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <section class="app poster-section" aria-labelledby="amp-app">
+      <div class="section-time">02:30</div>
+      <div class="section-head">
+        <p>02:30 THE APP</p>
+        <h2 id="amp-app">The interface is not the library. It is the gain.</h2>
+      </div>
+      <ol class="feature-list" role="list">
+        {FEATURES.map((feature, i) => (
+          <li>
+            <span>{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="stats-line" aria-label="Mozz measured stats">
+        {STATS.map((stat) => (
+          <article>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="flatline poster-section" aria-labelledby="amp-flatline">
+      <div class="section-time">03:05</div>
+      <div class="section-head">
+        <p>03:05 FLATLINE</p>
+        <h2 id="amp-flatline">No tracking is not quieter. It is silent.</h2>
+      </div>
+      <div class="flatline-rule" aria-hidden="true"></div>
+      <div class="ownership-list">
+        {OWNERSHIP.map((item) => (
+          <article>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+      <p class="license">GPL-3.0. Free forever. No account, no analytics, no telemetry, no ad networks.</p>
+    </section>
+
+    <section class="asked poster-section" aria-labelledby="amp-asked">
+      <div class="section-time">03:44</div>
+      <div class="section-head">
+        <p>03:44 ASKED</p>
+        <h2 id="amp-asked">Questions in the margin.</h2>
+      </div>
+      <div class="faq-list">
+        {FAQS.map((faq, i) => (
+          <details>
+            <summary><span>{String(i + 1).padStart(2, '0')}</span>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <footer class="runout poster-section">
+      <div class="section-time">04:20</div>
+      <div class="runout-grid">
+        <div>
+          <a class="lockup" href="/" aria-label="Mozz home">
+            <Mark size={34} decorative />
+            <span>{NAME}</span>
+          </a>
+          <h2>{TAGLINE}</h2>
+          <p class="subline">{SUBLINE}</p>
+          <p class="fine">MetaBrainz note: {FAQS[3].a}</p>
+        </div>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #faf9f7; }
+  :global(body) {
+    margin: 0;
+    color: #0d0d0f;
+    background: #faf9f7;
+    font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .amplitude {
+    --paper: #faf9f7;
+    --ink: #0d0d0f;
+    --red: #c80028;
+    --page-x: clamp(1.25rem, 4vw, 4rem);
+    --wave-band: clamp(320px, 30vw, 820px);
+    --content-start: calc(var(--wave-band) + var(--page-x));
+    position: relative;
+    min-height: 100vh;
+    overflow-x: clip;
+    isolation: isolate;
+    color: var(--ink);
+    background: var(--paper);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  h1, h2, h3, p { margin: 0; }
+  h1, h2, h3 {
+    font-weight: 700;
+    letter-spacing: -0.07em;
+    line-height: 0.84;
+  }
+  a { color: inherit; }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 5px;
+  }
+
+  .wavefield {
+    position: absolute;
+    z-index: 0;
+    inset: 42px auto 0 0;
+    width: var(--wave-band);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .wavefield::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: var(--red);
+    opacity: 0.72;
+    transform: translateX(-50%);
+  }
+
+  .wave-track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: 5rem;
+  }
+
+  .wave-chunk {
+    display: grid;
+    gap: clamp(5px, 0.7vw, 10px);
+  }
+
+  .wave-bar {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(5px, 0.62vw, 13px);
+    opacity: 1;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .wave-bar::before,
+  .wave-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: calc(var(--amp) * 47%);
+    height: 100%;
+    background: var(--red);
+  }
+
+  .wave-bar::before { right: 50%; }
+  .wave-bar::after { left: 50%; }
+
+  .wave-chunk.is-hot .wave-bar {
+    opacity: 1;
+    transform: scaleX(1.08);
+  }
+
+  .wave-chunk.flatline .wave-bar {
+    height: 2px;
+    opacity: 1;
+  }
+
+  .wave-chunk.flatline .wave-bar::before,
+  .wave-chunk.flatline .wave-bar::after {
+    width: calc(var(--amp) * 47%);
+  }
+
+  .poster-section {
+    position: relative;
+    z-index: 1;
+    padding: clamp(5rem, 10vw, 10rem) var(--page-x) clamp(5rem, 10vw, 10rem) var(--content-start);
+  }
+
+  .hero.poster-section {
+    padding-left: var(--content-start);
+    padding-bottom: clamp(2rem, 3vw, 3.25rem);
+  }
+
+  .section-time {
+    position: absolute;
+    left: var(--content-start);
+    top: clamp(5rem, 10vw, 10rem);
+    z-index: 2;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: clamp(0.72rem, 1vw, 0.9rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--red);
+  }
+
+  .identity {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(1.1rem, 2.4vw, 2rem) var(--page-x) 0;
+  }
+
+  .identity .lockup {
+    flex: none;
+  }
+
+  .identity p,
+  .section-head p,
+  .listen-copy > p:first-child,
+  .row-time,
+  .feature-list > li > span,
+  .stats-line span,
+  summary span,
+  .fine,
+  .phone-label,
+  .status,
+  .store small {
+    font-family: 'Space Mono', ui-monospace, monospace;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.62rem;
+    text-decoration: none;
+  }
+
+  .lockup span {
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.04em;
+  }
+
+  .identity p {
+    flex: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .hero {
+    min-height: calc(100svh - 42px);
+    padding-top: 0;
+    display: grid;
+    align-content: stretch;
+  }
+
+  .hero .section-time { top: clamp(7rem, 12vw, 12rem); }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(190px, 28%);
+    gap: clamp(1.25rem, 3vw, 3rem);
+    align-items: end;
+    min-height: 0;
+    padding-top: clamp(1.35rem, 3vw, 3rem);
+  }
+
+  .hero-copy { min-width: 0; }
+
+  h1 {
+    max-width: 15ch;
+    font-size: clamp(3.55rem, 7.4vw, 5.8rem);
+    line-height: 0.82;
+  }
+
+  .hero-line {
+    margin-top: 1rem;
+    max-width: 50ch;
+    font-size: clamp(1.16rem, 1.65vw, 1.65rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+  }
+
+  .support {
+    max-width: 60ch;
+    margin-top: 0.65rem;
+    font-size: clamp(0.98rem, 1.12vw, 1.08rem);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 1rem;
+    align-items: center;
+    margin-top: 1.25rem;
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 50px;
+    padding: 0.72rem 1rem;
+    border: 2px solid var(--ink);
+    color: var(--paper);
+    background: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .store svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+  .store span {
+    display: grid;
+    line-height: 1;
+  }
+  .store small {
+    font-size: 0.62rem;
+    font-weight: 400;
+    opacity: 0.72;
+  }
+  .store.is-pending {
+    color: var(--ink);
+    background: transparent;
+    border-style: dashed;
+    cursor: default;
+    opacity: 0.68;
+  }
+  .source-link {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.22em;
+  }
+
+  .phone {
+    --pw: clamp(180px, 17vw, 260px);
+    position: relative;
+    justify-self: end;
+    box-sizing: border-box;
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border: 2px solid var(--ink);
+    border-radius: calc(var(--pw) * 0.148);
+    background: var(--paper);
+  }
+
+  .phone-key {
+    position: absolute;
+    left: calc(var(--pw) * -0.012);
+    width: calc(var(--pw) * 0.012);
+    border: 1px solid var(--ink);
+    background: var(--paper);
+  }
+  .key-one {
+    top: 18%;
+    height: 6%;
+  }
+  .key-two {
+    top: 28%;
+    height: 10%;
+  }
+  .phone-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    background: var(--paper);
+    font-size: calc(var(--pw) * 0.044);
+  }
+  .island {
+    position: absolute;
+    top: 2.2%;
+    left: 50%;
+    width: 33%;
+    height: 3.8%;
+    border-radius: 999px;
+    background: var(--ink);
+    transform: translateX(-50%);
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: 7% 7% 0;
+    font-size: 0.56em;
+  }
+  .phone-label {
+    margin: 9% 7% 0;
+    color: var(--red);
+    font-size: 0.5em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .phone-art {
+    display: block;
+    width: 80%;
+    margin: 7% auto 0;
+    border: 2px solid var(--ink);
+  }
+  .track {
+    display: grid;
+    width: 80%;
+    margin: 7% auto 0;
+  }
+  .track strong {
+    font-size: 1.08em;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+  .track span {
+    margin-top: 0.18em;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.56em;
+  }
+  .scrub {
+    width: 80%;
+    height: 0.18em;
+    margin: 7% auto 0;
+    background: var(--ink);
+  }
+  .scrub i {
+    display: block;
+    width: 58%;
+    height: 100%;
+    background: var(--red);
+  }
+  .transport {
+    display: flex;
+    justify-content: center;
+    gap: 1.1em;
+    align-items: center;
+    margin-top: 8%;
+    font-family: 'Space Mono', monospace;
+  }
+  .transport b { color: var(--red); }
+
+  .section-head { max-width: 72rem; }
+  .section-head p, .listen-copy > p:first-child {
+    color: var(--red);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .section-head h2, .listen-copy h2, .runout h2 {
+    max-width: 10ch;
+    margin-top: 0.45rem;
+    font-size: clamp(3.3rem, 10vw, 11rem);
+  }
+
+  .server-rows {
+    margin-top: clamp(2.5rem, 6vw, 5rem);
+    border-top: 2px solid var(--ink);
+  }
+  .server-row {
+    display: grid;
+    grid-template-columns: 5.5rem 5rem minmax(0, 0.75fr) minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: center;
+    padding: clamp(1.4rem, 3vw, 2.2rem) 0;
+    border-bottom: 2px solid var(--ink);
+  }
+  .row-time {
+    color: var(--red);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .server-row h3 { font-size: clamp(3rem, 8vw, 8rem); }
+  .server-row p {
+    max-width: 36ch;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+  }
+
+  .server-row :global(.server-logo) {
+    color: var(--ink);
+  }
+
+  .listen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.62fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+    border-top: 2px solid var(--ink);
+  }
+
+  .listen-copy > p:last-child {
+    max-width: 56ch;
+    margin-top: 1.3rem;
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+  }
+  .listen-device {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .burst {
+    display: grid;
+    gap: 0.42rem;
+  }
+  .burst span {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 8px;
+  }
+
+  .burst span::before,
+  .burst span::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: calc(var(--amp) * 47%);
+    height: 100%;
+    background: var(--red);
+  }
+
+  .burst span::before { right: 50%; }
+  .burst span::after { left: 50%; }
+  .mini-phone {
+    display: grid;
+    align-content: space-between;
+    min-height: 340px;
+    border: 2px solid var(--ink);
+    padding: 1rem;
+  }
+  .mini-phone span {
+    font-family: 'Space Mono', monospace;
+    color: var(--red);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .mini-phone b {
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 0.78;
+    letter-spacing: -0.08em;
+  }
+  .mini-phone i {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .feature-list {
+    margin: clamp(2.5rem, 6vw, 5rem) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
+  }
+  .feature-list li {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding: 1.45rem 0;
+    border-bottom: 2px solid var(--ink);
+  }
+  .feature-list > li > span {
+    color: var(--red);
+    font-weight: 700;
+  }
+  .feature-list h3 {
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    line-height: 0.92;
+  }
+  .feature-list p {
+    max-width: 76ch;
+    margin-top: 0.55rem;
+    font-size: clamp(1rem, 1.25vw, 1.13rem);
+  }
+  .stats-line {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: clamp(3rem, 7vw, 6rem);
+    border-block: 2px solid var(--ink);
+  }
+  .stats-line article {
+    min-width: 0;
+    padding: 1rem 0;
+  }
+  .stats-line strong {
+    display: block;
+    color: var(--red);
+    font-size: clamp(3.2rem, 8vw, 8rem);
+    line-height: 0.8;
+    letter-spacing: -0.09em;
+  }
+  .stats-line span {
+    display: block;
+    max-width: 16ch;
+    margin-top: 0.75rem;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .flatline { border-top: 2px solid var(--ink); }
+  .flatline .section-head h2 { max-width: 11ch; }
+  .flatline-rule {
+    height: 3px;
+    margin: clamp(2.5rem, 6vw, 5rem) 0;
+    background: var(--red);
+  }
+  .ownership-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.6rem);
+  }
+  .ownership-list article {
+    border-top: 2px solid var(--ink);
+    padding-top: 1rem;
+  }
+  .ownership-list h3 {
+    color: var(--red);
+    font-size: clamp(1.8rem, 3.6vw, 3.6rem);
+  }
+  .ownership-list p {
+    margin-top: 0.7rem;
+    font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  }
+  .license {
+    margin-top: clamp(2rem, 5vw, 4rem);
+    max-width: 42ch;
+    font-size: clamp(1.5rem, 3.2vw, 3rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+  }
+
+  .faq-list {
+    margin-top: clamp(2.5rem, 6vw, 5rem);
+    border-top: 2px solid var(--ink);
+  }
+  details { border-bottom: 2px solid var(--ink); }
+  summary {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.3rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary span {
+    color: var(--red);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+  }
+  details p {
+    max-width: 72ch;
+    padding: 0 0 1.6rem 5rem;
+    font-size: clamp(1rem, 1.3vw, 1.18rem);
+  }
+
+  .runout {
+    border-top: 2px solid var(--ink);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .runout-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
+    align-items: end;
+  }
+  .runout .lockup { margin-bottom: 1.3rem; }
+  .runout h2 { max-width: 9ch; }
+  .subline {
+    margin-top: 0.7rem;
+    color: var(--red);
+    font-size: clamp(1.7rem, 4vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.07em;
+    line-height: 0.9;
+  }
+  .fine {
+    max-width: 72ch;
+    margin-top: 1.6rem;
+    font-size: 0.75rem;
+    line-height: 1.42;
+  }
+
+  @media (max-width: 900px) {
+    .amplitude {
+      --wave-band: clamp(40px, 13vw, 56px);
+    }
+
+    .wavefield {
+      width: var(--wave-band);
+      opacity: 0.16;
+    }
+    .wave-track { padding-block: 3rem; }
+    .wave-bar { height: 5px; }
+    .poster-section {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .hero.poster-section { padding-left: 1rem; }
+
+    .section-time {
+      position: static;
+      margin-bottom: 1rem;
+    }
+
+    .hero .section-time { margin-top: 1rem; }
+    .identity { padding-inline: 1rem; }
+    .identity p { display: none; }
+    .hero-grid, .listen, .runout-grid { grid-template-columns: 1fr; }
+    .hero-grid { min-height: auto; }
+    .phone { --pw: clamp(196px, 58vw, 258px) !important; }
+    .server-row { grid-template-columns: 4rem minmax(0, 1fr); }
+    .server-row h3, .server-row p { grid-column: 2; }
+    .server-row svg { grid-row: 1 / span 2; }
+    .stats-line, .ownership-list { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .poster-section { padding-left: 4.6rem; }
+    h1 { max-width: 11ch; font-size: clamp(3.35rem, 15vw, 4.75rem); }
+    .section-head h2, .listen-copy h2, .runout h2 { font-size: clamp(3rem, 15vw, 5.2rem); }
+    .actions { align-items: stretch; }
+    .store, .source-link {
+      width: 100%;
+      justify-content: center;
+    }
+    .feature-list li { grid-template-columns: 3rem 1fr; }
+    .stats-line, .ownership-list { grid-template-columns: 1fr; }
+    summary { grid-template-columns: 3rem 1fr; }
+    details p { padding-left: 4rem; }
+    .mini-phone { min-height: 260px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wave-bar {
+      opacity: 1;
+      transform: none !important;
+      transition: none !important;
+    }
+    .source-link, .store { transition: none !important; }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-amplitude-page]');
+    if (!root) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const chunks = Array.from(root.querySelectorAll('[data-wave-chunk]'));
+    if (reduce || !('IntersectionObserver' in window)) {
+      chunks.forEach((chunk) => chunk.classList.add('is-hot'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-hot', entry.isIntersecting);
+      });
+    }, { rootMargin: '-38% 0px -38% 0px', threshold: 0.01 });
+    chunks.forEach((chunk) => observer.observe(chunk));
+  })();
+</script>
