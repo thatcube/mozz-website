@@ -458,4 +458,51 @@ export const VARIANTS: Variant[] = [
     swatch: ['#0b0b0d', '#c80028', '#f5f4f1'],
     mood: 'dark',
   },
+
+  /* ------------------------------------------------------------------ *
+   * Round six — the next generation of the four favourite hero studies.
+   *
+   * Not extensions of umbra / cover / poster / eclipse: siblings. Each
+   * carries the family DNA — a wordmark at poster scale, a solid object
+   * that interrupts the type, red / cream / black and nothing else, one
+   * gesture per page — but opens on a composition the originals never
+   * made. Appended in one block at the end of the array on purpose, so
+   * three sessions can add variants at once without colliding.
+   * ------------------------------------------------------------------ */
+  {
+    slug: 'syzygy',
+    name: 'Syzygy',
+    vibe: 'three bodies in a line, and everything behind them goes dark',
+    blurb:
+      'A colossal MOZZ runs the width of the frame while a black disc crosses in front of a cream one, and the shadow it throws falls the whole height of the page with the phone standing at the end of it.',
+    swatch: ['#08070a', '#c80028', '#efe9df'],
+    mood: 'dark',
+  },
+  {
+    slug: 'imprint',
+    name: 'Imprint',
+    vibe: 'a block of ink laid over the wordmark, and everything under it reverses',
+    blurb:
+      'One enormous MOZZ set in black on paper, with a solid red block pressed across it. Inside the block the letters knock out to cream and the phone reverses with them — one object, two states, a single hard edge.',
+    swatch: ['#f3ede2', '#c80028', '#121011'],
+    mood: 'light',
+  },
+  {
+    slug: 'masthead',
+    name: 'Masthead',
+    vibe: 'the wordmark flies as a flag and the app comes up through it',
+    blurb:
+      'A full-measure MOZZ locked to the top of the page like a broadsheet flag, pierced from below by the phone so the letters behind it simply stop. Hairline rules, one red mark per band, nothing else.',
+    swatch: ['#f5f2ea', '#c80028', '#141312'],
+    mood: 'light',
+  },
+  {
+    slug: 'halftone',
+    name: 'Halftone',
+    vibe: 'the word only resolves where the app is',
+    blurb:
+      'MOZZ drawn as a field of dots on black. The dots open up at the edges of the frame and close to solid red where the phone crosses, so the wordmark focuses around the thing that plays it.',
+    swatch: ['#0a0a0c', '#c80028', '#ece6da'],
+    mood: 'dark',
+  },
 ];
