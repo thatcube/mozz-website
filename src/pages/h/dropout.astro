@@ -1,0 +1,454 @@
+---
+/**
+ * Dropout — two readouts on one axis.
+ *
+ * Above the line, signal: forty-eight ticks stepping down until, two thirds of
+ * the way across the page, there is nothing left. Below the line, the music,
+ * running dead even from the first edge to the last. Same axis, same rhythm,
+ * one of them survives the tunnel.
+ *
+ * That single crossing is the whole argument for downloads being a first-class
+ * part of the app rather than a tier, and it is the only drawing on the page.
+ * Everything else is left as plain type on plain paper.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const COUNT = 48;
+/** The tick at which the bars are gone for good. */
+const DROP = 30;
+
+const TICKS = Array.from({ length: COUNT }, (_, i) => {
+  // Eased rather than linear: signal holds, then gives out quickly.
+  const fall = i < DROP ? Math.pow(1 - i / DROP, 1.45) : 0;
+  return { signal: Math.round(fall * 100) };
+});
+
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#f7f3ea"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Azeret+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="dropout" />
+
+  <main class="sheet">
+    <header class="brow">
+      <span class="lockup">
+        <Mark size={22} decorative />
+        <b>Mozz</b>
+      </span>
+      <span>self&#8209;hosted music player</span>
+      <span class="end">free forever &middot; gpl&#8209;3.0 &middot; no account</span>
+    </header>
+
+    <h1><span>Mozz is a free player for the music on your own server.</span></h1>
+
+    <!-- ---- the crossing -------------------------------------------------- -->
+    <figure
+      class="chart"
+      role="img"
+      aria-label="Two readouts on one axis: the signal steps down to nothing two thirds of the way across, while the music continues at full strength to the edge."
+    >
+      <span class="key up" aria-hidden="true">signal</span>
+      <span class="key down" aria-hidden="true">music</span>
+
+      <div class="ticks" aria-hidden="true">
+        {
+          TICKS.map((tick, i) => (
+            <span class="col" style={`--s:${tick.signal}%;--i:${i}`}>
+              <i class="up" />
+              <i class="down" />
+            </span>
+          ))
+        }
+      </div>
+
+      <span class="axis" aria-hidden="true"></span>
+      <span class="seam" style={`--at:${(DROP / COUNT).toFixed(4)}`} aria-hidden="true">
+        <b>no service</b>
+      </span>
+    </figure>
+
+    <div class="foot">
+      <p class="sup">
+        Stream it at home over your own network. Download a record and it plays at
+        the bottom of a tunnel exactly the way it plays in the kitchen &mdash; same
+        library, same search, same app.
+      </p>
+
+      <div class="right">
+        <p class="works">
+          <span>plays from</span>
+          {SERVERS.map((server) => <b>{server}</b>)}
+        </p>
+
+        <div class="acts">
+          <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+          {
+            APP_STORE_URL ? (
+              <a class="btn wait" href={APP_STORE_URL}>
+                Download on the App Store
+              </a>
+            ) : (
+              <span class="btn wait" aria-disabled="true">
+                Coming to the App Store
+              </span>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #f7f3ea;
+  }
+</style>
+
+<style>
+  .sheet {
+    --paper: #f7f3ea;
+    --ink: #16131a;
+    --soft: #6f6a63;
+    --red: #d8002d;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: clamp(56px, 7.5vh, 88px) 0 clamp(18px, 3vh, 34px);
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .brow,
+  h1,
+  .foot {
+    width: min(84rem, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 60px);
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1.2rem;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  .end {
+    margin-left: auto;
+    opacity: 0.66;
+  }
+
+  h1 {
+    margin-top: clamp(1.2rem, 4.5vh, 2.8rem);
+    font-size: clamp(36px, 6.2vw, 96px);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 94;
+    line-height: 0.94;
+    letter-spacing: -0.042em;
+    text-wrap: balance;
+  }
+
+  /* The measure lives on the span; putting it on the h1 would fight the rule
+     above that centres these blocks in the page. */
+  h1 span {
+    display: block;
+    max-width: 16ch;
+  }
+
+  /* ---- the chart --------------------------------------------------------- */
+
+  .chart {
+    position: relative;
+    display: block;
+    margin-block: auto;
+    padding: 0 clamp(18px, 4vw, 60px);
+  }
+
+  .ticks {
+    display: flex;
+    align-items: center;
+    gap: clamp(2px, 0.44vw, 7px);
+    height: clamp(120px, 30vh, 300px);
+  }
+
+  .col {
+    display: grid;
+    grid-template-rows: 50% 50%;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .col i {
+    display: block;
+    width: 100%;
+    border-radius: 1px;
+  }
+
+  .col .up {
+    align-self: end;
+    height: var(--s);
+    background: var(--ink);
+  }
+
+  .col .down {
+    align-self: start;
+    height: 100%;
+    background: var(--red);
+  }
+
+  /* The signal ticks arrive left to right, then simply stop arriving. */
+  .col .up {
+    transform-origin: bottom;
+    animation: raise 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 13ms);
+  }
+
+  @keyframes raise {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .axis {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(22, 19, 26, 0.34);
+  }
+
+  .seam {
+    --pad: clamp(18px, 4vw, 60px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--at));
+    width: 1px;
+    background: var(--ink);
+  }
+
+  .seam b {
+    position: absolute;
+    left: 0.6rem;
+    top: 0;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(8.5px, 0.7vw, 10.5px);
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .key {
+    position: absolute;
+    left: clamp(18px, 4vw, 60px);
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(8.5px, 0.7vw, 10.5px);
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+  }
+
+  .key.up {
+    top: -1.35em;
+    color: var(--soft);
+  }
+
+  .key.down {
+    bottom: -1.35em;
+    color: var(--red);
+  }
+
+  /* ---- the foot ---------------------------------------------------------- */
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.2rem clamp(1.5rem, 4vw, 4rem);
+    padding-top: clamp(1.8rem, 5vh, 3.2rem);
+  }
+
+  .sup {
+    max-width: 42ch;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.55;
+    color: #47433d;
+    text-wrap: pretty;
+  }
+
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.85rem;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem 0.6rem;
+  }
+
+  .works span {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(8.5px, 0.68vw, 10px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .works b {
+    padding: 0.26rem 0.6rem;
+    border: 1px solid rgba(22, 19, 26, 0.22);
+    border-radius: 999px;
+    font-size: clamp(11px, 0.88vw, 13px);
+    font-weight: 600;
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.9vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--red);
+    color: var(--paper);
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: #a80020;
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(22, 19, 26, 0.34);
+    color: #4f4a44;
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow ------------------------------------------------------------ */
+
+  @media (max-width: 62rem) {
+    .end {
+      margin-left: 0;
+    }
+
+    .foot {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .right {
+      align-items: flex-start;
+    }
+
+    .works,
+    .acts {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(34px, 10.6vw, 48px);
+    }
+
+    /* Half the ticks at this width; the shape of the fall is what matters. */
+    .col:nth-child(even) {
+      display: none;
+    }
+
+    .ticks {
+      gap: 3px;
+      height: clamp(104px, 22vh, 180px);
+    }
+
+    .key.up,
+    .key.down {
+      font-size: 8.5px;
+    }
+
+    .seam b {
+      left: 0.4rem;
+      font-size: 8px;
+    }
+
+    .sup {
+      max-width: 40ch;
+      font-size: 13.5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .col .up {
+      animation: none;
+    }
+
+    .go {
+      transition: none;
+    }
+  }
+</style>

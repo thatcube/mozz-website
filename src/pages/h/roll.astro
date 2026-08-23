@@ -1,0 +1,378 @@
+---
+/**
+ * Roll — the wordmark punched into a player-piano roll.
+ *
+ * A band of red paper crosses the frame, sprocket-perforated top and bottom,
+ * with MOZZ knocked out of it as square holes on a five-by-seven grid. It is a
+ * nod to the 32-pixel mark — the app's own artwork is squares, so the letters
+ * are squares — and to the oldest idea in recorded music: a physical object you
+ * own that plays itself.
+ *
+ * Only the sprockets move, because on a real roll only the sprockets move.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+/** Five wide, seven tall. Read a 1 as a hole. */
+const GLYPHS: Record<string, string[]> = {
+  M: ['10001', '11011', '10101', '10001', '10001', '10001', '10001'],
+  O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+  Z: ['11111', '00010', '00010', '00100', '01000', '01000', '11111'],
+};
+
+const WORD = ['M', 'O', 'Z', 'Z'];
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#0b0a0e"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Azeret+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="roll" />
+
+  <main class="reel">
+    <div class="head">
+      <header class="brow">
+        <span class="lockup">
+          <Mark size={22} decorative />
+          <b>Mozz</b>
+        </span>
+        <span>self&#8209;hosted music player</span>
+        <span class="end">free forever &middot; gpl&#8209;3.0 &middot; no account</span>
+      </header>
+
+      <h1>Mozz is a free player for the music on your own server.</h1>
+    </div>
+
+    <!-- ---- the roll ------------------------------------------------------- -->
+    <div class="roll" role="img" aria-label="A red player-piano roll with MOZZ punched through it.">
+      <span class="sprockets top" aria-hidden="true"></span>
+
+      <div class="word" aria-hidden="true">
+        {
+          WORD.map((letter) => (
+            <span class="glyph">
+              {GLYPHS[letter].map((row) =>
+                [...row].map((cell) => <i class={cell === '1' ? 'hole' : undefined} />)
+              )}
+            </span>
+          ))
+        }
+      </div>
+
+      <span class="sprockets bottom" aria-hidden="true"></span>
+    </div>
+
+    <div class="foot">
+      <p class="sup">
+        Point it at the Plex, Jellyfin or Navidrome server you already run. Stream
+        it at home, or keep an album on the phone and play it with no signal at all.
+      </p>
+
+      <div class="right">
+        <p class="works">
+          {SERVERS.map((server) => <b>{server}</b>)}
+        </p>
+
+        <div class="acts">
+          <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+          {
+            APP_STORE_URL ? (
+              <a class="btn wait" href={APP_STORE_URL}>
+                Download on the App Store
+              </a>
+            ) : (
+              <span class="btn wait" aria-disabled="true">
+                Coming to the App Store
+              </span>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #0b0a0e;
+  }
+</style>
+
+<style>
+  .reel {
+    --void: #0b0a0e;
+    --cream: #f2eee6;
+    --red: #d8002d;
+    --cell: clamp(10px, 1.62vw, 25px);
+    --gap: calc(var(--cell) * 0.12);
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: clamp(56px, 7vh, 84px) 0 clamp(18px, 3vh, 34px);
+    overflow: hidden;
+    background: var(--void);
+    color: var(--cream);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .head,
+  .foot {
+    width: min(84rem, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 62px);
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.32rem 1.2rem;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(242, 238, 230, 0.5);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--cream);
+  }
+
+  .end {
+    margin-left: auto;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin-top: clamp(1rem, 3.6vh, 2.2rem);
+    font-size: clamp(32px, min(5.4vw, 8vh), 82px);
+    font-weight: 800;
+    font-variation-settings: 'wdth' 94;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  /* ---- the roll ----------------------------------------------------------- */
+
+  .roll {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    margin-block: auto;
+    padding: calc(var(--cell) * 1.9) clamp(16px, 4vw, 60px);
+    background: var(--red);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 30px 70px -34px rgba(216, 0, 45, 0.7);
+  }
+
+  /* Perforations: the ground showing through, punched at a fixed pitch so the
+     rhythm stays the same however wide the window gets. */
+  .sprockets {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: calc(var(--cell) * 0.9);
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      var(--void) 0 34%,
+      transparent 36%
+    );
+    background-size: calc(var(--cell) * 1.7) 100%;
+    background-repeat: repeat-x;
+    animation: advance 2.6s linear infinite;
+  }
+
+  .sprockets.top {
+    top: calc(var(--cell) * 0.5);
+  }
+
+  .sprockets.bottom {
+    bottom: calc(var(--cell) * 0.5);
+  }
+
+  @keyframes advance {
+    from {
+      background-position-x: 0;
+    }
+    to {
+      background-position-x: calc(var(--cell) * -1.7);
+    }
+  }
+
+  .word {
+    display: flex;
+    gap: calc(var(--cell) * 1.1);
+  }
+
+  .glyph {
+    display: grid;
+    grid-template-columns: repeat(5, var(--cell));
+    grid-auto-rows: var(--cell);
+    gap: var(--gap);
+  }
+
+  .glyph i {
+    display: block;
+    border-radius: calc(var(--cell) * 0.16);
+  }
+
+  .glyph .hole {
+    background: var(--void);
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  /* ---- the foot ----------------------------------------------------------- */
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.1rem clamp(1.4rem, 4vw, 3.6rem);
+  }
+
+  .sup {
+    max-width: 40ch;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.55;
+    color: rgba(242, 238, 230, 0.68);
+    text-wrap: pretty;
+  }
+
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .works b {
+    padding: 0.28rem 0.64rem;
+    border: 1px solid rgba(242, 238, 230, 0.24);
+    border-radius: 999px;
+    font-size: clamp(11px, 0.88vw, 13px);
+    font-weight: 600;
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.9vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--red);
+    color: #fff;
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: #f10233;
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(242, 238, 230, 0.32);
+    color: rgba(242, 238, 230, 0.72);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow ------------------------------------------------------------- */
+
+  @media (max-width: 62rem) {
+    .end {
+      margin-left: 0;
+    }
+
+    .foot {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .right {
+      align-items: flex-start;
+    }
+
+    .works,
+    .acts {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .reel {
+      --cell: clamp(9px, 3.1vw, 16px);
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(32px, 10.2vw, 46px);
+    }
+
+    .word {
+      gap: calc(var(--cell) * 0.85);
+    }
+
+    .sup {
+      max-width: 36ch;
+      font-size: 13.5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sprockets {
+      animation: none;
+    }
+
+    .go {
+      transition: none;
+    }
+  }
+</style>

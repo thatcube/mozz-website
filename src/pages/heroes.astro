@@ -1,10 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Mark from '../components/Mark.astro';
-import { APP_HEROES, ART_HEROES, NEW_HEROES } from '../data/heroes';
+import { APP_HEROES, ART_HEROES, LATEST_HEROES, NEW_HEROES } from '../data/heroes';
 import { NAME } from '../data/site';
 
 const SETS = [
+  {
+    id: 'latest',
+    title: 'Latest set',
+    note: 'Ten new standalone studies, each built on one memorable gesture and nothing else — a rubber stamp, a rack unit, a torn perforation, a single colossal Z. Same red, white and black; same sentence; ten different worlds to say it in.',
+    heroes: LATEST_HEROES,
+  },
   {
     id: 'new',
     title: 'Current set',
@@ -28,7 +34,7 @@ const SETS = [
 
 <Layout
   title={`${NAME} — hero studies`}
-description="Thirty-nine hero directions for Mozz."
+description="Forty-nine hero directions for Mozz."
   themeColor="#f6f4ee"
   noindex
 >
@@ -45,10 +51,11 @@ description="Thirty-nine hero directions for Mozz."
       <div class="brand"><Mark size={38} decorative /><span>{NAME}</span></div>
       <h1>Pick the opening note.</h1>
       <p>
-        Thirty-nine ways to introduce a free music player for Plex, Jellyfin and
-        Navidrome. The current set explores the red, white and black direction;
-        the earlier studies show the app or carry the idea through illustration.
-        Only the hero is built — the rest of the page follows whichever one wins.
+        Forty-nine ways to introduce a free music player for Plex, Jellyfin and
+        Navidrome. The latest set is ten new poster-like directions; the current
+        set explores the red, white and black direction; the earlier studies show
+        the app or carry the idea through illustration. Only the hero is built —
+        the rest of the page follows whichever one wins.
       </p>
     </header>
 

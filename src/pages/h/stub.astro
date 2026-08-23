@@ -1,0 +1,415 @@
+---
+/**
+ * Stub — a ticket, and the half you keep.
+ *
+ * One object on a black ground: a cream ticket with a real perforation running
+ * down it — punched holes, not a dashed border — and two notches bitten out of
+ * the edges where the tear begins. The large half is the app; the stub is the
+ * part that still works when the signal does not.
+ *
+ * The perforation is the only idea on the page, so everything else is set
+ * plainly and nothing is tilted, glowing or animated.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#0b0a0e"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Azeret+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="stub" />
+
+  <main class="hall">
+    <article class="ticket">
+      <div class="main">
+        <header class="head">
+          <span class="lockup">
+            <Mark size={24} decorative />
+            <b>Mozz</b>
+          </span>
+          <span class="ser">no.&nbsp;000001 &middot; admit everyone</span>
+        </header>
+
+        <h1>Mozz is a free player for the music on your own server.</h1>
+
+        <p class="sup">
+          Point it at the Plex, Jellyfin or Navidrome server you already run.
+          Stream it at home over your own network, or take a record with you and
+          play it with no signal at all.
+        </p>
+
+        <p class="works">
+          {SERVERS.map((server) => <b>{server}</b>)}
+        </p>
+
+        <div class="acts">
+          <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+          {
+            APP_STORE_URL ? (
+              <a class="btn wait" href={APP_STORE_URL}>
+                Download on the App Store
+              </a>
+            ) : (
+              <span class="btn wait" aria-disabled="true">
+                Coming to the App Store
+              </span>
+            )
+          }
+        </div>
+
+        <p class="fine">free forever &middot; gpl&#8209;3.0 &middot; no account, no tracking</p>
+      </div>
+
+      <div class="tear" aria-hidden="true">
+        <span class="notch a"></span>
+        <span class="notch b"></span>
+      </div>
+
+      <aside class="stub">
+        <span class="admit">Admit one</span>
+        <span class="badge">Offline</span>
+        <span class="lines">
+          <i>downloaded</i>
+          <i>plays with no signal</i>
+          <i>row 0 &middot; seat anywhere</i>
+        </span>
+      </aside>
+    </article>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #0b0a0e;
+  }
+</style>
+
+<style>
+  .hall {
+    --void: #0b0a0e;
+    --paper: #f4efe2;
+    --ink: #16131a;
+    --soft: #6d685f;
+    --red: #d8002d;
+    --notch: clamp(16px, 2vw, 30px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100svh;
+    padding: clamp(58px, 8vh, 96px) clamp(16px, 4vw, 60px) clamp(24px, 5vh, 56px);
+    overflow: hidden;
+    background:
+      radial-gradient(78% 64% at 50% 50%, rgba(216, 0, 45, 0.3), transparent 70%),
+      var(--void);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .ticket {
+    display: flex;
+    width: min(76rem, 100%);
+    min-height: clamp(320px, 66vh, 660px);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow:
+      0 50px 90px -40px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(244, 239, 226, 0.08);
+  }
+
+  /* ---- the large half ------------------------------------------------------ */
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: clamp(20px, 3.2vw, 46px);
+  }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+    padding-bottom: clamp(0.7rem, 1.8vh, 1.1rem);
+    border-bottom: 1px solid rgba(22, 19, 26, 0.24);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(15px, 1.2vw, 19px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .ser {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  h1 {
+    max-width: 17ch;
+    margin-top: clamp(1rem, 3vh, 1.9rem);
+    font-size: clamp(30px, min(4.5vw, 6.6vh), 66px);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 94;
+    line-height: 0.96;
+    letter-spacing: -0.042em;
+    text-wrap: balance;
+  }
+
+  .sup {
+    max-width: 44ch;
+    margin-top: clamp(0.7rem, 2vh, 1.2rem);
+    font-size: clamp(12.5px, 0.96vw, 15px);
+    line-height: 1.55;
+    color: #4a463f;
+    text-wrap: pretty;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: clamp(0.8rem, 2vh, 1.2rem);
+  }
+
+  .works b {
+    padding: 0.28rem 0.64rem;
+    border: 1px solid rgba(22, 19, 26, 0.24);
+    border-radius: 999px;
+    font-size: clamp(11px, 0.86vw, 12.5px);
+    font-weight: 600;
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: clamp(0.9rem, 2.6vh, 1.6rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.88vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--red);
+    color: #fff;
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: #a80020;
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(22, 19, 26, 0.34);
+    color: #4f4a44;
+  }
+
+  .fine {
+    margin-top: clamp(0.7rem, 1.8vh, 1.1rem);
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(8.5px, 0.68vw, 10px);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  /* ---- the tear ------------------------------------------------------------ */
+
+  .tear {
+    position: relative;
+    flex: none;
+    width: clamp(14px, 1.6vw, 24px);
+    /* Punched holes, at a fixed pitch, so the tear reads as paper. */
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      var(--void) 0 40%,
+      transparent 42%
+    );
+    background-size: 100% clamp(14px, 1.6vw, 22px);
+    background-repeat: repeat-y;
+  }
+
+  .notch {
+    position: absolute;
+    left: 50%;
+    width: var(--notch);
+    height: var(--notch);
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: var(--void);
+  }
+
+  .notch.a {
+    top: calc(var(--notch) / -2);
+  }
+
+  .notch.b {
+    bottom: calc(var(--notch) / -2);
+  }
+
+  /* ---- the half you keep --------------------------------------------------- */
+
+  .stub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 1.4vw, 22px);
+    flex: none;
+    width: clamp(96px, 15vw, 190px);
+    padding: clamp(18px, 2.4vw, 34px) clamp(8px, 1vw, 16px);
+  }
+
+  .admit,
+  .lines {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .admit {
+    font-size: clamp(15px, 1.5vw, 26px);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 86;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 0.5em 0.42em;
+    background: var(--red);
+    color: #fff;
+    font-size: clamp(11px, 1.05vw, 16px);
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .lines {
+    display: flex;
+    gap: clamp(5px, 0.6vw, 9px);
+  }
+
+  .lines i {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(8px, 0.64vw, 9.5px);
+    font-style: normal;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--soft);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow: the ticket tears across instead of down --------------------- */
+
+  @media (max-width: 52rem) {
+    .ticket {
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .tear {
+      width: auto;
+      height: clamp(14px, 4vw, 22px);
+      background-image: radial-gradient(
+        circle at 50% 50%,
+        var(--void) 0 40%,
+        transparent 42%
+      );
+      background-size: clamp(14px, 4vw, 22px) 100%;
+      background-repeat: repeat-x;
+    }
+
+    .notch {
+      left: auto;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .notch.a {
+      left: calc(var(--notch) / -2);
+    }
+
+    .notch.b {
+      right: calc(var(--notch) / -2);
+    }
+
+    .stub {
+      width: auto;
+      justify-content: space-between;
+      padding: clamp(14px, 3.6vw, 22px) clamp(20px, 3.2vw, 46px);
+    }
+
+    .admit,
+    .badge,
+    .lines {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+
+    .lines {
+      flex-direction: column;
+      gap: 2px;
+      text-align: right;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(30px, 9.4vw, 44px);
+    }
+
+    .sup {
+      max-width: 36ch;
+      font-size: 13px;
+    }
+
+    .acts {
+      padding-top: 1.1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .go {
+      transition: none;
+    }
+  }
+</style>

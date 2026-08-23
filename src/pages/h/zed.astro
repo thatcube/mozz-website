@@ -1,0 +1,424 @@
+---
+/**
+ * Zed — the page is one letter.
+ *
+ * A single Z, drawn as a clip-path rather than set in a typeface, stretched to
+ * the full frame so its two bars become the header and the footer and its
+ * counters become the two text columns. The copy is not placed *on* a poster;
+ * it is placed *inside* the letterform, ragging along the diagonal by way of
+ * shape-outside, which is the only way this idea is worth doing.
+ *
+ * Red does all the drawing. Type stays serif and quiet, so the letter can be
+ * as loud as it likes without the page turning into a shouting match.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#f6f2e9"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="zed" />
+
+  <main class="zed">
+    <div class="glyph" aria-hidden="true"></div>
+
+    <header class="brow">
+      <span class="lockup">
+        <Mark size={22} decorative />
+        <b>Mozz</b>
+      </span>
+      <span>self&#8209;hosted music player</span>
+      <span class="end">free forever &middot; gpl&#8209;3.0 &middot; no account</span>
+    </header>
+
+    <section class="upper">
+      <span class="cut" aria-hidden="true"></span>
+      <h1>Mozz is a free player for the music on your <em>own</em> server.</h1>
+    </section>
+
+    <section class="lower">
+      <span class="cut" aria-hidden="true"></span>
+
+      <p class="works">
+        <span>plays from</span>
+        {SERVERS.map((server) => <b>{server}</b>)}
+      </p>
+
+      <p class="sup">
+        Point it at the machine already humming in your house. Stream a record
+        over your own network, or keep it on the phone and play it with no signal
+        at all — same library, same app, no account anywhere in it.
+      </p>
+    </section>
+
+    <footer class="foot">
+      <div class="acts">
+        <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+        {
+          APP_STORE_URL ? (
+            <a class="btn wait" href={APP_STORE_URL}>
+              Download on the App Store
+            </a>
+          ) : (
+            <span class="btn wait" aria-disabled="true">
+              Coming to the App Store
+            </span>
+          )
+        }
+      </div>
+      <p class="fine">iPhone and iPad &middot; no tracking &middot; no subscription</p>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #f6f2e9;
+  }
+</style>
+
+<style>
+  .zed {
+    --paper: #f6f2e9;
+    --ink: #14121a;
+    --soft: #6d685f;
+    --red: #d8002d;
+
+    /* The letter, as numbers. Bar depth, and where the diagonal's two edges
+       cross the bars — every region below is derived from these. */
+    --bar: 18%;
+    /* Where the diagonal's two edges cross the bars. Keeping them 20 apart
+       gives the diagonal roughly the same visual weight as the bars; wider
+       apart and the letter stops reading as a Z and starts reading as a
+       slash. */
+    --e1: 40%; /* outer edge, at the bottom bar */
+    --e2: 60%; /* inner edge, at the top bar */
+
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .glyph {
+    position: absolute;
+    inset: 0;
+    background: var(--red);
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      var(--e1) calc(100% - var(--bar)),
+      100% calc(100% - var(--bar)),
+      100% 100%,
+      0 100%,
+      var(--e2) var(--bar),
+      0 var(--bar)
+    );
+  }
+
+  /* ---- reversed out of the top bar --------------------------------------- */
+
+  .brow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 1.2rem;
+    padding: max(50px, 5.4vh) clamp(56px, 8vw, 130px) 0 clamp(20px, 4vw, 64px);
+    color: color-mix(in srgb, var(--paper) 82%, transparent);
+    font-size: clamp(9.5px, 0.74vw, 11px);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--paper);
+  }
+
+  .end {
+    margin-left: auto;
+    opacity: 0.78;
+  }
+
+  /* ---- the two counters --------------------------------------------------- */
+
+  .upper,
+  .lower {
+    position: absolute;
+    z-index: 1;
+    top: var(--bar);
+    height: calc(100% - 2 * var(--bar));
+  }
+
+  .cut {
+    display: block;
+    width: 100%;
+    height: 100%;
+    shape-margin: clamp(0.9rem, 1.9vw, 2.1rem);
+  }
+
+  /* Upper-right counter: narrow at the top, opening out as the diagonal falls
+     away. The text starts a third of the way down, where there is room for a
+     line worth reading. */
+  .upper {
+    left: var(--e1);
+    right: 0;
+    padding-right: clamp(20px, 4vw, 64px);
+  }
+
+  /* The float has to own the full height of the counter for the shape to line
+     up with the diagonal, so the text is pushed down from inside instead. */
+  h1 {
+    padding-top: 26vh;
+  }
+
+  .upper .cut {
+    float: left;
+    shape-outside: polygon(0 0, 79.5% 0, 0 100%);
+  }
+
+  h1 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: clamp(26px, min(4.1vw, 6.2vh), 60px);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.014em;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--red);
+  }
+
+  /* Lower-left counter: the mirror. Widest at the top, closing to a point. */
+  .lower {
+    left: 0;
+    width: var(--e2);
+    padding-left: clamp(20px, 4vw, 64px);
+  }
+
+  .lower .cut {
+    float: right;
+    shape-outside: polygon(100% 0, 100% 100%, 20.5% 100%);
+  }
+
+  .works {
+    margin-bottom: clamp(0.8rem, 2vh, 1.3rem);
+    padding-top: 24vh;
+    line-height: 2.2;
+  }
+
+  .works span {
+    display: inline-block;
+    margin-right: 0.35rem;
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .works b {
+    display: inline-block;
+    margin-right: 0.28rem;
+    padding: 0.28rem 0.64rem;
+    border: 1px solid rgba(20, 18, 26, 0.24);
+    border-radius: 999px;
+    font-size: clamp(11px, 0.88vw, 13px);
+    font-weight: 600;
+  }
+
+  .sup {
+    max-width: 46ch;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.6;
+    color: #46423b;
+    text-wrap: pretty;
+  }
+
+  /* ---- reversed out of the bottom bar ------------------------------------- */
+
+  .foot {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem 1.4rem;
+    height: var(--bar);
+    padding: 0 clamp(20px, 4vw, 64px) 0 clamp(20px, 11vw, 180px);
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.9vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--paper);
+    color: var(--red);
+    transition: background 160ms ease, color 160ms ease;
+  }
+
+  .go:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .wait {
+    border: 1.5px dashed color-mix(in srgb, var(--paper) 54%, transparent);
+    color: color-mix(in srgb, var(--paper) 84%, transparent);
+  }
+
+  .fine {
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--paper) 72%, transparent);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--paper);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow: the counters stop being habitable --------------------------
+     Below this width a triangular column holds two words a line, so the letter
+     stops being the layout and becomes the mass at the top of it. */
+
+  @media (max-width: 56rem) {
+    .zed {
+      --bar: 26%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .glyph {
+      position: relative;
+      inset: auto;
+      flex: none;
+      height: clamp(180px, 30vh, 300px);
+    }
+
+    /* Reversed type stops working once the diagonal crosses the row, so the
+       brow comes off the letter and sits on the paper below it. */
+    .brow {
+      position: static;
+      padding: clamp(1rem, 3vh, 1.7rem) clamp(20px, 5vw, 40px) 0;
+      color: var(--soft);
+    }
+
+    .lockup {
+      color: var(--ink);
+    }
+
+    .end {
+      margin-left: 0;
+    }
+
+    .upper,
+    .lower {
+      position: static;
+      width: auto;
+      height: auto;
+      padding: 0 clamp(20px, 5vw, 40px);
+    }
+
+    .upper {
+      padding-top: clamp(0.9rem, 2.6vh, 1.5rem);
+    }
+
+    h1 {
+      padding-top: 0;
+    }
+
+    .works {
+      padding-top: 0;
+      line-height: 1.9;
+    }
+
+    .lower {
+      padding-top: clamp(1rem, 3vh, 1.7rem);
+      padding-bottom: clamp(1.2rem, 3vh, 2rem);
+    }
+
+    /* No diagonal to rag against once the letter is out of the flow. */
+    .cut {
+      display: none;
+    }
+
+    h1 {
+      max-width: 15ch;
+      font-size: clamp(30px, 9vw, 46px);
+    }
+
+    .works {
+      width: auto;
+    }
+
+    .foot {
+      position: relative;
+      height: auto;
+      margin-top: auto;
+      padding: clamp(1rem, 3vh, 1.6rem) clamp(20px, 5vw, 40px);
+      background: var(--red);
+    }
+
+    .brow {
+      padding-inline: clamp(20px, 5vw, 40px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .go {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,311 @@
+---
+/**
+ * Bias — one band, thrown across the page.
+ *
+ * Everything else in the set is square to the frame. This one is not: a single
+ * red band runs off both edges on a hard diagonal, carrying the wordmark, and
+ * the page is simply the two triangles it leaves behind. The claim sits in the
+ * upper one, the practical matter in the lower one.
+ *
+ * That is the whole idea, so nothing else is allowed to tilt, glow or move.
+ * The discipline around the gesture is what keeps it from looking like a
+ * sticker slapped on a template.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#f6f2e9"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Wix+Madefor+Text:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="bias" />
+
+  <main class="slant">
+    <div class="band" aria-hidden="true">
+      <b>MOZZ &middot; MOZZ &middot; MOZZ &middot; MOZZ &middot; MOZZ</b>
+    </div>
+
+    <div class="top">
+      <header class="brow">
+        <span class="lockup">
+          <Mark size={22} decorative />
+          <b>Mozz</b>
+        </span>
+        <span>self&#8209;hosted music player</span>
+        <span class="end">free forever &middot; gpl&#8209;3.0</span>
+      </header>
+
+      <h1>Mozz is a free player for the music on your own server.</h1>
+    </div>
+
+    <div class="bot">
+      <p class="sup">
+        Point it at the Plex, Jellyfin or Navidrome server you already run. Stream
+        it at home, or take an album with you and play it with no signal at all.
+      </p>
+
+      <p class="works">
+        {SERVERS.map((server) => <b>{server}</b>)}
+      </p>
+
+      <div class="acts">
+        <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+        {
+          APP_STORE_URL ? (
+            <a class="btn wait" href={APP_STORE_URL}>
+              Download on the App Store
+            </a>
+          ) : (
+            <span class="btn wait" aria-disabled="true">
+              Coming to the App Store
+            </span>
+          )
+        }
+      </div>
+
+      <p class="fine">iPhone and iPad &middot; no account, no tracking, no subscription</p>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #f6f2e9;
+  }
+</style>
+
+<style>
+  .slant {
+    --paper: #f6f2e9;
+    --ink: #14121a;
+    --soft: #6d685f;
+    --red: #d8002d;
+    --band: clamp(92px, 14vh, 180px);
+    --tilt: -7deg;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100svh;
+    padding: clamp(56px, 7vh, 86px) clamp(20px, 4.4vw, 72px) clamp(18px, 3vh, 36px);
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Wix Madefor Text', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  /* ---- the band ---------------------------------------------------------- */
+
+  .band {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 124vw;
+    height: var(--band);
+    transform: translate(-50%, -50%) rotate(var(--tilt));
+    background: var(--red);
+    box-shadow: 0 26px 60px -34px rgba(20, 18, 26, 0.6);
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .band b {
+    font-family: 'Anton', 'Archivo', 'Helvetica Neue', sans-serif;
+    font-size: calc(var(--band) * 0.74);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--paper);
+  }
+
+  /* ---- the upper triangle ------------------------------------------------ */
+
+  .top,
+  .bot {
+    position: relative;
+    z-index: 1;
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 1.1rem;
+    font-size: clamp(9.5px, 0.74vw, 11px);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  .end {
+    margin-left: auto;
+    opacity: 0.72;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-top: clamp(1rem, 3.4vh, 2rem);
+    font-size: clamp(32px, min(4.9vw, 7.6vh), 76px);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  /* ---- the lower triangle ------------------------------------------------ */
+
+  .bot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .sup {
+    max-width: 40ch;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.55;
+    color: #4a463f;
+    text-wrap: pretty;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: clamp(0.7rem, 1.8vh, 1.1rem);
+  }
+
+  .works b {
+    padding: 0.28rem 0.66rem;
+    border: 1px solid rgba(20, 18, 26, 0.22);
+    border-radius: 999px;
+    font-size: clamp(11px, 0.88vw, 13px);
+    font-weight: 600;
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: clamp(0.8rem, 2.2vh, 1.3rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.9vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--ink);
+    color: var(--paper);
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: var(--red);
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(20, 18, 26, 0.34);
+    color: #4f4a44;
+  }
+
+  .fine {
+    margin-top: clamp(0.7rem, 1.8vh, 1.1rem);
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow ------------------------------------------------------------ */
+
+  @media (max-width: 52rem) {
+    .slant {
+      --band: clamp(74px, 11.5vh, 118px);
+      --tilt: -9deg;
+    }
+
+    .end {
+      margin-left: 0;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(32px, min(10.4vw, 6.4vh), 52px);
+    }
+
+    .bot {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .works,
+    .acts {
+      justify-content: flex-start;
+    }
+
+    .sup {
+      max-width: 34ch;
+      font-size: 13.5px;
+    }
+
+    /* One repeat is a rhythm; three at this width is a smear. */
+    .band b {
+      font-size: calc(var(--band) * 0.62);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .go {
+      transition: none;
+    }
+  }
+</style>

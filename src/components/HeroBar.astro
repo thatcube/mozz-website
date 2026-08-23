@@ -1,5 +1,5 @@
 ---
-import { APP_HEROES, ART_HEROES, HEROES, NEW_HEROES } from '../data/heroes';
+import { APP_HEROES, ART_HEROES, HEROES, LATEST_HEROES, NEW_HEROES } from '../data/heroes';
 
 export interface Props {
   slug: string;
@@ -8,6 +8,7 @@ export interface Props {
 const { slug } = Astro.props;
 const current = HEROES.findIndex((hero) => hero.slug === slug);
 const GROUPS = [
+  { label: 'Latest', heroes: LATEST_HEROES },
   { label: 'New', heroes: NEW_HEROES },
   { label: 'App', heroes: APP_HEROES },
   { label: 'Art', heroes: ART_HEROES },

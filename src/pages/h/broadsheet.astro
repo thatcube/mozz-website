@@ -1,0 +1,485 @@
+---
+/**
+ * Broadsheet — the hero as the front page of a newspaper.
+ *
+ * Everything else in this set is a grotesk poster. This one moves the whole
+ * argument into print furniture: a centred Didone masthead, double rules, a
+ * dateline, and a folio of hairline-separated columns. Nothing decorative is
+ * added; the rules and the column measure do all the ordering.
+ *
+ * The boldness is spent once, on the rubber stamp. It is the only rotated
+ * object, the only red field, and it lands across the masthead the way a
+ * price stamp lands on a paper — because the single most surprising fact
+ * about Mozz is that it costs nothing.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const SERVERS = [
+  { name: 'Plex', note: 'Sign in and pick a library.' },
+  { name: 'Jellyfin', note: 'Quick Connect, or a password.' },
+  { name: 'Navidrome', note: 'Any Subsonic server works.' },
+];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#f4efe2"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Playfair+Display:ital,wght@0,400..900;1,400..600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="broadsheet" />
+
+  <main class="paper">
+    <div class="sheet">
+      <div class="folio">
+        <span>mozzmusic.com</span>
+        <span class="mid">Self&#8209;hosted music player</span>
+        <span>Late edition</span>
+      </div>
+
+      <div class="rule double"></div>
+
+      <div class="masthead">
+        <span class="mh">
+          <h2 class="wordmark" aria-hidden="true">Mozz</h2>
+
+          <!-- The one loud object on the page, straddling the last letter. -->
+          <span class="stamp" aria-hidden="true">
+            <b>Free</b>
+            <i>forever</i>
+          </span>
+        </span>
+      </div>
+
+      <div class="rule double"></div>
+
+      <div class="dateline">
+        <span>Vol.&nbsp;I &mdash; No.&nbsp;1</span>
+        <span>iPhone &amp; iPad</span>
+        <span>GPL&#8209;3.0</span>
+        <span>No account</span>
+        <span class="price">Price: $0</span>
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="columns">
+        <section class="lede">
+          <h1>
+            Mozz is a free player for the music on your <em>own</em> server.
+          </h1>
+
+          <div class="split">
+            <p>
+              Point it at the machine already sitting in your house. The catalogue
+              lands on the phone, search runs on the device, and the first note
+              starts before you have finished putting the phone back in your pocket.
+            </p>
+            <p>
+              Streaming and downloading are the same feature here, not a tier.
+              Keep a record on the phone and it behaves at the bottom of a tunnel
+              exactly as it does in the kitchen.
+            </p>
+            <p>
+              There is no Mozz account, because there is no Mozz server. The app
+              talks to yours and to nobody else, and every part of it is free and
+              open source with nothing held back.
+            </p>
+          </div>
+        </section>
+
+        <section class="aside" aria-label="Supported servers">
+          <h2 class="standing">Plays from</h2>
+          <dl>
+            {
+              SERVERS.map((server) => (
+                <div class="entry">
+                  <dt>{server.name}</dt>
+                  <dd>{server.note}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <div class="acts">
+            <a class="btn go" href={GITHUB_URL}>Read the source</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn wait" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn wait" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+
+          <p class="fine">
+            No tracking, no telemetry, no subscription. Your files stay on hardware
+            you control.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #f4efe2;
+  }
+</style>
+
+<style>
+  .paper {
+    --paper: #f4efe2;
+    --ink: #14110d;
+    --soft: #6d675c;
+    --red: #c80028;
+
+    display: flex;
+    justify-content: center;
+    min-height: 100svh;
+    padding: clamp(56px, 7vh, 84px) clamp(16px, 3vw, 46px) clamp(20px, 4vh, 44px);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .sheet {
+    display: flex;
+    flex-direction: column;
+    width: min(1500px, 100%);
+  }
+
+  /* ---- furniture -------------------------------------------------------- */
+
+  .rule {
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .rule.double {
+    height: 4px;
+    background: none;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .folio,
+  .dateline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.6rem;
+    padding: 0.5rem 0.1rem;
+    font-size: clamp(9.5px, 0.78vw, 11.5px);
+    font-weight: 600;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .folio {
+    justify-content: space-between;
+  }
+
+  .folio .mid {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .dateline {
+    justify-content: space-between;
+  }
+
+  .dateline .price {
+    color: var(--red);
+    font-weight: 800;
+  }
+
+  /* ---- masthead --------------------------------------------------------- */
+
+  .masthead {
+    padding: clamp(6px, 1.4vh, 16px) 0 clamp(4px, 1vh, 12px);
+    text-align: center;
+  }
+
+  /* The stamp is anchored to the word, not the frame, so it straddles the last
+     letter at every width instead of drifting off on a wide screen. */
+  .mh {
+    position: relative;
+    display: inline-block;
+  }
+
+  .wordmark {
+    display: block;
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-size: clamp(66px, 15.6vw, 236px);
+    font-weight: 900;
+    line-height: 0.82;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  .stamp {
+    position: absolute;
+    right: 0;
+    top: 47%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05em;
+    padding: 0.42em 0.72em 0.5em;
+    transform: translate(58%, -50%) rotate(-8.5deg);
+    border: 4px solid var(--red);
+    border-radius: 5px;
+    color: var(--red);
+    line-height: 1;
+    text-transform: uppercase;
+    mix-blend-mode: multiply;
+    animation: land 620ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
+  }
+
+  .stamp b {
+    font-size: clamp(20px, 3.4vw, 50px);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 92;
+    letter-spacing: 0.02em;
+  }
+
+  .stamp i {
+    font-size: clamp(8px, 1.05vw, 15px);
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.34em;
+    text-indent: 0.34em;
+  }
+
+  @keyframes land {
+    from {
+      opacity: 0;
+      transform: translate(46%, -50%) rotate(-8.5deg) scale(1.9);
+    }
+    to {
+      opacity: 1;
+      transform: translate(46%, -50%) rotate(-8.5deg) scale(1);
+    }
+  }
+
+  /* ---- the folio -------------------------------------------------------- */
+
+  .columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 19rem);
+    flex: 1 1 auto;
+    gap: clamp(1.2rem, 2.6vw, 2.6rem);
+    padding-top: clamp(0.9rem, 2.4vh, 1.7rem);
+  }
+
+  .lede {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-size: clamp(30px, 5.3vw, 80px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--red);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 2rem);
+    margin-top: auto;
+    padding-top: clamp(0.9rem, 2.4vh, 1.6rem);
+    border-top: 1px solid rgba(20, 17, 13, 0.28);
+  }
+
+  .split p {
+    font-size: clamp(12.5px, 1vw, 15px);
+    line-height: 1.58;
+    color: #3c382f;
+    text-wrap: pretty;
+    hyphens: auto;
+  }
+
+  .aside {
+    display: flex;
+    flex-direction: column;
+    padding-left: clamp(1.2rem, 2.6vw, 2.6rem);
+    border-left: 1px solid rgba(20, 17, 13, 0.28);
+  }
+
+  .standing {
+    padding-bottom: 0.45rem;
+    border-bottom: 2px solid var(--ink);
+    font-size: clamp(10px, 0.85vw, 12px);
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  .entry {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.52rem 0;
+    border-bottom: 1px solid rgba(20, 17, 13, 0.18);
+  }
+
+  dt {
+    flex: none;
+    width: 6.4rem;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(15px, 1.25vw, 19px);
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+    font-size: clamp(11px, 0.85vw, 12.5px);
+    line-height: 1.4;
+    color: var(--soft);
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: clamp(1rem, 2.6vh, 1.8rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.68rem 1.05rem;
+    font-size: clamp(11.5px, 0.9vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--red);
+    color: var(--paper);
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: #a1001f;
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(20, 17, 13, 0.42);
+    color: #4a453c;
+  }
+
+  .fine {
+    margin-top: 0.85rem;
+    font-size: clamp(10px, 0.78vw, 11.5px);
+    line-height: 1.5;
+    color: var(--soft);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow ----------------------------------------------------------- */
+
+  @media (max-width: 62rem) {
+    .columns {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .aside {
+      padding-left: 0;
+      padding-top: 1.1rem;
+      border-left: 0;
+      border-top: 1px solid rgba(20, 17, 13, 0.28);
+    }
+
+    .acts {
+      margin-top: 1.1rem;
+    }
+  }
+
+  @media (max-width: 62rem) {
+    .split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.7rem;
+    }
+
+    .split p:last-child {
+      display: none;
+    }
+
+    .folio .mid {
+      order: 3;
+      width: 100%;
+    }
+
+    .dateline span:nth-child(3),
+    .dateline span:nth-child(4) {
+      display: none;
+    }
+
+    .stamp {
+      border-width: 3px;
+    }
+
+    .wordmark {
+      font-size: clamp(58px, 20vw, 90px);
+    }
+
+    h1 {
+      max-width: 15ch;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stamp {
+      animation: none;
+    }
+
+    .go {
+      transition: none;
+    }
+  }
+</style>

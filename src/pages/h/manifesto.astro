@@ -1,0 +1,302 @@
+---
+/**
+ * Manifesto — one text field, two voices.
+ *
+ * No illustration, no phone, no shape. The page is a single argument set in a
+ * serif at reading size, and six phrases inside it are set eight times larger
+ * in red. The scale jump happens inline, in the flow, so the loud parts are
+ * genuinely part of the sentence rather than a headline stacked above a body.
+ *
+ * That contrast is the entire design, which is why nothing else on the page is
+ * allowed a second colour, a rule, or a border.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#f7f3ea"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="manifesto" />
+
+  <main class="tract">
+    <header class="brow">
+      <span class="lockup">
+        <Mark size={22} decorative />
+        <b>Mozz</b>
+      </span>
+      <span>self&#8209;hosted music player &middot; iPhone and iPad</span>
+      <span class="end">gpl&#8209;3.0</span>
+    </header>
+
+    <h1><span>Mozz is a free player for the music on your own server.</span></h1>
+
+    <div class="argument">
+      <p>
+        Somewhere in your house there is a machine with your music on it. Bought,
+        ripped, collected, tagged by hand at two in the morning. It is a library,
+        and <strong>it is not rented</strong>. Mozz is the part you hold: point the
+        app at the <b>Plex</b>, <b>Jellyfin</b> or <b>Navidrome</b> server you
+        already run, and the whole collection turns up on your phone &mdash; the
+        same albums, the same artwork, the same order you put them in. Stream it at
+        home over your own network. Take a record with you and it plays
+        <strong>with no signal at all</strong>, because downloading was part of the
+        design and not a tier bolted on afterwards. There is
+        <strong>no account</strong>, because there is no Mozz server to keep one on.
+        Nothing phones home. Nothing expires. Nothing is held back for a paid
+        version that does not exist, and no algorithm quietly decides what you are
+        allowed to hear next. It is <strong>free forever</strong>, open source, and
+        if something better comes along tomorrow
+        <strong>your music is still yours</strong> &mdash; on hardware you own, in
+        files you can move, with nobody's permission needed to press play.
+      </p>
+    </div>
+
+    <footer class="foot">
+      <div class="acts">
+        <a class="btn go" href={GITHUB_URL}>Source on GitHub</a>
+        {
+          APP_STORE_URL ? (
+            <a class="btn wait" href={APP_STORE_URL}>
+              Download on the App Store
+            </a>
+          ) : (
+            <span class="btn wait" aria-disabled="true">
+              Coming to the App Store
+            </span>
+          )
+        }
+      </div>
+      <p class="fine">No account &middot; no tracking &middot; no subscription</p>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #f7f3ea;
+  }
+</style>
+
+<style>
+  .tract {
+    --paper: #f7f3ea;
+    --ink: #16131a;
+    --soft: #6f6a63;
+    --red: #d8002d;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: clamp(56px, 7vh, 84px) clamp(20px, 4.4vw, 76px) clamp(18px, 3vh, 34px);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .brow,
+  h1,
+  .argument,
+  .foot {
+    width: min(86rem, 100%);
+    margin-inline: auto;
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 1.2rem;
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: clamp(14px, 1.1vw, 17px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  .end {
+    margin-left: auto;
+  }
+
+  /* The first shout. Same voice as the emphases below it, one size up. */
+  h1 {
+    margin-top: clamp(0.9rem, 2.8vh, 1.8rem);
+    margin-bottom: clamp(0.9rem, 2.6vh, 1.6rem);
+    font-size: clamp(30px, min(4.6vw, 6.6vh), 70px);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 92;
+    line-height: 0.92;
+    letter-spacing: -0.042em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-wrap: balance;
+  }
+
+  h1 span {
+    display: block;
+    max-width: 22ch;
+  }
+
+  /* ---- the argument -------------------------------------------------------- */
+
+  .argument {
+    columns: 2;
+    column-gap: clamp(1.6rem, 4vw, 4rem);
+    flex: 0 1 auto;
+    margin-bottom: auto;
+  }
+
+  .argument p {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: clamp(13.5px, 1.72vw, 30px);
+    font-weight: 400;
+    line-height: 1.6;
+    text-align: justify;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    color: #2f2c27;
+  }
+
+  .argument b {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 0.86em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* The scale jump, inline. This is the page. */
+  .argument strong {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 2em;
+    font-weight: 900;
+    font-variation-settings: 'wdth' 92;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  /* ---- the foot ------------------------------------------------------------ */
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem 1.4rem;
+    margin-top: auto;
+    padding-top: clamp(1.2rem, 3.4vh, 2.2rem);
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.9vw, 13.5px);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--red);
+    color: var(--paper);
+    transition: background 160ms ease;
+  }
+
+  .go:hover {
+    background: #a80020;
+  }
+
+  .wait {
+    border: 1.5px dashed rgba(22, 19, 26, 0.34);
+    color: #4f4a44;
+  }
+
+  .fine {
+    font-size: clamp(9px, 0.72vw, 10.5px);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow -------------------------------------------------------------- */
+
+  @media (max-width: 62rem) {
+    .end {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 46rem) {
+    .argument {
+      columns: 1;
+    }
+
+    .argument p {
+      text-align: left;
+      hyphens: none;
+    }
+
+    h1 {
+      font-size: clamp(30px, 9vw, 42px);
+    }
+
+    h1 span {
+      max-width: 14ch;
+    }
+
+    .argument p {
+      font-size: 13.5px;
+      line-height: 1.58;
+    }
+
+    .argument strong {
+      font-size: 1.75em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .go {
+      transition: none;
+    }
+  }
+</style>
