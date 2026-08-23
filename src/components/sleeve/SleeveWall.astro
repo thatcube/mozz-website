@@ -1,0 +1,76 @@
+---
+/**
+ * The library wall.
+ *
+ * The one moment per page where the vocabulary is allowed to be wallpaper: a
+ * dense grid of sleeves standing in for a collection. Everywhere else in the
+ * system a mark has to be explaining something.
+ */
+import Sleeve from './Sleeve.astro';
+import { sleeveWall } from '../../data/sleeve-art';
+
+export interface Props {
+  count?: number;
+  seed?: number;
+  /** Smallest tile width; the grid fits as many as the measure allows. */
+  min?: string;
+  gap?: string;
+  frame?: boolean;
+  /** Ground painted behind each tile, so the wall reads as objects on a shelf. */
+  ground?: 'none' | 'bone' | 'ink' | 'red';
+  class?: string;
+  label?: string;
+}
+
+const {
+  count = 48,
+  seed = 7,
+  min = '86px',
+  gap = '10px',
+  frame = true,
+  ground = 'bone',
+  class: className = '',
+  label = 'A wall of album sleeves, drawn as flat geometric marks',
+} = Astro.props;
+
+const wall = sleeveWall(count, seed);
+---
+
+<div
+  class:list={['wall', className]}
+  style={`--wall-min:${min};--wall-gap:${gap}`}
+  role="img"
+  aria-label={label}
+>
+  {wall.map((motif) => (
+    <span class="cell">
+      <Sleeve
+        kind={motif.kind}
+        seed={motif.seed}
+        red={motif.red}
+        inked={motif.inked}
+        ground={motif.inked ? 'ink' : motif.kind === 'nowplaying' ? 'red' : ground}
+        frame={frame}
+      />
+    </span>
+  ))}
+</div>
+
+<style>
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--wall-min), 1fr));
+    gap: var(--wall-gap);
+    width: 100%;
+  }
+
+  .cell {
+    display: block;
+    aspect-ratio: 1;
+  }
+
+  .cell :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+</style>

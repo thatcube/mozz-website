@@ -1,0 +1,83 @@
+---
+/**
+ * DIAGRAM — the week.
+ *
+ * Seven ticks around one ring, and one of them red. A fresh set is built on the
+ * device from records already in the library, so the mark is closed: nothing
+ * arrives from outside the circle.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  activeDay?: number;
+  caption?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  activeDay = 0,
+  caption = 'Built on device',
+  label = 'A ring divided into seven ticks with one marked in red',
+} = Astro.props;
+
+const CX = 150;
+const CY = 146;
+
+const ticks = Array.from({ length: 7 }, (_, i) => {
+  const deg = -90 + i * (360 / 7);
+  const rad = (deg * Math.PI) / 180;
+  const inner = i === activeDay ? 92 : 104;
+  const outer = i === activeDay ? 138 : 128;
+  return {
+    x1: CX + Math.cos(rad) * inner,
+    y1: CY + Math.sin(rad) * inner,
+    x2: CX + Math.cos(rad) * outer,
+    y2: CY + Math.sin(rad) * outer,
+    hot: i === activeDay,
+  };
+});
+---
+
+<Dia ratio="300 / 320" class={className}>
+  <svg viewBox="0 0 300 320" role="img" aria-label={label}>
+    <circle cx={CX} cy={CY} r="116" class="ring" />
+    <circle cx={CX} cy={CY} r="74" class="ring ring-thin" />
+    {ticks.map((tick) => (
+      <line
+        x1={tick.x1}
+        y1={tick.y1}
+        x2={tick.x2}
+        y2={tick.y2}
+        class={tick.hot ? 'tick tick-hot' : 'tick'}
+      />
+    ))}
+    <circle cx={CX} cy={CY} r="9" class="red" />
+  </svg>
+
+  <p class="dl dl--red dl--top" style="left:50%;top:0%">Week 01</p>
+  <p class="dl" style="left:50%;top:93%">{caption}</p>
+</Dia>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2;
+  }
+
+  .ring-thin { stroke-width: 1.1; }
+
+  .tick {
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2.4;
+  }
+
+  .tick-hot {
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 5;
+  }
+
+  .red { fill: var(--sl-red, #c80028); }
+</style>

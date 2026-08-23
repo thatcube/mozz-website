@@ -1,0 +1,1048 @@
+---
+/**
+ * VARIANT — ROTA
+ *
+ * Everything on the page turns. Near-black ground, one central spindle running
+ * the whole height, and every section announced by a circular plate sitting on
+ * that spindle. Where SLEEVE argues from a rectangular grid, ROTA argues from
+ * rotation: concentric rings leaving the server you own, a red playhead
+ * travelling a ring, two rings meeting edge to edge.
+ *
+ * The oversized wordmark is held back to the closing plate, so the hero is
+ * carried by the ring instead.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Sleeve from '../../components/sleeve/Sleeve.astro';
+import SleeveWall from '../../components/sleeve/SleeveWall.astro';
+import Wordmark from '../../components/sleeve/Wordmark.astro';
+import Playhead from '../../components/sleeve/Playhead.astro';
+import Radiate from '../../components/sleeve/Radiate.astro';
+import Vesica from '../../components/sleeve/Vesica.astro';
+import CutRing from '../../components/sleeve/CutRing.astro';
+import Gapless from '../../components/sleeve/Gapless.astro';
+import Equalizer from '../../components/sleeve/Equalizer.astro';
+import Weekly from '../../components/sleeve/Weekly.astro';
+import Narrowing from '../../components/sleeve/Narrowing.astro';
+import Device from '../../components/sleeve/Device.astro';
+import StoreButton from '../../components/sleeve/StoreButton.astro';
+import { featureMark, termMark } from '../../data/sleeve-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your record collection, still turning.';
+const SUPPORT =
+  'Mozz plays the music on your own Plex, Jellyfin or Subsonic server — streamed from the house, or downloaded and carried.';
+
+/** Which mark sits on the spindle at the head of each section. */
+const SPINDLE = [
+  'rings',
+  'nest',
+  'vesica',
+  'cutring',
+  'crosshair',
+  'halves',
+  'disc',
+  'nowplaying',
+  'lens',
+] as const;
+---
+
+<Layout
+  title={`${NAME} — your record collection, still turning`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Connect Plex, Jellyfin or a Subsonic server, stream at home and download for everywhere else."
+  themeColor="#0d0d0e"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="rota">
+    <VariantBar slug="rota" tone="cool" />
+
+    <header class="masthead">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={30} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p class="mast-mid">Rota — rotation study no. 02</p>
+      <p class="mast-end">Free forever · GPL-3.0</p>
+    </header>
+
+    <section class="hero" aria-labelledby="rota-hero">
+      <p class="eyebrow">One library · two modes · no account</p>
+      <h1 id="rota-hero">{HEADLINE}</h1>
+      <p class="hero-support">{SUPPORT}</p>
+
+      <div class="hero-ring">
+        <Playhead period={18} label="A red playhead travelling steadily around a ring" />
+        <p class="ring-note">The playhead does not care where the file came from.</p>
+      </div>
+
+      <div class="actions">
+        <StoreButton />
+        <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+      </div>
+
+      <dl class="hero-stats">
+        {STATS.map((stat) => (
+          <div>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-sources">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[0]} seed={4} /></span>
+        <p class="kicker">Turn 01 — the source</p>
+        <h2 id="rota-sources">It starts at a machine you already own.</h2>
+        <p class="lede">{FAQS[0].a}</p>
+      </div>
+
+      <ul class="server-ring" role="list">
+        {SERVERS.map((server, i) => (
+          <li>
+            <span class="server-index">{String(i + 1).padStart(2, '0')}</span>
+            <span class="server-logo"><ServerLogo name={server.name} size={44} /></span>
+            <h3>{server.name}</h3>
+            <p>{server.note}</p>
+          </li>
+        ))}
+      </ul>
+
+      <figure class="fig fig--wide">
+        <Radiate />
+        <figcaption>
+          <span>Fig. 01</span>
+          <span>
+            The catalogue leaves one machine and reaches everything you carry.
+            There is no service in the middle of this drawing.
+          </span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="turn turn--wall" aria-labelledby="rota-wall">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[1]} seed={9} /></span>
+        <p class="kicker">Turn 02 — the collection</p>
+        <h2 id="rota-wall">Everything you already paid for.</h2>
+        <p class="lede">{FEATURES[0].body}</p>
+      </div>
+
+      <div class="wall-frame">
+        <SleeveWall count={90} seed={23} min="60px" gap="1px" ground="bone" />
+      </div>
+      <p class="wall-note">
+        One wall, once. Every other mark below is drawing an argument, not filling
+        a space.
+      </p>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-parity">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[2]} seed={2} /></span>
+        <p class="kicker">Turn 03 — two modes, one size</p>
+        <h2 id="rota-parity">Streaming and offline are the same feature.</h2>
+      </div>
+
+      <figure class="fig fig--wide">
+        <Vesica />
+        <figcaption>
+          <span>Fig. 02</span>
+          <span>Two equal fields. The overlap is your library, and it is the same library either way.</span>
+        </figcaption>
+      </figure>
+
+      <div class="pair">
+        <article>
+          <p class="key">A — Streaming</p>
+          <p>
+            Play straight off the server over your own network. Browse it, queue
+            an album, hear it — the same interface on every server family,
+            because the app is reading your catalogue rather than someone else's.
+          </p>
+        </article>
+        <article>
+          <p class="key">B — {FEATURES[1].title}</p>
+          <p>{FEATURES[1].body}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-offline">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[3]} seed={6} /></span>
+        <p class="kicker">Turn 04 — the gap</p>
+        <h2 id="rota-offline">Cut the signal. It keeps turning.</h2>
+      </div>
+
+      <div class="split">
+        <figure class="fig fig--tall">
+          <CutRing />
+          <figcaption>
+            <span>Fig. 03</span>
+            <span>A notch taken out of the outer ring. Nothing inside it depends on the missing part.</span>
+          </figcaption>
+        </figure>
+        <div class="split-copy">
+          <p>{FAQS[2].a}</p>
+          <ul role="list">
+            <li><i aria-hidden="true"></i>The catalogue is held on the device, not fetched on demand.</li>
+            <li><i aria-hidden="true"></i>Search and browse with the server unreachable.</li>
+            <li><i aria-hidden="true"></i>Come back into range and it is the same library, unchanged.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-features">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[4]} seed={1} /></span>
+        <p class="kicker">Turn 05 — capabilities</p>
+        <h2 id="rota-features">What it does, in full.</h2>
+        <p class="lede">
+          {FEATURES.length} things, and none of them behind a paid tier. Each one
+          carries the mark that explains it.
+        </p>
+      </div>
+
+      <ol class="rota-features" role="list">
+        {FEATURES.map((feature, i) => (
+          <li>
+            <span class="rf-plate"><Sleeve kind={featureMark(i).kind} seed={i * 4 + 2} /></span>
+            <span class="rf-key">{featureMark(i).key}</span>
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div class="fig-row">
+        <figure class="fig">
+          <Gapless />
+          <figcaption>
+            <span>Fig. 04</span>
+            <span>{FEATURES[3].title} — two rings meeting edge to edge, with nothing between them.</span>
+          </figcaption>
+        </figure>
+        <figure class="fig">
+          <Equalizer />
+          <figcaption>
+            <span>Fig. 05</span>
+            <span>{FEATURES[6].title}</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="fig-row fig-row--uneven">
+        <figure class="fig fig--tall">
+          <Weekly />
+          <figcaption>
+            <span>Fig. 06</span>
+            <span>{FEATURES[5].title}</span>
+          </figcaption>
+        </figure>
+        <figure class="fig">
+          <Narrowing />
+          <figcaption>
+            <span>Fig. 07</span>
+            <span>{FEATURES[2].title} — the register shortens while you are still typing.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-hardware">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[5]} seed={8} /></span>
+        <p class="kicker">Turn 06 — hardware</p>
+        <h2 id="rota-hardware">iPhone and iPad, one app.</h2>
+        <p class="lede">{FAQS[4].a}</p>
+      </div>
+
+      <div class="devices">
+        <Device
+          kind="iphone"
+          screen="nowplaying"
+          width="clamp(178px, 17vw, 250px)"
+          label="iPhone playing a downloaded record with no signal"
+        />
+        <Device
+          kind="ipad"
+          screen="library"
+          width="clamp(250px, 30vw, 430px)"
+          label="iPad showing the album grid held on the device"
+        />
+        <Device
+          kind="iphone"
+          screen="search"
+          width="clamp(178px, 17vw, 250px)"
+          label="iPhone searching the whole catalogue on device"
+        />
+      </div>
+      <p class="device-note">
+        Real hardware proportions, drawn rather than photographed — 71.6 × 147.6
+        for the phone, 178.5 × 247.6 for the tablet.
+      </p>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-terms">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[6]} seed={3} /></span>
+        <p class="kicker">Turn 07 — terms</p>
+        <h2 id="rota-terms">What is not in the machine.</h2>
+      </div>
+
+      <div class="terms">
+        {OWNERSHIP.map((term, i) => (
+          <article>
+            <span class="term-plate">
+              <Sleeve kind={termMark(i).kind} seed={i * 6 + 3} ground={termMark(i).red ? 'red' : 'none'} frame />
+            </span>
+            <span class="term-key">{termMark(i).key}</span>
+            <h3>{term.title}</h3>
+            <p>{term.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="turn" aria-labelledby="rota-faq">
+      <div class="turn-head">
+        <span class="plate"><Sleeve kind={SPINDLE[7]} seed={0} /></span>
+        <p class="kicker">Turn 08 — questions</p>
+        <h2 id="rota-faq">Answered plainly.</h2>
+      </div>
+
+      <dl class="faq">
+        {FAQS.map((faq, i) => (
+          <div>
+            <dt><span>{String(i + 1).padStart(2, '0')}</span>{faq.q}</dt>
+            <dd>{faq.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="closing" aria-labelledby="rota-close">
+      <p class="eyebrow eyebrow--red">Closing plate</p>
+      <h2 id="rota-close">{TAGLINE}</h2>
+      <p class="closing-lede">{SUBLINE}</p>
+      <div class="actions">
+        <StoreButton />
+        <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="closing-mark">
+        <Wordmark />
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={26} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>{SUBLINE} GPL-3.0 with an App Store Exception.</p>
+      <a class="ghost ghost--small" href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #0d0d0e; }
+
+  :global(body) {
+    margin: 0;
+    background: #0d0d0e;
+  }
+
+  :global(*:focus-visible) {
+    outline: 2px solid #d8002d;
+    outline-offset: 4px;
+  }
+
+  .rota {
+    --ink: #0d0d0e;
+    --bone: #f2efe6;
+    --red: #d8002d;
+    --line: rgba(242, 239, 230, 0.2);
+    --line-soft: rgba(242, 239, 230, 0.11);
+    --gut: clamp(1.15rem, 5vw, 4.5rem);
+    --measure: 74rem;
+    --display: 'Familjen Grotesk', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sl-ink: #f2efe6;
+    --sl-bone: #0d0d0e;
+    --sl-red: #d8002d;
+    --sl-rule: rgba(242, 239, 230, 0.34);
+    --sl-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --store-bg: #f2efe6;
+    --store-fg: #0d0d0e;
+    --store-bg-hover: #d8002d;
+    --store-fg-hover: #f2efe6;
+    --store-pending-fg: #f2efe6;
+    --store-pending-border: rgba(242, 239, 230, 0.42);
+
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--display);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Masthead ----------------------------------------------------------- */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem var(--gut);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--display);
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+
+  .mast-mid { opacity: 0.6; }
+  .mast-end { opacity: 0.6; text-align: right; }
+
+  @media (max-width: 46rem) {
+    .mast-mid { display: none; }
+  }
+
+  /* Hero ---------------------------------------------------------------- */
+  .hero {
+    padding: clamp(3rem, 8vw, 7rem) var(--gut) clamp(3rem, 7vw, 6rem);
+    max-width: var(--measure);
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  .eyebrow--red { color: var(--red); opacity: 1; }
+
+  .hero h1 {
+    margin-top: clamp(1.3rem, 3vw, 2.2rem);
+    font-size: clamp(2.5rem, 6.6vw, 5.4rem);
+    line-height: 0.99;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    max-width: 17ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+
+  .hero-support {
+    margin-top: clamp(1.5rem, 2.6vw, 2.1rem);
+    margin-inline: auto;
+    max-width: 54ch;
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    line-height: 1.6;
+    opacity: 0.76;
+  }
+
+  .hero-ring {
+    width: clamp(210px, 32vw, 400px);
+    margin: clamp(2.4rem, 5vw, 4rem) auto clamp(1.6rem, 3vw, 2.4rem);
+  }
+
+  .ring-note {
+    margin-top: 1.2rem;
+    margin-inline: auto;
+    max-width: 46ch;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.9rem, 2vw, 1.6rem);
+    margin-top: clamp(1.4rem, 3vw, 2.2rem);
+  }
+
+  .ghost {
+    color: var(--bone);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--red);
+  }
+
+  .ghost:hover { color: var(--red); }
+  .ghost--small { font-size: 0.64rem; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1rem, 2.4vw, 2rem);
+    margin: clamp(2.6rem, 5vw, 4.2rem) 0 0;
+    padding-top: clamp(1.6rem, 3vw, 2.4rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .hero-stats dt {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    line-height: 1.5;
+  }
+
+  .hero-stats dd {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stats div:last-child dd { color: var(--red); }
+
+  @media (max-width: 46rem) {
+    .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* Turns --------------------------------------------------------------- */
+  .turn {
+    position: relative;
+    padding: clamp(3.2rem, 7vw, 6.4rem) var(--gut);
+    border-top: 1px solid var(--line);
+  }
+
+  /* The spindle: one hairline running the height of every turn. */
+  .turn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--line-soft);
+    pointer-events: none;
+  }
+
+  .turn > * { position: relative; }
+
+  .turn-head {
+    max-width: 60rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .plate {
+    display: block;
+    width: clamp(46px, 5vw, 64px);
+    margin: 0 auto clamp(1.2rem, 2.4vw, 1.8rem);
+    background: var(--ink);
+    padding: 0.4rem 0;
+  }
+
+  .plate :global(svg) { width: 100%; height: auto; display: block; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .turn-head h2 {
+    margin-top: 0.9rem;
+    font-size: clamp(1.85rem, 4.2vw, 3.3rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+    max-width: 20ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    margin-inline: auto;
+    max-width: 58ch;
+    font-size: clamp(0.96rem, 1.2vw, 1.08rem);
+    line-height: 1.62;
+    opacity: 0.74;
+  }
+
+  /* Servers ------------------------------------------------------------- */
+  .server-ring {
+    list-style: none;
+    margin: clamp(2.4rem, 5vw, 3.8rem) auto 0;
+    padding: 0;
+    max-width: var(--measure);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.2rem, 2.6vw, 2.4rem);
+  }
+
+  .server-ring li {
+    text-align: center;
+    padding: clamp(1.4rem, 2.6vw, 2.2rem) clamp(1rem, 2vw, 1.6rem);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  .server-index {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+  }
+
+  .server-logo {
+    display: grid;
+    place-items: center;
+    margin: 0.9rem 0 0.7rem;
+    color: var(--bone);
+  }
+
+  .server-ring h3 {
+    font-size: clamp(1.05rem, 1.6vw, 1.28rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .server-ring p {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 54rem) {
+    .server-ring { grid-template-columns: 1fr; }
+    .server-ring li { border-radius: 2rem; }
+  }
+
+  /* Figures ------------------------------------------------------------- */
+  .fig {
+    margin: clamp(2.4rem, 5vw, 4rem) auto 0;
+    max-width: 44rem;
+    width: 100%;
+  }
+
+  .fig--wide { max-width: 52rem; }
+  .fig--tall { max-width: 20rem; }
+
+  .fig figcaption {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 1.1rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.55;
+    opacity: 0.72;
+  }
+
+  .fig figcaption span:first-child {
+    flex: none;
+    color: var(--red);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 1;
+  }
+
+  .fig-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.6rem, 4vw, 3.4rem);
+    align-items: start;
+    max-width: var(--measure);
+    margin-inline: auto;
+  }
+
+  .fig-row--uneven { grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr); }
+  .fig-row .fig { margin-top: clamp(2.4rem, 5vw, 4rem); }
+  .fig-row--uneven .fig--tall { justify-self: center; }
+
+  @media (max-width: 54rem) {
+    .fig-row,
+    .fig-row--uneven { grid-template-columns: 1fr; }
+  }
+
+  /* Wall ---------------------------------------------------------------- */
+  /* Hairline gaps show through as a printed grid, and the column counts are
+     fixed so ninety tiles always close on a full row. */
+  .wall-frame {
+    max-width: var(--measure);
+    margin: clamp(2.4rem, 5vw, 3.6rem) auto 0;
+    padding: 1px;
+    background: rgba(242, 239, 230, 0.22);
+  }
+
+  .wall-frame :global(.wall) { grid-template-columns: repeat(15, minmax(0, 1fr)); }
+
+  @media (max-width: 66rem) {
+    .wall-frame :global(.wall) { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40rem) {
+    .wall-frame :global(.wall) { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+
+  .wall-note {
+    margin-top: 1.4rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* Pair / split -------------------------------------------------------- */
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.6rem, 4vw, 3.6rem);
+    max-width: 62rem;
+    margin: clamp(2.4rem, 5vw, 3.6rem) auto 0;
+  }
+
+  .key {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.8rem;
+  }
+
+  .pair p:not(.key) {
+    font-size: 0.98rem;
+    line-height: 1.62;
+    opacity: 0.8;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+    gap: clamp(1.8rem, 4vw, 3.6rem);
+    align-items: center;
+    max-width: 62rem;
+    margin: clamp(2rem, 4vw, 3rem) auto 0;
+  }
+
+  .split .fig { margin-top: 0; }
+
+  .split-copy p {
+    font-size: clamp(1rem, 1.3vw, 1.14rem);
+    line-height: 1.6;
+    opacity: 0.84;
+  }
+
+  .split-copy ul {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .split-copy li {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0.74;
+  }
+
+  .split-copy li i {
+    width: 8px;
+    height: 8px;
+    margin-top: 0.44rem;
+    background: var(--red);
+  }
+
+  @media (max-width: 54rem) {
+    .pair,
+    .split { grid-template-columns: 1fr; }
+    .split .fig--tall { max-width: 15rem; margin-inline: auto; }
+  }
+
+  /* Features ------------------------------------------------------------ */
+  .rota-features {
+    list-style: none;
+    margin: clamp(2.4rem, 5vw, 3.8rem) auto 0;
+    padding: 0;
+    max-width: var(--measure);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+  }
+
+  .rota-features li {
+    background: var(--ink);
+    padding: clamp(1.3rem, 2.4vw, 1.9rem);
+    text-align: center;
+  }
+
+  .rf-plate {
+    display: block;
+    width: clamp(52px, 5.4vw, 74px);
+    margin: 0 auto 1rem;
+  }
+
+  .rf-plate :global(svg) { width: 100%; height: auto; display: block; }
+
+  .rf-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+  }
+
+  .rota-features h3 {
+    margin-top: 0.6rem;
+    font-size: clamp(1rem, 1.4vw, 1.16rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .rota-features p {
+    margin-top: 0.6rem;
+    font-size: 0.86rem;
+    line-height: 1.58;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 66rem) {
+    .rota-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 34rem) {
+    .rota-features { grid-template-columns: 1fr; }
+  }
+
+  /* Devices ------------------------------------------------------------- */
+  .devices {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(1.2rem, 3vw, 3rem);
+    margin-top: clamp(2.4rem, 5vw, 4rem);
+  }
+
+  .device-note {
+    margin-top: 1.6rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* Terms --------------------------------------------------------------- */
+  .terms {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.2rem, 2.6vw, 2.2rem);
+    max-width: var(--measure);
+    margin: clamp(2.4rem, 5vw, 3.8rem) auto 0;
+  }
+
+  .terms article { text-align: center; }
+
+  .term-plate {
+    display: block;
+    width: clamp(74px, 8vw, 108px);
+    margin: 0 auto 1rem;
+  }
+
+  .term-plate :global(svg) { width: 100%; height: auto; display: block; }
+
+  .term-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+  }
+
+  .terms h3 {
+    margin-top: 0.6rem;
+    font-size: clamp(1.02rem, 1.5vw, 1.22rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .terms p {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    line-height: 1.58;
+    opacity: 0.72;
+  }
+
+  @media (max-width: 60rem) {
+    .terms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 34rem) {
+    .terms { grid-template-columns: 1fr; }
+  }
+
+  /* FAQ ----------------------------------------------------------------- */
+  .faq {
+    max-width: 62rem;
+    margin: clamp(2.4rem, 5vw, 3.6rem) auto 0;
+  }
+
+  .faq > div {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1rem, 3vw, 2.6rem);
+    padding: clamp(1.1rem, 2.2vw, 1.6rem) 0;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .faq > div:last-child { border-bottom: 1px solid var(--line-soft); }
+
+  .faq dt {
+    display: flex;
+    gap: 0.9rem;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+
+  .faq dt span {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    color: var(--red);
+    padding-top: 0.35rem;
+  }
+
+  .faq dd {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.62;
+    opacity: 0.74;
+  }
+
+  @media (max-width: 54rem) {
+    .faq > div { grid-template-columns: 1fr; gap: 0.7rem; }
+  }
+
+  /* Closing ------------------------------------------------------------- */
+  .closing {
+    padding: clamp(3.4rem, 8vw, 7rem) var(--gut) clamp(2.4rem, 5vw, 4rem);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .closing h2 {
+    margin-top: clamp(1.2rem, 2.6vw, 2rem);
+    font-size: clamp(2.1rem, 5.2vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    max-width: 18ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+
+  .closing-lede {
+    margin-top: 1.2rem;
+    margin-inline: auto;
+    max-width: 46ch;
+    font-size: clamp(1rem, 1.3vw, 1.14rem);
+    line-height: 1.6;
+    opacity: 0.76;
+  }
+
+  .closing-mark {
+    margin-top: clamp(2.6rem, 6vw, 4.6rem);
+    color: var(--bone);
+    opacity: 0.9;
+  }
+
+  .closing-mark :global(svg) { width: 100%; height: auto; display: block; }
+
+  /* Colophon ------------------------------------------------------------ */
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem var(--gut) 2.6rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    opacity: 0.72;
+  }
+
+  .colophon p { max-width: 44ch; }
+
+  @media (max-width: 54rem) {
+    .colophon { justify-content: flex-start; }
+  }
+</style>

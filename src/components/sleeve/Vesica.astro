@@ -1,0 +1,58 @@
+---
+/**
+ * DIAGRAM — streaming and offline, drawn as two equal overlapping fields.
+ *
+ * Two ellipses of identical size crossing to make a lens. Neither is the main
+ * one; the library is the dot where they meet. This is the whole argument about
+ * parity made in one mark.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  left?: string;
+  leftNote?: string;
+  right?: string;
+  rightNote?: string;
+  centre?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  left = 'Streaming',
+  leftNote = 'from the server you run',
+  right = 'Offline',
+  rightNote = 'from the device in your hand',
+  centre = 'One library',
+  label = 'Two equal overlapping ellipses labelled streaming and offline, meeting at a single library',
+} = Astro.props;
+---
+
+<Dia ratio="460 / 300" class={className}>
+  <svg viewBox="0 0 460 300" role="img" aria-label={label}>
+    <ellipse cx="164" cy="122" rx="132" ry="86" class="field" />
+    <ellipse cx="296" cy="122" rx="132" ry="86" class="field" />
+    <circle cx="230" cy="122" r="8" class="dot" />
+    <line x1="230" y1="138" x2="230" y2="248" class="leader" />
+  </svg>
+
+  <p class="dl" style="left:21%;top:41%"><b>{left}</b><i>{leftNote}</i></p>
+  <p class="dl" style="left:79%;top:41%"><b>{right}</b><i>{rightNote}</i></p>
+  <p class="dl dl--red dl--top" style="left:50%;top:88%">{centre}</p>
+</Dia>
+
+<style>
+  .field {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2;
+  }
+
+  .dot { fill: var(--sl-red, #c80028); }
+
+  .leader {
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 1.4;
+  }
+</style>

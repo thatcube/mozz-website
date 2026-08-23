@@ -1,0 +1,105 @@
+---
+/**
+ * DIAGRAM — the catalogue narrowing as you type.
+ *
+ * Stacked hairlines of varying length, the liner-note mark from the sleeve
+ * system, put to work: each column is one more keystroke and the register gets
+ * shorter. The whole thing is answered on the device.
+ */
+import { narrowingSteps } from '../../data/sleeve-art';
+
+export interface Props {
+  class?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  label = 'Five columns of stacked hairlines, each shorter than the last as a search query grows',
+} = Astro.props;
+
+const steps = narrowingSteps();
+const tallest = Math.max(...steps.map((s) => s.rows.length));
+---
+
+<div class:list={['narrow', className]} role="img" aria-label={label}>
+  {steps.map((step, i) => (
+    <div class="step" data-final={i === steps.length - 1 ? 'true' : undefined}>
+      <p class="key">
+        <span class="typed">{step.query || '\u00a0'}</span>
+        <i class="caret" aria-hidden="true"></i>
+      </p>
+      <div class="rows" style={`--slots:${tallest}`}>
+        {step.rows.map((w) => (
+          <i class="row" style={`width:${w}%`}></i>
+        ))}
+      </div>
+      <p class="count">{step.rows.length} shown</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .narrow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(0.6rem, 1.6vw, 1.6rem);
+    width: 100%;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--sl-ink, #131313);
+  }
+
+  .step[data-final] { border-top-color: var(--sl-red, #c80028); }
+
+  .key {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: clamp(0.8rem, 1.1vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    min-height: 1.4em;
+  }
+
+  .caret {
+    width: 2px;
+    height: 1em;
+    background: var(--sl-red, #c80028);
+    flex: none;
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-height: calc(var(--slots) * 13px);
+  }
+
+  .row {
+    display: block;
+    height: 3px;
+    background: var(--sl-ink, #131313);
+  }
+
+  .step[data-final] .row { background: var(--sl-red, #c80028); }
+
+  .count {
+    margin-top: auto;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 40rem) {
+    .narrow { grid-template-columns: repeat(2, 1fr); gap: 1.1rem 1.4rem; }
+    .rows { min-height: 0; }
+  }
+</style>

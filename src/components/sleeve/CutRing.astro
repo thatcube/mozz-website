@@ -1,0 +1,63 @@
+---
+/**
+ * DIAGRAM — the ring with the signal cut out of it.
+ *
+ * A clean notch is taken out of the outer ring; the record inside keeps turning
+ * and the playhead keeps moving. The gap is the point: nothing in the middle of
+ * the drawing depends on the part that is missing.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  gapLabel?: string;
+  innerLabel?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  gapLabel = 'No signal',
+  innerLabel = 'Still playing',
+  label = 'A ring with a clean gap cut out of it, a record still turning inside and the playhead still moving',
+} = Astro.props;
+---
+
+<Dia ratio="320 / 340" class={className}>
+  <svg viewBox="0 0 320 340" role="img" aria-label={label}>
+    <path d="M 216.7 79.7 A 110 110 0 1 1 103.3 79.7" class="ring" />
+
+    <line x1="216.7" y1="79.7" x2="236.5" y2="47.6" class="tick" />
+    <line x1="103.3" y1="79.7" x2="83.5" y2="47.6" class="tick" />
+
+    <circle cx="160" cy="174" r="48" class="ink" />
+    <line x1="160" y1="174" x2="160" y2="126" class="cue" />
+    <circle cx="160" cy="174" r="6" class="bone" />
+    <circle cx="55.4" cy="212" r="9" class="red" />
+  </svg>
+
+  <p class="dl dl--red dl--top" style="left:50%;top:2%">{gapLabel}</p>
+  <p class="dl" style="left:50%;top:93%">{innerLabel}</p>
+</Dia>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 3;
+  }
+
+  .tick {
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 2;
+  }
+
+  .cue {
+    stroke: var(--sl-bone, #f2efe6);
+    stroke-width: 2.5;
+  }
+
+  .ink { fill: var(--sl-ink, #131313); }
+  .bone { fill: var(--sl-bone, #f2efe6); }
+  .red { fill: var(--sl-red, #c80028); }
+</style>

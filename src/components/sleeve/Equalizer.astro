@@ -1,0 +1,70 @@
+---
+/**
+ * DIAGRAM — the equalizer.
+ *
+ * The same hairline logic as the liner-note mark, stood upright and graduated.
+ * A red rule joins the tops, so the curve reads as one gesture across the bands
+ * rather than ten unrelated columns.
+ */
+import Dia from './Dia.astro';
+import { EQ_BANDS } from '../../data/sleeve-art';
+
+export interface Props {
+  class?: string;
+  lowLabel?: string;
+  highLabel?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  lowLabel = 'Low',
+  highLabel = 'High',
+  label = 'Ten graduated bars with a red rule tracing their tops, drawn as an equalizer',
+} = Astro.props;
+
+const BASE = 188;
+const W = 30;
+const GAP = 14;
+const X0 = 17;
+
+const bars = EQ_BANDS.map((band, i) => {
+  const h = band * 2;
+  const x = X0 + i * (W + GAP);
+  return { x, y: BASE - h, h, mid: x + W / 2 };
+});
+
+const curve = bars.map((b) => `${b.mid},${b.y}`).join(' ');
+---
+
+<Dia ratio="460 / 218" class={className}>
+  <svg viewBox="0 0 460 218" role="img" aria-label={label}>
+    <line x1="17" y1="188" x2="443" y2="188" class="base" />
+    {bars.map((bar) => <rect x={bar.x} y={bar.y} width={W} height={bar.h} class="bar" />)}
+    <polyline points={curve} class="curve" />
+    {bars.map((bar) => <circle cx={bar.mid} cy={bar.y} r="4" class="node" />)}
+  </svg>
+
+  <p class="dl dl--l dl--dim" style="left:3.7%;top:93%">{lowLabel}</p>
+  <p class="dl dl--r dl--dim" style="left:96.3%;top:93%">{highLabel}</p>
+  <p class="dl dl--l dl--red" style="left:3.7%;top:10%">{EQ_BANDS.length} bands</p>
+</Dia>
+
+<style>
+  .base {
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2;
+  }
+
+  .bar { fill: var(--sl-ink, #131313); }
+
+  .curve {
+    fill: none;
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 2;
+  }
+
+  .node { fill: var(--sl-red, #c80028); }
+
+  .dl--dim { opacity: 0.62; }
+</style>

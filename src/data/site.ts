@@ -462,4 +462,53 @@ export const VARIANTS: Variant[] = [
     swatch: ['#0b0b0d', '#c80028', '#f5f4f1'],
     mood: 'dark',
   },
+
+  /* ------------------------------------------------------------------ *
+   * Round six — the sleeve system.
+   *
+   * Four sites built entirely out of one album-artwork language: Swiss /
+   * International modernist record-sleeve design in the Blue Note, ECM and
+   * Vignelli lineage. Flat geometric abstraction, bone and near-black and one
+   * signal red, no gradient or shadow anywhere. The marks — concentric rings,
+   * a crossing-ellipse lens, stacked hairlines, a cut ring, a red square
+   * holding a bone circle — are shared through src/data/sleeve-art.ts and
+   * src/components/sleeve/, so all four speak the same vocabulary while
+   * arguing it from four different structures.
+   * ------------------------------------------------------------------ */
+  {
+    slug: 'sleeve',
+    name: 'Sleeve',
+    vibe: 'the record cover as the whole design system',
+    blurb:
+      'Bone paper, a hard 12-column grid and one enormous square plate per idea. The crossing-ellipse lens carries the argument: streaming and offline as two equal fields that overlap on one library.',
+    swatch: ['#f2efe6', '#c80028', '#131313'],
+    mood: 'light',
+  },
+  {
+    slug: 'rota',
+    name: 'Rota',
+    vibe: 'everything on the page turns',
+    blurb:
+      'Near-black, centred on a single spine, every section a circular plate. Concentric rings radiate from the server you own and a red playhead travels the ring, so rotation is the structure and not a decoration.',
+    swatch: ['#0d0d0e', '#c80028', '#f2efe6'],
+    mood: 'dark',
+  },
+  {
+    slug: 'emblem',
+    name: 'Emblem',
+    vibe: 'a museum catalogue of identification plates',
+    blurb:
+      'A ruled left rail and a plate for every claim, each stamped with the red square holding a bone circle. Stacked hairlines do the explaining: the on-device catalogue narrowing as you type.',
+    swatch: ['#eeeae2', '#c80028', '#1b1c1e'],
+    mood: 'light',
+  },
+  {
+    slug: 'pressing',
+    name: 'Pressing',
+    vibe: 'your own copy, coming off the line',
+    blurb:
+      'Full-bleed bands of ink, red and bone, read as stations in a pressing plant. The ring with a notch cut out of it and graduated equalizer bars carry the argument that the copy in your hand is finished.',
+    swatch: ['#0b0b0c', '#d8002d', '#f2efe6'],
+    mood: 'dark',
+  },
 ];

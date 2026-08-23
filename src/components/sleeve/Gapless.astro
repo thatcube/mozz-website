@@ -1,0 +1,62 @@
+---
+/**
+ * DIAGRAM — the gapless queue.
+ *
+ * Two rings meeting exactly edge to edge, with the playhead sitting on the
+ * tangent. There is no third thing between them, which is the entire claim.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  first?: string;
+  second?: string;
+  seam?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  first = 'Track 01',
+  second = 'Track 02',
+  seam = 'No gap',
+  label = 'Two rings touching edge to edge with a red playhead exactly on the join',
+} = Astro.props;
+---
+
+<Dia ratio="460 / 296" class={className}>
+  <svg viewBox="0 0 460 296" role="img" aria-label={label}>
+    <circle cx="120" cy="146" r="96" class="ring" />
+    <circle cx="120" cy="146" r="26" class="ring ring-thin" />
+    <circle cx="120" cy="146" r="6" class="ink" />
+
+    <circle cx="312" cy="146" r="96" class="ring" />
+    <circle cx="312" cy="146" r="26" class="ring ring-thin" />
+    <circle cx="312" cy="146" r="6" class="ink" />
+
+    <line x1="216" y1="34" x2="216" y2="258" class="seam" />
+    <circle cx="216" cy="146" r="10" class="red" />
+  </svg>
+
+  <p class="dl dl--red dl--top" style="left:47%;top:1%">{seam}</p>
+  <p class="dl" style="left:26%;top:94%">{first}</p>
+  <p class="dl" style="left:68%;top:94%">{second}</p>
+</Dia>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2.4;
+  }
+
+  .ring-thin { stroke-width: 1.2; }
+
+  .seam {
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 1.2;
+  }
+
+  .ink { fill: var(--sl-ink, #131313); }
+  .red { fill: var(--sl-red, #c80028); }
+</style>

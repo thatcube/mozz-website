@@ -1,0 +1,1095 @@
+---
+/**
+ * VARIANT — SLEEVE
+ *
+ * The record cover as the entire design system. Bone paper, a hard twelve
+ * column grid, one enormous square plate per idea, and the crossing-ellipse
+ * lens carrying the argument: streaming and offline are two equal fields that
+ * overlap on a single library.
+ *
+ * Every mark on the page comes from src/components/sleeve/. The library wall is
+ * allowed to be wallpaper exactly once; after that each mark has to explain
+ * something or it does not appear.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Sleeve from '../../components/sleeve/Sleeve.astro';
+import SleeveWall from '../../components/sleeve/SleeveWall.astro';
+import Wordmark from '../../components/sleeve/Wordmark.astro';
+import Radiate from '../../components/sleeve/Radiate.astro';
+import Vesica from '../../components/sleeve/Vesica.astro';
+import Narrowing from '../../components/sleeve/Narrowing.astro';
+import Gapless from '../../components/sleeve/Gapless.astro';
+import Weekly from '../../components/sleeve/Weekly.astro';
+import Equalizer from '../../components/sleeve/Equalizer.astro';
+import CutRing from '../../components/sleeve/CutRing.astro';
+import Device from '../../components/sleeve/Device.astro';
+import StoreButton from '../../components/sleeve/StoreButton.astro';
+import { featureMark, termMark } from '../../data/sleeve-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Two fields. One library.';
+const SUPPORT = 'A free, open source player for the music already sitting on your own server.';
+---
+
+<Layout
+  title={`${NAME} — two fields, one library`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at Plex, Jellyfin or a Subsonic server, stream at home, download for anywhere."
+  themeColor="#f2efe6"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="sleeve-page">
+    <VariantBar slug="sleeve" tone="cool" />
+
+    <header class="masthead">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={30} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p class="mast-meta">Sleeve — plate system no. 01</p>
+      <p class="mast-meta mast-meta--end">iPhone · iPad · GPL-3.0</p>
+    </header>
+
+    <section class="hero" aria-labelledby="sleeve-title">
+      <p class="rule-line">
+        <span>Catalogue</span>
+        <span>Bone · Ink · Signal red</span>
+        <span>Free forever</span>
+      </p>
+
+      <Wordmark class="hero-wordmark" />
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="sleeve-title">{HEADLINE}</h1>
+          <p class="support">{SUPPORT}</p>
+          <p class="lede">
+            Connect the server you already run, then take the whole catalogue with
+            you. Playing from the house and playing from the device are the same
+            size on this page because they are the same size in the app.
+          </p>
+          <div class="actions">
+            <StoreButton />
+            <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+          </div>
+          <dl class="hero-stats">
+            {STATS.slice(0, 2).map((stat) => (
+              <div>
+                <dt>{stat.label}</dt>
+                <dd>{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <figure class="hero-plate">
+          <div class="plate-face">
+            <Sleeve kind="vesica" seed={2} ground="bone" frame />
+          </div>
+          <figcaption>
+            <span>Fig. 01</span>
+            <span>Streaming and offline, drawn to the same measure</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band sources" aria-labelledby="sleeve-sources">
+      <div class="band-head">
+        <p class="kicker">01 — Sources</p>
+        <h2 id="sleeve-sources">Point it at a server you already own.</h2>
+        <p class="band-lede">{FAQS[0].a}</p>
+      </div>
+
+      <ol class="server-row" role="list">
+        {SERVERS.map((server, i) => (
+          <li>
+            <span class="server-no">0{i + 1}</span>
+            <span class="server-logo"><ServerLogo name={server.name} size={40} /></span>
+            <h3>{server.name}</h3>
+            <p>{server.note}</p>
+          </li>
+        ))}
+      </ol>
+
+      <figure class="diagram diagram--wide">
+        <Radiate />
+        <figcaption>
+          <span>Fig. 02</span>
+          <span>
+            The catalogue leaves one machine in your house and reaches everything
+            you carry. Nothing in the middle of this drawing belongs to us.
+          </span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="band wall-band" aria-labelledby="sleeve-wall">
+      <div class="band-head band-head--split">
+        <div>
+          <p class="kicker">02 — The collection</p>
+          <h2 id="sleeve-wall">Everything you already paid for, on the shelf.</h2>
+        </div>
+        <p class="band-lede">
+          {FEATURES[0].body}
+        </p>
+      </div>
+
+      <div class="the-wall">
+        <SleeveWall count={80} seed={11} min="52px" gap="8px" />
+      </div>
+
+      <p class="wall-note">
+        One wall, once. Every other mark on this page is doing a job.
+      </p>
+    </section>
+
+    <section class="band parity" aria-labelledby="sleeve-parity">
+      <div class="band-head">
+        <p class="kicker">03 — Parity</p>
+        <h2 id="sleeve-parity">Neither one is the main one.</h2>
+      </div>
+
+      <figure class="diagram diagram--wide">
+        <Vesica />
+        <figcaption>
+          <span>Fig. 03</span>
+          <span>Equal fields. The library is the point where they meet.</span>
+        </figcaption>
+      </figure>
+
+      <div class="parity-grid">
+        <article>
+          <p class="col-key">A — Streaming</p>
+          <h3>Play straight off the machine in the other room.</h3>
+          <p>
+            Browse your own library over your own network, queue an album and
+            hear it. Same interface on every server family, because the app is
+            reading your catalogue rather than someone else's.
+          </p>
+        </article>
+        <article>
+          <p class="col-key">B — Offline</p>
+          <h3>{FEATURES[1].title}</h3>
+          <p>{FEATURES[1].body}</p>
+        </article>
+      </div>
+
+      <div class="parity-proof">
+        <figure class="diagram diagram--tall">
+          <CutRing />
+          <figcaption>
+            <span>Fig. 04</span>
+            <span>The notch is the tunnel. The record does not notice.</span>
+          </figcaption>
+        </figure>
+        <div class="proof-copy">
+          <p class="col-key">Downloads</p>
+          <p>{FAQS[2].a}</p>
+          <ul role="list">
+            <li><i aria-hidden="true"></i>Catalogue held on the device, not fetched on demand.</li>
+            <li><i aria-hidden="true"></i>Search and browse with the server unreachable.</li>
+            <li><i aria-hidden="true"></i>Come home and it is the same library, unchanged.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band instrument" aria-labelledby="sleeve-instrument">
+      <div class="band-head">
+        <p class="kicker">04 — The instrument</p>
+        <h2 id="sleeve-instrument">What the app actually does.</h2>
+        <p class="band-lede">
+          {FEATURES.length} capabilities, each with the mark that explains it. No
+          paid tier is holding any of them back.
+        </p>
+      </div>
+
+      <ol class="feature-list" role="list">
+        {FEATURES.map((feature, i) => (
+          <li>
+            <span class="f-key">{featureMark(i).key}</span>
+            <span class="f-mark">
+              <Sleeve kind={featureMark(i).kind} seed={i * 3} ground="bone" frame />
+            </span>
+            <div class="f-copy">
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+              <p class="f-note">{featureMark(i).note}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="proof-row">
+        <figure class="diagram">
+          <Narrowing />
+          <figcaption>
+            <span>Fig. 05</span>
+            <span>{FEATURES[2].title} — the register shortens while you are still typing.</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="proof-pair">
+        <figure class="diagram">
+          <Gapless />
+          <figcaption>
+            <span>Fig. 06</span>
+            <span>{FEATURES[3].title}</span>
+          </figcaption>
+        </figure>
+        <figure class="diagram">
+          <Equalizer />
+          <figcaption>
+            <span>Fig. 07</span>
+            <span>{FEATURES[6].title}</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="proof-pair proof-pair--offset">
+        <figure class="diagram diagram--tall">
+          <Weekly />
+          <figcaption>
+            <span>Fig. 08</span>
+            <span>{FEATURES[5].title}</span>
+          </figcaption>
+        </figure>
+        <div class="proof-copy">
+          <p class="col-key">Weekly</p>
+          <p>{FEATURES[5].body}</p>
+          <p class="col-key col-key--space">Radio</p>
+          <p>{FEATURES[4].body}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band devices" aria-labelledby="sleeve-devices">
+      <div class="band-head">
+        <p class="kicker">05 — Hardware</p>
+        <h2 id="sleeve-devices">iPhone and iPad, one app.</h2>
+        <p class="band-lede">{FAQS[4].a}</p>
+      </div>
+
+      <div class="device-row">
+        <div class="device-cell">
+          <Device kind="iphone" screen="nowplaying" label="An iPhone showing a downloaded album playing with no signal" />
+          <p class="device-cap">iPhone — playing a downloaded record</p>
+        </div>
+        <div class="device-cell device-cell--wide">
+          <Device kind="ipad" screen="library" label="An iPad showing a grid of albums from a connected server" />
+          <p class="device-cap">iPad — the catalogue, held on device</p>
+        </div>
+        <div class="device-cell">
+          <Device kind="iphone" screen="search" label="An iPhone showing search results narrowing as a query is typed" />
+          <p class="device-cap">iPhone — search across the whole catalogue</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band measure" aria-labelledby="sleeve-measure">
+      <div class="band-head">
+        <p class="kicker">06 — Measured</p>
+        <h2 id="sleeve-measure">Four numbers, plainly set.</h2>
+      </div>
+      <dl class="stat-row">
+        {STATS.map((stat) => (
+          <div>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="band terms" aria-labelledby="sleeve-terms">
+      <div class="band-head band-head--split">
+        <div>
+          <p class="kicker">07 — Terms</p>
+          <h2 id="sleeve-terms">The conditions your library stays yours under.</h2>
+        </div>
+        <p class="band-lede">
+          {OWNERSHIP.length} plates. Each one is a thing the app does not do,
+          which is the part that matters.
+        </p>
+      </div>
+
+      <div class="term-grid">
+        {OWNERSHIP.map((term, i) => (
+          <article>
+            <span class="term-plate">
+              <Sleeve kind={termMark(i).kind} seed={i * 5 + 1} ground={termMark(i).red ? 'red' : 'bone'} frame />
+            </span>
+            <span class="term-key">{termMark(i).key}</span>
+            <h3>{term.title}</h3>
+            <p>{term.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="band queries" aria-labelledby="sleeve-queries">
+      <div class="band-head">
+        <p class="kicker">08 — Queries</p>
+        <h2 id="sleeve-queries">Questions, answered flat.</h2>
+      </div>
+      <dl class="faq">
+        {FAQS.map((item, i) => (
+          <div>
+            <dt><span>Q{i + 1}</span>{item.q}</dt>
+            <dd>{item.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="closing" aria-labelledby="sleeve-close">
+      <p class="rule-line rule-line--invert">
+        <span>Closing plate</span>
+        <span>{SUBLINE}</span>
+        <span>GPL-3.0</span>
+      </p>
+      <div class="closing-grid">
+        <div>
+          <h2 id="sleeve-close">{TAGLINE}</h2>
+          <p class="closing-lede">
+            Your files, on hardware you control, played by an app that has no
+            reason to know anything about you.
+          </p>
+          <div class="actions actions--invert">
+            <StoreButton />
+            <a class="ghost ghost--invert" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="closing-plate">
+          <Sleeve kind="nowplaying" seed={0} />
+        </div>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={28} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>{TAGLINE} {SUBLINE}</p>
+      <a class="ghost ghost--small" href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #f2efe6; }
+
+  :global(body) {
+    margin: 0;
+    background: #f2efe6;
+    color: #131313;
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  :global(*:focus-visible) {
+    outline: 2px solid #c80028;
+    outline-offset: 4px;
+  }
+
+  .sleeve-page {
+    --sl-bone: #f2efe6;
+    --sl-ink: #131313;
+    --sl-red: #c80028;
+    --sl-rule: #cdc7b8;
+    --gut: clamp(1.15rem, 4.5vw, 5.5rem);
+    --col-gap: clamp(0.9rem, 1.8vw, 2.2rem);
+    position: relative;
+    overflow-x: clip;
+    background: var(--sl-bone);
+  }
+
+  /* Masthead ---------------------------------------------------------- */
+  .masthead {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.35rem var(--gut);
+    border-bottom: 2px solid var(--sl-ink);
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    font-size: 1.12rem;
+  }
+
+  .mast-meta,
+  .kicker,
+  .col-key,
+  .f-key,
+  .f-note,
+  .device-cap,
+  .wall-note,
+  .rule-line,
+  .server-no,
+  .diagram figcaption,
+  .faq dt span,
+  .stat-row dt,
+  .hero-stats dt,
+  .ghost {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+
+  .mast-meta { text-align: center; opacity: 0.62; }
+  .mast-meta--end { text-align: right; }
+
+  @media (max-width: 54rem) {
+    .masthead { grid-template-columns: auto 1fr; }
+    .mast-meta { display: none; }
+    .mast-meta--end { display: block; }
+  }
+
+  /* Hero -------------------------------------------------------------- */
+  .hero { padding: clamp(2rem, 4vw, 4rem) var(--gut) clamp(3rem, 6vw, 6rem); }
+
+  .rule-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--sl-rule);
+    opacity: 0.72;
+  }
+
+  .rule-line span:nth-child(2) { text-align: center; }
+  .rule-line span:last-child { text-align: right; }
+
+  .hero-wordmark {
+    margin: clamp(1.4rem, 3vw, 2.6rem) 0 clamp(1.6rem, 3vw, 2.8rem);
+    --wm-weight: 800;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: clamp(1.6rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  h1 {
+    font-size: clamp(2.3rem, 5.2vw, 4.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    max-width: 14ch;
+  }
+
+  .support {
+    margin-top: 1.2rem;
+    font-size: clamp(1.02rem, 1.5vw, 1.32rem);
+    line-height: 1.42;
+    font-weight: 500;
+    max-width: 40ch;
+  }
+
+  .lede {
+    margin-top: 1rem;
+    font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+    line-height: 1.62;
+    max-width: 46ch;
+    opacity: 0.78;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.4rem;
+    margin-top: 1.8rem;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-bottom: 0.28rem;
+    border-bottom: 2px solid var(--sl-red);
+    color: var(--sl-ink);
+    font-size: 0.72rem;
+  }
+
+  .ghost:hover { color: var(--sl-red); }
+
+  .hero-stats {
+    display: flex;
+    gap: clamp(1.6rem, 4vw, 3.4rem);
+    margin-top: 2.4rem;
+    padding-top: 1.3rem;
+    border-top: 1px solid var(--sl-rule);
+  }
+
+  .hero-stats dt { opacity: 0.6; max-width: 18ch; }
+
+  .hero-stats dd {
+    margin: 0.45rem 0 0;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-plate { margin: 0; }
+
+  .hero-plate figcaption {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.5;
+    opacity: 0.72;
+  }
+
+  .hero-plate figcaption span:first-child {
+    flex: none;
+    color: var(--sl-red);
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .plate-face {
+    aspect-ratio: 1;
+    background: var(--sl-bone);
+    border: 2px solid var(--sl-ink);
+  }
+
+  .plate-face :global(svg) { width: 100%; height: 100%; }
+
+  @media (max-width: 60rem) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-plate { max-width: 26rem; }
+  }
+
+  /* Bands ------------------------------------------------------------- */
+  .band {
+    padding: clamp(3rem, 6vw, 6.5rem) var(--gut);
+    border-top: 2px solid var(--sl-ink);
+  }
+
+  .band-head { max-width: 62rem; }
+
+  .band-head--split {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(1.4rem, 4vw, 4rem);
+    max-width: none;
+    align-items: end;
+  }
+
+  .kicker { color: var(--sl-red); }
+
+  .band h2 {
+    margin-top: 0.9rem;
+    font-size: clamp(1.8rem, 3.6vw, 3.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+    max-width: 20ch;
+  }
+
+  .band-lede {
+    margin-top: 1rem;
+    font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+    line-height: 1.62;
+    max-width: 52ch;
+    opacity: 0.78;
+  }
+
+  .band-head--split .band-lede { margin-top: 0; }
+
+  @media (max-width: 54rem) {
+    .band-head--split { grid-template-columns: 1fr; align-items: start; }
+  }
+
+  /* Sources ----------------------------------------------------------- */
+  .server-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--col-gap);
+    margin-top: clamp(2rem, 4vw, 3.4rem);
+  }
+
+  .server-row li {
+    padding-top: 1.1rem;
+    border-top: 2px solid var(--sl-ink);
+  }
+
+  .server-no { display: block; color: var(--sl-red); }
+
+  .server-logo {
+    display: block;
+    margin-top: 1.1rem;
+    color: var(--sl-ink);
+  }
+
+  .server-row h3 {
+    margin-top: 1rem;
+    font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .server-row p {
+    margin-top: 0.55rem;
+    font-size: 0.94rem;
+    line-height: 1.58;
+    opacity: 0.78;
+  }
+
+  @media (max-width: 48rem) {
+    .server-row { grid-template-columns: 1fr; }
+  }
+
+  /* Diagrams ---------------------------------------------------------- */
+  .diagram { margin: 0; }
+
+  .diagram--wide {
+    margin-top: clamp(2.4rem, 5vw, 4.5rem);
+    max-width: 62rem;
+  }
+
+  .diagram--tall { max-width: 22rem; }
+
+  .diagram figcaption {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.1rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--sl-rule);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    opacity: 0.74;
+  }
+
+  .diagram figcaption span:first-child {
+    flex: none;
+    color: var(--sl-red);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+  }
+
+  /* Wall -------------------------------------------------------------- */
+  .the-wall { margin-top: clamp(2rem, 4vw, 3.4rem); }
+
+  /* Fixed column counts so the wall always closes on a full row. */
+  .the-wall :global(.wall) { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+
+  @media (max-width: 66rem) {
+    .the-wall :global(.wall) { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40rem) {
+    .the-wall :global(.wall) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  }
+
+  .wall-note {
+    margin-top: 1.2rem;
+    opacity: 0.55;
+  }
+
+  /* Parity ------------------------------------------------------------ */
+  .parity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.6rem, 4vw, 4rem);
+    margin-top: clamp(2.4rem, 5vw, 4rem);
+  }
+
+  .parity-grid article {
+    padding-top: 1.1rem;
+    border-top: 2px solid var(--sl-ink);
+  }
+
+  .col-key { color: var(--sl-red); display: block; }
+  .col-key--space { margin-top: 1.6rem; }
+
+  .parity-grid h3,
+  .proof-copy h3 {
+    margin-top: 1rem;
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    max-width: 20ch;
+  }
+
+  .parity-grid p:last-child {
+    margin-top: 0.8rem;
+    font-size: 0.97rem;
+    line-height: 1.62;
+    opacity: 0.8;
+  }
+
+  .parity-proof {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) 1fr;
+    gap: clamp(1.8rem, 5vw, 4.5rem);
+    align-items: center;
+    margin-top: clamp(2.6rem, 6vw, 5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--sl-rule);
+  }
+
+  .proof-copy p {
+    font-size: 0.99rem;
+    line-height: 1.62;
+    max-width: 48ch;
+    opacity: 0.82;
+  }
+
+  .proof-copy .col-key { opacity: 1; margin-bottom: 0.7rem; }
+
+  .proof-copy ul {
+    margin-top: 1.3rem;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .proof-copy li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .proof-copy li i {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    background: var(--sl-red);
+  }
+
+  @media (max-width: 54rem) {
+    .parity-grid { grid-template-columns: 1fr; }
+    .parity-proof { grid-template-columns: 1fr; }
+    .diagram--tall { max-width: 18rem; }
+  }
+
+  /* Features ---------------------------------------------------------- */
+  .feature-list {
+    margin-top: clamp(2rem, 4vw, 3.4rem);
+    display: grid;
+    gap: 0;
+  }
+
+  .feature-list li {
+    display: grid;
+    grid-template-columns: 5rem 7rem 1fr;
+    gap: clamp(1rem, 3vw, 2.6rem);
+    align-items: start;
+    padding: clamp(1.3rem, 2.4vw, 2rem) 0;
+    border-top: 1px solid var(--sl-rule);
+  }
+
+  .feature-list li:first-child { border-top: 2px solid var(--sl-ink); }
+  .feature-list li:last-child { border-bottom: 2px solid var(--sl-ink); }
+
+  .f-key { color: var(--sl-red); padding-top: 0.35rem; }
+
+  .f-mark { display: block; }
+  .f-mark :global(svg) { width: 100%; height: auto; }
+
+  .f-copy h3 {
+    font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    line-height: 1.14;
+  }
+
+  .f-copy p {
+    margin-top: 0.6rem;
+    font-size: 0.97rem;
+    line-height: 1.62;
+    max-width: 58ch;
+    opacity: 0.8;
+  }
+
+  .f-note {
+    margin-top: 0.9rem !important;
+    opacity: 0.55 !important;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 48rem) {
+    .feature-list li { grid-template-columns: 3.6rem 1fr; }
+    .f-mark { grid-column: 1; grid-row: 2; }
+    .f-copy { grid-column: 2; grid-row: 1 / span 2; }
+  }
+
+  .proof-row { margin-top: clamp(2.6rem, 5vw, 4.5rem); }
+
+  .proof-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.8rem, 5vw, 4.5rem);
+    align-items: end;
+    margin-top: clamp(2.6rem, 5vw, 4.5rem);
+  }
+
+  .proof-pair--offset {
+    grid-template-columns: minmax(0, 20rem) 1fr;
+    align-items: center;
+  }
+
+  @media (max-width: 54rem) {
+    .proof-pair,
+    .proof-pair--offset { grid-template-columns: 1fr; }
+  }
+
+  /* Devices ----------------------------------------------------------- */
+  .device-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(1.4rem, 4vw, 3.6rem);
+    margin-top: clamp(2.4rem, 5vw, 4rem);
+    padding: clamp(1.8rem, 4vw, 3.4rem) clamp(1rem, 3vw, 3rem);
+    border: 2px solid var(--sl-ink);
+  }
+
+  .device-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .device-cap { opacity: 0.62; text-align: center; }
+
+  /* Stats ------------------------------------------------------------- */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--col-gap);
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .stat-row > div {
+    padding-top: 1rem;
+    border-top: 2px solid var(--sl-ink);
+  }
+
+  .stat-row dt { opacity: 0.6; max-width: 18ch; }
+
+  .stat-row dd {
+    margin: 0.6rem 0 0;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.94;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-row > div:nth-child(4) dd { color: var(--sl-red); }
+
+  @media (max-width: 48rem) {
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Terms ------------------------------------------------------------- */
+  .term-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--col-gap);
+    margin-top: clamp(2.2rem, 4vw, 3.4rem);
+  }
+
+  .term-grid article {
+    padding-top: 1.1rem;
+    border-top: 2px solid var(--sl-ink);
+  }
+
+  .term-plate {
+    display: block;
+    aspect-ratio: 1;
+    margin-bottom: 1.1rem;
+  }
+
+  .term-plate :global(svg) { width: 100%; height: 100%; }
+
+  .term-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    color: var(--sl-red);
+    margin-bottom: 0.5rem;
+  }
+
+  .term-grid h3 {
+    font-size: clamp(1.1rem, 1.7vw, 1.38rem);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .term-grid p {
+    margin-top: 0.55rem;
+    font-size: 0.93rem;
+    line-height: 1.58;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 60rem) {
+    .term-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 34rem) {
+    .term-grid { grid-template-columns: 1fr; }
+  }
+
+  /* FAQ --------------------------------------------------------------- */
+  .faq { margin-top: clamp(2rem, 4vw, 3.2rem); }
+
+  .faq > div {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: clamp(1rem, 4vw, 3.4rem);
+    padding: clamp(1.2rem, 2.4vw, 1.9rem) 0;
+    border-top: 1px solid var(--sl-rule);
+  }
+
+  .faq > div:first-child { border-top: 2px solid var(--sl-ink); }
+  .faq > div:last-child { border-bottom: 2px solid var(--sl-ink); }
+
+  .faq dt {
+    display: flex;
+    gap: 1rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.32rem);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .faq dt span {
+    flex: none;
+    color: var(--sl-red);
+    padding-top: 0.3rem;
+  }
+
+  .faq dd {
+    margin: 0;
+    font-size: 0.97rem;
+    line-height: 1.62;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 54rem) {
+    .faq > div { grid-template-columns: 1fr; gap: 0.7rem; }
+  }
+
+  /* Closing ----------------------------------------------------------- */
+  .closing {
+    padding: clamp(3rem, 6vw, 6.5rem) var(--gut);
+    background: var(--sl-ink);
+    color: var(--sl-bone);
+    --sl-bone: #f2efe6;
+    --sl-ink: #131313;
+    --store-bg: #f2efe6;
+    --store-fg: #131313;
+    --store-bg-hover: #c80028;
+    --store-pending-fg: #f2efe6;
+    --store-pending-border: rgba(242, 239, 230, 0.45);
+  }
+
+  .rule-line--invert { border-bottom-color: rgba(242, 239, 230, 0.28); }
+
+  .closing-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--col-gap);
+    align-items: end;
+    margin-top: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  .closing h2 {
+    font-size: clamp(2.1rem, 5.4vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    font-weight: 800;
+    max-width: 16ch;
+  }
+
+  .closing-lede {
+    margin-top: 1.3rem;
+    font-size: clamp(1rem, 1.3vw, 1.16rem);
+    line-height: 1.58;
+    max-width: 46ch;
+    opacity: 0.78;
+  }
+
+  .actions--invert .ghost { color: #f2efe6; }
+  .actions--invert .ghost:hover { color: #f2efe6; border-bottom-color: #f2efe6; }
+
+  .closing-plate {
+    width: 100%;
+    max-width: 21rem;
+    margin-left: auto;
+  }
+
+  .closing-plate :global(svg) { width: 100%; height: auto; }
+
+  @media (max-width: 60rem) {
+    .closing-grid { grid-template-columns: 1fr; align-items: start; }
+    .closing-plate { max-width: 14rem; margin-top: clamp(2.2rem, 6vw, 3rem); }
+  }
+
+  /* Colophon ---------------------------------------------------------- */
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 1.6rem var(--gut);
+    background: var(--sl-ink);
+    color: var(--sl-bone);
+    border-top: 1px solid rgba(242, 239, 230, 0.2);
+  }
+
+  .colophon .lockup { color: #f2efe6; }
+
+  .colophon p {
+    font-size: 0.86rem;
+    opacity: 0.66;
+  }
+
+  .ghost--small { color: #f2efe6; }
+</style>

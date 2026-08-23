@@ -1,0 +1,1131 @@
+---
+/**
+ * VARIANT — PRESSING
+ *
+ * The page is a run through a pressing plant. Every section is a full-bleed
+ * band and the ground changes as you descend — ink, then red, then bone, then
+ * ink again — so the concept is paced by colour rather than by rules or by a
+ * rail. The primary devices are the cut ring (a record with a notch taken out
+ * of it that keeps playing) and the equalizer bars, both of which are built
+ * from the same hairline logic as the sleeves.
+ *
+ * The oversized wordmark appears exactly once, in the hero.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import Sleeve from '../../components/sleeve/Sleeve.astro';
+import SleeveWall from '../../components/sleeve/SleeveWall.astro';
+import Wordmark from '../../components/sleeve/Wordmark.astro';
+import CutRing from '../../components/sleeve/CutRing.astro';
+import Equalizer from '../../components/sleeve/Equalizer.astro';
+import Vesica from '../../components/sleeve/Vesica.astro';
+import Radiate from '../../components/sleeve/Radiate.astro';
+import Narrowing from '../../components/sleeve/Narrowing.astro';
+import Gapless from '../../components/sleeve/Gapless.astro';
+import Weekly from '../../components/sleeve/Weekly.astro';
+import Playhead from '../../components/sleeve/Playhead.astro';
+import Device from '../../components/sleeve/Device.astro';
+import StoreButton from '../../components/sleeve/StoreButton.astro';
+import { featureMark, termMark } from '../../data/sleeve-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Pressed once. Plays anywhere you take it.';
+const SUPPORT =
+  'A free, open source player for the Plex, Jellyfin or Subsonic server you already run. Stream it over your own network, or press a copy onto the device and walk out the door.';
+
+const STATIONS = [
+  { no: '01', name: 'Source' },
+  { no: '02', name: 'Master' },
+  { no: '03', name: 'Two modes' },
+  { no: '04', name: 'The cut' },
+  { no: '05', name: 'Capabilities' },
+  { no: '06', name: 'Hardware' },
+  { no: '07', name: 'Terms' },
+  { no: '08', name: 'Queries' },
+];
+---
+
+<Layout
+  title={`${NAME} — pressed once, plays anywhere`}
+  description="Mozz is a free, open source music player for iPhone and iPad that connects to your own Plex, Jellyfin or Subsonic server. Streaming and downloads are the same feature."
+  themeColor="#131313"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;800&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="press">
+    <VariantBar slug="pressing" tone="dark" />
+
+    <header class="topline">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={30} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p class="runline">Pressing — a run in eight stations</p>
+      <p class="runline runline--end">GPL-3.0 · iOS 17+</p>
+    </header>
+
+    <!-- ============================================ HERO — ink -->
+    <section class="band band--ink hero" aria-labelledby="press-hero">
+      <p class="station"><span>00</span>Intake</p>
+
+      <h1 id="press-hero">{HEADLINE}</h1>
+      <p class="hero-support">{SUPPORT}</p>
+
+      <div class="actions">
+        <StoreButton />
+        <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+      </div>
+
+      <div class="hero-mark" aria-hidden="true">
+        <Wordmark />
+      </div>
+
+      <dl class="stats">
+        {STATS.map((stat) => (
+          <div>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <ol class="run" role="list">
+        {STATIONS.map((station) => (
+          <li><span>{station.no}</span>{station.name}</li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ============================================ 01 SOURCE — bone -->
+    <section class="band band--bone" aria-labelledby="press-source">
+      <p class="station"><span>01</span>Source</p>
+
+      <div class="split">
+        <div>
+          <h2 id="press-source">The master is already in your house.</h2>
+          <p class="lede">{FAQS[0].a}</p>
+        </div>
+        <div class="split-aside">
+          <p class="micro">Three server families, one behaviour</p>
+          <ul class="srvs" role="list">
+            {SERVERS.map((server) => (
+              <li>
+                <span class="srv-logo"><ServerLogo name={server.name} size={30} /></span>
+                <span>
+                  <strong>{server.name}</strong>
+                  <em>{server.note}</em>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <figure class="fig fig--wide">
+        <Radiate />
+        <figcaption>
+          <b>Fig. 01</b>
+          <span>
+            One machine you own, and everything downstream of it. There is no
+            service in the middle of this drawing.
+          </span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ============================================ 02 MASTER — ink, the wall -->
+    <section class="band band--ink" aria-labelledby="press-master">
+      <p class="station"><span>02</span>Master</p>
+
+      <div class="split">
+        <div>
+          <h2 id="press-master">{FEATURES[0].title}.</h2>
+          <p class="lede">{FEATURES[0].body}</p>
+        </div>
+        <div class="split-aside">
+          <p class="micro">Search across the whole run</p>
+          <p class="big-num">{STATS[0].value}</p>
+          <p class="micro micro--dim">{STATS[0].label}</p>
+          <p class="big-num big-num--red">{STATS[1].value}</p>
+          <p class="micro micro--dim">{STATS[1].label}</p>
+        </div>
+      </div>
+
+      <div class="wall-frame">
+        <SleeveWall count={96} seed={57} min="56px" gap="1px" ground="bone" />
+      </div>
+      <p class="wall-note">
+        One wall, once. Every mark after this one is drawing an argument.
+      </p>
+    </section>
+
+    <!-- ============================================ 03 TWO MODES — red -->
+    <section class="band band--red" aria-labelledby="press-modes">
+      <p class="station"><span>03</span>Two modes</p>
+
+      <h2 id="press-modes">Streaming and downloads come off the same press.</h2>
+
+      <figure class="fig fig--wide">
+        <Vesica />
+        <figcaption>
+          <b>Fig. 02</b>
+          <span>Two fields of equal size. Neither one is the main one.</span>
+        </figcaption>
+      </figure>
+
+      <div class="two-up">
+        <article>
+          <p class="key">A — Streaming</p>
+          <p>
+            Play straight off the server on your own network. The interface is
+            the same on every server family, because the app is reading your
+            catalogue rather than someone else's.
+          </p>
+        </article>
+        <article>
+          <p class="key">B — {FEATURES[1].title}</p>
+          <p>{FEATURES[1].body}</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================ 04 THE CUT — ink -->
+    <section class="band band--ink" aria-labelledby="press-cut">
+      <p class="station"><span>04</span>The cut</p>
+
+      <div class="cut">
+        <figure class="fig">
+          <CutRing />
+          <figcaption>
+            <b>Fig. 03</b>
+            <span>A notch taken out of the outer ring. Nothing inside it depends on the notch.</span>
+          </figcaption>
+        </figure>
+        <div>
+          <h2 id="press-cut">Cut the signal. It keeps playing.</h2>
+          <p class="lede">{FAQS[2].a}</p>
+          <ul class="ticks" role="list">
+            <li><i aria-hidden="true"></i>The catalogue is held on the device, not fetched on demand.</li>
+            <li><i aria-hidden="true"></i>Search and browse with the server unreachable.</li>
+            <li><i aria-hidden="true"></i>Come back into range and it is the same library, unchanged.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tail">
+        <h3 class="sub">{FEATURES[2].title}</h3>
+        <p class="lede">{FEATURES[2].body}</p>
+        <figure class="fig fig--full">
+          <Narrowing />
+          <figcaption>
+            <b>Fig. 04</b>
+            <span>
+              Each column is the same register one keystroke later. The rules
+              are the results, and they shorten while you are still typing.
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================ 05 CAPABILITIES — bone -->
+    <section class="band band--bone" aria-labelledby="press-caps">
+      <p class="station"><span>05</span>Capabilities</p>
+
+      <h2 id="press-caps">Everything comes off the same run.</h2>
+      <p class="lede">
+        {FEATURES.length} capabilities, all of them in the free app, because
+        there is no other kind.
+      </p>
+
+      <ul class="caps" role="list">
+        {FEATURES.map((feature, i) => (
+          <li>
+            <span class="cap-mark"><Sleeve kind={featureMark(i).kind} seed={i * 5 + 3} ground="bone" frame /></span>
+            <span class="cap-key">{featureMark(i).key}</span>
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="fig-row">
+        <figure class="fig">
+          <Equalizer />
+          <figcaption>
+            <b>Fig. 05</b>
+            <span>{FEATURES[6].title} — bands built from the same hairline as the sleeves.</span>
+          </figcaption>
+        </figure>
+        <figure class="fig">
+          <Gapless />
+          <figcaption>
+            <b>Fig. 06</b>
+            <span>{FEATURES[3].title} — two rings meeting edge to edge, with no space between them.</span>
+          </figcaption>
+        </figure>
+        <figure class="fig">
+          <Weekly />
+          <figcaption>
+            <b>Fig. 07</b>
+            <span>{FEATURES[5].title} — a fresh notch each week, cut on the device.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================ 06 HARDWARE — ink -->
+    <section class="band band--ink" aria-labelledby="press-hw">
+      <p class="station"><span>06</span>Hardware</p>
+
+      <div class="split">
+        <div>
+          <h2 id="press-hw">Two players, one pressing.</h2>
+          <p class="lede">{FAQS[4].a}</p>
+          <p class="lede">
+            The iPad lays the catalogue out as a wall of sleeves. The iPhone
+            carries the same run in your pocket, and behaves identically with
+            the server out of reach.
+          </p>
+        </div>
+        <div class="split-aside">
+          <div class="playhead-box">
+            <Playhead />
+          </div>
+          <p class="micro micro--dim">The playhead — a red dot travelling a ring</p>
+        </div>
+      </div>
+
+      <div class="devices">
+        <figure>
+          <Device
+            kind="ipad"
+            screen="library"
+            width="clamp(236px, 30vw, 420px)"
+            label="iPad showing the album grid held on the device"
+          />
+          <figcaption>iPad — the run, laid out flat</figcaption>
+        </figure>
+        <figure>
+          <Device
+            kind="iphone"
+            screen="nowplaying"
+            width="clamp(168px, 16vw, 240px)"
+            label="iPhone playing a downloaded record with no signal"
+          />
+          <figcaption>iPhone — a pressed copy, offline</figcaption>
+        </figure>
+        <figure>
+          <Device
+            kind="iphone"
+            screen="search"
+            width="clamp(168px, 16vw, 240px)"
+            label="iPhone searching the whole catalogue on device"
+          />
+          <figcaption>iPhone — the register, on device</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================ 07 TERMS — red -->
+    <section class="band band--red" aria-labelledby="press-terms">
+      <p class="station"><span>07</span>Terms</p>
+
+      <h2 id="press-terms">No plate is held back.</h2>
+      <p class="lede">
+        Free forever, open source, and with nothing in the app that needs to
+        know who you are.
+      </p>
+
+      <div class="terms">
+        {OWNERSHIP.map((term, i) => (
+          <article>
+            <span class="term-mark"><Sleeve kind={termMark(i).kind} seed={i * 11 + 4} /></span>
+            <p class="key key--light">{termMark(i).key}</p>
+            <h3>{term.title}</h3>
+            <p>{term.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============================================ 08 QUERIES — bone -->
+    <section class="band band--bone" aria-labelledby="press-faq">
+      <p class="station"><span>08</span>Queries</p>
+
+      <h2 id="press-faq">Before you run it.</h2>
+
+      <dl class="faq">
+        {FAQS.map((faq, i) => (
+          <div>
+            <dt><span>{String(i + 1).padStart(2, '0')}</span>{faq.q}</dt>
+            <dd>{faq.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <!-- ============================================ CLOSING — ink -->
+    <section class="band band--ink closing" aria-labelledby="press-close">
+      <p class="station"><span>09</span>Out</p>
+
+      <div class="close-grid">
+        <div>
+          <h2 id="press-close">{TAGLINE}</h2>
+          <p class="lede">
+            Your files, on hardware you control, played by an app with no reason
+            to know anything about you.
+          </p>
+          <div class="actions">
+            <StoreButton />
+            <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="close-stamp">
+          <Sleeve kind="nowplaying" seed={0} label="The signal-red now playing sleeve" />
+        </div>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <a class="lockup lockup--sm" href="/" aria-label={`${NAME} home`}>
+        <Mark size={26} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>{SUBLINE} GPL-3.0 with an App Store Exception.</p>
+      <a class="ghost ghost--sm" href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #131313; }
+
+  :global(body) {
+    margin: 0;
+    background: #131313;
+  }
+
+  :global(*:focus-visible) {
+    outline: 2px solid #d8002d;
+    outline-offset: 4px;
+  }
+
+  .press {
+    --ink: #131313;
+    --bone: #f2efe6;
+    --red: #c80028;
+    --red-bright: #d8002d;
+    --gut: clamp(1.15rem, 5vw, 4.6rem);
+    --measure: 88rem;
+    --body: 'Work Sans', system-ui, sans-serif;
+    --mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sl-mono: 'Space Mono', ui-monospace, monospace;
+
+    background: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Topline ------------------------------------------------------------- */
+  .topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem var(--gut);
+    background: var(--ink);
+    color: var(--bone);
+    border-bottom: 1px solid rgba(242, 239, 230, 0.18);
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: inherit;
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .runline {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  .runline--end { text-align: right; }
+
+  @media (max-width: 52rem) {
+    .runline:not(.runline--end) { display: none; }
+  }
+
+  /* Bands --------------------------------------------------------------- */
+  /* The measure is held by the band's own padding, so every child still starts
+     hard against the left edge of the column instead of being centred. */
+  .band {
+    padding-block: clamp(3rem, 7vw, 6.4rem);
+    padding-inline: max(var(--gut), (100% - var(--measure)) / 2);
+  }
+
+  .band--ink {
+    background: var(--ink);
+    color: var(--bone);
+    --sl-ink: #f2efe6;
+    --sl-bone: #131313;
+    --sl-red: #d8002d;
+    --sl-rule: rgba(242, 239, 230, 0.22);
+    --store-bg: #f2efe6;
+    --store-fg: #131313;
+    --store-bg-hover: #d8002d;
+    --store-fg-hover: #f2efe6;
+    --store-pending-fg: #f2efe6;
+    --store-pending-border: rgba(242, 239, 230, 0.42);
+  }
+
+  .band--bone {
+    background: var(--bone);
+    color: var(--ink);
+    --sl-ink: #131313;
+    --sl-bone: #f2efe6;
+    --sl-red: #c80028;
+    --sl-rule: #cdc7b8;
+    --store-bg: #131313;
+    --store-fg: #f2efe6;
+    --store-bg-hover: #c80028;
+    --store-pending-fg: #131313;
+    --store-pending-border: rgba(19, 19, 19, 0.4);
+  }
+
+  .band--red {
+    background: var(--red);
+    color: var(--bone);
+    --sl-ink: #f2efe6;
+    --sl-bone: #c80028;
+    --sl-red: #131313;
+    --sl-rule: rgba(242, 239, 230, 0.3);
+    --store-bg: #f2efe6;
+    --store-fg: #c80028;
+    --store-pending-fg: #f2efe6;
+    --store-pending-border: rgba(242, 239, 230, 0.5);
+  }
+
+  /* Station tab --------------------------------------------------------- */
+  .station {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding-bottom: 0.8rem;
+    margin-bottom: clamp(1.8rem, 4vw, 3.2rem);
+    border-bottom: 1px solid currentColor;
+    opacity: 0.9;
+  }
+
+  .station span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .band--ink .station span,
+  .band--bone .station span { color: var(--red-bright); }
+  .band--bone .station span { color: var(--red); }
+
+  /* Hero ---------------------------------------------------------------- */
+  .hero h1 {
+    font-size: clamp(2.4rem, 6.6vw, 6rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+    font-weight: 800;
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+
+  .hero-support {
+    margin-top: clamp(1.3rem, 2.5vw, 2rem);
+    max-width: 54ch;
+    font-size: clamp(1rem, 1.35vw, 1.24rem);
+    line-height: 1.55;
+    opacity: 0.8;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(0.9rem, 2vw, 1.6rem);
+    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  }
+
+  .ghost {
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .ghost:hover { opacity: 0.7; }
+  .ghost--sm { font-size: 0.62rem; }
+
+  /* The one oversized wordmark on this page. */
+  .hero-mark {
+    margin-top: clamp(2.6rem, 6vw, 5rem);
+    color: var(--bone);
+  }
+
+  .hero-mark :global(svg) { width: 100%; height: auto; display: block; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1rem, 2.4vw, 2rem);
+    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+    padding-top: clamp(1.2rem, 2.4vw, 1.8rem);
+    border-top: 1px solid rgba(242, 239, 230, 0.24);
+  }
+
+  .stats dt {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    line-height: 1.5;
+  }
+
+  .stats dd {
+    margin: 0.4rem 0 0;
+    font-size: clamp(1.5rem, 2.6vw, 2.3rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats div:last-child dd { color: var(--red-bright); }
+
+  @media (max-width: 46rem) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .run {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 clamp(1rem, 2.6vw, 2.2rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.1rem, 2.2vw, 1.6rem);
+    border-top: 1px solid rgba(242, 239, 230, 0.24);
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  .run li {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.24rem 0;
+  }
+
+  .run span { color: var(--red-bright); }
+
+  /* Shared type --------------------------------------------------------- */
+  .band h2 {
+    font-size: clamp(1.85rem, 4.2vw, 3.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.042em;
+    font-weight: 800;
+    max-width: 19ch;
+    text-wrap: balance;
+  }
+
+  .sub {
+    font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+    max-width: 18ch;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 56ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+    line-height: 1.62;
+    opacity: 0.82;
+  }
+
+  .lede + .lede { margin-top: 0.9rem; }
+
+  .micro {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .micro--dim { opacity: 0.58; margin-top: 0.4rem; }
+
+  .key {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+    color: var(--red-bright);
+  }
+
+  .band--red .key,
+  .key--light { color: inherit; opacity: 0.72; }
+  .band--bone .key { color: var(--red); }
+
+  /* Split --------------------------------------------------------------- */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: clamp(1.8rem, 4.5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .split-aside { padding-top: 0.4rem; }
+
+  @media (max-width: 56rem) {
+    .split { grid-template-columns: 1fr; }
+  }
+
+  .srvs {
+    display: grid;
+    gap: 0;
+    margin-top: 1.1rem;
+    border-top: 1px solid currentColor;
+  }
+
+  .srvs li {
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px solid;
+    border-color: color-mix(in srgb, currentColor 26%, transparent);
+  }
+
+  .srv-logo { display: block; }
+
+  .srvs strong {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .srvs em {
+    display: block;
+    margin-top: 0.3rem;
+    font-style: normal;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    opacity: 0.72;
+  }
+
+  .big-num {
+    margin-top: 1.2rem;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .big-num--red { color: var(--red-bright); }
+
+  /* Wall ---------------------------------------------------------------- */
+  .wall-frame {
+    margin-top: clamp(2.2rem, 4.5vw, 3.4rem);
+    padding: 1px;
+    background: rgba(242, 239, 230, 0.2);
+  }
+
+  .wall-frame :global(.wall) { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+
+  @media (max-width: 66rem) {
+    .wall-frame :global(.wall) { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40rem) {
+    .wall-frame :global(.wall) { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+
+  .wall-note {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* Figures ------------------------------------------------------------- */
+  .fig { margin: clamp(2.2rem, 4.5vw, 3.4rem) 0 0; }
+  .fig--wide { max-width: 64rem; }
+
+  .fig figcaption {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 1rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid;
+    border-color: color-mix(in srgb, currentColor 28%, transparent);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    line-height: 1.55;
+    opacity: 0.76;
+  }
+
+  .fig figcaption b {
+    flex: none;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .band--ink .fig figcaption b { color: var(--red-bright); }
+  .band--bone .fig figcaption b { color: var(--red); }
+
+  /* On the red bands the accent colour inside a diagram is ink, which is too
+     close to the ground for small type, so those labels take the paper. */
+  .band--red :global(.dl--red) { color: var(--bone); }
+
+  /* Three drawings of different proportions, but one baseline of captions. */
+  .fig-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.4rem, 3vw, 2.6rem);
+    align-items: stretch;
+  }
+
+  .fig-row .fig {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fig-row figcaption { margin-top: auto; padding-top: 0.65rem; }
+  .fig-row .dia { margin-bottom: 1rem; }
+
+  @media (max-width: 62rem) {
+    .fig-row { grid-template-columns: 1fr; }
+    .fig-row .fig { max-width: 30rem; }
+  }
+
+  /* Two-up + cut -------------------------------------------------------- */
+  .two-up {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.4rem, 3.5vw, 3.2rem);
+    margin-top: clamp(2.2rem, 4vw, 3.2rem);
+  }
+
+  .two-up p:not(.key) {
+    font-size: 0.98rem;
+    line-height: 1.6;
+    opacity: 0.86;
+  }
+
+  @media (max-width: 52rem) {
+    .two-up { grid-template-columns: 1fr; }
+  }
+
+  .cut {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    gap: clamp(1.8rem, 4.5vw, 4.4rem);
+    align-items: center;
+  }
+
+  .cut .fig { margin-top: 0; }
+
+  .tail {
+    margin-top: clamp(3rem, 6vw, 5.4rem);
+    padding-top: clamp(3rem, 6vw, 5.4rem);
+    border-top: 1px solid rgba(242, 239, 230, 0.2);
+  }
+
+  .fig--full { max-width: none; }
+
+  @media (max-width: 56rem) {
+    .cut { grid-template-columns: 1fr; }
+    .cut .fig { margin-top: 1.8rem; }
+  }
+
+  .ticks {
+    list-style: none;
+    margin: 1.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .ticks li {
+    display: grid;
+    grid-template-columns: 10px 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0.82;
+  }
+
+  .ticks i {
+    width: 9px;
+    height: 9px;
+    margin-top: 0.4rem;
+    background: var(--red-bright);
+  }
+
+  /* Capabilities -------------------------------------------------------- */
+  .caps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: clamp(2.2rem, 4.5vw, 3.4rem) 0 clamp(2.4rem, 5vw, 4rem);
+    border-top: 2px solid currentColor;
+    border-left: 1px solid;
+    border-left-color: color-mix(in srgb, currentColor 24%, transparent);
+  }
+
+  .caps li {
+    padding: clamp(1.1rem, 2vw, 1.6rem);
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-color: color-mix(in srgb, currentColor 24%, transparent);
+  }
+
+  .cap-mark {
+    display: block;
+    width: clamp(38px, 4vw, 54px);
+    margin-bottom: 1rem;
+  }
+
+  .cap-mark :global(svg) { width: 100%; height: auto; display: block; }
+
+  .cap-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .caps h3 {
+    font-size: clamp(1rem, 1.4vw, 1.16rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .caps p {
+    margin-top: 0.55rem;
+    font-size: 0.87rem;
+    line-height: 1.55;
+    opacity: 0.76;
+  }
+
+  @media (max-width: 68rem) {
+    .caps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 38rem) {
+    .caps { grid-template-columns: 1fr; }
+  }
+
+  /* Hardware ------------------------------------------------------------ */
+  .playhead-box {
+    max-width: 15rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .devices {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: clamp(1.2rem, 3vw, 3rem);
+    margin-top: clamp(2.4rem, 5vw, 3.8rem);
+  }
+
+  .devices figure { margin: 0; }
+
+  .devices figcaption {
+    margin-top: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.58;
+  }
+
+  /* Terms --------------------------------------------------------------- */
+  .terms {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.4rem, 3vw, 2.6rem);
+    margin-top: clamp(2.4rem, 5vw, 3.6rem);
+  }
+
+  .terms article {
+    padding-top: 1.1rem;
+    border-top: 2px solid currentColor;
+  }
+
+  .term-mark {
+    display: block;
+    width: clamp(48px, 6vw, 76px);
+    margin-bottom: 1.1rem;
+  }
+
+  .term-mark :global(svg) { width: 100%; height: auto; display: block; }
+
+  .terms h3 {
+    font-size: clamp(1.02rem, 1.5vw, 1.22rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .terms p:not(.key) {
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    line-height: 1.58;
+    opacity: 0.86;
+  }
+
+  @media (max-width: 62rem) {
+    .terms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 34rem) {
+    .terms { grid-template-columns: 1fr; }
+  }
+
+  /* FAQ ----------------------------------------------------------------- */
+  .faq {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 2px solid currentColor;
+  }
+
+  .faq > div {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1rem, 3vw, 2.6rem);
+    padding: clamp(1rem, 2vw, 1.5rem) 0;
+    border-bottom: 1px solid;
+    border-color: color-mix(in srgb, currentColor 24%, transparent);
+  }
+
+  .faq dt {
+    display: flex;
+    gap: 0.9rem;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.35;
+  }
+
+  .faq dt span {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    padding-top: 0.34rem;
+  }
+
+  .faq dd {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.62;
+    opacity: 0.78;
+  }
+
+  @media (max-width: 52rem) {
+    .faq > div { grid-template-columns: 1fr; gap: 0.6rem; }
+  }
+
+  /* Closing ------------------------------------------------------------- */
+  .close-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.5fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .closing h2 {
+    font-size: clamp(2.1rem, 5vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    max-width: 15ch;
+  }
+
+  .close-stamp {
+    --sl-ink: #131313;
+    --sl-bone: #f2efe6;
+  }
+
+  .close-stamp :global(svg) { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 56rem) {
+    .close-grid { grid-template-columns: 1fr; }
+    .close-stamp { max-width: 14rem; }
+  }
+
+  /* Colophon ------------------------------------------------------------ */
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.3rem var(--gut) 2.6rem;
+    background: var(--ink);
+    color: var(--bone);
+    border-top: 1px solid rgba(242, 239, 230, 0.18);
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.1em;
+    opacity: 0.72;
+  }
+
+  .colophon p { max-width: 46ch; }
+  .lockup--sm { font-size: 0.95rem; }
+</style>

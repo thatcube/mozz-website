@@ -1,0 +1,64 @@
+---
+/**
+ * DIAGRAM — the catalogue radiating out of the server you own.
+ *
+ * Concentric rings leaving one small solid block: the machine in your house,
+ * and everything downstream of it. Nothing is drawn at the centre of the
+ * internet, because there isn't one in this product.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  label = 'Concentric rings radiating from a single server block out to an iPhone, an iPad and a downloaded copy',
+} = Astro.props;
+
+const CX = 92;
+const CY = 150;
+const RINGS = [84, 140, 196, 252, 310, 372, 440];
+
+/** A node sitting exactly on one of the rings. */
+function at(r: number, deg: number) {
+  const rad = (deg * Math.PI) / 180;
+  return { x: CX + Math.cos(rad) * r, y: CY + Math.sin(rad) * r };
+}
+
+const phone = at(196, -36);
+const pad = at(252, 30);
+const down = at(310, -6);
+---
+
+<Dia ratio="460 / 300" class={className}>
+  <svg viewBox="0 0 460 300" role="img" aria-label={label}>
+    {RINGS.map((r) => <circle cx={CX} cy={CY} r={r} class="ring" />)}
+
+    <rect x={CX - 14} y={CY - 14} width="28" height="28" class="ink" />
+
+    <rect x={phone.x - 7} y={phone.y - 7} width="14" height="14" class="ink" />
+    <rect x={pad.x - 7} y={pad.y - 7} width="14" height="14" class="ink" />
+    <rect x={down.x - 7} y={down.y - 7} width="14" height="14" class="red" />
+  </svg>
+
+  <p class="dl dl--l" style="left:17%;top:62%">
+    Your server<i>Plex · Jellyfin · Subsonic</i>
+  </p>
+  <p class="dl dl--l" style={`left:${((phone.x + 14) / 460) * 100}%;top:${(phone.y / 300) * 100}%`}>iPhone</p>
+  <p class="dl dl--l" style={`left:${((pad.x + 14) / 460) * 100}%;top:${(pad.y / 300) * 100}%`}>iPad</p>
+  <p class="dl dl--r dl--red" style={`left:${((down.x - 14) / 460) * 100}%;top:${(down.y / 300) * 100}%`}>Downloaded</p>
+</Dia>
+
+<style>
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 1.6;
+  }
+
+  .ink { fill: var(--sl-ink, #131313); }
+  .red { fill: var(--sl-red, #c80028); }
+</style>

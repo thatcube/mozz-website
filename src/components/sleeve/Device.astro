@@ -1,0 +1,396 @@
+---
+/**
+ * An iPhone or an iPad, drawn in the sleeve vocabulary.
+ *
+ * The body uses the real hardware proportion — 71.6 × 147.6 mm for the phone,
+ * 178.5 × 247.6 mm for the 11" tablet — so it never becomes a stretched
+ * rectangle on a wide screen. Everything inside is sized from a single custom
+ * property, `--dev-w`, which the caller may pass as a clamp(); the whole device
+ * then scales as one object instead of drifting out of register.
+ *
+ * Three screens ship with it so the four concepts show the same app rather than
+ * four different inventions. Pass `screen="custom"` to fill it yourself.
+ */
+import Sleeve from './Sleeve.astro';
+import { DEVICE_RATIO, CATALOG } from '../../data/sleeve-art';
+
+export interface Props {
+  kind?: 'iphone' | 'ipad';
+  screen?: 'nowplaying' | 'library' | 'search' | 'custom';
+  /** Any CSS length. A clamp() is encouraged so it scales with the viewport. */
+  width?: string;
+  class?: string;
+  label: string;
+}
+
+const {
+  kind = 'iphone',
+  screen = 'nowplaying',
+  width,
+  class: className = '',
+  label,
+} = Astro.props;
+
+const ratio = DEVICE_RATIO[kind];
+const defaultWidth =
+  kind === 'iphone' ? 'clamp(184px, 19vw, 268px)' : 'clamp(230px, 30vw, 420px)';
+
+const libraryTiles = [
+  { kind: 'rings', seed: 3 },
+  { kind: 'nowplaying', seed: 0 },
+  { kind: 'rules', seed: 5 },
+  { kind: 'vesica', seed: 2 },
+  { kind: 'halves', seed: 1 },
+  { kind: 'disc', seed: 4 },
+  { kind: 'nest', seed: 6 },
+  { kind: 'cutring', seed: 2 },
+  { kind: 'bars', seed: 7 },
+  { kind: 'quadrant', seed: 3 },
+  { kind: 'lens', seed: 1 },
+  { kind: 'crosshair', seed: 5 },
+] as const;
+
+const searchRows = [64, 52, 60, 44, 56, 38];
+---
+
+<figure
+  class:list={['device', `is-${kind}`, className]}
+  style={`--dev-w:${width ?? defaultWidth};--dev-ratio:${ratio.w} / ${ratio.h}`}
+  role="img"
+  aria-label={label}
+>
+  <div class="body">
+    {kind === 'iphone' && <span class="island" aria-hidden="true"></span>}
+    {kind === 'ipad' && <span class="cam" aria-hidden="true"></span>}
+
+    <div class="screen">
+      {screen === 'nowplaying' && (
+        <div class="scr scr-now">
+          <div class="chrome"><span>9:41</span><span class="chrome-tag">offline</span></div>
+          <div class="art"><Sleeve kind="nowplaying" seed={0} /></div>
+          <p class="track">{CATALOG[10].title}</p>
+          <p class="artist">{CATALOG[10].artist}</p>
+          <div class="scrub" aria-hidden="true"><i class="scrub-fill"></i><i class="scrub-dot"></i></div>
+          <div class="times"><span>1:24</span><span>−3:11</span></div>
+          <div class="transport" aria-hidden="true">
+            <span class="t-prev"></span>
+            <span class="t-play"></span>
+            <span class="t-next"></span>
+          </div>
+          <p class="badge">downloaded · plays with no signal</p>
+        </div>
+      )}
+
+      {screen === 'library' && (
+        <div class="scr scr-lib">
+          <div class="chrome"><span>9:41</span><span class="chrome-tag">library</span></div>
+          <p class="scr-title">Albums</p>
+          <div class="lib-grid">
+            {libraryTiles.map((tile) => (
+              <span class="lib-cell"><Sleeve kind={tile.kind} seed={tile.seed} ground="bone" frame /></span>
+            ))}
+          </div>
+          <div class="lib-bar" aria-hidden="true">
+            <i></i><i></i><i class="on"></i><i></i>
+          </div>
+        </div>
+      )}
+
+      {screen === 'search' && (
+        <div class="scr scr-search">
+          <div class="chrome"><span>9:41</span><span class="chrome-tag">on device</span></div>
+          <div class="field" aria-hidden="true"><span class="q">glass</span><i class="caret"></i></div>
+          <div class="results" aria-hidden="true">
+            {searchRows.map((w, i) => (
+              <span class="res">
+                <i class="res-mark" data-hot={i === 0 ? 'true' : undefined}></i>
+                <i class="res-line" style={`width:${w}%`}></i>
+              </span>
+            ))}
+          </div>
+          <p class="badge">6 of 100,000 · 16 ms</p>
+        </div>
+      )}
+
+      {screen === 'custom' && <slot />}
+    </div>
+  </div>
+</figure>
+
+<style>
+  .device {
+    margin: 0;
+    width: var(--dev-w);
+    max-width: 100%;
+    flex: none;
+  }
+
+  .body {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--dev-ratio);
+    padding: calc(var(--dev-w) * 0.032);
+    background: var(--dev-body, var(--sl-ink, #131313));
+    border-radius: calc(var(--dev-w) * 0.11);
+  }
+
+  .is-ipad .body {
+    padding: calc(var(--dev-w) * 0.026);
+    border-radius: calc(var(--dev-w) * 0.035);
+  }
+
+  .island {
+    position: absolute;
+    top: calc(var(--dev-w) * 0.062);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--dev-w) * 0.29);
+    height: calc(var(--dev-w) * 0.085);
+    background: var(--dev-body, var(--sl-ink, #131313));
+    border-radius: calc(var(--dev-w) * 0.05);
+    z-index: 2;
+  }
+
+  .cam {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--dev-w) * 0.009);
+    transform: translateY(-50%);
+    width: calc(var(--dev-w) * 0.009);
+    height: calc(var(--dev-w) * 0.009);
+    background: var(--sl-bone, #f2efe6);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--dev-screen, var(--sl-bone, #f2efe6));
+    border-radius: calc(var(--dev-w) * 0.082);
+    color: var(--sl-ink, #131313);
+  }
+
+  .is-ipad .screen { border-radius: calc(var(--dev-w) * 0.016); }
+
+  .scr {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--dev-w) * 0.058) calc(var(--dev-w) * 0.062);
+    font-size: calc(var(--dev-w) * 0.043);
+    line-height: 1.25;
+  }
+
+  .chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: calc(var(--dev-w) * 0.038);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding-top: calc(var(--dev-w) * 0.028);
+  }
+
+  .is-ipad .chrome { padding-top: 0; }
+
+  .chrome-tag {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: calc(var(--dev-w) * 0.03);
+    opacity: 0.62;
+  }
+
+  /* Now playing ------------------------------------------------------- */
+  .art {
+    margin-top: calc(var(--dev-w) * 0.09);
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .art :global(svg) { width: 100%; height: 100%; }
+
+  .track {
+    margin-top: calc(var(--dev-w) * 0.075);
+    font-size: calc(var(--dev-w) * 0.062);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .artist {
+    margin-top: calc(var(--dev-w) * 0.012);
+    font-size: calc(var(--dev-w) * 0.042);
+    opacity: 0.66;
+  }
+
+  .scrub {
+    position: relative;
+    margin-top: calc(var(--dev-w) * 0.07);
+    height: calc(var(--dev-w) * 0.012);
+    background: color-mix(in srgb, var(--sl-ink, #131313) 20%, transparent);
+  }
+
+  .scrub-fill {
+    position: absolute;
+    inset: 0 62% 0 0;
+    background: var(--sl-red, #c80028);
+  }
+
+  .scrub-dot {
+    position: absolute;
+    top: 50%;
+    left: 38%;
+    width: calc(var(--dev-w) * 0.038);
+    height: calc(var(--dev-w) * 0.038);
+    margin-top: calc(var(--dev-w) * -0.019);
+    margin-left: calc(var(--dev-w) * -0.019);
+    background: var(--sl-red, #c80028);
+    border-radius: 50%;
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: calc(var(--dev-w) * 0.032);
+    font-size: calc(var(--dev-w) * 0.034);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.6;
+  }
+
+  .transport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--dev-w) * 0.13);
+    margin-top: auto;
+    padding-bottom: calc(var(--dev-w) * 0.03);
+  }
+
+  .t-prev,
+  .t-next {
+    width: 0;
+    height: 0;
+    border-block: calc(var(--dev-w) * 0.036) solid transparent;
+  }
+
+  .t-prev { border-right: calc(var(--dev-w) * 0.055) solid var(--sl-ink, #131313); }
+  .t-next { border-left: calc(var(--dev-w) * 0.055) solid var(--sl-ink, #131313); }
+
+  .t-play {
+    width: calc(var(--dev-w) * 0.15);
+    height: calc(var(--dev-w) * 0.15);
+    border-radius: 50%;
+    background: var(--sl-ink, #131313);
+    position: relative;
+  }
+
+  .t-play::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-block: calc(var(--dev-w) * 0.032) solid transparent;
+    border-left: calc(var(--dev-w) * 0.05) solid var(--sl-bone, #f2efe6);
+  }
+
+  .badge {
+    margin-top: calc(var(--dev-w) * 0.02);
+    text-align: center;
+    font-size: calc(var(--dev-w) * 0.03);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* Library ----------------------------------------------------------- */
+  .scr-title {
+    margin-top: calc(var(--dev-w) * 0.075);
+    font-size: calc(var(--dev-w) * 0.085);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .lib-grid {
+    margin-top: calc(var(--dev-w) * 0.05);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--dev-w) * 0.035);
+  }
+
+  .is-ipad .lib-grid { grid-template-columns: repeat(4, 1fr); }
+
+  .lib-cell { display: block; aspect-ratio: 1; }
+  .lib-cell :global(svg) { width: 100%; height: 100%; }
+
+  .lib-bar {
+    display: flex;
+    gap: calc(var(--dev-w) * 0.07);
+    justify-content: center;
+    margin-top: auto;
+    padding-top: calc(var(--dev-w) * 0.05);
+  }
+
+  .lib-bar i {
+    width: calc(var(--dev-w) * 0.05);
+    height: calc(var(--dev-w) * 0.012);
+    background: color-mix(in srgb, var(--sl-ink, #131313) 28%, transparent);
+  }
+
+  .lib-bar i.on { background: var(--sl-red, #c80028); }
+
+  /* Search ------------------------------------------------------------ */
+  .field {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--dev-w) * 0.02);
+    margin-top: calc(var(--dev-w) * 0.075);
+    padding-bottom: calc(var(--dev-w) * 0.03);
+    border-bottom: 2px solid var(--sl-ink, #131313);
+  }
+
+  .q {
+    font-size: calc(var(--dev-w) * 0.075);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .caret {
+    width: calc(var(--dev-w) * 0.012);
+    height: calc(var(--dev-w) * 0.075);
+    background: var(--sl-red, #c80028);
+  }
+
+  .results {
+    margin-top: calc(var(--dev-w) * 0.055);
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--dev-w) * 0.048);
+  }
+
+  .res { display: flex; align-items: center; gap: calc(var(--dev-w) * 0.035); }
+
+  .res-mark {
+    width: calc(var(--dev-w) * 0.06);
+    height: calc(var(--dev-w) * 0.06);
+    flex: none;
+    border: 2px solid var(--sl-ink, #131313);
+    border-radius: 50%;
+  }
+
+  .res-mark[data-hot] {
+    background: var(--sl-red, #c80028);
+    border-color: var(--sl-red, #c80028);
+  }
+
+  .res-line {
+    height: calc(var(--dev-w) * 0.014);
+    background: color-mix(in srgb, var(--sl-ink, #131313) 34%, transparent);
+  }
+
+  .scr-search .badge { margin-top: auto; }
+</style>

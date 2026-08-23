@@ -1,0 +1,74 @@
+---
+/**
+ * DIAGRAM — the playhead.
+ *
+ * A red dot travelling one ring. Motion is the only thing on these pages that
+ * moves, and it stops dead under prefers-reduced-motion with the dot parked at a
+ * legible angle rather than snapping back to twelve o'clock.
+ */
+export interface Props {
+  class?: string;
+  /** Seconds for one full revolution. */
+  period?: number;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  period = 14,
+  label = 'A red playhead dot travelling around a ring',
+} = Astro.props;
+---
+
+<svg
+  class:list={['playhead', className]}
+  style={`--spin:${period}s`}
+  viewBox="0 0 300 300"
+  role="img"
+  aria-label={label}
+>
+  <circle cx="150" cy="150" r="112" class="ring" />
+  <circle cx="150" cy="150" r="78" class="ring ring-thin" />
+  <circle cx="150" cy="150" r="30" class="ink" />
+  <circle cx="150" cy="150" r="7" class="bone" />
+  <g class="arm">
+    <circle cx="150" cy="38" r="10" class="red" />
+  </g>
+</svg>
+
+<style>
+  .playhead {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2.4;
+  }
+
+  .ring-thin { stroke-width: 1.2; }
+
+  .ink { fill: var(--sl-ink, #131313); }
+  .bone { fill: var(--sl-bone, #f2efe6); }
+  .red { fill: var(--sl-red, #c80028); }
+
+  .arm {
+    transform-origin: 150px 150px;
+    animation: orbit var(--spin) linear infinite;
+  }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arm {
+      animation: none;
+      transform: rotate(214deg);
+    }
+  }
+</style>

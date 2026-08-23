@@ -1,0 +1,99 @@
+---
+/**
+ * Diagram shell.
+ *
+ * Every explanatory mark in this system is geometry plus a handful of small
+ * labels. The geometry belongs in an SVG so it stays exact; the labels must not,
+ * because SVG text scales with the viewBox and a caption that is legible at
+ * 400px becomes a headline at 2000px. So the SVG carries the drawing and the
+ * labels ride on top as ordinary HTML, positioned in per-cent of the same box.
+ *
+ * Labels use the .dl class and are placed with inline left/top. Add dl--l to
+ * anchor from the left edge of the text, dl--r to anchor from the right, and
+ * nothing for centred.
+ */
+export interface Props {
+  /** aspect-ratio for the box, matching the SVG viewBox, e.g. "460 / 300". */
+  ratio: string;
+  class?: string;
+}
+
+const { ratio, class: className = '' } = Astro.props;
+---
+
+<div class:list={['dia', className]} style={`--dia-ratio:${ratio}`}>
+  <slot />
+</div>
+
+<style>
+  .dia {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--dia-ratio);
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  .dia :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .dia :global(.dl) {
+    position: absolute;
+    margin: 0;
+    font-family: var(--sl-mono, var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace));
+    font-size: clamp(0.54rem, 0.66vw, 0.72rem);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--sl-ink, #131313);
+    max-width: 34%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+
+  .dia :global(.dl--l) {
+    text-align: left;
+    transform: translate(0, -50%);
+  }
+
+  .dia :global(.dl--r) {
+    text-align: right;
+    transform: translate(-100%, -50%);
+  }
+
+  .dia :global(.dl--top) { transform: translate(-50%, 0); }
+  .dia :global(.dl--red) { color: var(--sl-red, #c80028); }
+  .dia :global(.dl--bone) { color: var(--sl-bone, #f2efe6); }
+
+  .dia :global(.dl b) {
+    display: block;
+    font-size: 1.45em;
+    letter-spacing: 0.02em;
+    font-weight: 700;
+    text-transform: none;
+  }
+
+  .dia :global(.dl i) {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    opacity: 0.62;
+    margin-top: 0.35em;
+  }
+
+  /* Below this size the qualifier lines are wider than the shapes they sit in,
+     so they are dropped and the drawing keeps only its primary labels. The
+     prose beside every diagram already carries the same point. */
+  @container (max-width: 26rem) {
+    .dia :global(.dl) { max-width: 40%; letter-spacing: 0.1em; }
+    .dia :global(.dl i) { display: none; }
+  }
+</style>

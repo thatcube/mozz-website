@@ -1,0 +1,228 @@
+---
+/**
+ * One sleeve.
+ *
+ * A single mark from the system, drawn flat in a 100×100 field. Colour comes
+ * from three custom properties the page sets — `--sl-ink`, `--sl-bone`,
+ * `--sl-red` — so the same tile works on bone or on black without a second
+ * drawing. Nothing here is allowed a gradient, a shadow or a soft edge.
+ */
+import type { MotifKind } from '../../data/sleeve-art';
+
+export interface Props {
+  kind: MotifKind;
+  /** Deterministic variation inside the mark. */
+  seed?: number;
+  /** Swaps the drawing ink for the signal red. */
+  red?: boolean;
+  /** Inverts the tile: solid ink ground, bone drawing. */
+  inked?: boolean;
+  /** Paints a ground behind the mark. */
+  ground?: 'none' | 'bone' | 'ink' | 'red';
+  /** Hairline frame, as a sleeve edge. */
+  frame?: boolean;
+  class?: string;
+  label?: string;
+}
+
+const {
+  kind,
+  seed = 0,
+  red = false,
+  inked = false,
+  ground = 'none',
+  frame = false,
+  class: className = '',
+  label,
+} = Astro.props;
+
+/** Small deterministic spread, 0…n-1, from the tile seed. */
+const pick = (n: number, salt = 0) => (seed + salt * 37) % n;
+
+const ringCount = 3 + pick(2);
+const ringRadii = Array.from({ length: ringCount }, (_, i) => 42 - i * (34 / ringCount));
+
+const ruleCount = 7 + pick(4, 1);
+const RULE_SPREAD = [72, 46, 88, 34, 62, 80, 40, 68, 54, 84, 30];
+const ruleRows = Array.from({ length: ruleCount }, (_, i) => ({
+  y: 18 + (i * 64) / Math.max(1, ruleCount - 1),
+  len: RULE_SPREAD[(i + seed) % RULE_SPREAD.length],
+}));
+
+const barCount = 6 + pick(3, 2);
+const BAR_SPREAD = [58, 30, 46, 68, 24, 52, 38, 62, 44];
+const barHeights = Array.from(
+  { length: barCount },
+  (_, i) => BAR_SPREAD[(i + seed) % BAR_SPREAD.length],
+);
+const barGap = 76 / barCount;
+const barW = barGap * 0.52;
+
+const cueAngle = (-52 - pick(4, 3) * 22) * (Math.PI / 180);
+const cueX = (50 + Math.cos(cueAngle) * 32).toFixed(2);
+const cueY = (50 + Math.sin(cueAngle) * 32).toFixed(2);
+
+/** Cut ring: a clean 66° notch, rotated by the seed. */
+const gapStart = pick(8, 4) * 45;
+const arcPoint = (deg: number, r: number) => {
+  const a = (deg * Math.PI) / 180;
+  return `${(50 + Math.cos(a) * r).toFixed(2)} ${(50 + Math.sin(a) * r).toFixed(2)}`;
+};
+const cutPath = `M ${arcPoint(gapStart + 33, 34)} A 34 34 0 1 1 ${arcPoint(gapStart - 33, 34)}`;
+
+const quadRotate = pick(4, 5) * 90;
+const lensRotate = pick(2, 6) === 0 ? 0 : 90;
+
+const drawClass = red ? 'is-red' : inked ? 'is-bone' : 'is-ink';
+---
+
+<svg
+  class:list={['sleeve', className]}
+  viewBox="0 0 100 100"
+  role={label ? 'img' : 'presentation'}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  {ground === 'bone' && <rect class="fill-bone" width="100" height="100" />}
+  {ground === 'ink' && <rect class="fill-ink" width="100" height="100" />}
+  {ground === 'red' && <rect class="fill-red" width="100" height="100" />}
+  {inked && ground === 'none' && <rect class="fill-ink" width="100" height="100" />}
+
+  {kind === 'rings' && (
+    <g class={drawClass}>
+      {ringRadii.map((r) => <circle cx="50" cy="50" r={r} class="stroke" />)}
+      <circle cx="50" cy="50" r="5" class="fill" />
+    </g>
+  )}
+
+  {kind === 'vesica' && (
+    <g class={drawClass}>
+      <ellipse cx="50" cy="50" rx="42" ry="19" class="stroke" transform="rotate(34 50 50)" />
+      <ellipse cx="50" cy="50" rx="42" ry="19" class="stroke" transform="rotate(-34 50 50)" />
+      <circle cx="50" cy="50" r="5" class="fill" />
+    </g>
+  )}
+
+  {kind === 'rules' && (
+    <g class={drawClass}>
+      {ruleRows.map((row) => (
+        <rect x="12" y={row.y} width={row.len * 0.76} height="2.4" class="fill" />
+      ))}
+    </g>
+  )}
+
+  {kind === 'disc' && (
+    <g class={drawClass}>
+      <circle cx="50" cy="50" r="33" class="fill" />
+      <line x1="50" y1="50" x2={cueX} y2={cueY} class="cue" />
+    </g>
+  )}
+
+  {kind === 'nowplaying' && (
+    <g>
+      <rect width="100" height="100" class="fill-red" />
+      <circle cx="50" cy="50" r="28" class="fill-bone" />
+      <circle cx="50" cy="50" r="5.5" class="fill-red" />
+    </g>
+  )}
+
+  {kind === 'cutring' && (
+    <g class={drawClass}>
+      <path d={cutPath} class="stroke" />
+      <circle cx="50" cy="50" r="5" class="fill" />
+    </g>
+  )}
+
+  {kind === 'bars' && (
+    <g class={drawClass}>
+      {barHeights.map((h, i) => (
+        <rect x={12 + i * barGap} y={82 - h} width={barW} height={h} class="fill" />
+      ))}
+    </g>
+  )}
+
+  {kind === 'arcs' && (
+    <g class={drawClass}>
+      <path d="M 14 60 A 26 26 0 0 1 40 86" class="stroke" />
+      <path d="M 14 40 A 46 46 0 0 1 60 86" class="stroke" />
+      <path d="M 14 20 A 66 66 0 0 1 80 86" class="stroke" />
+      <rect x="10" y="82" width="8" height="8" class="fill" />
+    </g>
+  )}
+
+  {kind === 'quadrant' && (
+    <g class={drawClass} transform={`rotate(${quadRotate} 50 50)`}>
+      <circle cx="50" cy="50" r="34" class="stroke" />
+      <path d="M 50 50 L 84 50 A 34 34 0 0 1 50 84 Z" class="fill" />
+    </g>
+  )}
+
+  {kind === 'halves' && (
+    <g class={drawClass}>
+      <circle cx="50" cy="50" r="34" class="stroke" />
+      <path d="M 50 16 A 34 34 0 0 0 50 84 Z" class="fill" />
+    </g>
+  )}
+
+  {kind === 'crosshair' && (
+    <g class={drawClass}>
+      <circle cx="50" cy="50" r="30" class="stroke" />
+      <line x1="0" y1="50" x2="100" y2="50" class="hair" />
+      <line x1="50" y1="0" x2="50" y2="100" class="hair" />
+      <circle cx="50" cy="50" r="5" class="fill" />
+    </g>
+  )}
+
+  {kind === 'nest' && (
+    <g class={drawClass}>
+      <rect x="12" y="12" width="76" height="76" class="stroke" />
+      <rect x="26" y="26" width="48" height="48" class="stroke" />
+      <rect x="40" y="40" width="20" height="20" class="fill" />
+    </g>
+  )}
+
+  {kind === 'lens' && (
+    <g class={drawClass} transform={`rotate(${lensRotate} 50 50)`}>
+      <ellipse cx="50" cy="50" rx="40" ry="17" class="stroke" />
+      <rect x="10" y="48.8" width="80" height="2.4" class="fill" />
+      <circle cx="50" cy="50" r="5" class="fill" />
+    </g>
+  )}
+
+  {frame && <rect x="0.6" y="0.6" width="98.8" height="98.8" class="frame" />}
+</svg>
+
+<style>
+  .sleeve {
+    display: block;
+    width: 100%;
+    height: auto;
+    shape-rendering: geometricPrecision;
+  }
+
+  .fill-bone { fill: var(--sl-bone, #f2efe6); }
+  .fill-ink { fill: var(--sl-ink, #131313); }
+  .fill-red { fill: var(--sl-red, #c80028); }
+
+  .is-ink .fill { fill: var(--sl-ink, #131313); }
+  .is-ink .stroke { fill: none; stroke: var(--sl-ink, #131313); stroke-width: 2.4; }
+  .is-ink .hair { stroke: var(--sl-ink, #131313); stroke-width: 1.2; }
+  .is-ink .cue { stroke: var(--sl-bone, #f2efe6); stroke-width: 3; }
+
+  .is-bone .fill { fill: var(--sl-bone, #f2efe6); }
+  .is-bone .stroke { fill: none; stroke: var(--sl-bone, #f2efe6); stroke-width: 2.4; }
+  .is-bone .hair { stroke: var(--sl-bone, #f2efe6); stroke-width: 1.2; }
+  .is-bone .cue { stroke: var(--sl-ink, #131313); stroke-width: 3; }
+
+  .is-red .fill { fill: var(--sl-red, #c80028); }
+  .is-red .stroke { fill: none; stroke: var(--sl-red, #c80028); stroke-width: 2.4; }
+  .is-red .hair { stroke: var(--sl-red, #c80028); stroke-width: 1.2; }
+  .is-red .cue { stroke: var(--sl-bone, #f2efe6); stroke-width: 3; }
+
+  .frame {
+    fill: none;
+    stroke: var(--sl-rule, rgba(19, 19, 19, 0.18));
+    stroke-width: 1.2;
+  }
+</style>

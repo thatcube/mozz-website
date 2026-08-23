@@ -1,0 +1,60 @@
+---
+/**
+ * The wordmark, set to an exact measure.
+ *
+ * `textLength` with `lengthAdjust="spacingAndGlyphs"` forces the letters to fill
+ * the box precisely, so the mark spans its column at every viewport and can
+ * never push the page sideways while a webfont is still loading. It inherits the
+ * page's family, so each concept sets it in its own type.
+ *
+ * This is a hero gesture. It is allowed once at the top of a page and, at most,
+ * once more in the footer — never ghosted behind body copy.
+ */
+export interface Props {
+  text?: string;
+  class?: string;
+  /** viewBox height. Raise it if a page's face has an unusually tall cap. */
+  height?: number;
+  /** Type size in viewBox units. */
+  size?: number;
+  /** Baseline position in viewBox units. */
+  baseline?: number;
+  decorative?: boolean;
+}
+
+const {
+  text = 'MOZZ',
+  class: className = '',
+  height = 208,
+  size = 280,
+  baseline = 204,
+  decorative = true,
+} = Astro.props;
+---
+
+<svg
+  class:list={['wordmark', className]}
+  viewBox={`0 0 1000 ${height}`}
+  role={decorative ? 'presentation' : 'img'}
+  aria-label={decorative ? undefined : text}
+  aria-hidden={decorative ? 'true' : undefined}
+  focusable="false"
+>
+  <text x="0" y={baseline} font-size={size} textLength="1000" lengthAdjust="spacingAndGlyphs">
+    {text}
+  </text>
+</svg>
+
+<style>
+  .wordmark {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .wordmark text {
+    font-family: inherit;
+    font-weight: var(--wm-weight, 800);
+    fill: var(--wm-fill, var(--sl-ink, #131313));
+  }
+</style>
