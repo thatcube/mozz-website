@@ -277,7 +277,6 @@ const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
     --word-size: min(44vw, 74vh);
     --word-bottom: 30%;
     --ph-top: 10.5%;
-    --ph-h: 77%;
 
     --pad: clamp(20px, 4.2vw, 62px);
     --barpad: calc(42px + clamp(12px, 1.6vh, 22px));
@@ -509,7 +508,8 @@ const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
     top: var(--ph-top, 12.5%);
     z-index: 2;
     width: var(--pw);
-    height: var(--ph-h, 60%);
+    height: auto;
+    aspect-ratio: 71.6 / 147.6;
     transform: translateX(-50%);
     padding: 9px;
     border-radius: 40px;
@@ -952,7 +952,6 @@ const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
       --deep-r: 700px;
       --deep-rs: 40px;
       --ph-top: 10.5%;
-      --ph-h: 49%;
       --word-bottom: 34%;
       --word-size: min(45vw, 21vh);
     }
@@ -1037,7 +1036,6 @@ const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
   @media (max-width: 900px) and (min-width: 641px) {
     .umbra {
       --pw: min(230px, 30vw);
-      --ph-h: 55%;
       --word-size: min(34vw, 24vh);
       --word-bottom: 30%;
       --deep-l: 180px;
@@ -1050,7 +1048,6 @@ const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
       --pad: 18px;
       --pw: min(188px, 48vw);
       --ph-top: 10%;
-      --ph-h: 48%;
       --word-size: min(45vw, 20.5vh);
       --word-bottom: 35%;
     }
