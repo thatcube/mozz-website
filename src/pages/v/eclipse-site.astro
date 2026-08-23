@@ -1,0 +1,2628 @@
+---
+/**
+ * VARIANT — ECLIPSE SITE
+ *
+ * A direct extension of the hero study at /h/eclipse, not a new idea.
+ *
+ * The hero is kept: MOZZ set enormous in Archivo and cropped by the bottom of
+ * the window, the app standing in front of it, and a band of red running behind
+ * the phone — everything the object passes over changes colour, the way light
+ * does when something crosses it.
+ *
+ * That is then the whole document. A transit band runs down the page and each
+ * section is lit by what is in front of it: the middle server is the one in the
+ * band, the drifting sleeves turn red only while they are inside it, and the
+ * split section puts an eclipse diagram against the ownership argument. Ink,
+ * paper and one red. No photography — every sleeve is generated below.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  DONATE_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+/* Hardcoded here, and only here: the hero sentence and the meta description. */
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT =
+  'Point it at Plex, Jellyfin or Navidrome. Listen at home, or keep an album on the phone and play it with no signal at all.';
+const META =
+  'Mozz is a free, open source music player for iPhone and iPad. Point it at your own Plex, Jellyfin or Navidrome server, listen at home, or download an album and play it offline.';
+
+const PARITY = [FEATURES[0], FEATURES[1]];
+const WEEKLY = FEATURES[5];
+const REST = [FEATURES[2], FEATURES[3], FEATURES[4], FEATURES[6]];
+
+/* ------------------------------------------------------------------ sleeves */
+
+/**
+ * Invented artwork in two states.
+ *
+ * Every sleeve is drawn twice from the same geometry: once in ink on paper, and
+ * once with the ink swapped for red. Stacking the two and clipping the red copy
+ * to a fixed band is the hero's trick, applied to a moving row — a sleeve is
+ * only red while it is inside the light.
+ */
+type Tokens = { p: string; i: string; c: string };
+
+const DARK: Tokens = { p: '#e2ddd3', i: '#14101a', c: '#fdf6ec' };
+const LIT: Tokens = { p: '#ffe1e6', i: '#d8002d', c: '#fdf6ec' };
+
+/** Each sleeve is a shape kind plus a ground/mark/accent role triple. */
+const SLEEVES: Array<{ k: string; r: [keyof Tokens, keyof Tokens, keyof Tokens] }> = [
+  { k: 'transit', r: ['p', 'i', 'c'] },
+  { k: 'rule', r: ['i', 'c', 'p'] },
+  { k: 'crescent', r: ['c', 'i', 'p'] },
+  { k: 'column', r: ['p', 'i', 'c'] },
+  { k: 'halfdisc', r: ['i', 'p', 'c'] },
+  { k: 'ladder', r: ['c', 'i', 'p'] },
+  { k: 'corner', r: ['p', 'i', 'c'] },
+  { k: 'orbit', r: ['i', 'c', 'p'] },
+  { k: 'stack', r: ['c', 'i', 'p'] },
+  { k: 'notch', r: ['p', 'i', 'c'] },
+  { k: 'dial', r: ['i', 'c', 'p'] },
+  { k: 'grain', r: ['c', 'i', 'p'] },
+];
+
+function shapes(kind: string, bg: string, fg: string, ac: string): string {
+  switch (kind) {
+    case 'transit':
+      return `<circle cx="50" cy="48" r="30" fill="${fg}"/>
+        <circle cx="66" cy="40" r="30" fill="${bg}"/>
+        <rect x="0" y="88" width="100" height="4" fill="${ac}"/>`;
+    case 'rule': {
+      let out = '';
+      for (let i = 0; i < 9; i += 1)
+        out += `<rect x="10" y="${12 + i * 8.6}" width="${
+          i === 4 ? 80 : 34 + ((i * 17) % 46)
+        }" height="2.6" fill="${i === 4 ? ac : fg}" opacity="${i === 4 ? 1 : 0.8}"/>`;
+      return out;
+    }
+    case 'crescent':
+      return `<circle cx="46" cy="50" r="32" fill="${fg}"/>
+        <circle cx="62" cy="44" r="30" fill="${bg}"/>
+        <circle cx="20" cy="20" r="5" fill="${ac}"/>`;
+    case 'column': {
+      let out = '';
+      for (let i = 0; i < 5; i += 1)
+        out += `<rect x="${9 + i * 18}" y="${14 + (i % 3) * 9}" width="11" height="${
+          72 - (i % 3) * 14
+        }" fill="${i === 2 ? ac : fg}"/>`;
+      return out;
+    }
+    case 'halfdisc':
+      return `<path d="M50 12a38 38 0 0 1 0 76Z" fill="${fg}"/>
+        <path d="M50 12a38 38 0 0 0 0 76Z" fill="${ac}" opacity="0.9"/>
+        <circle cx="50" cy="50" r="7" fill="${bg}"/>`;
+    case 'ladder': {
+      let out = `<rect x="14" y="10" width="3" height="80" fill="${fg}"/><rect x="83" y="10" width="3" height="80" fill="${fg}"/>`;
+      for (let i = 0; i < 6; i += 1)
+        out += `<rect x="14" y="${16 + i * 14}" width="72" height="4" fill="${
+          i === 3 ? ac : fg
+        }" opacity="${i === 3 ? 1 : 0.72}"/>`;
+      return out;
+    }
+    case 'corner':
+      return `<path d="M0 0H62L0 62Z" fill="${fg}"/>
+        <path d="M100 100H44L100 44Z" fill="${ac}"/>`;
+    case 'orbit':
+      return `<g fill="none" stroke="${fg}" stroke-width="2.6">
+          <ellipse cx="50" cy="50" rx="40" ry="15" transform="rotate(-26 50 50)"/>
+          <ellipse cx="50" cy="50" rx="40" ry="15" transform="rotate(26 50 50)"/>
+        </g><circle cx="50" cy="50" r="9" fill="${ac}"/>`;
+    case 'stack': {
+      let out = '';
+      for (let i = 0; i < 4; i += 1)
+        out += `<rect x="${12 + i * 4}" y="${14 + i * 17}" width="${
+          76 - i * 8
+        }" height="12" fill="${i === 1 ? ac : fg}" opacity="${i === 1 ? 1 : 0.85}"/>`;
+      return out;
+    }
+    case 'notch':
+      return `<rect x="0" y="0" width="100" height="46" fill="${fg}"/>
+        <rect x="34" y="0" width="32" height="46" fill="${bg}"/>
+        <rect x="0" y="58" width="100" height="6" fill="${ac}"/>
+        <rect x="0" y="72" width="62" height="6" fill="${fg}" opacity="0.6"/>`;
+    case 'dial':
+      return `<g fill="none" stroke="${fg}" stroke-width="2.4">
+          <circle cx="50" cy="50" r="34"/><circle cx="50" cy="50" r="23"/><circle cx="50" cy="50" r="12"/>
+        </g><rect x="49" y="8" width="2.6" height="26" fill="${ac}"/>`;
+    case 'grain':
+    default: {
+      let out = '';
+      for (let r = 0; r < 7; r += 1)
+        for (let c = 0; c < 7; c += 1)
+          out += `<circle cx="${10 + c * 13.4}" cy="${10 + r * 13.4}" r="${
+            1.2 + ((r + c) % 4) * 1.1
+          }" fill="${r === 3 && c === 3 ? ac : fg}"/>`;
+      return out;
+    }
+  }
+}
+
+function sleeve(index: number, lit = false): string {
+  const spec = SLEEVES[index % SLEEVES.length];
+  const t = lit ? LIT : DARK;
+  const [bg, fg, ac] = spec.r.map((role) => t[role]);
+  return `<svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+    <rect width="100" height="100" fill="${bg}"/>${shapes(spec.k, bg, fg, ac)}</svg>`;
+}
+
+const DRIFT = Array.from({ length: 12 }, (_, i) => i);
+const WALL = Array.from({ length: 60 }, (_, i) => i * 5 + 2);
+const PAD_TILES = Array.from({ length: 24 }, (_, i) => i * 3 + 1);
+---
+
+<Layout title={`${NAME} — a free player for the music on your own server`} description={META} themeColor="#eeeae2">
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=DM+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </Fragment>
+
+  <VariantBar slug="eclipse-site" tone="cool" />
+
+  <main class="eclipse">
+    <!-- ============================================================== HERO
+         The study at /h/eclipse, preserved: the word cropped by the frame,
+         the app in front of it, and a band of red where the app crosses. -->
+    <section class="hero" aria-labelledby="ec-hero">
+      <div class="frame">
+        <header class="top">
+          <a class="lockup" href="#ec-hero">
+            <Mark size={24} decorative />
+            <b>{NAME}</b>
+            <i aria-hidden="true"></i>
+            <span>self-hosted music player</span>
+          </a>
+          <span class="fine">{SUBLINE.toLowerCase()} &middot; gpl-3.0 &middot; no account</span>
+        </header>
+
+        <div class="mid">
+          <div class="say">
+            <h1 id="ec-hero">{HEADLINE}</h1>
+            <p>{SUPPORT}</p>
+          </div>
+
+          <div class="works">
+            <span class="tag">works with</span>
+            <ul role="list">
+              {SERVERS.map((s) => <li>{s.name}</li>)}
+            </ul>
+          </div>
+
+          <div class="word" aria-hidden="true">
+            <span class="w">MOZZ</span>
+            <span class="w lit">MOZZ</span>
+          </div>
+
+          <div
+            class="phone"
+            role="img"
+            aria-label="The Mozz now playing screen: an album streaming from your own server, already downloaded to the phone."
+          >
+            <div class="screen">
+              <div class="island"></div>
+
+              <div class="status">
+                <span>9:41</span>
+                <span class="glyphs">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"
+                    ><path
+                      d="M1.6 7.5 14.3 2.1a.42.42 0 0 1 .55.55L9.45 15.35a.42.42 0 0 1-.78.02L6.35 10.4 1.58 8.28a.42.42 0 0 1 .02-.78z"
+                      fill="currentColor"></path></svg
+                  >
+                  <svg viewBox="0 0 26 12" aria-hidden="true"
+                    ><rect
+                      x="0.7"
+                      y="0.7"
+                      width="21"
+                      height="10.6"
+                      rx="3.2"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.3"></rect><rect
+                      x="2.6"
+                      y="2.6"
+                      width="14"
+                      height="6.8"
+                      rx="1.8"
+                      fill="currentColor"></rect><path
+                      d="M23.6 4.2v3.6a2.1 2.1 0 0 0 0-3.6z"
+                      fill="currentColor"></path></svg
+                  >
+                </span>
+              </div>
+
+              <div class="scr-head">
+                <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"
+                  ><path
+                    d="M3 6l5 5 5-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path></svg
+                >
+                <span class="from">playing from your server</span>
+                <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+              </div>
+
+              <div class="art">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                  <defs>
+                    <clipPath id="ecs-disc"><circle cx="60" cy="54" r="33"></circle></clipPath>
+                  </defs>
+                  <rect width="120" height="120" fill="#d8002d"></rect>
+                  <circle cx="60" cy="54" r="40" fill="none" stroke="#fdf6ec" stroke-width="1.4" opacity="0.34"></circle>
+                  <circle cx="60" cy="54" r="33" fill="#f6ece0"></circle>
+                  <g clip-path="url(#ecs-disc)">
+                    <circle class="umbra" cx="42" cy="51" r="31" fill="#1a0812"></circle>
+                  </g>
+                  <circle cx="60" cy="54" r="3.6" fill="#d8002d"></circle>
+                  <rect x="18" y="104" width="26" height="3" fill="#fdf6ec" opacity="0.5"></rect>
+                </svg>
+              </div>
+
+              <div class="meta">
+                <strong>Umbra</strong>
+                <span>Sable Field &middot; Long Shadow</span>
+              </div>
+
+              <div class="bar"><span></span></div>
+              <div class="times"><span>1:47</span><span>&minus;2:25</span></div>
+
+              <div class="ctrls">
+                <svg viewBox="0 0 20 20" aria-hidden="true"
+                  ><path d="M17 3.5v13L7.5 10z" fill="currentColor"></path><rect
+                    x="3"
+                    y="3.5"
+                    width="2.4"
+                    height="13"
+                    rx="1"
+                    fill="currentColor"></rect></svg
+                >
+                <span class="play"
+                  ><svg viewBox="0 0 20 20" aria-hidden="true"
+                    ><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.2" fill="currentColor"></rect><rect
+                      x="11.1"
+                      y="4.4"
+                      width="3.3"
+                      height="11.2"
+                      rx="1.2"
+                      fill="currentColor"></rect></svg
+                  ></span
+                >
+                <svg viewBox="0 0 20 20" aria-hidden="true"
+                  ><path d="M3 3.5v13L12.5 10z" fill="currentColor"></path><rect
+                    x="14.6"
+                    y="3.5"
+                    width="2.4"
+                    height="13"
+                    rx="1"
+                    fill="currentColor"></rect></svg
+                >
+              </div>
+
+              <div class="vol">
+                <svg viewBox="0 0 16 16" aria-hidden="true"
+                  ><path d="M4 6h2.4L9.4 3.4v9.2L6.4 10H4z" fill="currentColor"></path></svg
+                >
+                <span class="track"><i></i></span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"
+                  ><path d="M2.5 6h2.4L7.9 3.4v9.2L4.9 10H2.5z" fill="currentColor"></path><path
+                    d="M10.4 5.6a3.4 3.4 0 0 1 0 4.8M12.4 3.4a6.4 6.4 0 0 1 0 9.2"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"></path></svg
+                >
+              </div>
+
+              <div class="dl">
+                <svg viewBox="0 0 16 16" aria-hidden="true"
+                  ><circle cx="8" cy="8" r="7" fill="#d8002d"></circle><path
+                    d="M4.8 8.2 7 10.4l4-4.6"
+                    fill="none"
+                    stroke="#fdf6ec"
+                    stroke-width="1.9"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path></svg
+                >
+                <span>downloaded &middot; plays offline</span>
+              </div>
+
+              <div class="home"></div>
+            </div>
+          </div>
+
+          <p class="note a">
+            <span class="dot"
+              ><svg viewBox="0 0 16 16" aria-hidden="true"
+                ><path
+                  d="M4 8h8M8.6 4.4 12.2 8l-3.6 3.6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.9"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></path></svg
+              ></span
+            >
+            <span>your library<br />lives on your box</span>
+          </p>
+
+          <p class="note b">
+            <span class="dot"
+              ><svg viewBox="0 0 16 16" aria-hidden="true"
+                ><path
+                  d="M12 8H4M7.4 4.4 3.8 8l3.6 3.6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.9"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></path></svg
+              ></span
+            >
+            <span>downloaded once<br />plays with no signal</span>
+          </p>
+        </div>
+
+        <footer class="bot">
+          <div class="actions">
+            <a class="btn" href={GITHUB_URL}>Source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+          <a class="ref" href="#ec-servers">
+            mz–04 &middot; eclipse
+            <svg viewBox="0 0 16 16" aria-hidden="true"
+              ><path
+                d="M8 2v12M3.4 9.4 8 14l4.6-4.6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path></svg
+            >
+          </a>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ========================================================== SERVERS
+         Three servers, and the transit band standing over the middle one. -->
+    <section class="band servers" id="ec-servers" aria-labelledby="ec-servers-t">
+      <span class="transit" aria-hidden="true"></span>
+
+      <div class="wrap">
+        <p class="eyebrow"><i aria-hidden="true"></i>Where the music already is</p>
+        <h2 id="ec-servers-t">Point it at the machine you already own.</h2>
+
+        <ul class="rack" role="list">
+          {
+            SERVERS.map((s, i) => (
+              <li class={`rack-item reveal${i === 1 ? ' is-lit' : ''}`} style={`--i:${i}`}>
+                <span class="rack-logo">
+                  <ServerLogo name={s.name} size={24} />
+                </span>
+                <h3>{s.name}</h3>
+                <p>{s.note}</p>
+                <span class="rack-no">{String(i + 1).padStart(2, '0')}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="aside">{FAQS[0].a}</p>
+      </div>
+    </section>
+
+    <!-- ================================================= STREAMING / OFFLINE -->
+    <section class="band parity" aria-labelledby="ec-parity-t">
+      <div class="wrap">
+        <p class="eyebrow"><i aria-hidden="true"></i>Equal halves</p>
+        <h2 id="ec-parity-t">In the light or out of it, the same player.</h2>
+
+        <div class="halves">
+          {
+            PARITY.map((f, i) => (
+              <article class={`half ${i === 0 ? 'is-paper' : 'is-ink'} reveal`} style={`--i:${i}`}>
+                <span class="half-tag">{i === 0 ? 'Streaming' : 'Offline'}</span>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+                <svg class="half-illo" viewBox="0 0 130 66" aria-hidden="true">
+                  {i === 0 ? (
+                    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                      <rect x="3" y="15" width="26" height="36" rx="3" />
+                      <path d="M10 44h5" />
+                      <path d="M41 24a16 16 0 0 1 0 18" />
+                      <path d="M52 16a28 28 0 0 1 0 34" opacity="0.6" />
+                      <path d="M63 8a40 40 0 0 1 0 50" opacity="0.34" />
+                      <rect x="97" y="10" width="28" height="46" rx="6" />
+                      <circle cx="111" cy="33" r="6" fill="currentColor" stroke="none" />
+                    </g>
+                  ) : (
+                    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                      <path d="M3 33h46" opacity="0.45" stroke-dasharray="4 7" />
+                      <path d="M59 22 77 44M77 22 59 44" />
+                      <rect x="97" y="10" width="28" height="46" rx="6" />
+                      <circle cx="111" cy="33" r="6" fill="currentColor" stroke="none" />
+                    </g>
+                  )}
+                </svg>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ STATS -->
+    <section class="band figures" aria-label="Measured figures">
+      <div class="wrap">
+        <ul class="stats" role="list">
+          {
+            STATS.map((s, i) => (
+              <li class="reveal" style={`--i:${i}`}>
+                <b>{s.value}</b>
+                <span>{s.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================================================== MARQUEE
+         The drifting row from /h/marquee, executed the way this page works:
+         one row of sleeves in ink, a second identical row in red clipped to
+         a fixed band, and both on the same animation. A sleeve is only red
+         for as long as it is inside the light. -->
+    <section class="band weekly" aria-labelledby="ec-weekly-t">
+      <div class="wrap weekly-head">
+        <p class="eyebrow"><i aria-hidden="true"></i>Featured</p>
+        <h2 id="ec-weekly-t">{WEEKLY.title}</h2>
+        <p class="weekly-body">{WEEKLY.body}</p>
+      </div>
+
+      <div class="mq" aria-hidden="true">
+        <div class="mq-row">
+          <div class="mq-track">
+            {[0, 1].map(() => DRIFT.map((n) => <span class="mq-cell" set:html={sleeve(n)} />))}
+          </div>
+          <div class="mq-band">
+            <div class="mq-track mq-lit">
+              {[0, 1].map(() => DRIFT.map((n) => <span class="mq-cell" set:html={sleeve(n, true)} />))}
+            </div>
+          </div>
+        </div>
+        <span class="mq-edge mq-edge-l"></span>
+        <span class="mq-edge mq-edge-r"></span>
+      </div>
+    </section>
+
+    <!-- ========================================================= FEATURES -->
+    <section class="band does" aria-labelledby="ec-does-t">
+      <div class="wrap">
+        <p class="eyebrow"><i aria-hidden="true"></i>What it does with them</p>
+        <h2 id="ec-does-t">A player built the way a library wants to be played.</h2>
+
+        <ul class="cards" role="list">
+          {
+            REST.map((f, i) => (
+              <li class="card reveal" style={`--i:${i}`}>
+                <span class="card-no">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ SPLIT
+         /h/split, moved down the page and turned against a drawing rather
+         than a device: the eclipse itself on one side, the reason the app
+         exists on the other, and the wordmark holding the seam. -->
+    <section class="split" aria-labelledby="ec-own-t">
+      <div class="field field-diagram">
+        <svg class="diagram" viewBox="0 0 360 340" role="img" aria-label="An eclipse diagram: a dark disc crossing a lit one, with a red corona.">
+          <circle cx="180" cy="164" r="132" fill="none" stroke="#d8002d" stroke-width="2" opacity="0.35"></circle>
+          <circle cx="180" cy="164" r="108" fill="#d8002d"></circle>
+          <circle cx="180" cy="164" r="90" fill="#fdf6ec"></circle>
+          <circle class="crosser" cx="150" cy="152" r="86" fill="#14101a"></circle>
+          <g fill="none" stroke="#14101a" stroke-width="1.6" opacity="0.5">
+            <path d="M20 300h320"></path>
+          </g>
+          <g fill="#14101a" font-family="'DM Mono', monospace" font-size="11" letter-spacing="1.4">
+            <text x="20" y="322">LIGHT</text>
+            <text x="340" y="322" text-anchor="end">UMBRA</text>
+          </g>
+          <g transform="translate(148 322) scale(0.9)">
+            <path
+              d="M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z"
+              fill="#d8002d"
+              shape-rendering="crispEdges"></path>
+          </g>
+        </svg>
+        <p class="field-note"><span class="dot" aria-hidden="true"></span>{TAGLINE}</p>
+        <span class="seam seam-left" aria-hidden="true"><span>MOZZ</span></span>
+      </div>
+
+      <div class="field field-own">
+        <span class="seam seam-right" aria-hidden="true"><span>MOZZ</span></span>
+        <div class="own">
+          <p class="eyebrow"><i aria-hidden="true"></i>Why it is built this way</p>
+          <h2 id="ec-own-t">Nothing standing in between.</h2>
+          <ul role="list">
+            {
+              OWNERSHIP.map((o, i) => (
+                <li class="reveal" style={`--i:${i}`}>
+                  <h3>{o.title}</h3>
+                  <p>{o.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= PAIR -->
+    <section class="band pair" aria-labelledby="ec-pair-t">
+      <div class="wrap pair-head">
+        <p class="eyebrow"><i aria-hidden="true"></i>Both screens</p>
+        <h2 id="ec-pair-t">iPhone and iPad, one app.</h2>
+        <p class="pair-body">{FAQS[4].a}</p>
+      </div>
+
+      <div class="rig" role="img" aria-label="An iPad showing the Mozz library beside an iPhone playing a downloaded album.">
+        <div class="pad">
+          <div class="pad-screen">
+            <aside class="pad-side">
+              <span class="pad-brand"><Mark size={16} decorative /><b>{NAME}</b></span>
+              <span class="pad-nav is-on">Library</span>
+              <span class="pad-nav">Radio</span>
+              <span class="pad-nav">Downloads</span>
+              <span class="pad-nav">Playlists</span>
+              <span class="pad-weekly"><i aria-hidden="true"></i>Mozz Weekly</span>
+            </aside>
+            <div class="pad-main">
+              <div class="pad-top">
+                <span class="pad-h">Albums</span>
+                <span class="pad-search"></span>
+              </div>
+              <div class="pad-grid">
+                {PAD_TILES.map((n) => <span class="pad-tile" set:html={sleeve(n)} />)}
+              </div>
+              <div class="pad-now">
+                <span class="pad-now-art" set:html={sleeve(4, true)} />
+                <span class="pad-now-meta"><b>Umbra</b><i>Sable Field</i></span>
+                <span class="pad-now-bar"><i></i></span>
+                <span class="pad-now-play"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini">
+          <div class="mini-screen">
+            <span class="mini-island" aria-hidden="true"></span>
+            <span class="mini-art" set:html={sleeve(4, true)} />
+            <span class="mini-title">Umbra</span>
+            <span class="mini-sub">Sable Field</span>
+            <span class="mini-bar"><i></i></span>
+            <span class="mini-ctrl"><i></i><b></b><i></i></span>
+            <span class="mini-chip">downloaded</span>
+            <span class="mini-home" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== FAQ
+         /h/wall, demoted to the paper texture behind the questions. -->
+    <section class="band faq" aria-labelledby="ec-faq-t">
+      <div class="wall" aria-hidden="true">
+        {WALL.map((n) => <span class="wall-tile" set:html={sleeve(n)} />)}
+      </div>
+
+      <div class="wrap">
+        <p class="eyebrow"><i aria-hidden="true"></i>Before you ask</p>
+        <h2 id="ec-faq-t">Questions, answered plainly.</h2>
+
+        <dl class="qa">
+          {
+            FAQS.map((f, i) => (
+              <div class="qa-row reveal" style={`--i:${i}`}>
+                <dt>{f.q}</dt>
+                <dd>{f.a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============================================================ CLOSE
+         The word cropped by the bottom of the page, the way it is cropped
+         by the bottom of the hero. -->
+    <footer class="close" aria-labelledby="ec-close-t">
+      <div class="wrap close-inner">
+        <h2 id="ec-close-t">{TAGLINE}</h2>
+        <p class="close-sub">{SUBLINE}</p>
+
+        <div class="actions">
+          <a class="btn" href={GITHUB_URL}>Source on GitHub</a>
+          {
+            APP_STORE_URL ? (
+              <a class="btn ghost" href={APP_STORE_URL}>
+                Download on the App Store
+              </a>
+            ) : (
+              <span class="btn ghost pending" aria-disabled="true">
+                Coming to the App Store
+              </span>
+            )
+          }
+          <a class="btn plain" href={DONATE_URL}>Sponsor the work</a>
+        </div>
+
+        <div class="colophon">
+          <span class="lockup"><Mark size={22} decorative /><b>{NAME}</b></span>
+          <span>no account &middot; no tracking &middot; gpl-3.0</span>
+          <span>mz–04 &middot; eclipse</span>
+        </div>
+      </div>
+
+      <div class="close-word" aria-hidden="true">
+        <span class="w">MOZZ</span>
+        <span class="w lit">MOZZ</span>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const items = document.querySelectorAll<HTMLElement>('.reveal, .rig');
+  if (items.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.15 },
+    );
+    for (const item of items) io.observe(item);
+  }
+</script>
+
+<style is:global>
+  body {
+    background: #eeeae2;
+  }
+</style>
+
+<style>
+  .eclipse {
+    --paper: #eeeae2;
+    --stock: #e2ddd3;
+    --ink: #14101a;
+    --red: #d8002d;
+    --deep: #7d0019;
+    --cream: #fdf6ec;
+    --pw: 292px;
+    --band: calc(var(--pw) * 2);
+    --pad: clamp(20px, 4.4vw, 64px);
+    --measure: 1320px;
+
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .wrap {
+    width: min(100%, var(--measure));
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  /* --------------------------------------------------------------- hero */
+
+  .hero {
+    position: relative;
+    height: calc(100svh - 42px);
+    min-height: 660px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    width: min(1240px, 132vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(216, 0, 45, 0.1), rgba(216, 0, 45, 0) 58%);
+    pointer-events: none;
+  }
+
+  .frame {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    padding: clamp(18px, 2.6vh, 30px) var(--pad) clamp(16px, 2.2vh, 26px);
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: clamp(12px, 1vw, 13.5px);
+  }
+
+  .lockup b {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 112%;
+    letter-spacing: -0.015em;
+    font-size: 1.25em;
+  }
+
+  .lockup i {
+    width: 18px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.35;
+  }
+
+  .lockup > span {
+    opacity: 0.62;
+  }
+
+  .fine {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.85vw, 11.5px);
+    opacity: 0.5;
+  }
+
+  .mid {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: clamp(10px, 2.4vh, 26px);
+  }
+
+  .say {
+    position: relative;
+    z-index: 3;
+    max-width: 27ch;
+  }
+
+  .say h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: clamp(25px, 2.55vw, 37px);
+    line-height: 1.04;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+
+  .say p {
+    max-width: 34ch;
+    margin-top: 0.85em;
+    font-size: clamp(13px, 1.02vw, 14.5px);
+    line-height: 1.5;
+    opacity: 0.66;
+  }
+
+  .works {
+    position: relative;
+    z-index: 3;
+    text-align: right;
+    flex: none;
+  }
+
+  .works .tag {
+    display: block;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.45;
+  }
+
+  .works ul {
+    margin-top: 0.5rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .works li {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-stretch: 105%;
+    font-size: clamp(15px, 1.35vw, 20px);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    padding-top: 0.3rem;
+    border-top: 1px solid rgba(20, 16, 26, 0.18);
+  }
+
+  .works li:first-child {
+    border-top-color: var(--red);
+  }
+
+  .word {
+    position: absolute;
+    left: 50%;
+    bottom: -0.06em;
+    transform: translateX(-50%);
+    z-index: 1;
+    white-space: nowrap;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-stretch: 125%;
+    font-size: 34vw;
+    line-height: 0.74;
+    letter-spacing: -0.028em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .w {
+    display: block;
+    color: var(--ink);
+  }
+
+  .w.lit {
+    position: absolute;
+    inset: 0;
+    color: var(--red);
+    clip-path: inset(0 calc(50% - var(--band) / 2) 0 calc(50% - var(--band) / 2));
+    animation: umbra 26s ease-in-out infinite;
+  }
+
+  @keyframes umbra {
+    0%,
+    100% {
+      clip-path: inset(0 calc(50% - var(--band) / 2) 0 calc(50% - var(--band) / 2));
+    }
+    50% {
+      clip-path: inset(0 calc(50% - var(--band) * 0.585) 0 calc(50% - var(--band) * 0.585));
+    }
+  }
+
+  .phone {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 2;
+    width: var(--pw);
+    /* The real hardware ratio, not a rounded one. */
+    aspect-ratio: 71.6 / 147.6;
+    transform: translateX(-50%);
+    padding: calc(var(--pw) * 0.031);
+    border-radius: calc(var(--pw) * 0.155);
+    background: #100c14;
+    box-shadow:
+      0 0 0 clamp(7px, 0.85vw, 12px) var(--paper),
+      0 0 0 calc(clamp(7px, 0.85vw, 12px) + 1px) rgba(20, 16, 26, 0.14),
+      0 42px 70px -34px rgba(20, 16, 26, 0.6);
+  }
+
+  .screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 calc(var(--pw) * 0.055);
+    border-radius: calc(var(--pw) * 0.126);
+    overflow: hidden;
+    background: #191320;
+    color: var(--cream);
+    font-size: calc(var(--pw) / 20);
+  }
+
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 0.62em;
+    width: 30%;
+    height: 1.1em;
+    border-radius: 999px;
+    background: #0a070d;
+    transform: translateX(-50%);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.72em 0.35em 0;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.62em;
+    opacity: 0.72;
+  }
+
+  .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+
+  .glyphs svg:first-child {
+    width: 0.85em;
+    height: 0.85em;
+  }
+
+  .glyphs svg:last-child {
+    width: 1.5em;
+    height: 0.7em;
+  }
+
+  .scr-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 1.5em;
+    padding: 0 0.2em;
+  }
+
+  .chev {
+    width: 0.95em;
+    height: 0.95em;
+    opacity: 0.75;
+    flex: none;
+  }
+
+  .from {
+    flex: 1;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.53em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.62;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.14em;
+    height: 0.8em;
+    flex: none;
+  }
+
+  .eq i {
+    width: 0.14em;
+    background: var(--red);
+    border-radius: 1px;
+    animation: level 1.1s ease-in-out infinite;
+  }
+
+  .eq i:nth-child(1) {
+    height: 55%;
+    animation-delay: -0.35s;
+  }
+  .eq i:nth-child(2) {
+    height: 100%;
+  }
+  .eq i:nth-child(3) {
+    height: 38%;
+    animation-delay: -0.7s;
+  }
+
+  @keyframes level {
+    0%,
+    100% {
+      transform: scaleY(0.42);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .art {
+    margin-top: 1.05em;
+  }
+
+  .art svg {
+    width: 100%;
+    height: auto;
+    border-radius: 0.35em;
+    display: block;
+  }
+
+  .umbra {
+    animation: cross 30s ease-in-out infinite;
+  }
+
+  @keyframes cross {
+    0%,
+    100% {
+      transform: translateX(-6px);
+    }
+    50% {
+      transform: translateX(30px);
+    }
+  }
+
+  .meta {
+    margin-top: 1.15em;
+    padding: 0 0.15em;
+  }
+
+  .meta strong {
+    display: block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 108%;
+    font-size: 1.12em;
+    letter-spacing: -0.02em;
+  }
+
+  .meta span {
+    display: block;
+    margin-top: 0.2em;
+    font-size: 0.66em;
+    opacity: 0.55;
+  }
+
+  .bar {
+    margin: 1.1em 0.15em 0;
+    height: 0.22em;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.18);
+    overflow: hidden;
+  }
+
+  .bar span {
+    display: block;
+    width: 42%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5em 0.15em 0;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.55em;
+    opacity: 0.5;
+  }
+
+  .ctrls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.35em;
+    margin-top: 0.95em;
+  }
+
+  .ctrls > svg {
+    width: 1.15em;
+    height: 1.15em;
+    opacity: 0.85;
+  }
+
+  .play {
+    display: grid;
+    place-items: center;
+    width: 2.35em;
+    height: 2.35em;
+    border-radius: 999px;
+    background: var(--red);
+    color: #150009;
+  }
+
+  .play svg {
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .vol {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    margin: 1.5em 0.35em 0;
+    opacity: 0.42;
+  }
+
+  .vol svg {
+    width: 0.72em;
+    height: 0.72em;
+    flex: none;
+  }
+
+  .vol .track {
+    position: relative;
+    flex: 1;
+    height: 0.16em;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.28);
+  }
+
+  .vol .track i {
+    position: absolute;
+    inset: 0 42% 0 0;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.85);
+  }
+
+  .dl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    margin-top: auto;
+    margin-bottom: 0.7em;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.52em;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    opacity: 0.62;
+  }
+
+  .dl svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+
+  .home {
+    width: 32%;
+    height: 0.2em;
+    margin: 0 auto 0.6em;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.5);
+  }
+
+  .note {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    line-height: 1.45;
+    opacity: 0.78;
+  }
+
+  .dot {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    border-radius: 999px;
+    background: var(--red);
+    color: var(--cream);
+  }
+
+  .dot svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .note.a {
+    top: 38%;
+    left: calc(50% - var(--pw) / 2 - 168px);
+  }
+
+  .note.b {
+    top: 26%;
+    left: calc(50% + var(--pw) / 2 + 30px);
+    flex-direction: row-reverse;
+  }
+
+  .bot {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: clamp(10px, 1.6vh, 18px);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.66rem 1.05rem;
+    border-radius: 999px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: clamp(12px, 0.95vw, 13.5px);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border-style: dashed;
+    border-color: rgba(20, 16, 26, 0.34);
+  }
+
+  .btn.pending {
+    opacity: 0.72;
+    cursor: default;
+  }
+
+  .btn.pending::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--red);
+  }
+
+  .btn.plain {
+    border-color: transparent;
+    background: transparent;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--red);
+    padding-inline: 0.3rem;
+  }
+
+  a.btn:not(.plain):hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--cream);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .ref {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    white-space: nowrap;
+  }
+
+  .ref:hover {
+    opacity: 1;
+  }
+
+  .ref svg {
+    width: 13px;
+    height: 13px;
+    animation: nudge 2.6s ease-in-out infinite;
+  }
+
+  @keyframes nudge {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  /* -------------------------------------------------- shared band styles */
+
+  .band {
+    position: relative;
+    padding-block: clamp(62px, 9vh, 126px);
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .eyebrow i {
+    width: 22px;
+    height: 2px;
+    background: var(--red);
+    opacity: 1;
+  }
+
+  .band h2 {
+    max-width: 20ch;
+    margin-top: 0.7rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 108%;
+    font-size: clamp(28px, 4.1vw, 62px);
+    line-height: 0.98;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+  }
+
+  .reveal {
+    opacity: 1;
+  }
+
+  :global(html.js) .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 0.7, 0.2, 1),
+      transform 0.6s cubic-bezier(0.22, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  :global(html.js) .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ------------------------------------------------------------ servers */
+
+  .servers {
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+    overflow: hidden;
+  }
+
+  /* The band the app casts, standing over one column. */
+  .transit {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: min(var(--band), 62vw);
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to right,
+      rgba(216, 0, 45, 0) 0%,
+      rgba(216, 0, 45, 0.09) 22%,
+      rgba(216, 0, 45, 0.09) 78%,
+      rgba(216, 0, 45, 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  .rack {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 26px);
+    margin-top: clamp(30px, 5vh, 58px);
+  }
+
+  .rack-item {
+    position: relative;
+    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px) clamp(26px, 2.8vw, 38px);
+    border: 1px solid rgba(20, 16, 26, 0.2);
+    background: var(--stock);
+  }
+
+  .rack-item.is-lit {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--cream);
+  }
+
+  .rack-logo {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    opacity: 0.85;
+  }
+
+  .rack-item h3 {
+    margin-top: 1rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 106%;
+    font-size: clamp(19px, 1.7vw, 26px);
+    letter-spacing: -0.02em;
+  }
+
+  .rack-item p {
+    margin-top: 0.5rem;
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.55;
+    opacity: 0.72;
+  }
+
+  .rack-no {
+    position: absolute;
+    right: clamp(14px, 1.6vw, 22px);
+    bottom: clamp(10px, 1.2vw, 16px);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    opacity: 0.45;
+  }
+
+  .aside {
+    position: relative;
+    max-width: 62ch;
+    margin-top: clamp(22px, 3vh, 34px);
+    padding-left: 1rem;
+    border-left: 2px solid var(--red);
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.6;
+    opacity: 0.68;
+  }
+
+  /* ------------------------------------------------- streaming / offline */
+
+  .halves {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 26px);
+    margin-top: clamp(30px, 5vh, 58px);
+  }
+
+  .half {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(22px, 2.6vw, 40px);
+    min-height: clamp(280px, 34vh, 380px);
+  }
+
+  .half.is-paper {
+    background: var(--stock);
+    border: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .half.is-ink {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .half-tag {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .half.is-ink .half-tag {
+    color: #ff5c7c;
+  }
+
+  .half h3 {
+    margin-top: 0.8rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 104%;
+    font-size: clamp(21px, 2.2vw, 33px);
+    line-height: 1.04;
+    letter-spacing: -0.026em;
+  }
+
+  .half p {
+    margin-top: 0.75rem;
+    max-width: 42ch;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.58;
+    opacity: 0.75;
+  }
+
+  .half-illo {
+    width: min(220px, 62%);
+    height: auto;
+    margin-top: auto;
+    padding-top: 1.6rem;
+    opacity: 0.8;
+  }
+
+  /* ------------------------------------------------------------ figures */
+
+  .figures {
+    padding-block: clamp(28px, 5vh, 60px);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.6vw, 26px);
+  }
+
+  .stats li {
+    padding-top: clamp(10px, 1.4vh, 16px);
+    border-top: 1px solid rgba(238, 234, 226, 0.28);
+  }
+
+  .stats li:first-child {
+    border-top-color: var(--red);
+  }
+
+  .stats b {
+    display: block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: clamp(30px, 3.6vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .stats li:first-child b {
+    color: var(--red);
+  }
+
+  .stats span {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: clamp(11.5px, 0.9vw, 13.5px);
+    line-height: 1.4;
+    opacity: 0.6;
+  }
+
+  /* ----------------------------------------------------------- marquee */
+
+  .weekly-body {
+    max-width: 54ch;
+    margin-top: 1rem;
+    font-size: clamp(13.5px, 1.06vw, 16px);
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+
+  .mq {
+    position: relative;
+    margin-top: clamp(30px, 5vh, 60px);
+    overflow: hidden;
+  }
+
+  .mq-row {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mq-track {
+    display: flex;
+    width: max-content;
+    gap: clamp(10px, 1.2vw, 18px);
+    will-change: transform;
+    animation: drift 62s linear infinite;
+  }
+
+  /* The red copy, clipped to the band the app stands in. Same geometry, same
+     animation — only the ink changes as a sleeve enters the light. The clip
+     lives on a static wrapper, not on the moving track, so the band stays put
+     while the sleeves travel through it. */
+  .mq-band {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    clip-path: inset(0 calc(50% - var(--band) / 2) 0 calc(50% - var(--band) / 2));
+  }
+
+  .mq-band::before,
+  .mq-band::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 2px;
+    background: rgba(216, 0, 45, 0.55);
+  }
+
+  .mq-band::before {
+    left: 0;
+  }
+
+  .mq-band::after {
+    right: 0;
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(calc(-50% - clamp(5px, 0.6vw, 9px)), 0, 0);
+    }
+  }
+
+  .mq-cell {
+    display: block;
+    flex: none;
+    width: clamp(118px, 14.5vw, 210px);
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .mq-cell :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .mq-edge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(40px, 10vw, 160px);
+    pointer-events: none;
+  }
+
+  .mq-edge-l {
+    left: 0;
+    background: linear-gradient(to right, var(--paper), rgba(238, 234, 226, 0));
+  }
+
+  .mq-edge-r {
+    right: 0;
+    background: linear-gradient(to left, var(--paper), rgba(238, 234, 226, 0));
+  }
+
+  /* ----------------------------------------------------------- features */
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(30px, 5vh, 58px);
+    background: rgba(20, 16, 26, 0.2);
+    border: 1px solid rgba(20, 16, 26, 0.2);
+  }
+
+  .card {
+    padding: clamp(24px, 2.8vw, 44px);
+    background: var(--paper);
+  }
+
+  .card-no {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--red);
+  }
+
+  .card h3 {
+    margin-top: 0.9rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 104%;
+    font-size: clamp(19px, 1.8vw, 28px);
+    line-height: 1.08;
+    letter-spacing: -0.024em;
+  }
+
+  .card p {
+    margin-top: 0.6rem;
+    max-width: 44ch;
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.58;
+    opacity: 0.7;
+  }
+
+  /* -------------------------------------------------------------- split */
+
+  .split {
+    position: relative;
+    display: grid;
+    grid-template-columns: 46% 1fr;
+    min-height: clamp(560px, 92svh, 900px);
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: clamp(40px, 6vh, 90px) clamp(22px, 4vw, 70px);
+  }
+
+  .field-diagram {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .diagram {
+    width: min(100%, 440px);
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .diagram text {
+    fill: var(--paper);
+    opacity: 0.6;
+  }
+
+  .diagram path[d^='M20 300'] {
+    stroke: var(--paper);
+    opacity: 0.25;
+  }
+
+  .diagram .crosser {
+    fill: var(--ink);
+    animation: transit 24s ease-in-out infinite;
+  }
+
+  @keyframes transit {
+    0%,
+    100% {
+      transform: translateX(-16px);
+    }
+    50% {
+      transform: translateX(34px);
+    }
+  }
+
+  .field-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: clamp(22px, 3vh, 38px);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10.5px, 0.9vw, 12.5px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .field-note .dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .field-own {
+    background: var(--paper);
+  }
+
+  .own {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 640px);
+  }
+
+  .own h2 {
+    max-width: 14ch;
+    margin-top: 0.7rem;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 110%;
+    font-size: clamp(32px, 4.3vw, 66px);
+    line-height: 0.94;
+    letter-spacing: -0.036em;
+  }
+
+  .own ul {
+    margin-top: clamp(22px, 3vh, 36px);
+  }
+
+  .own li {
+    padding-block: clamp(14px, 1.8vh, 22px);
+    border-top: 1px solid rgba(20, 16, 26, 0.22);
+  }
+
+  .own li:last-child {
+    border-bottom: 1px solid rgba(20, 16, 26, 0.22);
+  }
+
+  .own h3 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 104%;
+    font-size: clamp(17px, 1.5vw, 23px);
+    letter-spacing: -0.02em;
+  }
+
+  .own p {
+    margin-top: 0.35rem;
+    max-width: 48ch;
+    font-size: clamp(12.5px, 0.98vw, 14.5px);
+    line-height: 1.55;
+    opacity: 0.72;
+  }
+
+  .seam {
+    position: absolute;
+    top: clamp(24px, 5vh, 58px);
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-stretch: 125%;
+    font-size: clamp(70px, 11vw, 190px);
+    line-height: 0.78;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .seam-left {
+    right: 0;
+    transform: translateX(50%);
+    color: rgba(238, 234, 226, 0.12);
+  }
+
+  .seam-right {
+    left: 0;
+    transform: translateX(-50%);
+    color: rgba(20, 16, 26, 0.1);
+  }
+
+  /* --------------------------------------------------------------- pair */
+
+  .pair {
+    overflow: hidden;
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+  }
+
+  .pair-body {
+    max-width: 50ch;
+    margin-top: 1rem;
+    font-size: clamp(13.5px, 1.06vw, 16px);
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+
+  .rig {
+    position: relative;
+    width: min(100% - var(--pad) * 2, 1000px);
+    margin: clamp(34px, 6vh, 74px) auto 0;
+    padding-bottom: 7%;
+  }
+
+  .pad {
+    width: 100%;
+    aspect-ratio: 1.43;
+    padding: clamp(8px, 0.9vw, 14px);
+    border-radius: clamp(16px, 1.9vw, 30px);
+    background: #100c14;
+    box-shadow:
+      0 0 0 1px rgba(20, 16, 26, 0.2),
+      0 44px 80px -40px rgba(20, 16, 26, 0.7);
+  }
+
+  .pad-screen {
+    display: grid;
+    grid-template-columns: clamp(120px, 19%, 190px) 1fr;
+    height: 100%;
+    border-radius: clamp(10px, 1.3vw, 20px);
+    overflow: hidden;
+    background: #191320;
+    color: var(--cream);
+  }
+
+  .pad-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: clamp(12px, 1.5vw, 22px);
+    background: rgba(10, 7, 13, 0.6);
+    border-right: 1px solid rgba(253, 246, 236, 0.09);
+    font-size: clamp(9.5px, 0.86vw, 12.5px);
+  }
+
+  .pad-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .pad-brand b {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 110%;
+    font-size: 1.15em;
+  }
+
+  .pad-nav {
+    padding: 0.34rem 0.5rem;
+    border-radius: 3px;
+    color: rgba(253, 246, 236, 0.55);
+  }
+
+  .pad-nav.is-on {
+    background: var(--red);
+    color: var(--cream);
+  }
+
+  .pad-weekly {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(253, 246, 236, 0.12);
+    color: rgba(253, 246, 236, 0.66);
+  }
+
+  .pad-weekly i {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .pad-main {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(12px, 1.5vw, 22px);
+    min-width: 0;
+  }
+
+  .pad-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(10px, 1.2vw, 16px);
+  }
+
+  .pad-h {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 106%;
+    font-size: clamp(13px, 1.4vw, 22px);
+    letter-spacing: -0.02em;
+  }
+
+  .pad-search {
+    width: clamp(70px, 22%, 190px);
+    height: clamp(14px, 1.5vw, 22px);
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.1);
+  }
+
+  .pad-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(6px, 0.8vw, 12px);
+    align-content: start;
+    min-height: 0;
+  }
+
+  .pad-tile {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .pad-tile :global(svg),
+  .pad-now-art :global(svg),
+  .mini-art :global(svg),
+  .wall-tile :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .pad-now {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1.6fr) auto;
+    align-items: center;
+    gap: clamp(8px, 1vw, 16px);
+    margin-top: auto;
+    padding-top: clamp(10px, 1.2vw, 18px);
+    border-top: 1px solid rgba(253, 246, 236, 0.12);
+  }
+
+  .pad-now-art {
+    display: block;
+    width: clamp(26px, 3.4vw, 46px);
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .pad-now-meta {
+    display: grid;
+    min-width: 0;
+    font-size: clamp(9px, 0.82vw, 12px);
+  }
+
+  .pad-now-meta b {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pad-now-meta i {
+    font-style: normal;
+    opacity: 0.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pad-now-bar {
+    display: block;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.18);
+  }
+
+  .pad-now-bar i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--red);
+  }
+
+  .pad-now-play {
+    width: clamp(18px, 2.2vw, 30px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .mini {
+    position: absolute;
+    right: 1.5%;
+    bottom: 0;
+    width: 18.5%;
+    min-width: 84px;
+    aspect-ratio: 71.6 / 147.6;
+    padding: clamp(4px, 0.5vw, 8px);
+    border-radius: clamp(14px, 1.7vw, 26px);
+    background: #100c14;
+    box-shadow:
+      0 0 0 clamp(5px, 0.6vw, 9px) var(--paper),
+      0 0 0 calc(clamp(5px, 0.6vw, 9px) + 1px) rgba(20, 16, 26, 0.16),
+      0 30px 60px -30px rgba(20, 16, 26, 0.7);
+    transform: rotate(3deg);
+    transform-origin: 50% 100%;
+  }
+
+  .mini-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: clamp(6px, 0.7vw, 11px);
+    border-radius: clamp(10px, 1.3vw, 20px);
+    background: #191320;
+    color: var(--cream);
+    overflow: hidden;
+    font-size: clamp(6px, 0.62vw, 9px);
+  }
+
+  .mini-island {
+    width: 34%;
+    height: 0.9em;
+    margin: 0.2em auto 0.7em;
+    border-radius: 999px;
+    background: #0a070d;
+  }
+
+  .mini-art {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .mini-title {
+    margin-top: 0.8em;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.15em;
+  }
+
+  .mini-sub {
+    opacity: 0.55;
+  }
+
+  .mini-bar {
+    display: block;
+    height: 0.28em;
+    margin-top: 0.7em;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.2);
+  }
+
+  .mini-bar i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--red);
+  }
+
+  .mini-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9em;
+    margin-top: auto;
+  }
+
+  .mini-ctrl i {
+    width: 0.7em;
+    height: 0.7em;
+    background: rgba(253, 246, 236, 0.7);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .mini-ctrl i:first-child {
+    transform: scaleX(-1);
+  }
+
+  .mini-ctrl b {
+    width: 1.9em;
+    height: 1.9em;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .mini-chip {
+    margin-top: 0.7em;
+    text-align: center;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .mini-home {
+    width: 32%;
+    height: 0.25em;
+    margin: 0.6em auto 0;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.45);
+  }
+
+  :global(html.js) .rig .pad,
+  :global(html.js) .rig .mini {
+    opacity: 0;
+    transition:
+      opacity 0.75s cubic-bezier(0.2, 0.75, 0.2, 1),
+      transform 0.75s cubic-bezier(0.2, 0.75, 0.2, 1);
+  }
+
+  :global(html.js) .rig .pad {
+    transform: translateY(58px);
+  }
+
+  :global(html.js) .rig .mini {
+    transform: translateY(78px) rotate(9deg);
+    transition-delay: 160ms;
+  }
+
+  :global(html.js) .rig.is-in .pad {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html.js) .rig.is-in .mini {
+    opacity: 1;
+    transform: rotate(3deg);
+  }
+
+  /* ---------------------------------------------------------------- faq */
+
+  .faq {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+  }
+
+  .wall {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2px;
+    opacity: 0.12;
+    pointer-events: none;
+    -webkit-mask-image:
+      radial-gradient(110% 70% at 84% 30%, #000 0%, rgba(0, 0, 0, 0.28) 44%, transparent 74%),
+      linear-gradient(to bottom, transparent 0%, #000 22%, #000 74%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(110% 70% at 84% 30%, #000 0%, rgba(0, 0, 0, 0.28) 44%, transparent 74%),
+      linear-gradient(to bottom, transparent 0%, #000 22%, #000 74%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  .wall-tile {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .faq .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  .qa {
+    margin-top: clamp(28px, 4.5vh, 54px);
+    border-top: 1px solid rgba(20, 16, 26, 0.24);
+  }
+
+  .qa-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+    gap: clamp(12px, 3vw, 46px);
+    padding-block: clamp(18px, 2.4vh, 28px);
+    border-bottom: 1px solid rgba(20, 16, 26, 0.24);
+  }
+
+  .qa dt {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-stretch: 104%;
+    font-size: clamp(16px, 1.5vw, 23px);
+    line-height: 1.12;
+    letter-spacing: -0.022em;
+  }
+
+  .qa dd {
+    margin: 0;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.75;
+  }
+
+  /* -------------------------------------------------------------- close */
+
+  .close {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(62px, 9vh, 118px);
+    border-top: 1px solid rgba(20, 16, 26, 0.16);
+  }
+
+  .close-inner {
+    position: relative;
+    z-index: 2;
+  }
+
+  .close h2 {
+    max-width: 16ch;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-stretch: 110%;
+    font-size: clamp(32px, 5vw, 76px);
+    line-height: 0.94;
+    letter-spacing: -0.038em;
+    text-wrap: balance;
+  }
+
+  .close-sub {
+    margin-top: 0.8rem;
+    font-size: clamp(14px, 1.2vw, 19px);
+    font-weight: 600;
+    color: var(--red);
+  }
+
+  .close .actions {
+    margin-top: clamp(20px, 3vh, 32px);
+  }
+
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1.6rem;
+    margin-top: clamp(34px, 5vh, 60px);
+    padding-top: clamp(14px, 2vh, 22px);
+    border-top: 1px solid rgba(20, 16, 26, 0.2);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .colophon span:last-child {
+    margin-left: auto;
+  }
+
+  /* The wordmark cropped by the bottom of the document, exactly as the hero
+     is cropped by the bottom of the window. */
+  .close-word {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(18px, 3vh, 34px);
+    height: 15vw;
+    min-height: 90px;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 900;
+    font-stretch: 125%;
+    font-size: 34vw;
+    line-height: 0.74;
+    letter-spacing: -0.028em;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .close-word .w {
+    display: block;
+    color: rgba(20, 16, 26, 0.14);
+  }
+
+  .close-word .w.lit {
+    position: absolute;
+    inset: 0;
+    color: rgba(216, 0, 45, 0.5);
+    clip-path: inset(0 calc(50% - var(--band) / 2) 0 calc(50% - var(--band) / 2));
+  }
+
+  /* ----------------------------------------------------------- narrower */
+
+  @media (max-width: 1180px) {
+    .note.a {
+      left: calc(50% - var(--pw) / 2 - 150px);
+    }
+
+    .split {
+      grid-template-columns: 44% 1fr;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .rack,
+    .halves,
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .field {
+      min-height: clamp(380px, 62svh, 560px);
+    }
+
+    .seam {
+      display: none;
+    }
+
+    .qa-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+
+    .pad-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .transit {
+      width: 78vw;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .eclipse {
+      --pw: clamp(138px, min(56vw, calc((100svh - 494px) / 2.06)), 208px);
+      --band: calc(var(--pw) * 1.34);
+    }
+
+    .hero {
+      min-height: 620px;
+    }
+
+    .mid {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0.9rem;
+    }
+
+    .fine {
+      display: none;
+    }
+
+    .say {
+      max-width: none;
+    }
+
+    .say h1 {
+      font-size: clamp(24px, 6.6vw, 32px);
+    }
+
+    .say p {
+      max-width: 40ch;
+      font-size: 13px;
+    }
+
+    .works {
+      text-align: left;
+    }
+
+    .works ul {
+      display: flex;
+      gap: 0.7rem;
+      margin-top: 0.35rem;
+    }
+
+    .works li {
+      font-size: 15px;
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .works li:not(:first-child)::before {
+      content: '·';
+      margin-right: 0.7rem;
+      opacity: 0.4;
+    }
+
+    .word {
+      font-size: 34.5vw;
+    }
+
+    .note {
+      font-size: 10px;
+    }
+
+    .note.b {
+      display: none;
+    }
+
+    .note.a {
+      top: auto;
+      bottom: calc(var(--pw) * 2.06 + 26px);
+      left: 0;
+    }
+
+    .bot {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+
+    .bot .actions {
+      width: 100%;
+    }
+
+    .bot .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 0.7rem 0.6rem;
+      font-size: 12.5px;
+    }
+
+    .wall {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .close-word {
+      height: 17vw;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.1rem;
+    }
+
+    .mini {
+      right: 0;
+      width: 26%;
+    }
+
+    .wall {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .colophon span:last-child {
+      margin-left: 0;
+    }
+
+    .close-word {
+      height: 19vw;
+      min-height: 62px;
+    }
+  }
+
+  @media (max-width: 900px) and (max-height: 760px) {
+    .note.a {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .w.lit,
+    .eq i,
+    .umbra,
+    .ref svg,
+    .mq-track,
+    .diagram .crosser {
+      animation: none;
+    }
+
+    :global(html.js) .reveal,
+    :global(html.js) .rig .pad,
+    :global(html.js) .rig .mini {
+      opacity: 1;
+      transform: none;
+    }
+
+    :global(html.js) .rig .mini {
+      transform: rotate(3deg);
+    }
+  }
+</style>
