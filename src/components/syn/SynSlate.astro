@@ -1,0 +1,251 @@
+---
+/**
+ * The Mozz library on an iPad, drawn.
+ *
+ * Companion to SynPhone. Landscape, real proportions (247.6 x 178.5 mm), with
+ * the sidebar and album grid the app actually uses. It exists so the "pair"
+ * idea — iPhone and iPad together, moving as you scroll — can live in a section
+ * further down the page instead of in a hero, which is what Brandon asked for.
+ *
+ *   --syn-tw       rendered width of the hardware (any CSS length)
+ *   --syn-bezel / --syn-screen / --syn-fg / --syn-red / --syn-shadow
+ */
+import { RECORDS } from '../../data/syn-art';
+
+export interface Props {
+  width?: string;
+  /** Twelve sleeve SVG strings from src/data/syn-art.ts. */
+  covers: string[];
+  class?: string;
+  label?: string | null;
+}
+
+const {
+  width = 'clamp(360px, 40vw, 620px)',
+  covers,
+  class: className = '',
+  label = null,
+} = Astro.props;
+
+const NAV = ['Library', 'Albums', 'Artists', 'Playlists', 'Downloads', 'Mozz Weekly'];
+const grid = covers.slice(0, 12);
+---
+
+<div
+  class:list={['syn-slate', className]}
+  style={`--syn-tw:${width}`}
+  role={label ? 'img' : undefined}
+  aria-label={label ?? undefined}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <div class="slate-shell">
+    <div class="slate-screen">
+      <aside class="slate-side">
+        <p class="slate-brand">Mozz</p>
+        <ul class="slate-nav" role="list">
+          {
+            NAV.map((item, i) => (
+              <li class={i === 1 ? 'is-on' : ''}>
+                <span class="slate-dot"></span>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="slate-status"><i></i>Your server is online</p>
+      </aside>
+
+      <section class="slate-main">
+        <header class="slate-top">
+          <span class="slate-over">Your collection</span>
+          <span class="slate-count">1,284 albums · 18,930 tracks</span>
+        </header>
+
+        <div class="slate-grid">
+          {
+            grid.map((cover, i) => (
+              <figure class="slate-cell">
+                <span class="slate-cover" set:html={cover} />
+                <figcaption>
+                  <strong>{RECORDS[i % RECORDS.length].title}</strong>
+                  <span>{RECORDS[i % RECORDS.length].artist}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  .syn-slate {
+    width: var(--syn-tw);
+    flex: none;
+  }
+
+  .slate-shell {
+    width: 100%;
+    /* iPad Pro 11-inch: 247.6 x 178.5 mm, landscape. */
+    aspect-ratio: 247.6 / 178.5;
+    padding: calc(var(--syn-tw) * 0.022);
+    border-radius: calc(var(--syn-tw) * 0.042);
+    background: var(--syn-bezel, #0a070d);
+    box-shadow:
+      inset 0 0 0 1px var(--syn-rim, rgba(255, 255, 255, 0.14)),
+      var(--syn-shadow, 0 46px 90px -40px rgba(0, 0, 0, 0.7));
+    isolation: isolate;
+  }
+
+  .slate-screen {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--syn-tw) * 0.026);
+    background: var(--syn-screen, #14101a);
+    color: var(--syn-fg, #fdf6ec);
+    font-size: calc(var(--syn-tw) / 46);
+    font-family: var(--syn-font, 'Helvetica Neue', Arial, sans-serif);
+  }
+
+  .slate-side {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 23%;
+    padding: 1.3em 1em;
+    border-right: 1px solid color-mix(in srgb, var(--syn-fg, #fdf6ec) 14%, transparent);
+  }
+
+  .slate-brand {
+    font-size: 1.2em;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .slate-nav {
+    display: grid;
+    gap: 0.62em;
+    margin: 1.5em 0 0;
+    font-size: 0.78em;
+  }
+
+  .slate-nav li {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    opacity: 0.56;
+  }
+
+  .slate-nav li.is-on {
+    opacity: 1;
+    font-weight: 700;
+  }
+
+  .slate-dot {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  .slate-nav li.is-on .slate-dot {
+    background: var(--syn-red, #d8002d);
+    opacity: 1;
+  }
+
+  .slate-status {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-top: auto;
+    font-size: 0.66em;
+    opacity: 0.6;
+  }
+
+  .slate-status i {
+    width: 0.45em;
+    height: 0.45em;
+    border-radius: 50%;
+    background: var(--syn-red, #d8002d);
+  }
+
+  .slate-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    padding: 1.3em 1.2em 0;
+  }
+
+  .slate-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+    padding-bottom: 0.85em;
+    border-bottom: 1px solid color-mix(in srgb, var(--syn-fg, #fdf6ec) 14%, transparent);
+  }
+
+  .slate-over {
+    font-size: 1.05em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .slate-count {
+    font-size: 0.62em;
+    opacity: 0.55;
+    white-space: nowrap;
+  }
+
+  .slate-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.95em;
+    margin-top: 1em;
+  }
+
+  .slate-cell {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .slate-cover {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0.34em;
+  }
+
+  .slate-cover :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .slate-cell figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    margin-top: 0.44em;
+    font-size: 0.58em;
+    line-height: 1.25;
+  }
+
+  .slate-cell strong {
+    font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .slate-cell span {
+    opacity: 0.55;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>

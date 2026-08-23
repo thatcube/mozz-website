@@ -558,4 +558,51 @@ export const VARIANTS: Variant[] = [
     swatch: ['#0a0a0c', '#c80028', '#ece6da'],
     mood: 'dark',
   },
+
+  /* ------------------------------------------------------------------ *
+   * SYNTHESIS SET — four finished sites, appended as one block.
+   *
+   * Each of these combines all four of the hero studies Brandon picked —
+   * umbra's graded light, eclipse's crossed colossal wordmark, cover's
+   * occlusion and poster's full-measure type — into a single shippable
+   * page, and each pays off marquee, split, pair and wall further down.
+   * They differ in which of the four leads: poster, eclipse, cover, umbra
+   * respectively. Red, white and black only.
+   * ------------------------------------------------------------------ */
+  {
+    slug: 'anthology',
+    name: 'Anthology',
+    vibe: 'the whole argument, set as one printed sheet',
+    blurb:
+      'Poster logic leads: a full-measure MOZZ carries the page and every section is another plate on the same press. Umbra grading does the transitions, the eclipse crossing lands mid-page, and the offline chapter is the wordmark half-hidden behind the phone.',
+    swatch: ['#eeeae2', '#d8002d', '#14101a'],
+    mood: 'light',
+  },
+  {
+    slug: 'union',
+    name: 'Union',
+    vibe: 'the eclipse, held for a whole page',
+    blurb:
+      'Eclipse exactly as it stands — colossal type cropped by both edges, the app crossing it, everything it passes over turning red — then repeated as the structure of the site. One black umbra chapter for offline, and a printed poster closes it.',
+    swatch: ['#fdfcfa', '#d8002d', '#14101a'],
+    mood: 'light',
+  },
+  {
+    slug: 'chorus',
+    name: 'Chorus',
+    vibe: 'night lifting to morning, one word at a time',
+    blurb:
+      'Cover leads: the wordmark half-hidden behind the thing that plays it, with minimal drawn marks around it. Umbra grading runs the full document, so the page starts at ground black and finishes in cream.',
+    swatch: ['#0a070d', '#d8002d', '#eeeae2'],
+    mood: 'dark',
+  },
+  {
+    slug: 'finale',
+    name: 'Finale',
+    vibe: 'the last word, lit from one side',
+    blurb:
+      'Umbra at full size: MOZZ off both edges, cream at the frame, falling to red, going to ground behind a phone that eats a hole in the light. Cover supplies the tilt, eclipse the scale, and poster prints the closing sheet.',
+    swatch: ['#0a070d', '#d8002d', '#fdf6ec'],
+    mood: 'dark',
+  },
 ];

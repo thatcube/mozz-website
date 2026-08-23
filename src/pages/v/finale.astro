@@ -1,0 +1,1959 @@
+---
+/**
+ * VARIANT — FINALE
+ *
+ * The synthesis that leads with UMBRA, at full size. MOZZ runs off both edges
+ * of the window; the word is lit cream at the frame, falls through red and
+ * deep red as it nears the app, and goes to ground black directly behind it.
+ * The phone does not sit on top of the wordmark — it eats a hole in the light.
+ *
+ * The rest of the page keeps the night and lets the other three favourites do
+ * the work inside it:
+ *   COVER   — the offline chapter is a word half-hidden behind the tilted
+ *             phone that proves it, with the same minimal drawn marks around.
+ *   ECLIPSE — the crossing happens once, in the hero, where the app passes in
+ *             front of the type and takes the light out of it.
+ *   POSTER  — the page ends on the only lit thing in it: a printed cream
+ *             sheet, full-measure wordmark, billing list, colophon.
+ *
+ * The enormous MOZZ is used exactly twice: the hero and that closing sheet.
+ * The sections between are marked by rules, inverted fields and drawings —
+ * printing the logo behind every heading would spend the one gesture the whole
+ * page is built on.
+ *
+ * Payoffs: iPhone and iPad as the centrepiece, moving with the scroll; a
+ * marquee band for the weekly mix; a split against a drawn disc rather than a
+ * player; and a wall of sleeves as decoration behind the licence.
+ *
+ * Every claim comes from src/data/site.ts.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import SynPhone from '../../components/syn/SynPhone.astro';
+import SynSlate from '../../components/syn/SynSlate.astro';
+import SynMotion from '../../components/syn/SynMotion.astro';
+import SynSpeaker from '../../components/syn/SynSpeaker.astro';
+import { sleeve, sleeveRun, INK_LIGHT, INK_DARK, INK_RED } from '../../data/syn-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+  SITE,
+} from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT =
+  'Listen at home over your own network, or keep an album on the phone and play it with no signal at all.';
+
+const domain = SITE.replace(/^https?:\/\//, '');
+const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'iPhone and iPad'];
+
+const HERO_ART = sleeve({ kind: 'band', ink: INK_RED, seed: 'finale-hero' });
+const COVER_ART = sleeve({ kind: 'eclipse', ink: INK_DARK, seed: 'finale-cover' });
+const PAIR_ART = sleeve({ kind: 'wave', ink: INK_RED, seed: 'finale-pair' });
+const SLATE_COVERS = sleeveRun(12, INK_DARK, 'finale-slate');
+const MARQUEE_ROWS = [
+  sleeveRun(10, INK_DARK, 'finale-m1'),
+  sleeveRun(10, INK_RED, 'finale-m2'),
+];
+const WALL = sleeveRun(28, INK_DARK, 'finale-wall');
+
+const BOTH = [
+  {
+    tag: 'In the light',
+    title: 'Streaming',
+    body: 'At home the app talks straight to the server you run. Your own network, your own library, and the catalog copied onto the device while it plays.',
+  },
+  {
+    tag: 'In the dark',
+    title: 'Downloads',
+    body: 'Out of range a downloaded album behaves exactly as it does at home — same shelf, same queue, same search, nothing to wait for.',
+  },
+];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin, Navidrome or Subsonic server you already run, listen at home, or download an album and play it offline."
+  themeColor="#0a070d"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..200,300..800&family=Wix+Madefor+Text:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <SynMotion />
+
+  <main class="finale">
+    <VariantBar slug="finale" tone="neutral" />
+
+    <!-- ==================================================================
+         HERO — umbra at full size. The light falls across the word and
+         stops dead where the app stands.
+    =================================================================== -->
+    <header class="hero">
+      <div class="glow" aria-hidden="true"></div>
+
+      <div class="stage" aria-hidden="true">
+        <div class="wl lit"><span>MOZZ</span></div>
+        <div class="wl pen"><span>MOZZ</span></div>
+        <div class="wl deep"><span>MOZZ</span></div>
+        <div class="wl umb"><span>MOZZ</span></div>
+
+        <svg class="illo arcs" viewBox="0 0 46 84">
+          <path
+            d="M6 10a44 44 0 0 1 0 64M20 21a28 28 0 0 1 0 42M34 32a13 13 0 0 1 0 20"
+            fill="none"
+            stroke="#d8002d"
+            stroke-width="2.6"
+            stroke-linecap="round"></path>
+        </svg>
+
+        <svg class="illo spark" viewBox="0 0 40 40">
+          <path
+            d="M20 0c1.1 11.3 8.7 18.9 20 20-11.3 1.1-18.9 8.7-20 20-1.1-11.3-8.7-18.9-20-20 11.3-1.1 18.9-8.7 20-20Z"
+            fill="#eeeae2"></path>
+        </svg>
+
+        <svg class="illo bars" viewBox="0 0 34 26">
+          <rect class="b1" x="0" y="6" width="6" height="20" fill="#eeeae2" opacity="0.7"></rect>
+          <rect class="b2" x="10" y="0" width="6" height="26" fill="#d8002d"></rect>
+          <rect class="b3" x="20" y="11" width="6" height="15" fill="#eeeae2" opacity="0.7"></rect>
+          <rect class="b4" x="30" y="17" width="4" height="9" fill="#d8002d" opacity="0.65"></rect>
+        </svg>
+      </div>
+
+      <div class="hero-phone">
+        <SynPhone
+          width="clamp(210px, 19vw, 300px)"
+          art={HERO_ART}
+          title="Second Shadow"
+          artist="Halo North"
+          label="An iPhone running Mozz, playing a downloaded album from a home server."
+        />
+      </div>
+
+      <div class="ui">
+        <div class="top">
+          <span class="lockup">
+            <Mark size={26} decorative />
+            <b>{NAME}</b>
+            <i aria-hidden="true"></i>
+            <span>self&#8209;hosted music player</span>
+          </span>
+          <span class="fine">free forever &middot; gpl&#8209;3.0 &middot; no account</span>
+        </div>
+
+        <p class="plays">
+          <span class="tag">plays from</span>
+          <b>Plex</b>
+          <i aria-hidden="true"></i>
+          <b>Jellyfin</b>
+          <i aria-hidden="true"></i>
+          <b>Navidrome</b>
+          <i aria-hidden="true"></i>
+          <b>Subsonic</b>
+        </p>
+
+        <div class="say">
+          <h1>{HEADLINE}</h1>
+          <p class="sup">{SUPPORT}</p>
+
+          <div class="actions">
+            <a class="btn solid" href={GITHUB_URL}>Source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+
+        <div class="hero-foot">
+          <span>{TAGLINE}</span>
+          <span class="ref">mz&#8209;16 &middot; finale</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================================================================
+         SERVERS
+    =================================================================== -->
+    <section class="band servers" aria-labelledby="fi-servers">
+      <div class="head-rule">
+        <h2 id="fi-servers">Point it at what you already run</h2>
+        <span class="ref">01 / finale</span>
+      </div>
+
+      <ol class="server-list" role="list">
+        {
+          SERVERS.map((server, i) => (
+            <li data-syn-reveal style={`--syn-delay:${i * 90}ms`}>
+              <ServerLogo name={server.name} size={30} />
+              <h3>{server.name}</h3>
+              <p>{server.note}</p>
+            </li>
+          ))
+        }
+        <li class="server-sub" data-syn-reveal style="--syn-delay:270ms">
+          <span class="sub-glyph" aria-hidden="true">◇</span>
+          <h3>Subsonic &amp; OpenSubsonic</h3>
+          <p>
+            Any compatible server connects the same way. Navidrome is the tested target; the rest
+            are best-effort.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ==================================================================
+         STREAMING AND OFFLINE — light and dark, weighted the same.
+    =================================================================== -->
+    <section class="band both" aria-labelledby="fi-both">
+      <div class="head-rule">
+        <h2 id="fi-both">Two ways to listen, weighted the same</h2>
+        <span class="ref">02 / finale</span>
+      </div>
+
+      <div class="both-grid">
+        {
+          BOTH.map((item, i) => (
+            <article data-syn-reveal style={`--syn-delay:${i * 110}ms`}>
+              <span class="kicker">{item.tag}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="both-note">{FEATURES[0].body}</p>
+    </section>
+
+    <!-- ==================================================================
+         PAIR PAYOFF — the centrepiece. Both devices cross the section as
+         you scroll past it.
+    =================================================================== -->
+    <section class="pair" aria-labelledby="fi-pair" data-syn-track>
+      <div class="pair-inner">
+        <div class="head-rule">
+          <h2 id="fi-pair">One library, on both pieces of glass</h2>
+          <span class="ref">03 / finale</span>
+        </div>
+
+        <p class="pair-lede">
+          Same catalog, same downloads, same queue on iPhone and iPad. iOS and iPadOS 17 or later,
+          written in SwiftUI.
+        </p>
+
+        <div class="pair-stage">
+          <div class="pair-slate">
+            <SynSlate
+              width="clamp(320px, 47vw, 740px)"
+              covers={SLATE_COVERS}
+              label="An iPad showing the Mozz library: albums, artists, playlists, downloads and Mozz Weekly beside a grid of covers."
+            />
+          </div>
+          <div class="pair-phone">
+            <SynPhone
+              width="clamp(124px, 13vw, 206px)"
+              art={PAIR_ART}
+              title="Every Room"
+              artist="June Current"
+              progress={44}
+              label="An iPhone playing the same library from the same server."
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         VOICE — the library answering without being touched.
+    =================================================================== -->
+    <section class="band voice" aria-labelledby="fi-voice">
+      <div class="head-rule">
+        <h2 id="fi-voice">{FEATURES[7].title}</h2>
+        <span class="ref">04 / finale</span>
+      </div>
+
+      <div class="voice-row">
+        <div class="voice-art" data-syn-reveal>
+          <SynSpeaker label="A HomePod, with the request leaving it on both sides." />
+        </div>
+        <div class="voice-say" data-syn-reveal style="--syn-delay:120ms">
+          <p class="voice-line">&ldquo;Play Second Shadow.&rdquo;</p>
+          <p>{FEATURES[7].body}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         COVER PAYOFF — the app chapter: the word, half behind the thing
+         that plays it, with the minimal marks around it.
+    =================================================================== -->
+    <section class="cover" aria-labelledby="fi-cover">
+      <div class="cover-stage">
+        <span class="cover-word" aria-hidden="true">DOWNLOADED</span>
+
+        <svg class="cv-spark cv-spark-one" viewBox="0 0 70 70" aria-hidden="true">
+          <path d="M35 3v64M3 35h64M12.4 12.4l45.2 45.2M57.6 12.4 12.4 57.6"></path>
+        </svg>
+        <svg class="cv-spark cv-spark-two" viewBox="0 0 70 70" aria-hidden="true">
+          <path d="M35 3v64M3 35h64"></path>
+        </svg>
+
+        <div class="cover-phone">
+          <SynPhone
+            width="clamp(196px, 18vw, 282px)"
+            art={COVER_ART}
+            title="No Signal"
+            artist="Quiet Motor"
+            source="Downloaded to this iPhone"
+            chip="No connection needed"
+            progress={71}
+            elapsed="2:52"
+            remaining="−1:08"
+            label="An iPhone playing a downloaded album with no connection, in front of the Mozz wordmark."
+          />
+        </div>
+      </div>
+
+      <div class="cover-say">
+        <span class="kicker">Offline</span>
+        <h2 id="fi-cover">{FEATURES[1].title}</h2>
+        <p>{FEATURES[1].body}</p>
+        <p class="cover-second">{FEATURES[3].body}</p>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         SPLIT PAYOFF — against a drawn disc, not against a player.
+    =================================================================== -->
+    <section class="split" aria-labelledby="fi-split">
+      <div class="split-art">
+        <svg viewBox="0 0 300 300" role="img" aria-label="A record, drawn as concentric grooves around a red label">
+          <circle cx="150" cy="150" r="146" fill="#14101a"></circle>
+          <g fill="none" stroke="#eeeae2" opacity="0.5">
+            <circle cx="150" cy="150" r="132" stroke-width="1.4"></circle>
+            <circle cx="150" cy="150" r="118" stroke-width="1.4"></circle>
+            <circle cx="150" cy="150" r="104" stroke-width="1.4"></circle>
+            <circle cx="150" cy="150" r="90" stroke-width="1.4"></circle>
+            <circle cx="150" cy="150" r="76" stroke-width="1.4"></circle>
+          </g>
+          <circle cx="150" cy="150" r="58" fill="#d8002d"></circle>
+          <circle cx="150" cy="150" r="8" fill="#0a070d"></circle>
+          <path
+            d="M150 62a88 88 0 0 1 88 88"
+            fill="none"
+            stroke="#d8002d"
+            stroke-width="5"
+            stroke-linecap="round"></path>
+        </svg>
+      </div>
+
+      <div class="split-say">
+        <div class="split-inner">
+          <span class="kicker">The split</span>
+          <h2 id="fi-split">On one side the record. On the other, nobody.</h2>
+          <p>
+            There is no service in the middle of this arrangement. The files are yours, the machine
+            is yours, and the app is the only thing between them.
+          </p>
+          <ul class="split-list" role="list">
+            {
+              OWNERSHIP.slice(0, 3).map((item) => (
+                <li>
+                  <b>{item.title}</b>
+                  <span>{item.body}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         FEATURES
+    =================================================================== -->
+    <section class="band feats" aria-labelledby="fi-feats">
+      <div class="head-rule">
+        <h2 id="fi-feats">Everything the app does</h2>
+        <span class="ref">05 / finale</span>
+      </div>
+
+      <ol class="feat-grid" role="list">
+        {
+          FEATURES.map((feature, i) => (
+            <li data-syn-reveal style={`--syn-delay:${(i % 3) * 80}ms`}>
+              <span class="feat-no">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ==================================================================
+         ECLIPSE PAYOFF — the measured facts crossing a cropped wordmark.
+    =================================================================== -->
+    <section class="eclipse" aria-labelledby="fi-stats">
+      <div class="head-rule stats-head">
+        <h2 id="fi-stats">Measured</h2>
+        <span class="ref">06 / finale</span>
+      </div>
+
+      <dl class="stat-row">
+        {
+          STATS.map((stat, i) => (
+            <div data-syn-reveal style={`--syn-delay:${i * 70}ms`}>
+              <dt>{stat.value}</dt>
+              <dd>{stat.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <!-- ==================================================================
+         MARQUEE PAYOFF — the weekly mix, as a featured band.
+    =================================================================== -->
+    <section class="marquee" aria-labelledby="fi-weekly">
+      <div class="mq-rows" aria-hidden="true">
+        {
+          MARQUEE_ROWS.map((row, r) => (
+            <div class={`mq-row mq-row-${r}`}>
+              <div class="mq-track">
+                {[...row, ...row].map((art) => (
+                  <span class="mq-cover" set:html={art} />
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="mq-say" data-syn-reveal>
+        <span class="kicker">Featured</span>
+        <h2 id="fi-weekly">{FEATURES[5].title}</h2>
+        <p>{FEATURES[5].body}</p>
+        <p class="mq-second">{FEATURES[4].body}</p>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         OWNERSHIP, over a wall of sleeves used as decoration.
+    =================================================================== -->
+    <section class="own" aria-labelledby="fi-own">
+      <div class="own-wall" aria-hidden="true">
+        {WALL.map((art) => <span class="own-cover" set:html={art} />)}
+      </div>
+
+      <div class="own-inner">
+        <div class="head-rule">
+          <h2 id="fi-own">{SUBLINE}</h2>
+          <span class="ref">07 / finale</span>
+        </div>
+
+        <ol class="own-grid" role="list">
+          {
+            OWNERSHIP.map((item, i) => (
+              <li data-syn-reveal style={`--syn-delay:${i * 70}ms`}>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         FAQ
+    =================================================================== -->
+    <section class="band faq" aria-labelledby="fi-faq">
+      <div class="head-rule">
+        <h2 id="fi-faq">Questions</h2>
+        <span class="ref">08 / finale</span>
+      </div>
+
+      <div class="faq-list">
+        {
+          FAQS.map((item) => (
+            <details>
+              <summary>
+                <span>{item.q}</span>
+                <i aria-hidden="true" />
+              </summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         CLOSE — poster. The only lit thing on the page, printed at full
+         measure, and the last word.
+    =================================================================== -->
+    <footer class="close">
+      <div class="sheet">
+        <div class="sheet-bill">
+          <span class="lockup">
+            <Mark size={20} decorative />
+            <b>{NAME}</b>
+            <i aria-hidden="true"></i>
+            <span>self&#8209;hosted music player</span>
+          </span>
+          <span class="sheet-fine">free forever · gpl-3.0 · no account</span>
+        </div>
+
+        <svg class="sheet-word" viewBox="0 0 1000 214" role="img" aria-label={NAME}>
+          <text
+            x="500"
+            y="196"
+            text-anchor="middle"
+            textLength="1000"
+            lengthAdjust="spacingAndGlyphs">MOZZ</text
+          >
+        </svg>
+
+        <ul class="bill-list" role="list">
+          {BILL.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <div class="sheet-say">
+          <p>{TAGLINE}</p>
+          <div class="actions">
+            <a class="btn solid" href={GITHUB_URL}>Read the source</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+
+        <div class="sheet-foot">
+          <span>No account · no tracking · GPL-3.0</span>
+          <span>{domain}</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #0a070d;
+  }
+</style>
+
+<style>
+  .finale {
+    --void: #0a070d;
+    --ink: #14101a;
+    --cream: #eeeae2;
+    --paper: #fdf6ec;
+    --red: #d8002d;
+    --deep: #a10020;
+    --shadow: #5c0014;
+    --pad: clamp(18px, 4.4vw, 62px);
+
+    /* Where the app stands, and therefore where the light stops. */
+    --cx: 63.5%;
+    --pw: clamp(210px, 19vw, 300px);
+
+    --umb-l: 190px;
+    --umb-ls: 30px;
+    --umb-r: 180px;
+    --umb-rs: 34px;
+
+    --deep-l: 292px;
+    --deep-ls: 54px;
+    --deep-r: 286px;
+    --deep-rs: 58px;
+
+    --pen-l: 470px;
+    --pen-ls: 92px;
+    --pen-r: 1280px;
+    --pen-rs: 64px;
+
+    position: relative;
+    overflow-x: clip;
+    background: var(--void);
+    color: var(--cream);
+    font-family: 'Wix Madefor Text', 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .kicker {
+    display: block;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.84vw, 11.5px);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .ref,
+  .fine {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.84vw, 11.5px);
+    opacity: 0.5;
+    white-space: nowrap;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: clamp(11.5px, 0.95vw, 13.5px);
+  }
+
+  .lockup b {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 110, 'wght' 800;
+    font-size: 1.3em;
+    letter-spacing: -0.02em;
+  }
+
+  .lockup i {
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .lockup span {
+    opacity: 0.6;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.2rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 1vw, 14px);
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform 150ms ease;
+  }
+
+  .btn.solid {
+    background: var(--cream);
+    color: var(--void);
+  }
+
+  .btn.ghost {
+    border: 1.5px solid rgba(238, 234, 226, 0.55);
+  }
+
+  .btn.is-pending {
+    border-style: dashed;
+    opacity: 0.78;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  a:focus-visible,
+  summary:focus-visible,
+  [aria-disabled]:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .band {
+    position: relative;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(52px, 8vh, 106px) var(--pad);
+  }
+
+  .head-rule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(238, 234, 226, 0.34);
+  }
+
+  .head-rule h2 {
+    max-width: 22ch;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 108, 'wght' 700;
+    font-size: clamp(26px, 3.4vw, 52px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* ---------------- hero: the umbra ---------------- */
+
+  .hero {
+    position: relative;
+    height: 100svh;
+    min-height: 620px;
+    overflow: hidden;
+  }
+
+  .glow {
+    position: absolute;
+    left: var(--cx);
+    top: 44%;
+    width: min(1180px, 128vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(216, 0, 45, 0.2), rgba(216, 0, 45, 0) 62%);
+    pointer-events: none;
+  }
+
+  .stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .wl {
+    position: absolute;
+    inset: 0;
+  }
+
+  .wl span {
+    position: absolute;
+    left: 50%;
+    /* Clear of the sentence at the foot of the frame: the word is the light,
+       and the type has to stay readable inside it. */
+    bottom: 39%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    font-variation-settings: 'opsz' 96, 'wdth' 152, 'wght' 800;
+    font-size: min(40vw, 62vh);
+    line-height: 0.74;
+    letter-spacing: -0.028em;
+    user-select: none;
+  }
+
+  .wl.lit span {
+    color: var(--cream);
+  }
+
+  /* The bright band: light bending as it nears the object. */
+  .wl.pen span {
+    color: var(--red);
+  }
+
+  .wl.pen {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--pen-l) - var(--pen-ls)),
+      #000 calc(var(--cx) - var(--pen-l)),
+      #000 calc(var(--cx) + var(--pen-r)),
+      transparent calc(var(--cx) + var(--pen-r) + var(--pen-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--pen-l) - var(--pen-ls)),
+      #000 calc(var(--cx) - var(--pen-l)),
+      #000 calc(var(--cx) + var(--pen-r)),
+      transparent calc(var(--cx) + var(--pen-r) + var(--pen-rs))
+    );
+  }
+
+  /* The penumbra: half the light gone. */
+  .wl.deep span {
+    color: var(--shadow);
+  }
+
+  .wl.deep {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--deep-l) - var(--deep-ls)),
+      #000 calc(var(--cx) - var(--deep-l)),
+      #000 calc(var(--cx) + var(--deep-r)),
+      transparent calc(var(--cx) + var(--deep-r) + var(--deep-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--deep-l) - var(--deep-ls)),
+      #000 calc(var(--cx) - var(--deep-l)),
+      #000 calc(var(--cx) + var(--deep-r)),
+      transparent calc(var(--cx) + var(--deep-r) + var(--deep-rs))
+    );
+  }
+
+  /* The umbra proper: the letters go to ground behind the app. */
+  .wl.umb span {
+    color: var(--void);
+  }
+
+  .wl.umb {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--umb-l) - var(--umb-ls)),
+      #000 calc(var(--cx) - var(--umb-l)),
+      #000 calc(var(--cx) + var(--umb-r)),
+      transparent calc(var(--cx) + var(--umb-r) + var(--umb-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--umb-l) - var(--umb-ls)),
+      #000 calc(var(--cx) - var(--umb-l)),
+      #000 calc(var(--cx) + var(--umb-r)),
+      transparent calc(var(--cx) + var(--umb-r) + var(--umb-rs))
+    );
+  }
+
+  .illo {
+    position: absolute;
+    height: auto;
+  }
+
+  .arcs {
+    left: calc(var(--cx) + var(--pw) * 0.5 + clamp(26px, 3.2vw, 56px));
+    bottom: 24%;
+    width: clamp(28px, 2.6vw, 40px);
+    animation: fi-breathe 9s ease-in-out infinite;
+  }
+
+  .spark {
+    left: calc(var(--cx) - var(--pw) * 0.5 - clamp(30px, 3.4vw, 56px));
+    top: 10%;
+    width: clamp(15px, 1.5vw, 22px);
+    animation: fi-twinkle 6.5s ease-in-out infinite;
+  }
+
+  .bars {
+    left: calc(var(--cx) - var(--pw) * 0.5 - clamp(34px, 4.6vw, 78px));
+    bottom: 16%;
+    width: clamp(24px, 2.2vw, 32px);
+    opacity: 0.9;
+  }
+
+  .bars rect {
+    transform-origin: 50% 100%;
+    animation: fi-pump 1.25s ease-in-out infinite alternate;
+  }
+
+  .bars .b2 {
+    animation-duration: 0.86s;
+  }
+
+  .bars .b3 {
+    animation-duration: 1.55s;
+  }
+
+  .bars .b4 {
+    animation-duration: 1.05s;
+  }
+
+  @keyframes fi-pump {
+    from {
+      transform: scaleY(0.42);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes fi-breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: translateX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(5px);
+    }
+  }
+
+  @keyframes fi-twinkle {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.82) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(45deg);
+    }
+  }
+
+  /* The app, standing in the hole it made in the light. */
+  .hero-phone {
+    position: absolute;
+    left: var(--cx);
+    top: 13%;
+    z-index: 2;
+    transform: translateX(-50%);
+    --syn-bezel: #efe9e0;
+    --syn-screen: #140a11;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-rim: rgba(255, 255, 255, 0.5);
+    --syn-font: 'Wix Madefor Text', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow:
+      0 44px 90px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(10, 7, 13, 0.5),
+      0 0 130px 40px rgba(216, 0, 45, 0.16);
+  }
+
+  .ui {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: clamp(56px, 7vh, 78px) var(--pad) clamp(16px, 2.4vh, 30px);
+  }
+
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .plays {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    align-items: center;
+    margin-top: clamp(1rem, 3vh, 2.2rem);
+    font-size: clamp(12px, 0.96vw, 14px);
+  }
+
+  .plays .tag {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 0.8em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.45;
+  }
+
+  .plays b {
+    font-weight: 700;
+  }
+
+  .plays i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .say {
+    max-width: min(100%, 30rem);
+    margin-top: auto;
+  }
+
+  .say h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 64, 'wdth' 104, 'wght' 700;
+    font-size: clamp(25px, 2.7vw, 40px);
+    line-height: 1.03;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .sup {
+    max-width: 36ch;
+    margin-top: 0.85rem;
+    font-size: clamp(13px, 1.02vw, 15px);
+    line-height: 1.55;
+    opacity: 0.68;
+  }
+
+  .say .actions {
+    margin-top: 1.3rem;
+  }
+
+  .hero-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    justify-content: space-between;
+    margin-top: clamp(1.2rem, 3vh, 2.2rem);
+    padding-top: 0.7rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.22);
+    font-size: clamp(11px, 0.9vw, 13px);
+    opacity: 0.75;
+  }
+
+  /* ---------------- servers ---------------- */
+
+  .server-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(1rem, 2.4vw, 2.2rem);
+    margin: clamp(1.6rem, 3.4vh, 2.8rem) 0 0;
+    padding: 0;
+  }
+
+  .server-list li {
+    padding-top: 1rem;
+    border-top: 2px solid rgba(238, 234, 226, 0.34);
+  }
+
+  .server-list li:first-child {
+    border-top-color: var(--red);
+  }
+
+  .server-list h3 {
+    margin-top: 0.7rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 106, 'wght' 700;
+    font-size: clamp(19px, 1.8vw, 27px);
+    letter-spacing: -0.026em;
+  }
+
+  .server-list p {
+    margin-top: 0.45rem;
+    font-size: clamp(12.5px, 0.96vw, 14.5px);
+    line-height: 1.55;
+    opacity: 0.68;
+  }
+
+  .sub-glyph {
+    display: block;
+    font-size: 26px;
+    line-height: 1;
+    opacity: 0.65;
+  }
+
+  /* ---------------- both ---------------- */
+
+  .both-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.8rem);
+    margin-top: clamp(1.6rem, 3.4vh, 2.8rem);
+  }
+
+  .both-grid article {
+    padding: clamp(1.2rem, 2.2vw, 2rem);
+    border: 1px solid rgba(238, 234, 226, 0.3);
+  }
+
+  .both-grid article:first-child {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+  }
+
+  .both-grid h3 {
+    margin-top: 0.45rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 112, 'wght' 800;
+    font-size: clamp(26px, 3vw, 44px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+  }
+
+  .both-grid p {
+    max-width: 44ch;
+    margin-top: 0.8rem;
+    font-size: clamp(12.5px, 0.98vw, 15px);
+    line-height: 1.55;
+    opacity: 0.76;
+  }
+
+  .both-note {
+    max-width: 62ch;
+    margin-top: clamp(1.4rem, 3vh, 2.2rem);
+    padding-top: 1rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.24);
+    font-size: clamp(12.5px, 0.96vw, 14.5px);
+    line-height: 1.6;
+    opacity: 0.6;
+  }
+
+  /* ---------------- pair payoff ---------------- */
+
+  .pair {
+    background: var(--ink);
+    overflow: clip;
+  }
+
+  .pair-inner {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(52px, 8vh, 106px) var(--pad);
+  }
+
+  .pair-lede {
+    max-width: 48ch;
+    margin-top: 1.1rem;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.55;
+    opacity: 0.7;
+  }
+
+  .pair-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: clamp(1.8rem, 4vh, 3.4rem);
+  }
+
+  .pair-slate {
+    flex: none;
+    --syn-bezel: #eeeae2;
+    --syn-screen: #0a070d;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-rim: rgba(20, 16, 26, 0.4);
+    --syn-font: 'Wix Madefor Text', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: 0 46px 96px -40px rgba(0, 0, 0, 0.95);
+    transform: translateY(calc((0.5 - var(--syn-p, 0.5)) * 50px))
+      rotate(calc((0.5 - var(--syn-p, 0.5)) * 2.6deg));
+  }
+
+  .pair-phone {
+    flex: none;
+    margin-left: clamp(-60px, -4.2vw, -20px);
+    --syn-bezel: #efe9e0;
+    --syn-screen: #140a11;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-rim: rgba(255, 255, 255, 0.45);
+    --syn-font: 'Wix Madefor Text', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: 0 34px 68px -28px rgba(0, 0, 0, 0.95);
+    transform: translateY(calc((var(--syn-p, 0.5) - 0.5) * 92px));
+  }
+
+  /* ---------------- voice ---------------- */
+
+  .voice-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 4.2rem);
+    align-items: center;
+    margin-top: clamp(1.6rem, 3.4vh, 2.8rem);
+  }
+
+  .voice-art {
+    width: clamp(148px, 18.5vw, 244px);
+    color: var(--cream);
+    --syn-speaker-glass: var(--void);
+  }
+
+  .voice-line {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 110, 'wght' 800;
+    font-size: clamp(24px, 3.2vw, 46px);
+    line-height: 1;
+    letter-spacing: -0.036em;
+    color: var(--red);
+  }
+
+  .voice-say > p + p {
+    max-width: 50ch;
+    margin-top: 1rem;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.74;
+  }
+
+  /* ---------------- cover payoff ---------------- */
+
+  .cover {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 4rem);
+    align-items: center;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(56px, 10vh, 128px) var(--pad);
+  }
+
+  .cover-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(330px, 54vh, 570px);
+    overflow: clip;
+  }
+
+  .cover-word {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -52%);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 96, 'wdth' 140, 'wght' 800;
+    font-size: clamp(52px, 9.6vw, 158px);
+    line-height: 0.74;
+    letter-spacing: -0.02em;
+    color: var(--red);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .cover-phone {
+    position: relative;
+    z-index: 3;
+    transform: rotate(-9deg);
+    --syn-bezel: #191320;
+    --syn-screen: #0a070d;
+    --syn-fg: #fdf6ec;
+    --syn-red: #d8002d;
+    --syn-rim: rgba(253, 246, 236, 0.2);
+    --syn-font: 'Wix Madefor Text', 'Helvetica Neue', Arial, sans-serif;
+    --syn-shadow: -22px 40px 86px rgba(0, 0, 0, 0.62);
+  }
+
+  .cv-spark {
+    position: absolute;
+    z-index: 2;
+    height: auto;
+    fill: none;
+    stroke: var(--cream);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+
+  .cv-spark-one {
+    left: 8%;
+    top: 12%;
+    width: clamp(20px, 2.2vw, 34px);
+    animation: fi-twinkle 6s ease-in-out infinite;
+  }
+
+  .cv-spark-two {
+    right: 9%;
+    bottom: 16%;
+    width: clamp(14px, 1.6vw, 24px);
+    animation: fi-twinkle 8s ease-in-out infinite 1.4s;
+  }
+
+  .cover-say h2 {
+    margin-top: 0.6rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 108, 'wght' 700;
+    font-size: clamp(27px, 3.4vw, 50px);
+    line-height: 1;
+    letter-spacing: -0.032em;
+  }
+
+  .cover-say p {
+    max-width: 42ch;
+    margin-top: 1rem;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.74;
+  }
+
+  .cover-second {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.24);
+    opacity: 0.56 !important;
+  }
+
+  /* ---------------- split payoff ---------------- */
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    overflow: clip;
+  }
+
+  .split-art,
+  .split-say {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(48px, 8vh, 104px) clamp(20px, 3.4vw, 56px);
+  }
+
+  .split-art {
+    background: var(--red);
+  }
+
+  .split-art svg {
+    width: min(70%, 300px);
+    height: auto;
+  }
+
+  .split-say {
+    background: var(--void);
+  }
+
+  /* The record crosses the seam, so the two fields read as one picture. */
+  .split-art svg {
+    transform: translateX(clamp(12px, 4.5vw, 78px));
+    filter: drop-shadow(0 30px 52px rgba(0, 0, 0, 0.45));
+  }
+
+  .split-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 40rem;
+  }
+
+  .split-inner h2 {
+    margin-top: 0.5rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 106, 'wght' 700;
+    font-size: clamp(25px, 3vw, 46px);
+    line-height: 1.02;
+    letter-spacing: -0.034em;
+  }
+
+  .split-inner > p {
+    max-width: 42ch;
+    margin-top: 1rem;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.6;
+    opacity: 0.72;
+  }
+
+  .split-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.4rem 0 0;
+    padding: 0;
+  }
+
+  .split-list li {
+    display: grid;
+    gap: 0.2rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.22);
+  }
+
+  .split-list b {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 104, 'wght' 700;
+    font-size: clamp(16px, 1.4vw, 22px);
+    letter-spacing: -0.025em;
+    color: var(--red);
+  }
+
+  .split-list span {
+    font-size: clamp(12px, 0.92vw, 14px);
+    line-height: 1.5;
+    opacity: 0.68;
+  }
+
+  /* ---------------- features ---------------- */
+
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    gap: clamp(1rem, 2.4vw, 2.2rem);
+    margin: clamp(1.6rem, 3.4vh, 2.8rem) 0 0;
+    padding: 0;
+  }
+
+  .feat-grid li {
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(238, 234, 226, 0.3);
+  }
+
+  .feat-no {
+    display: block;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 11px;
+    opacity: 0.45;
+  }
+
+  .feat-grid h3 {
+    margin-top: 0.4rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 104, 'wght' 700;
+    font-size: clamp(17px, 1.6vw, 24px);
+    line-height: 1.06;
+    letter-spacing: -0.026em;
+  }
+
+  .feat-grid p {
+    margin-top: 0.45rem;
+    font-size: clamp(12.5px, 0.94vw, 14.5px);
+    line-height: 1.55;
+    opacity: 0.68;
+  }
+
+  /* ---------------- eclipse payoff ---------------- */
+
+  .eclipse {
+    position: relative;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(46px, 7vh, 92px) var(--pad);
+  }
+
+  .stats-head {
+    margin-bottom: clamp(1.2rem, 2.6vh, 2rem);
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 0;
+    margin: 0;
+  }
+
+  .stat-row > div {
+    padding: clamp(1rem, 2vw, 1.8rem) clamp(0.7rem, 1.4vw, 1.4rem);
+    border-bottom: 1px solid rgba(238, 234, 226, 0.24);
+  }
+
+  .stat-row > div + div {
+    border-left: 1px solid rgba(238, 234, 226, 0.24);
+  }
+
+  .stat-row dt {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 116, 'wght' 800;
+    font-size: clamp(34px, 4.2vw, 62px);
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-row div:nth-child(odd) dt {
+    color: var(--red);
+  }
+
+  .stat-row dd {
+    margin: 0.5rem 0 0;
+    font-size: clamp(11.5px, 0.9vw, 13.5px);
+    line-height: 1.4;
+    opacity: 0.62;
+  }
+
+  /* ---------------- marquee payoff ---------------- */
+
+  .marquee {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    padding: clamp(52px, 9vh, 112px) var(--pad);
+    background: var(--ink);
+  }
+
+  .mq-rows {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(9px, 1.3vw, 18px);
+    opacity: 0.9;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .mq-row {
+    overflow: hidden;
+  }
+
+  .mq-track {
+    display: flex;
+    gap: clamp(9px, 1.3vw, 18px);
+    width: max-content;
+    animation: fi-drift 88s linear infinite;
+  }
+
+  .mq-row-1 .mq-track {
+    animation-duration: 110s;
+    animation-direction: reverse;
+  }
+
+  .mq-cover {
+    display: block;
+    flex: none;
+    width: clamp(94px, 12vw, 178px);
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .mq-cover :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes fi-drift {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .mq-say {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 42rem);
+    padding: clamp(1.4rem, 3vw, 2.6rem);
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .mq-say h2 {
+    margin-top: 0.5rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 72, 'wdth' 112, 'wght' 800;
+    font-size: clamp(26px, 3.2vw, 46px);
+    line-height: 1;
+    letter-spacing: -0.036em;
+  }
+
+  .mq-say .kicker {
+    color: var(--ink);
+  }
+
+  .mq-say p {
+    margin-top: 0.9rem;
+    font-size: clamp(13px, 1vw, 15.5px);
+    line-height: 1.55;
+  }
+
+  .mq-second {
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(253, 246, 236, 0.35);
+    opacity: 0.78;
+  }
+
+  /* ---------------- ownership over the wall ---------------- */
+
+  .own {
+    position: relative;
+    overflow: clip;
+  }
+
+  .own-wall {
+    position: absolute;
+    inset: -8%;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 5px;
+    /* Decoration, and subordinate to it: the licence is what you read. */
+    opacity: 0.18;
+    transform: rotate(4deg) scale(1.2);
+    pointer-events: none;
+  }
+
+  .own-cover {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .own-cover :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .own-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(52px, 8vh, 106px) var(--pad);
+  }
+
+  .own-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(0.9rem, 2vw, 1.7rem);
+    margin: clamp(1.6rem, 3.4vh, 2.8rem) 0 0;
+    padding: 0;
+  }
+
+  .own-grid li {
+    padding: clamp(1rem, 2vw, 1.6rem);
+    background: rgba(10, 7, 13, 0.9);
+    border: 1px solid rgba(238, 234, 226, 0.24);
+  }
+
+  .own-grid h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 60, 'wdth' 110, 'wght' 800;
+    font-size: clamp(20px, 2vw, 30px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--red);
+  }
+
+  .own-grid p {
+    margin-top: 0.6rem;
+    font-size: clamp(12.5px, 0.95vw, 14.5px);
+    line-height: 1.55;
+    opacity: 0.72;
+  }
+
+  /* ---------------- faq ---------------- */
+
+  .faq-list {
+    margin-top: clamp(1.2rem, 2.6vh, 2rem);
+  }
+
+  details {
+    border-bottom: 1px solid rgba(238, 234, 226, 0.22);
+  }
+
+  summary {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(0.9rem, 1.8vh, 1.35rem) 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 104, 'wght' 700;
+    font-size: clamp(16px, 1.6vw, 24px);
+    line-height: 1.1;
+    letter-spacing: -0.026em;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary i {
+    position: relative;
+    flex: none;
+    width: 18px;
+    height: 18px;
+  }
+
+  summary i::before,
+  summary i::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2.5px;
+    background: var(--red);
+    transform: translateY(-50%);
+  }
+
+  summary i::after {
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 180ms ease;
+  }
+
+  details[open] summary i::after {
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  details p {
+    max-width: 70ch;
+    padding: 0 0 clamp(1rem, 2vh, 1.4rem);
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.6;
+    opacity: 0.72;
+  }
+
+  /* ---------------- close: the printed sheet ---------------- */
+
+  .close {
+    padding: 0 var(--pad) clamp(28px, 5vh, 60px);
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: clamp(22px, 3.4vh, 42px) clamp(18px, 3vw, 46px) clamp(16px, 2.6vh, 30px);
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .sheet-bill {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.55rem;
+    border-bottom: 3px solid var(--ink);
+    font-size: clamp(10px, 0.86vw, 12px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .sheet-fine {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    opacity: 0.6;
+  }
+
+  .sheet-word {
+    width: 100%;
+    height: auto;
+    margin-top: clamp(8px, 1.6vh, 18px);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .sheet-word text {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 96, 'wdth' 150, 'wght' 800;
+    font-size: 214px;
+    fill: var(--red);
+  }
+
+  .bill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 0.9rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'wdth' 112, 'wght' 700;
+    font-size: clamp(14px, 1.7vw, 26px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .bill-list li:not(:last-child)::after {
+    content: '✳';
+    margin-left: 0.9rem;
+    font-size: 0.62em;
+    vertical-align: 0.16em;
+    color: var(--red);
+  }
+
+  .sheet-say {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: clamp(1.2rem, 2.6vh, 2rem);
+  }
+
+  .sheet-say p {
+    max-width: 22ch;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: 'opsz' 60, 'wdth' 108, 'wght' 800;
+    font-size: clamp(20px, 2.4vw, 34px);
+    line-height: 1.02;
+    letter-spacing: -0.034em;
+  }
+
+  .sheet .btn.solid {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .sheet .btn.ghost {
+    border-color: rgba(20, 16, 26, 0.55);
+  }
+
+  .sheet-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    justify-content: space-between;
+    margin-top: clamp(1.2rem, 2.6vh, 2rem);
+    padding-top: 0.6rem;
+    border-top: 3px solid var(--ink);
+    font-size: clamp(10px, 0.84vw, 11.5px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  /* ---------------- narrow ---------------- */
+
+  @media (max-width: 1080px) {
+    .cover,
+    .split {
+      grid-template-columns: 1fr;
+    }
+
+    .split-art svg {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .finale {
+      --cx: 50%;
+
+      /* The fall-off is measured in pixels around the app, so it has to be
+         re-scaled for a narrow frame or the whole word goes to ground. */
+      --umb-l: 98px;
+      --umb-ls: 22px;
+      --umb-r: 96px;
+      --umb-rs: 24px;
+
+      --deep-l: 148px;
+      --deep-ls: 32px;
+      --deep-r: 146px;
+      --deep-rs: 34px;
+
+      --pen-l: 146px;
+      --pen-ls: 40px;
+      --pen-r: 168px;
+      --pen-rs: 40px;
+    }
+
+    /* Rows rather than layers. The word and the app share the second row, so
+       the light still falls across the type without covering the sentence. */
+    .hero {
+      display: grid;
+      /* An explicit track, or an auto column sizes itself to the widest
+         nowrap line in the header and pushes the app off the screen. */
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      height: auto;
+      min-height: 0;
+      overflow: clip;
+      padding-bottom: clamp(24px, 5vh, 48px);
+    }
+
+    .ui {
+      grid-row: 1;
+      height: auto;
+    }
+
+    .stage {
+      grid-row: 2;
+      grid-column: 1;
+      position: relative;
+      inset: auto;
+      min-height: clamp(370px, 118vw, 560px);
+      margin: clamp(1rem, 4vh, 2.2rem) calc(var(--pad) * -1) 0;
+      overflow: clip;
+    }
+
+    .wl span {
+      bottom: 50%;
+      transform: translate(-50%, 50%);
+      font-size: 54vw;
+    }
+
+    .hero-phone {
+      grid-row: 2;
+      /* Both share row two on purpose; without an explicit column the app
+         auto-places into a second one and squeezes the sentence. */
+      grid-column: 1;
+      align-self: center;
+      justify-self: center;
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      margin-top: clamp(1rem, 4vh, 2.2rem);
+    }
+
+    .say {
+      margin-top: clamp(1.4rem, 4vh, 2.6rem);
+    }
+
+    .illo {
+      display: none;
+    }
+
+    .pair-stage {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pair-phone {
+      margin-left: 0;
+      margin-top: clamp(-66px, -9vw, -28px);
+    }
+
+    .own-wall {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    .voice-row {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mq-track {
+      animation: none;
+      transform: translateX(-8%);
+    }
+
+    .arcs,
+    .spark,
+    .cv-spark {
+      animation: none;
+      opacity: 0.85;
+    }
+
+    .bars rect {
+      animation: none;
+      transform: scaleY(0.7);
+    }
+
+    .bars .b2 {
+      transform: scaleY(1);
+    }
+
+    .btn,
+    .btn:hover {
+      transform: none;
+      transition: none;
+    }
+
+    .pair-slate,
+    .pair-phone {
+      transform: none;
+    }
+  }
+</style>

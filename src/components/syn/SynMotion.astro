@@ -1,0 +1,108 @@
+---
+/**
+ * Scroll behaviour shared by the four synthesis pages.
+ *
+ * Two jobs, both deliberately small:
+ *
+ *   [data-syn-reveal]  gains `.is-in` the first time it enters the viewport.
+ *   [data-syn-track]   carries `--syn-p`, 0 to 1, as it crosses the viewport.
+ *
+ * `--syn-p` is what makes the pair section move as you scroll rather than
+ * simply appear: the iPhone and the iPad are positioned from it.
+ *
+ * Nothing is hidden until the script has run — the resting styles below are
+ * scoped to `.syn-js`, which only exists once JavaScript is present. With
+ * `prefers-reduced-motion: reduce`, the script still runs but hands every
+ * element its finished state immediately, so the page is composed and still
+ * rather than composed and animating.
+ */
+---
+
+<style is:global>
+  .syn-js [data-syn-reveal] {
+    opacity: 0;
+    transform: translateY(var(--syn-rise, 20px));
+    transition:
+      opacity 720ms cubic-bezier(0.16, 0.84, 0.3, 1) var(--syn-delay, 0ms),
+      transform 720ms cubic-bezier(0.16, 0.84, 0.3, 1) var(--syn-delay, 0ms);
+  }
+
+  .syn-js [data-syn-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-syn-track] {
+    --syn-p: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .syn-js [data-syn-reveal],
+    .syn-js [data-syn-reveal].is-in {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    root.classList.add('syn-js');
+
+    const still =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const reveals = () => document.querySelectorAll('[data-syn-reveal]');
+    const tracks = () => document.querySelectorAll('[data-syn-track]');
+
+    if (still || !('IntersectionObserver' in window)) {
+      reveals().forEach((el) => el.classList.add('is-in'));
+      tracks().forEach((el) => el.style.setProperty('--syn-p', '0.5'));
+      return;
+    }
+
+    const seen = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          seen.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+    );
+
+    reveals().forEach((el) => seen.observe(el));
+
+    const tracked = Array.from(tracks());
+    if (!tracked.length) return;
+
+    let queued = false;
+
+    const measure = () => {
+      queued = false;
+      const vh = window.innerHeight || 1;
+      for (const el of tracked) {
+        const box = el.getBoundingClientRect();
+        // 0 as the element's top reaches the bottom of the window, 1 as its
+        // bottom leaves the top — so the whole pass is usable, not just the
+        // moment it is centred.
+        const span = box.height + vh;
+        const p = span > 0 ? (vh - box.top) / span : 0.5;
+        el.style.setProperty('--syn-p', String(Math.min(1, Math.max(0, p))));
+      }
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  })();
+</script>
