@@ -480,7 +480,7 @@ export const VARIANTS: Variant[] = [
     name: 'Sleeve',
     vibe: 'the record cover as the whole design system',
     blurb:
-      'Bone paper, a hard 12-column grid and one enormous square plate per idea. The crossing-ellipse lens carries the argument: streaming and offline as two equal fields that overlap on one library.',
+      'Bone paper, a hard 12-column grid and one enormous square plate per idea. Two crossing ellipses do the arguing: streaming in one, downloads in the other, and your library where they overlap.',
     swatch: ['#f2efe6', '#c80028', '#131313'],
     mood: 'light',
   },
