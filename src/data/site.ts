@@ -362,4 +362,100 @@ export const VARIANTS: Variant[] = [
     swatch: ['#071a24', '#49bea9', '#e0a55c'],
     mood: 'dark',
   },
+
+  /* ------------------------------------------------------------------ *
+   * Round five — ten full sites built out of the red / white / black
+   * oversized-type language the hero studies landed on. Same ink, ten
+   * different systems: print, machine, room, signal.
+   * ------------------------------------------------------------------ */
+  {
+    slug: 'ledger',
+    name: 'Ledger',
+    vibe: 'your library, set as a printed index',
+    blurb:
+      'The whole catalogue as one enormous ruled index — tabular numerals, hairline rules, a red reading line that tracks down the page. Editorial, dense and completely calm.',
+    swatch: ['#f2efe6', '#c80028', '#131313'],
+    mood: 'light',
+  },
+  {
+    slug: 'broadside',
+    name: 'Broadside',
+    vibe: 'a newspaper printed the day you took your music back',
+    blurb:
+      'Broadsheet columns, a condensed masthead running the full measure, halftone dots and red overprint sitting a hair out of register. Loud, fast and unmistakably printed.',
+    swatch: ['#efe9dc', '#c80028', '#111010'],
+    mood: 'light',
+  },
+  {
+    slug: 'gatefold',
+    name: 'Gatefold',
+    vibe: 'the sleeve opens and the liner notes are the site',
+    blurb:
+      'A double sleeve unfolding down the page: spine, hinge, inner spread, credits set like liner notes. Every section is another panel of the same record.',
+    swatch: ['#100d0c', '#c80028', '#e8dfd0'],
+    mood: 'dark',
+  },
+  {
+    slug: 'tapepath',
+    name: 'Tape Path',
+    vibe: 'one length of tape threaded through the whole page',
+    blurb:
+      'A single red ribbon leaves the supply reel in the hero, threads every head and guide on the way down and winds up at the take-up reel in the footer. One continuous gesture.',
+    swatch: ['#0c0c0e', '#c80028', '#dedae0'],
+    mood: 'dark',
+  },
+  {
+    slug: 'patchbay',
+    name: 'Patchbay',
+    vibe: 'you own the routing',
+    blurb:
+      'A studio patchbay where every section is a module and red cables carry the signal between them. Self-hosting drawn as the thing it is: your own signal path, nobody in the middle.',
+    swatch: ['#17181b', '#c80028', '#e4e2dd'],
+    mood: 'dark',
+  },
+  {
+    slug: 'nightdrive',
+    name: 'Night Drive',
+    vibe: 'no bars, and the album keeps playing',
+    blurb:
+      'Black road, white line, one red tail-light. Built entirely around the moment the signal drops and the downloaded record does not. The most cinematic and the most empty.',
+    swatch: ['#070708', '#c80028', '#f3f1ec'],
+    mood: 'dark',
+  },
+  {
+    slug: 'tuner',
+    name: 'Tuner',
+    vibe: 'the page is a dial and your servers are the stations',
+    blurb:
+      'A full-width tuning scale with a red needle that tracks the scroll. Every section is a station you land on — servers, offline, radio, the licence.',
+    swatch: ['#f4f2ec', '#c80028', '#191817'],
+    mood: 'light',
+  },
+  {
+    slug: 'amplitude',
+    name: 'Amplitude',
+    vibe: 'one waveform, top to bottom',
+    blurb:
+      'A single colossal red waveform runs the entire document, and each section is a moment inside it — the loud part, the drop-out, the run-out. Nothing else on the page competes.',
+    swatch: ['#faf9f7', '#c80028', '#0d0d0f'],
+    mood: 'light',
+  },
+  {
+    slug: 'longplay',
+    name: 'Long Play',
+    vibe: 'side a, side b, and a run-out groove',
+    blurb:
+      'Paced like an album. Sections are tracks with timings in the margin, the page turns over halfway down, and the last thing you reach is the run-out.',
+    swatch: ['#0a0a0b', '#c80028', '#f0ece3'],
+    mood: 'dark',
+  },
+  {
+    slug: 'blackout',
+    name: 'Blackout',
+    vibe: 'the network stops here and the music does not',
+    blurb:
+      'One hard line across the page. Above it the connection, below it nothing at all — except the album still playing. The trust argument as the entire composition.',
+    swatch: ['#0b0b0d', '#c80028', '#f5f4f1'],
+    mood: 'dark',
+  },
 ];

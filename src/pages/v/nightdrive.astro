@@ -1,0 +1,1415 @@
+---
+/**
+ * VARIANT — NIGHT DRIVE
+ *
+ * The page is the drive away from home: one road, one vanishing point, and one
+ * warm window shrinking behind the listener. Signal bars disappear by section,
+ * but the phone keeps playing the downloaded record in the passenger seat.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+const HEADLINE = 'No signal. Still playing.';
+const PRODUCT_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT =
+  'Stream at home over your own network, or download an album and play it with nothing at all.';
+const HOME_POINTS = [
+  'Your library stays on the machine you already run.',
+  'Mozz talks across your own network while you are home.',
+  'Add more than one server and browse them as one collection.',
+];
+const ROAD_POINTS = [
+  'The phone leaves the driveway with the album already on it.',
+  'The catalog lives on device, so search and browsing still answer.',
+  'Gapless playback keeps the record together after the bars are gone.',
+];
+const SIGNAL_STEPS = [
+  { label: 'At home', level: 5 },
+  { label: 'Edge of town', level: 3 },
+  { label: 'Out of range', level: 1 },
+  { label: 'Offline', level: 0 },
+];
+---
+<Layout
+  title={`${NAME} — no signal, still playing`}
+  description="Mozz is a free player for the music on your own server. Stream over your own network or download albums that keep playing when the signal runs out."
+  themeColor="#070708"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+  <main class="nightdrive">
+    <VariantBar slug="nightdrive" tone="neutral" />
+    <aside class="signal-rail" aria-label="Signal strength over the drive">
+      <p class="signal-rail__label">signal</p>
+      <svg class="signal-rail__bars" data-signal-bars viewBox="0 0 42 34" aria-hidden="true">
+        <rect x="1" y="25" width="5" height="8" rx="2" />
+        <rect x="10" y="19" width="5" height="14" rx="2" />
+        <rect x="19" y="13" width="5" height="20" rx="2" />
+        <rect x="28" y="7" width="5" height="26" rx="2" />
+        <rect x="37" y="1" width="5" height="32" rx="2" />
+      </svg>
+      <p class="signal-rail__status" data-signal-label>At home</p>
+      <svg class="signal-rail__none" data-signal-none viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M8 28c6.6-6 17.4-6 24 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        <path d="M14 22c3.4-3 8.6-3 12 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        <path d="M18.6 16.8c.8-.5 1.9-.5 2.8 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        <path d="M9 9 31 31M31 9 9 31" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+      </svg>
+    </aside>
+    <header class="hero" data-signal-stage data-signal-level="5" data-signal-text="At home">
+      <div class="hero__sky" aria-hidden="true"></div>
+      <div class="headlight" aria-hidden="true"></div>
+      <div class="tail-light" aria-hidden="true"></div>
+      <svg
+        class="road road--hero"
+        viewBox="0 0 1600 960"
+        preserveAspectRatio="xMidYMid slice"
+        role="img"
+        aria-label="A black highway narrowing to one warm lit house on the horizon. White center dashes travel toward the viewer."
+      >
+        <defs>
+          <linearGradient id="nd-road-face" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#101011" />
+            <stop offset="1" stop-color="#020203" />
+          </linearGradient>
+          <radialGradient id="nd-window" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="#f3f1ec" stop-opacity="1" />
+            <stop offset=".42" stop-color="#f6c978" stop-opacity=".62" />
+            <stop offset="1" stop-color="#f6c978" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="nd-shoulder" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#f3f1ec" stop-opacity="0" />
+            <stop offset=".46" stop-color="#f3f1ec" stop-opacity=".22" />
+            <stop offset="1" stop-color="#f3f1ec" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <rect width="1600" height="960" fill="#070708" />
+        <rect x="0" y="395" width="1600" height="2" fill="#2d2417" opacity=".7" />
+        <g class="far-lights" fill="#d89b43">
+          <circle cx="566" cy="390" r="2" opacity=".8" />
+          <circle cx="610" cy="389" r="1.6" opacity=".55" />
+          <circle cx="1038" cy="391" r="1.8" opacity=".6" />
+          <circle cx="1086" cy="390" r="1.5" opacity=".48" />
+        </g>
+        <g class="house">
+          <ellipse cx="800" cy="392" rx="80" ry="42" fill="url(#nd-window)" />
+          <path d="M774 398V365L800 344L826 365V398Z" fill="#050506" />
+          <path d="M767 365 800 338 833 365" fill="none" stroke="#050506" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+          <rect x="793" y="371" width="14" height="18" rx="1" fill="#f3f1ec" />
+          <path d="M800 371v18M793 380h14" stroke="#80551e" stroke-width="1" />
+        </g>
+        <path class="road-face" d="M760 402H840L1518 960H82Z" fill="url(#nd-road-face)" />
+        <path d="M760 402 82 960" stroke="url(#nd-shoulder)" stroke-width="2.6" />
+        <path d="M840 402 1518 960" stroke="url(#nd-shoulder)" stroke-width="2.6" />
+        <path class="road-edge" d="M717 424 0 960" fill="none" stroke="#f3f1ec" stroke-opacity=".18" stroke-width="1.6" />
+        <path class="road-edge" d="M883 424 1600 960" fill="none" stroke="#f3f1ec" stroke-opacity=".18" stroke-width="1.6" />
+        <path
+          class="dash-line"
+          d="M800 410L800 980"
+          fill="none"
+          stroke="#f3f1ec"
+          stroke-width="11"
+          stroke-linecap="round"
+          stroke-dasharray="34 58"
+        />
+        <path
+          class="dash-line dash-line--ghost"
+          d="M800 410L800 980"
+          fill="none"
+          stroke="#f3f1ec"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-dasharray="18 74"
+          opacity=".55"
+        />
+      </svg>
+      <div class="hero__content">
+        <div class="lockup hero__lockup">
+          <Mark size={30} decorative />
+          <span class="wordmark">{NAME}</span>
+          <span class="lockup__rule" aria-hidden="true"></span>
+          <span class="lockup__tag">night drive</span>
+        </div>
+        <section class="hero__copy">
+          <p class="kicker">The house falls behind. The record does not.</p>
+          <h1>{HEADLINE}</h1>
+          <p class="product-line">{PRODUCT_LINE}</p>
+          <p class="support">{SUPPORT}</p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+        <figure class="phone phone--hero" aria-label="An iPhone on the passenger seat showing Mozz playing a downloaded album offline.">
+          <div class="phone-screen">
+            <span class="island" aria-hidden="true"></span>
+            <div class="status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="status__glyphs">
+                <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                <svg viewBox="0 0 26 12"><rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2" /><rect x="3" y="3" width="14" height="6" rx="1.4" /><path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z" /></svg>
+              </span>
+            </div>
+            <div class="phone-head">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6.2 8 11l5-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span>downloaded · plays offline</span>
+              <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            </div>
+            <div class="album-art" aria-hidden="true">
+              <svg viewBox="0 0 140 140">
+                <rect width="140" height="140" fill="#f3f1ec" />
+                <path d="M0 98 140 34v106H0Z" fill="#070708" />
+                <path d="M28 86 70 38 112 86" fill="none" stroke="#c80028" stroke-width="8" stroke-linejoin="round" />
+                <circle cx="70" cy="78" r="24" fill="none" stroke="#070708" stroke-width="10" />
+                <rect x="18" y="114" width="42" height="5" fill="#c80028" />
+                <rect x="18" y="124" width="26" height="4" fill="#070708" opacity=".6" />
+              </svg>
+            </div>
+            <div class="track-meta">
+              <strong>Driveway Light</strong>
+              <span>Downloaded from your server</span>
+            </div>
+            <div class="scrub" aria-hidden="true"><i></i></div>
+            <div class="times" aria-hidden="true"><span>1:52</span><span>&minus;2:14</span></div>
+            <div class="controls" aria-hidden="true">
+              <svg viewBox="0 0 20 20"><path d="M17.4 3.4v13.2L7.6 10z" /><rect x="2.6" y="3.4" width="2.6" height="13.2" rx="1.2" /></svg>
+              <span><svg viewBox="0 0 20 20"><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.3" /><rect x="11.1" y="4.4" width="3.3" height="11.2" rx="1.3" /></svg></span>
+              <svg viewBox="0 0 20 20"><path d="M2.6 3.4v13.2L12.4 10z" /><rect x="14.8" y="3.4" width="2.6" height="13.2" rx="1.2" /></svg>
+            </div>
+            <div class="download-badge">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#c80028" /><path d="M4.9 8.2 6.9 10.3 11 5.9" fill="none" stroke="#f3f1ec" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span>downloaded · plays offline</span>
+            </div>
+            <span class="home-indicator" aria-hidden="true"></span>
+          </div>
+        </figure>
+      </div>
+    </header>
+    <div class="road-band" aria-hidden="true"><i></i></div>
+    <section class="section home-section" data-signal-stage data-signal-level="5" data-signal-text="At home" aria-labelledby="nd-home">
+      <div class="wrap split split--home">
+        <div class="section-copy">
+          <p class="eyebrow">Still at home · five bars</p>
+          <h2 id="nd-home">Point Mozz at the server already humming in your house.</h2>
+          <p>
+            Streaming is not a cloud claim here. It is the familiar part of the
+            drive: your phone on the same network as the machine that holds the
+            records, reading the library you already built.
+          </p>
+          <ul class="plain-list">
+            {HOME_POINTS.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+        <div class="server-house" aria-label="Supported servers shown as lit windows">
+          <svg class="server-house__roof" viewBox="0 0 520 220" aria-hidden="true">
+            <path d="M36 194V92L260 26L484 92V194Z" fill="#050506" stroke="#30281c" stroke-width="2" />
+            <path d="M16 96 260 18 504 96" fill="none" stroke="#f3f1ec" stroke-opacity=".18" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="240" y="126" width="40" height="68" fill="#100c08" />
+          </svg>
+          <div class="server-windows">
+            {SERVERS.map((s) => (
+              <article class="server-window">
+                <span class="server-window__glow" aria-hidden="true"></span>
+                <ServerLogo name={s.name} size={34} brand />
+                <h3>{s.name}</h3>
+                <p>{s.note}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="road-out" data-signal-stage data-signal-level="3" data-signal-text="Edge of town" aria-labelledby="nd-road-out">
+      <div class="road-out__road" aria-hidden="true"><i></i></div>
+      <div class="wrap road-out__copy">
+        <p class="eyebrow">The road out · three bars</p>
+        <h2 id="nd-road-out">The house gets smaller. The queue keeps moving.</h2>
+      </div>
+    </section>
+    <section class="section offline-section" data-signal-stage data-signal-level="0" data-signal-text="Offline" aria-labelledby="nd-offline">
+      <div class="wrap split split--offline">
+        <div class="offline-panel" aria-hidden="true">
+          <div class="offline-panel__top">
+            <span>no service</span>
+            <svg viewBox="0 0 44 44"><path d="M8 31c7.6-6.6 20.4-6.6 28 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><path d="M14 24c4.6-3.8 11.4-3.8 16 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><path d="M10 10 34 34M34 10 10 34" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" /></svg>
+          </div>
+          <div class="offline-shelf">
+            {[0, 1, 2, 3].map((i) => (
+              <span class="offline-record" style={`--r:${i}`}>
+                <i></i>
+              </span>
+            ))}
+          </div>
+          <p>Downloaded before the drive.</p>
+        </div>
+        <div class="section-copy">
+          <p class="eyebrow">Out of range · no bars</p>
+          <h2 id="nd-offline">The downloaded album has the same weight as the stream.</h2>
+          <p>
+            Offline is not a rescue mode. Keep an album on the phone and it plays
+            with the server unreachable: the catalog is there, search is there,
+            and the queue still respects the record.
+          </p>
+          <ul class="plain-list">
+            {ROAD_POINTS.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+    <div class="road-band road-band--thin" aria-hidden="true"><i></i></div>
+    <section class="section instrument" data-signal-stage data-signal-level="1" data-signal-text="One bar" aria-labelledby="nd-instrument">
+      <div class="wrap">
+        <div class="section-copy section-copy--wide">
+          <p class="eyebrow">The instrument · one bar</p>
+          <h2 id="nd-instrument">Everything in the app is tuned for a library you control.</h2>
+          <p>
+            Calm in the hand, fast under the thumb, and honest about where the
+            music lives. The app is the instrument; your server and downloads are
+            the sources.
+          </p>
+        </div>
+        <div class="feature-grid">
+          {FEATURES.map((f, i) => (
+            <article class="feature-card">
+              <span class="feature-card__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </article>
+          ))}
+        </div>
+        <dl class="mile-markers">
+          {STATS.map((s) => (
+            <div>
+              <dt>{s.value}</dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+    <section class="section ownership" data-signal-stage data-signal-level="0" data-signal-text="No service" aria-labelledby="nd-costs">
+      <div class="wrap">
+        <div class="section-copy section-copy--wide">
+          <p class="eyebrow">What it costs</p>
+          <h2 id="nd-costs">Nothing hidden in the dark.</h2>
+          <p>
+            Free forever, open source under GPL-3.0, and built around the premise
+            that the music is already yours.
+          </p>
+        </div>
+        <div class="ownership-list">
+          {OWNERSHIP.map((o) => (
+            <article>
+              <span aria-hidden="true"></span>
+              <h3>{o.title}</h3>
+              <p>{o.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+    <section class="section faq" aria-labelledby="nd-faq">
+      <div class="wrap faq__grid">
+        <div class="section-copy">
+          <p class="eyebrow">Questions at the shoulder</p>
+          <h2 id="nd-faq">Before the road goes black.</h2>
+        </div>
+        <div class="faq-list">
+          {FAQS.map((f) => (
+            <details>
+              <summary>
+                <span>{f.q}</span>
+                <i aria-hidden="true"></i>
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+    <footer class="final" data-signal-stage data-signal-level="0" data-signal-text="Offline" aria-labelledby="nd-final">
+      <div class="tail-road" aria-hidden="true"><i></i></div>
+      <div class="wrap final__inner">
+        <div class="lockup final__lockup">
+          <Mark size={34} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+        <h2 id="nd-final">{TAGLINE}</h2>
+        <p>{SUBLINE}</p>
+        <div class="actions actions--center">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="fineprint">
+          For recommendations, Mozz may ask MusicBrainz and ListenBrainz what sounds
+          similar to an artist and title. That request carries no name, no server
+          address, no account, and can be switched off in Settings.
+        </p>
+      </div>
+    </footer>
+  </main>
+</Layout>
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rail = document.querySelector('[data-signal-bars]');
+  const label = document.querySelector('[data-signal-label]');
+  const none = document.querySelector('[data-signal-none]');
+  const stages = Array.from(document.querySelectorAll('[data-signal-stage]'));
+  function setSignal(level, text) {
+    if (!rail || !label || !none) return;
+    rail.setAttribute('data-level', String(level));
+    label.textContent = text;
+    none.classList.toggle('is-visible', Number(level) === 0);
+  }
+  setSignal(5, 'At home');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      const target = visible.target;
+      setSignal(target.getAttribute('data-signal-level') || '5', target.getAttribute('data-signal-text') || 'At home');
+    }, { threshold: reduce ? 0.35 : [0.2, 0.45, 0.7] });
+    stages.forEach((stage) => observer.observe(stage));
+  }
+</script>
+<style>
+  :global(html) {
+    background: #070708;
+    color-scheme: dark;
+    overflow-x: clip;
+  }
+  :global(body) {
+    margin: 0;
+    background: #070708;
+    color: #f3f1ec;
+    font-family: 'Barlow', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .nightdrive {
+    --night: #070708;
+    --cream: #f3f1ec;
+    --red: #c80028;
+    --amber: #d89b43;
+    --soft: rgba(243, 241, 236, 0.72);
+    --dim: rgba(243, 241, 236, 0.46);
+    --line: rgba(243, 241, 236, 0.16);
+    --hard-line: rgba(243, 241, 236, 0.28);
+    --wrap: min(1180px, 100% - 3rem);
+    position: relative;
+    min-height: 100svh;
+    overflow-x: clip;
+    background: var(--night);
+    color: var(--cream);
+    font-size: 17px;
+    line-height: 1.62;
+    isolation: isolate;
+  }
+  .wrap {
+    width: var(--wrap);
+    margin-inline: auto;
+  }
+  p,
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3,
+  .wordmark,
+  .mile-markers dt {
+    font-family: 'Big Shoulders Display', Impact, 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 0.9;
+  }
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.66rem;
+    color: var(--cream);
+  }
+  .wordmark {
+    font-size: 1.55rem;
+    letter-spacing: -0.02em;
+  }
+  .lockup__rule {
+    width: 34px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.34;
+  }
+  .lockup__tag,
+  .eyebrow,
+  .signal-rail,
+  .feature-card__num,
+  .fineprint {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .signal-rail {
+    position: fixed;
+    right: clamp(0.7rem, 2vw, 1.7rem);
+    top: 50%;
+    z-index: 40;
+    display: grid;
+    justify-items: center;
+    gap: 0.55rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .signal-rail__label,
+  .signal-rail__status {
+    writing-mode: vertical-rl;
+    margin: 0;
+  }
+  .signal-rail__bars {
+    width: 42px;
+    height: 34px;
+  }
+  .signal-rail__bars rect {
+    background: var(--cream);
+    fill: var(--cream);
+    transition: opacity 220ms ease, background-color 220ms ease;
+  }
+  .signal-rail__bars[data-level='5'] rect { opacity: 1; }
+  .signal-rail__bars[data-level='3'] rect:nth-child(n + 4) { opacity: 0.16; }
+  .signal-rail__bars[data-level='1'] rect:nth-child(n + 2) { opacity: 0.16; }
+  .signal-rail__bars[data-level='0'] rect { opacity: 0.13; }
+  .signal-rail__none {
+    width: 38px;
+    height: 38px;
+    margin-top: 0.35rem;
+    color: var(--red);
+    opacity: 0;
+    transform: scale(0.86);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+  .signal-rail__none.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 42px);
+    overflow: hidden;
+    background: var(--night);
+  }
+  .hero__sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(216, 155, 67, 0.07), transparent 44%),
+      linear-gradient(#070708 0%, #080808 48%, #030303 100%);
+  }
+  .headlight {
+    position: absolute;
+    left: 50%;
+    bottom: -30%;
+    width: min(1180px, 120vw);
+    aspect-ratio: 1.25;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at 50% 100%, rgba(243, 241, 236, 0.35), rgba(243, 241, 236, 0.1) 34%, transparent 68%);
+    pointer-events: none;
+  }
+  .tail-light {
+    position: absolute;
+    right: 18%;
+    bottom: 18%;
+    width: 96px;
+    height: 28px;
+    border-radius: 999px;
+    background: radial-gradient(ellipse, rgba(200, 0, 40, 0.8), rgba(200, 0, 40, 0.16) 48%, transparent 72%);
+    opacity: 0.8;
+  }
+  .road {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+  .road--hero {
+    transform: translateX(clamp(120px, 14vw, 260px)) scale(1.02);
+    transform-origin: 50% 50%;
+  }
+  .house ellipse {
+    opacity: 0.86;
+  }
+  .dash-line {
+    animation: road-dash 1.15s linear infinite;
+  }
+  .dash-line--ghost {
+    animation-duration: 1.7s;
+  }
+  @keyframes road-dash { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -92; } }
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(240px, 0.55fr);
+    grid-template-rows: auto 1fr;
+    gap: clamp(1rem, 4vw, 4rem);
+    min-height: calc(100svh - 42px);
+    width: min(1280px, 100% - 3rem);
+    margin-inline: auto;
+    padding: clamp(1rem, 2.4vh, 1.6rem) 0 clamp(1.4rem, 4vh, 3rem);
+  }
+  .hero__lockup {
+    grid-column: 1 / -1;
+    align-self: start;
+  }
+  .hero__copy {
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    max-width: 860px;
+    padding: clamp(0.9rem, 2vw, 1.3rem) clamp(1rem, 2.4vw, 1.7rem) clamp(1rem, 2.4vw, 1.5rem) 0;
+    margin-bottom: 0;
+  }
+  .hero__copy::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -0.55rem -1.2rem -0.65rem -1rem;
+    background: radial-gradient(ellipse at 32% 58%, rgba(7, 7, 8, 0.96) 0 48%, rgba(7, 7, 8, 0.68) 68%, rgba(7, 7, 8, 0) 100%);
+    pointer-events: none;
+  }
+  .kicker {
+    color: var(--amber);
+    font-size: clamp(0.74rem, 1.1vw, 0.9rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    margin-top: clamp(0.65rem, 1.2vw, 1rem);
+    max-width: 9.5ch;
+    font-size: clamp(3.8rem, 11.2vw, 10.4rem);
+    line-height: 0.8;
+    letter-spacing: -0.052em;
+    text-wrap: balance;
+  }
+  .product-line {
+    margin-top: clamp(0.75rem, 1.5vw, 1.1rem);
+    max-width: 44rem;
+    color: var(--cream);
+    font-size: clamp(1.1rem, 1.75vw, 1.55rem);
+    line-height: 1.12;
+    font-weight: 600;
+  }
+  .support {
+    margin-top: 0.65rem;
+    max-width: 45rem;
+    color: var(--soft);
+    font-size: clamp(1rem, 1.3vw, 1.18rem);
+    line-height: 1.48;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: clamp(1rem, 1.9vw, 1.45rem);
+  }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    min-height: 3.15rem;
+    padding: 0.72rem 1.25rem;
+    border: 1px solid var(--cream);
+    border-radius: 999px;
+    background: var(--cream);
+    color: var(--night);
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+  }
+  .store svg {
+    width: 23px;
+    height: 23px;
+    fill: currentColor;
+    flex: none;
+  }
+  .store span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.14rem;
+  }
+  .store small {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    opacity: 0.72;
+  }
+  .store.is-pending {
+    border-style: dashed;
+    border-color: rgba(243, 241, 236, 0.46);
+    background: transparent;
+    color: rgba(243, 241, 236, 0.74);
+    cursor: default;
+  }
+  .source-link {
+    color: var(--cream);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(243, 241, 236, 0.36);
+  }
+  .source-link:hover {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+  }
+  a:focus-visible,
+  summary:focus-visible,
+  .store:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 4px;
+  }
+  .phone {
+    --pw: clamp(196px, 19vw, 286px);
+    position: relative;
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border-radius: calc(var(--pw) * 0.148);
+    background: linear-gradient(156deg, #3a3834, #0c0c0d 44%, #24211d);
+    box-shadow:
+      0 34px 90px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(243, 241, 236, 0.18),
+      0 0 70px rgba(243, 241, 236, 0.16);
+  }
+  .phone--hero {
+    align-self: end;
+    justify-self: center;
+    transform: rotate(8deg) translateY(-1.5vh);
+  }
+  .phone-screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    overflow: hidden;
+    background: #11100f;
+    color: var(--cream);
+    font-size: calc(var(--pw) / 20);
+    padding: 0 calc(var(--pw) * 0.055) calc(var(--pw) * 0.035);
+  }
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 0.7em;
+    width: 30%;
+    height: 1.08em;
+    border-radius: 999px;
+    background: #030303;
+    transform: translateX(-50%);
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.72em;
+    font-size: 0.62em;
+    font-weight: 600;
+    opacity: 0.72;
+  }
+  .status__glyphs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38em;
+  }
+  .status svg {
+    width: 1.35em;
+    height: 0.72em;
+    fill: currentColor;
+  }
+  .phone-head {
+    display: flex;
+    align-items: center;
+    gap: 0.42em;
+    margin-top: 1.55em;
+    color: rgba(243, 241, 236, 0.58);
+    font-size: 0.54em;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  .phone-head > svg {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+  }
+  .phone-head span:not(.eq) {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.12em;
+    height: 0.8em;
+  }
+  .eq i {
+    width: 0.14em;
+    background: var(--red);
+    border-radius: 1px;
+    transform-origin: 50% 100%;
+    animation: eq 1s ease-in-out infinite alternate;
+  }
+  .eq i:nth-child(1) { height: 45%; } .eq i:nth-child(2) { height: 100%; animation-duration: 1.4s; }
+  .eq i:nth-child(3) { height: 62%; animation-duration: 0.72s; }
+  @keyframes eq { from { transform: scaleY(0.45); } to { transform: scaleY(1); } }
+  .album-art {
+    margin-top: 1.1em;
+    border-radius: 0.5em;
+    overflow: hidden;
+    box-shadow: 0 1em 2.4em rgba(0, 0, 0, 0.48);
+  }
+  .album-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .track-meta {
+    margin-top: 1em;
+  }
+  .track-meta strong {
+    display: block;
+    font-size: 1.12em;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .track-meta span {
+    display: block;
+    margin-top: 0.24em;
+    color: rgba(243, 241, 236, 0.55);
+    font-size: 0.68em;
+  }
+  .scrub {
+    height: 0.2em;
+    margin-top: 1em;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(243, 241, 236, 0.2);
+  }
+  .scrub i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--cream);
+  }
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.44em;
+    color: rgba(243, 241, 236, 0.44);
+    font-size: 0.55em;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3em;
+    margin-top: 1em;
+  }
+  .controls > svg {
+    width: 1.12em;
+    height: 1.12em;
+    fill: rgba(243, 241, 236, 0.82);
+  }
+  .controls span {
+    display: grid;
+    place-items: center;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--night);
+  }
+  .controls span svg {
+    width: 1.15em;
+    height: 1.15em;
+    fill: currentColor;
+  }
+  .download-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    margin-top: auto;
+    font-size: 0.5em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(243, 241, 236, 0.68);
+  }
+  .download-badge svg {
+    width: 1.12em;
+    height: 1.12em;
+    flex: none;
+  }
+  .home-indicator {
+    display: block;
+    width: 34%;
+    height: 0.22em;
+    margin: 0.55em auto 0;
+    border-radius: 999px;
+    background: rgba(243, 241, 236, 0.42);
+  }
+  .road-band {
+    position: relative;
+    height: clamp(58px, 8vw, 112px);
+    overflow: hidden;
+    border-block: 1px solid var(--line);
+    background: #050505;
+  }
+  .road-band i,
+  .road-out__road i,
+  .tail-road i {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(to bottom, var(--cream) 0 20px, transparent 20px 48px);
+    animation: road-band-dash 1.4s linear infinite;
+  }
+  @keyframes road-band-dash { from { background-position-y: 0; } to { background-position-y: 48px; } }
+  .section {
+    position: relative;
+    padding: clamp(5rem, 10vw, 9rem) 0;
+    background: var(--night);
+    border-top: 1px solid var(--line);
+  }
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .section-copy {
+    max-width: 46rem;
+  }
+  .section-copy--wide {
+    max-width: 62rem;
+  }
+  .section-copy h2,
+  .road-out h2,
+  .final h2 {
+    margin-top: 0.7rem;
+    color: var(--cream);
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    line-height: 0.86;
+    text-wrap: balance;
+  }
+  .section-copy p:not(.eyebrow) {
+    margin-top: 1.2rem;
+    max-width: 58ch;
+    color: var(--soft);
+    font-size: clamp(1rem, 1.35vw, 1.15rem);
+    line-height: 1.65;
+  }
+  .plain-list {
+    list-style: none;
+    margin: 1.8rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .plain-list li {
+    position: relative;
+    padding-left: 1.45rem;
+    color: rgba(243, 241, 236, 0.78);
+  }
+  .plain-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 0.58rem;
+    height: 1px;
+    background: var(--red);
+  }
+  .server-house {
+    position: relative;
+    min-height: 480px;
+    display: grid;
+    place-items: center;
+  }
+  .server-house__roof {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: auto;
+    opacity: 0.9;
+  }
+  .server-windows {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: min(100%, 620px);
+    padding-top: 4rem;
+  }
+  .server-window {
+    position: relative;
+    min-height: 230px;
+    padding: 1.3rem 1.1rem;
+    border: 1px solid rgba(243, 241, 236, 0.18);
+    background: linear-gradient(180deg, rgba(216, 155, 67, 0.2), rgba(243, 241, 236, 0.05));
+    overflow: hidden;
+  }
+  .server-window__glow {
+    position: absolute;
+    inset: -20% 10% auto;
+    height: 55%;
+    background: radial-gradient(ellipse, rgba(243, 241, 236, 0.32), transparent 70%);
+    pointer-events: none;
+  }
+  .server-window h3 {
+    position: relative;
+    margin-top: 1.2rem;
+    font-size: clamp(2rem, 4vw, 3.6rem);
+  }
+  .server-window p {
+    position: relative;
+    margin-top: 0.75rem;
+    color: var(--soft);
+    font-size: 0.96rem;
+    line-height: 1.5;
+  }
+  .road-out {
+    position: relative;
+    min-height: clamp(420px, 62vw, 760px);
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+    background: #040405;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .road-out__road {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(100deg, transparent 0 28%, rgba(243, 241, 236, 0.12) 49.8%, rgba(243, 241, 236, 0.12) 50.2%, transparent 72%),
+      linear-gradient(#040405, #090909);
+  }
+  .road-out__road::before,
+  .road-out__road::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(243, 241, 236, 0.15);
+  }
+  .road-out__road::before {
+    left: 28%;
+    transform: skewX(-24deg);
+  }
+  .road-out__road::after {
+    right: 28%;
+    transform: skewX(24deg);
+  }
+  .road-out__copy {
+    position: relative;
+    z-index: 1;
+  }
+  .road-out h2 {
+    max-width: 9.4ch;
+  }
+  .offline-panel {
+    border: 1px solid var(--hard-line);
+    min-height: 430px;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: #050506;
+  }
+  .offline-panel__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--red);
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+  .offline-panel__top svg {
+    width: 44px;
+    height: 44px;
+  }
+  .offline-shelf {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-top: clamp(3rem, 7vw, 5.5rem);
+  }
+  .offline-record {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    background: var(--cream);
+  }
+  .offline-record::before {
+    content: '';
+    position: absolute;
+    inset: 18%;
+    border-radius: 50%;
+    border: 10px solid var(--night);
+  }
+  .offline-record i {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+  .offline-panel > p {
+    margin-top: 1.8rem;
+    color: var(--dim);
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    gap: 1px;
+    margin-top: 3rem;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+  }
+  .feature-card {
+    min-height: 330px;
+    padding: 1.2rem;
+    background: #09090a;
+  }
+  .feature-card__num {
+    color: var(--red);
+  }
+  .feature-card h3 {
+    margin-top: 2.4rem;
+    font-size: clamp(2rem, 3.8vw, 3.5rem);
+  }
+  .feature-card p {
+    margin-top: 1rem;
+    color: var(--soft);
+    font-size: 0.95rem;
+    line-height: 1.54;
+  }
+  .mile-markers {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 3rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--red);
+  }
+  .mile-markers div {
+    min-width: 0;
+  }
+  .mile-markers dt {
+    font-size: clamp(3.5rem, 9vw, 9rem);
+    color: var(--cream);
+  }
+  .mile-markers dd {
+    margin: 0.3rem 0 0;
+    color: var(--dim);
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .ownership-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 3rem;
+    background: var(--red);
+  }
+  .ownership-list article {
+    min-height: 260px;
+    padding: 1.3rem;
+    background: var(--night);
+  }
+  .ownership-list span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--red);
+  }
+  .ownership-list h3 {
+    margin-top: 1.5rem;
+    font-size: clamp(2.3rem, 5.2vw, 5rem);
+  }
+  .ownership-list p {
+    margin-top: 0.9rem;
+    color: var(--soft);
+    line-height: 1.56;
+  }
+  .faq__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+  .faq-list {
+    border-top: 1px solid var(--line);
+  }
+  .faq-list details {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-list summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.35rem 0;
+    color: var(--cream);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+  }
+  .faq-list summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-list summary i {
+    position: relative;
+    flex: none;
+    width: 18px;
+    height: 18px;
+  }
+  .faq-list summary i::before,
+  .faq-list summary i::after {
+    content: '';
+    position: absolute;
+    background: var(--red);
+  }
+  .faq-list summary i::before {
+    left: 0;
+    right: 0;
+    top: 8px;
+    height: 2px;
+  }
+  .faq-list summary i::after {
+    top: 0;
+    bottom: 0;
+    left: 8px;
+    width: 2px;
+  }
+  .faq-list details[open] summary i::after {
+    transform: scaleY(0);
+  }
+  .faq-list p {
+    max-width: 62ch;
+    padding-bottom: 1.4rem;
+    color: var(--soft);
+  }
+  .final {
+    position: relative;
+    min-height: 760px;
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+    background: #030303;
+    border-top: 1px solid var(--line);
+  }
+  .tail-road {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(80px 32px at 44% 32%, rgba(200, 0, 40, 0.8), transparent 70%),
+      radial-gradient(64px 28px at 56% 30%, rgba(200, 0, 40, 0.62), transparent 70%);
+  }
+  .tail-road::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(560px, 64vw);
+    height: 100%;
+    transform: translateX(-50%);
+    clip-path: polygon(48% 12%, 52% 12%, 100% 100%, 0 100%);
+    background: #080809;
+    border-inline: 1px solid rgba(243, 241, 236, 0.1);
+  }
+  .final__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    padding: clamp(5rem, 11vw, 9rem) 0 3rem;
+  }
+  .final h2 {
+    max-width: 10ch;
+    margin-top: 1.6rem;
+  }
+  .final p:not(.fineprint) {
+    margin-top: 1rem;
+    color: var(--soft);
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+  }
+  .actions--center {
+    justify-content: center;
+  }
+  .fineprint {
+    max-width: 70ch;
+    margin-top: 3rem;
+    color: rgba(243, 241, 236, 0.42);
+    line-height: 1.8;
+    text-transform: none;
+    letter-spacing: 0.08em;
+  }
+  @media (max-width: 1020px) {
+    .hero__content,
+    .split,
+    .faq__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero__copy {
+      padding-bottom: 0;
+    }
+    .phone--hero {
+      justify-self: end;
+      width: clamp(196px, 36vw, 270px);
+      transform: rotate(5deg) translateY(-2rem);
+    }
+    .server-windows,
+    .ownership-list,
+    .mile-markers {
+      grid-template-columns: 1fr 1fr;
+    }
+    .signal-rail {
+      display: none;
+    }
+  }
+  @media (max-width: 620px) {
+    .nightdrive {
+      --wrap: min(100% - 2rem, 1180px);
+    }
+    .hero__content {
+      width: min(100% - 2rem, 1280px);
+      min-height: auto;
+      padding-bottom: 1.6rem;
+    }
+    .lockup__tag,
+    .lockup__rule {
+      display: none;
+    }
+    .hero h1 {
+      font-size: clamp(3.7rem, 18vw, 5.8rem);
+      max-width: 8ch;
+    }
+    .hero__copy {
+      margin-bottom: 0.5rem;
+    }
+    .headlight {
+      width: 108vw;
+      bottom: -22%;
+    }
+    .road--hero {
+      transform: translateX(18vw) scale(1.02);
+    }
+    .phone--hero {
+      justify-self: center;
+      width: clamp(190px, 62vw, 236px);
+    }
+    .section-copy h2,
+    .road-out h2,
+    .final h2 {
+      font-size: clamp(3rem, 17vw, 5.4rem);
+    }
+    .server-house {
+      min-height: auto;
+    }
+    .server-house__roof {
+      display: none;
+    }
+    .server-windows,
+    .ownership-list,
+    .mile-markers {
+      grid-template-columns: 1fr;
+    }
+    .offline-shelf {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .feature-grid {
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+    .feature-card {
+      min-height: 0;
+    }
+    .actions .store,
+    .actions .source-link {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dash-line,
+    .road-band i,
+    .road-out__road i,
+    .tail-road i,
+    .eq i {
+      animation: none !important;
+    }
+    .signal-rail__none {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,1426 @@
+---
+/**
+ * VARIANT — GATEFOLD
+ *
+ * The page behaves like a double record sleeve opening on its hinge: black outer
+ * board, cream printed card, red used like label ink. The crease is the
+ * signature gesture — the hero and inner spread rotate open with perspective,
+ * while the same fold line continues down the document as the page structure.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+const HEADLINE = 'A player for the records you already keep.';
+const HERO_LINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT = 'Stream it at home from the server you run, or download an album and play it where there is no signal at all.';
+const CATALOGUE = 'GPL-3.0 / no account / free forever';
+const FEATURE_COLUMNS = [FEATURES.slice(0, 3), FEATURES.slice(3, 5), FEATURES.slice(5)];
+const streamingCopy = 'At home, Mozz talks directly to the Plex, Jellyfin or Navidrome server already holding your library. No Mozz account sits in the middle.';
+const offlineCopy = FEATURES[1].body;
+const recommendationPrint = FAQS[3].a;
+---
+<Layout
+  title={`${NAME} — gatefold sleeve for your own music`}
+  description="A free iPhone and iPad player for music on your own Plex, Jellyfin or Navidrome server — streamed at home or downloaded for no signal."
+  themeColor="#100d0c"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Caslon+Display&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+  <main class="gf">
+    <VariantBar slug="gatefold" tone="neutral" />
+    <!-- ===============================================================
+         FRONT COVER — the closed object opens on a centre hinge.
+    ================================================================ -->
+    <header class="cover fold-stage is-open" data-fold aria-labelledby="gf-hero-title">
+      <div class="cover-panel panel panel-left" aria-hidden="true"></div>
+      <div class="cover-panel panel panel-right" aria-hidden="true"></div>
+      <span class="hinge hero-hinge" aria-hidden="true"></span>
+      <div class="cover-inner">
+        <nav class="topline" aria-label="Gatefold cover header">
+          <a class="lockup" href="/" aria-label={`${NAME} home`}>
+            <Mark size={30} decorative />
+            <span>{NAME}</span>
+          </a>
+          <span class="catalogue">{CATALOGUE}</span>
+        </nav>
+        <div class="cover-copy">
+          <p class="kicker">Front cover / self-hosted music</p>
+          <h1 id="gf-hero-title">{HEADLINE}</h1>
+          <p class="hero-line">{HERO_LINE}</p>
+          <p class="support">{SUPPORT}</p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="red-edge" aria-hidden="true">
+          <span class="disc-peek"></span>
+          <span class="red-band"></span>
+        </div>
+      </div>
+    </header>
+    <!-- ===============================================================
+         INNER SPREAD — two cream sleeve panels sharing the same crease.
+    ================================================================ -->
+    <section class="spread fold-stage is-open" data-fold aria-labelledby="gf-sources-title">
+      <div class="panel paper spread-left">
+        <p class="panel-label">Inner left / sources</p>
+        <h2 id="gf-sources-title">The libraries you already run.</h2>
+        <p class="panel-intro">
+          Point {NAME} at a server with your music on it. The sleeve does not sell
+          a new catalogue; it gives more room to the one already on your shelf.
+        </p>
+        <ol class="source-panels" role="list">
+          {SERVERS.map((server, index) => (
+            <li class="source-panel">
+              <span class="source-num">{String(index + 1).padStart(2, '0')}</span>
+              <span class="source-mark"><ServerLogo name={server.name} size={34} /></span>
+              <div>
+                <h3>{server.name}</h3>
+                <p>{server.note}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <span class="hinge spread-hinge" aria-hidden="true"></span>
+      <div class="panel paper spread-right" aria-labelledby="gf-sides-title">
+        <p class="panel-label">Inner right / both sides</p>
+        <h2 id="gf-sides-title">Both sides of the same record.</h2>
+        <p class="panel-intro">
+          Streaming and offline are co-equal. The panels match in scale because
+          neither mode is secondary.
+        </p>
+        <div class="side-pair">
+          <article class="side-card">
+            <span class="side-kicker">Side one</span>
+            <h3>Streaming at home</h3>
+            <p>{streamingCopy}</p>
+          </article>
+          <article class="side-card">
+            <span class="side-kicker">Side two</span>
+            <h3>Downloads anywhere</h3>
+            <p>{offlineCopy}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    <!-- ===============================================================
+         INNER SLEEVE — liner notes and the phone pulled out at an angle.
+    ================================================================ -->
+    <section class="inner-sleeve" aria-labelledby="gf-app-title">
+      <div class="sleeve-wrap">
+        <div class="liner paper">
+          <p class="panel-label">Inner sleeve / liner notes</p>
+          <h2 id="gf-app-title">The app is written in the credits.</h2>
+          <div class="liner-columns">
+            {FEATURE_COLUMNS.map((column, columnIndex) => (
+              <div class="liner-column">
+                {column.map((feature, featureIndex) => (
+                  <p>
+                    <strong>{String(columnIndex * 3 + featureIndex + 1).padStart(2, '0')} — {feature.title}.</strong>
+                    {' '}{feature.body}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div class="stat-strip" aria-label="Measured performance details">
+            {STATS.map((stat) => (
+              <span><b>{stat.value}</b>{stat.label}</span>
+            ))}
+          </div>
+        </div>
+        <figure class="phone-pocket">
+          <div class="phone" role="img" aria-label="An iPhone showing Mozz playing an album from your own server with offline controls available.">
+            <div class="phone-screen">
+              <span class="island" aria-hidden="true"></span>
+              <div class="status" aria-hidden="true">
+                <span>9:41</span>
+                <span class="glyphs">
+                  <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" /></svg>
+                  <svg viewBox="0 0 26 12"><rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2" /><rect x="3" y="3" width="14" height="6" rx="1.4" /><path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z" /></svg>
+                </span>
+              </div>
+              <div class="phone-head">
+                <span>playing from your server</span>
+                <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>
+              </div>
+              <svg class="album-art" viewBox="0 0 160 160" aria-hidden="true">
+                <rect width="160" height="160" fill="#e8dfd0" />
+                <rect x="0" y="0" width="58" height="160" fill="#c80028" />
+                <rect x="118" y="0" width="42" height="160" fill="#14100f" />
+                <circle cx="79" cy="73" r="43" fill="#14100f" />
+                <circle cx="79" cy="73" r="18" fill="#c80028" />
+                <circle cx="79" cy="73" r="5" fill="#e8dfd0" />
+                <rect x="20" y="124" width="44" height="6" fill="#e8dfd0" />
+                <rect x="78" y="124" width="62" height="6" fill="#14100f" opacity="0.62" />
+                <rect x="78" y="137" width="38" height="5" fill="#14100f" opacity="0.35" />
+              </svg>
+              <div class="track-meta">
+                <strong>Gatefold Morning</strong>
+                <span>House Library · Mozz</span>
+              </div>
+              <div class="scrub" aria-hidden="true"><span></span></div>
+              <div class="time-row" aria-hidden="true"><span>1:28</span><span>&minus;3:04</span></div>
+              <div class="controls" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path d="M17 3.5v13L7.6 10z" /><rect x="3" y="3.5" width="2.5" height="13" rx="1" /></svg>
+                <span class="play"><svg viewBox="0 0 20 20"><rect x="5.6" y="4.2" width="3.4" height="11.6" rx="1.2" /><rect x="11" y="4.2" width="3.4" height="11.6" rx="1.2" /></svg></span>
+                <svg viewBox="0 0 20 20"><path d="M3 3.5v13l9.4-6.5z" /><rect x="14.6" y="3.5" width="2.5" height="13" rx="1" /></svg>
+              </div>
+              <div class="phone-badge">downloaded · plays offline</div>
+              <span class="home-indicator" aria-hidden="true"></span>
+            </div>
+          </div>
+          <figcaption>Printed card, glass front, the record already in your pocket.</figcaption>
+        </figure>
+      </div>
+    </section>
+    <!-- ===============================================================
+         LABEL — trust and ownership as a centre label, not a card grid.
+    ================================================================ -->
+    <section class="label-section" aria-labelledby="gf-trust-title">
+      <div class="label-shell">
+        <figure class="centre-label" aria-hidden="true">
+          <span class="label-ring ring-a"></span>
+          <span class="label-ring ring-b"></span>
+          <span class="label-ring ring-c"></span>
+          <span class="spindle"></span>
+          <span class="label-title">MOZZ</span>
+          <span class="label-side">GPL-3.0</span>
+        </figure>
+        <div class="label-copy">
+          <p class="panel-label">Centre label / ownership</p>
+          <h2 id="gf-trust-title">Pressed for the person who owns the music.</h2>
+          <div class="ownership-grid">
+            {OWNERSHIP.map((item) => (
+              <article>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+        <aside class="label-stats" aria-label="Small-print facts">
+          <span>Small print around the label</span>
+          {STATS.map((stat) => (
+            <p><b>{stat.value}</b> {stat.label}</p>
+          ))}
+        </aside>
+      </div>
+    </section>
+    <!-- ===============================================================
+         BACK COVER — notes, track listing, CTA and barcode small print.
+    ================================================================ -->
+    <section class="back-cover" aria-labelledby="gf-faq-title">
+      <div class="back-wrap paper">
+        <div class="back-head">
+          <p class="panel-label">Back cover / notes</p>
+          <h2 id="gf-faq-title">Questions as sleeve notes.</h2>
+        </div>
+        <ol class="faq-tracks" role="list">
+          {FAQS.map((faq, index) => (
+            <li>
+              <span class="track-number">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <footer class="final-cta">
+          <div class="footer-lockup">
+            <Mark size={34} decorative />
+            <span>{NAME}</span>
+          </div>
+          <div class="footer-copy">
+            <h2>{TAGLINE}</h2>
+            <p>{SUBLINE}</p>
+            <div class="actions footer-actions">
+              {APP_STORE_URL ? (
+                <a class="store" href={APP_STORE_URL}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Download on the</small>App Store</span>
+                </a>
+              ) : (
+                <span class="store is-pending" aria-disabled="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                  <span><small>Coming to the</small>App Store</span>
+                </span>
+              )}
+              <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+          <p class="fine-print">{recommendationPrint}</p>
+          <span class="barcode" aria-hidden="true"></span>
+        </footer>
+      </div>
+    </section>
+  </main>
+</Layout>
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (!reduceMotion.matches) {
+    document.documentElement.classList.add('gf-can-fold');
+    const folds = document.querySelectorAll('[data-fold]');
+    requestAnimationFrame(() => {
+      folds.forEach((fold) => fold.classList.add('is-open'));
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-open');
+      });
+    }, { threshold: 0.32 });
+    folds.forEach((fold) => observer.observe(fold));
+  }
+</script>
+<style>
+  :global(html) {
+    background: #100d0c;
+  }
+  :global(body) {
+    margin: 0;
+    color: #e8dfd0;
+    background: #100d0c;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  .gf {
+    --black: #100d0c;
+    --black-2: #181312;
+    --cream: #e8dfd0;
+    --cream-warm: #f3eadb;
+    --ink: #14100f;
+    --red: #c80028;
+    --red-deep: #8d001c;
+    --shadow: #5c3f2e;
+    --rule: rgba(20, 16, 15, 0.2);
+    --light-rule: rgba(232, 223, 208, 0.18);
+    --wrap: min(1180px, calc(100% - clamp(2rem, 5vw, 6rem)));
+    position: relative;
+    overflow-x: clip;
+    isolation: isolate;
+    min-height: 100svh;
+    background:
+      radial-gradient(80% 60% at 50% 0%, rgba(92, 63, 46, 0.34), transparent 62%),
+      radial-gradient(120% 70% at 50% 50%, transparent 54%, rgba(0, 0, 0, 0.34) 100%),
+      var(--black);
+    color: var(--cream);
+    font-size: 17px;
+    line-height: 1.58;
+  }
+  .gf::before {
+    content: '';
+    position: absolute;
+    top: 42px;
+    bottom: 0;
+    left: 50%;
+    z-index: 0;
+    width: 1px;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0),
+        rgba(232, 223, 208, 0.34),
+        rgba(0, 0, 0, 0)
+      );
+    box-shadow:
+      -18px 0 28px rgba(0, 0, 0, 0.24),
+      18px 0 30px rgba(255, 246, 224, 0.05);
+    pointer-events: none;
+  }
+  .gf::after {
+    content: '';
+    position: fixed;
+    inset: 42px 0 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(70% 60% at 50% 18%, transparent 28%, rgba(0, 0, 0, 0.22) 100%),
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.018) 0 1px,
+        transparent 1px 4px
+      );
+    mix-blend-mode: screen;
+    opacity: 0.5;
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:focus-visible,
+  .store:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+  }
+  .paper {
+    color: var(--ink);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(20, 16, 15, 0.024) 0 1px,
+        transparent 1px 5px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(20, 16, 15, 0.018) 0 1px,
+        transparent 1px 7px
+      ),
+      linear-gradient(180deg, var(--cream-warm), var(--cream));
+    box-shadow:
+      0 34px 80px -48px rgba(0, 0, 0, 0.78),
+      inset 0 0 0 1px rgba(20, 16, 15, 0.12);
+  }
+  .lockup,
+  .footer-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.68rem;
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 1.35rem;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .panel-label,
+  .catalogue,
+  .kicker,
+  .side-kicker,
+  .source-num,
+  .track-number,
+  .fine-print,
+  .label-stats,
+  .phone-badge,
+  .status,
+  .phone-head,
+  .time-row {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .panel-label,
+  .kicker,
+  .catalogue {
+    font-size: 0.72rem;
+  }
+  .panel-intro {
+    max-width: 42ch;
+    margin-top: 1rem;
+    font-size: clamp(1rem, 1.4vw, 1.12rem);
+    line-height: 1.52;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem 1.1rem;
+  }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    min-height: 3.25rem;
+    padding: 0.72rem 1.18rem;
+    border: 1px solid var(--cream);
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 8px 8px 0 rgba(200, 0, 40, 0.22);
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background-color 160ms ease;
+  }
+  a.store:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 12px 12px 0 rgba(200, 0, 40, 0.28);
+  }
+  .store svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+  .store span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+    text-align: left;
+    font-weight: 700;
+  }
+  .store small {
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.64;
+  }
+  .store.is-pending {
+    border-style: dashed;
+    background: transparent;
+    color: color-mix(in srgb, var(--cream) 72%, var(--black));
+    box-shadow: inset 0 0 0 1px rgba(232, 223, 208, 0.08);
+    cursor: default;
+  }
+  .source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.6rem;
+    font-weight: 700;
+    border-bottom: 1px solid currentColor;
+  }
+  .source-link:hover {
+    color: var(--red);
+  }
+  /* ------------------------------------------------------------ cover */
+  .fold-stage {
+    position: relative;
+    overflow: hidden;
+    perspective: 1600px;
+    transform-style: preserve-3d;
+  }
+  .cover {
+    min-height: calc(100svh - 42px);
+    background: var(--black);
+  }
+  .cover-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 0;
+    background:
+      radial-gradient(90% 70% at 50% 20%, rgba(92, 63, 46, 0.22), transparent 58%),
+      linear-gradient(180deg, #171211, #0d0a09);
+    transition:
+      transform 1100ms cubic-bezier(0.18, 0.82, 0.22, 1),
+      box-shadow 1100ms cubic-bezier(0.18, 0.82, 0.22, 1);
+    backface-visibility: hidden;
+  }
+  .panel-left {
+    left: 0;
+    transform-origin: 100% 50%;
+  }
+  .panel-right {
+    right: 0;
+    transform-origin: 0 50%;
+  }
+  :global(.gf-can-fold) .fold-stage:not(.is-open) .panel-left {
+    transform: rotateY(-34deg);
+    box-shadow: 28px 0 44px -30px rgba(0, 0, 0, 0.95);
+  }
+  :global(.gf-can-fold) .fold-stage:not(.is-open) .panel-right {
+    transform: rotateY(34deg);
+    box-shadow: -28px 0 44px -30px rgba(0, 0, 0, 0.95);
+  }
+  .hinge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 3;
+    width: 1px;
+    transform: translateX(-0.5px);
+    background: rgba(232, 223, 208, 0.56);
+    box-shadow:
+      -26px 0 38px rgba(0, 0, 0, 0.38),
+      26px 0 38px rgba(255, 246, 224, 0.08);
+    pointer-events: none;
+  }
+  .hinge::before,
+  .hinge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: min(14vw, 180px);
+    pointer-events: none;
+  }
+  .hinge::before {
+    right: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.34));
+  }
+  .hinge::after {
+    left: 0;
+    background: linear-gradient(90deg, rgba(255, 246, 224, 0.06), transparent);
+  }
+  .cover-inner {
+    position: relative;
+    z-index: 4;
+    width: var(--wrap);
+    min-height: calc(100svh - 42px);
+    margin-inline: auto;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: clamp(1.1rem, 2.5vw, 2rem) 0 clamp(3rem, 6vw, 5rem);
+  }
+  .topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .catalogue {
+    color: rgba(232, 223, 208, 0.66);
+    text-align: right;
+  }
+  .cover-copy {
+    align-self: center;
+    width: min(100%, 88rem);
+    padding: clamp(0.75rem, 2vh, 2rem) 0 0;
+    transform: translateY(clamp(-2rem, -3vh, -1rem));
+  }
+  .cover h1 {
+    max-width: 16.8ch;
+    margin-top: 0.5rem;
+    color: var(--cream);
+    font-size: clamp(3.7rem, 8.2vw, 8.8rem);
+    line-height: 0.9;
+    text-wrap: balance;
+  }
+  .hero-line {
+    max-width: 58rem;
+    margin-top: clamp(0.85rem, 1.4vw, 1.25rem);
+    color: var(--cream);
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: clamp(1.7rem, 2.7vw, 3.25rem);
+    line-height: 0.94;
+    letter-spacing: -0.04em;
+  }
+  .support {
+    max-width: 46rem;
+    margin-top: 0.85rem;
+    color: rgba(232, 223, 208, 0.76);
+    font-size: clamp(0.98rem, 1.25vw, 1.14rem);
+  }
+  .cover .actions {
+    margin-top: 1.45rem;
+  }
+  .red-edge {
+    position: absolute;
+    top: 50%;
+    right: min(-4vw, -1rem);
+    z-index: -1;
+    width: min(34vw, 28rem);
+    aspect-ratio: 1;
+    transform: translateY(-34%);
+    pointer-events: none;
+  }
+  .red-edge::before {
+    content: '';
+    position: absolute;
+    top: 6%;
+    bottom: 6%;
+    left: 0;
+    width: 42%;
+    background:
+      linear-gradient(90deg, rgba(232, 223, 208, 0.68) 0 2px, transparent 2px),
+      linear-gradient(180deg, #181312, #0b0807);
+    box-shadow:
+      inset -1px 0 0 rgba(232, 223, 208, 0.34),
+      16px 0 28px -22px rgba(0, 0, 0, 0.9);
+  }
+  .disc-peek {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 92%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, var(--cream) 0 3.5%, var(--red) 3.8% 19%, var(--red-deep) 19.6% 23%, transparent 23.5%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(232, 223, 208, 0.16) 0 1px, transparent 1px 7px),
+      radial-gradient(circle at 50% 50%, #1d1817 0 64%, #090707 66% 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(232, 223, 208, 0.14),
+      0 24px 46px -30px rgba(0, 0, 0, 0.92);
+    opacity: 0.98;
+  }
+  .red-band {
+    position: absolute;
+    top: 8%;
+    bottom: 8%;
+    left: 37%;
+    width: 2px;
+    background: var(--cream);
+    box-shadow:
+      -8px 0 0 rgba(20, 16, 15, 0.92),
+      -10px 0 0 rgba(232, 223, 208, 0.24),
+      8px 0 18px rgba(0, 0, 0, 0.62);
+    opacity: 0.9;
+  }
+  /* ------------------------------------------------------------ spread */
+  .spread {
+    width: var(--wrap);
+    margin: clamp(2rem, 5vw, 5rem) auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-height: 48rem;
+    isolation: isolate;
+  }
+  .spread .panel {
+    position: relative;
+    z-index: 1;
+    padding: clamp(2rem, 4vw, 4rem);
+    transition:
+      transform 1000ms cubic-bezier(0.18, 0.82, 0.22, 1),
+      box-shadow 1000ms cubic-bezier(0.18, 0.82, 0.22, 1);
+  }
+  .spread-left {
+    transform-origin: 100% 50%;
+  }
+  .spread-right {
+    transform-origin: 0 50%;
+  }
+  :global(.gf-can-fold) .spread:not(.is-open) .spread-left {
+    transform: rotateY(-28deg);
+  }
+  :global(.gf-can-fold) .spread:not(.is-open) .spread-right {
+    transform: rotateY(28deg);
+  }
+  .spread h2,
+  .inner-sleeve h2,
+  .label-copy h2,
+  .back-head h2,
+  .footer-copy h2 {
+    margin-top: 0.72rem;
+    font-size: clamp(2.4rem, 5.7vw, 5.9rem);
+    text-wrap: balance;
+  }
+  .source-panels {
+    display: grid;
+    gap: 0;
+    margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .source-panel {
+    display: grid;
+    grid-template-columns: 3.4rem auto minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .source-num {
+    padding-top: 0.3rem;
+    color: var(--red);
+    font-size: 0.72rem;
+  }
+  .source-mark {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+  }
+  .source-panel h3,
+  .side-card h3,
+  .ownership-grid h3,
+  .faq-tracks h3 {
+    font-size: clamp(1.45rem, 2.2vw, 2.05rem);
+    letter-spacing: -0.035em;
+  }
+  .source-panel p,
+  .side-card p,
+  .ownership-grid p,
+  .faq-tracks p {
+    margin-top: 0.45rem;
+    color: rgba(20, 16, 15, 0.7);
+    line-height: 1.52;
+  }
+  .side-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .side-card {
+    min-height: 20rem;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: rgba(255, 250, 240, 0.46);
+  }
+  .side-kicker {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--red);
+    font-size: 0.72rem;
+  }
+  /* ------------------------------------------------------- inner sleeve */
+  .inner-sleeve {
+    position: relative;
+    z-index: 1;
+    padding: clamp(5rem, 10vw, 9rem) 0;
+  }
+  .sleeve-wrap {
+    width: var(--wrap);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .liner {
+    padding: clamp(2rem, 4vw, 4rem);
+  }
+  .liner-columns {
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    column-count: 3;
+    column-gap: 1.5rem;
+    column-rule: 1px solid var(--rule);
+  }
+  .liner-column {
+    break-inside: avoid;
+  }
+  .liner-column p {
+    margin: 0 0 1rem;
+    font-size: 0.84rem;
+    line-height: 1.38;
+    color: rgba(20, 16, 15, 0.72);
+  }
+  .liner-column strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .stat-strip span {
+    padding: 1rem;
+    background: rgba(255, 250, 240, 0.52);
+    font-size: 0.72rem;
+    line-height: 1.32;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .stat-strip b {
+    display: block;
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: clamp(1.8rem, 3.5vw, 3.4rem);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--red);
+  }
+  .phone-pocket {
+    position: relative;
+    margin: 0;
+    justify-self: center;
+    transform: rotate(-4deg);
+  }
+  .phone-pocket::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -2rem;
+    width: 118%;
+    height: 42%;
+    transform: translateX(-50%) rotate(4deg);
+    background: rgba(0, 0, 0, 0.38);
+    filter: blur(24px);
+    border-radius: 50%;
+  }
+  .phone {
+    --pw: clamp(196px, 23vw, 320px);
+    position: relative;
+    z-index: 1;
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * 0.035);
+    border-radius: calc(var(--pw) * 0.148);
+    background: linear-gradient(145deg, #4a4440, #171312 40%, #2e2925 100%);
+    box-shadow:
+      0 34px 70px -28px rgba(0, 0, 0, 0.82),
+      inset 0 0 0 1px rgba(232, 223, 208, 0.22);
+  }
+  .phone-screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 calc(var(--pw) * 0.06) calc(var(--pw) * 0.055);
+    border-radius: calc(var(--pw) * 0.148 - var(--pw) * 0.035);
+    overflow: hidden;
+    background: #14100f;
+    color: var(--cream);
+    font-size: calc(var(--pw) / 18);
+  }
+  .island {
+    position: absolute;
+    top: 0.74em;
+    left: 50%;
+    width: 31%;
+    height: 1.1em;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: #050303;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8em 0.2em 0;
+    font-size: 0.58em;
+    opacity: 0.72;
+  }
+  .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+  }
+  .glyphs svg:first-child {
+    width: 1.1em;
+    height: 0.75em;
+    fill: currentColor;
+  }
+  .glyphs svg:last-child {
+    width: 1.55em;
+    height: 0.75em;
+    fill: currentColor;
+  }
+  .phone-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6em;
+    margin-top: 2.2em;
+    font-size: 0.52em;
+    color: rgba(232, 223, 208, 0.6);
+  }
+  .equalizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.16em;
+    height: 0.9em;
+  }
+  .equalizer i {
+    width: 0.16em;
+    border-radius: 1px;
+    background: var(--red);
+    animation: gf-level 0.95s ease-in-out infinite alternate;
+  }
+  .equalizer i:nth-child(1) {
+    height: 45%;
+  }
+  .equalizer i:nth-child(2) {
+    height: 100%;
+    animation-duration: 1.3s;
+  }
+  .equalizer i:nth-child(3) {
+    height: 68%;
+    animation-duration: 0.72s;
+  }
+  @keyframes gf-level {
+    from { transform: scaleY(0.42); }
+    to { transform: scaleY(1); }
+  }
+  .album-art {
+    display: block;
+    width: 100%;
+    margin-top: 1.2em;
+    border-radius: 0.45em;
+    box-shadow: 0 1.3em 2.6em rgba(0, 0, 0, 0.42);
+  }
+  .track-meta {
+    margin-top: 1em;
+  }
+  .track-meta strong {
+    display: block;
+    font-size: 1.08em;
+    line-height: 1.12;
+  }
+  .track-meta span {
+    display: block;
+    margin-top: 0.22em;
+    font-size: 0.66em;
+    color: rgba(232, 223, 208, 0.54);
+  }
+  .scrub {
+    height: 0.24em;
+    margin-top: 1.1em;
+    border-radius: 999px;
+    background: rgba(232, 223, 208, 0.18);
+    overflow: hidden;
+  }
+  .scrub span {
+    display: block;
+    width: 42%;
+    height: 100%;
+    background: var(--red);
+  }
+  .time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.55em;
+    font-size: 0.5em;
+    color: rgba(232, 223, 208, 0.44);
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3em;
+    margin-top: auto;
+    padding-top: 1.2em;
+  }
+  .controls svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: currentColor;
+    opacity: 0.84;
+  }
+  .play {
+    display: grid;
+    place-items: center;
+    width: 2.35em;
+    height: 2.35em;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--cream);
+  }
+  .play svg {
+    width: 1.05em;
+    height: 1.05em;
+    opacity: 1;
+  }
+  .phone-badge {
+    display: grid;
+    place-items: center;
+    margin-top: 1.2em;
+    padding: 0.58em 0.6em;
+    border: 1px dashed rgba(232, 223, 208, 0.24);
+    border-radius: 999px;
+    font-size: 0.48em;
+    color: rgba(232, 223, 208, 0.68);
+  }
+  .home-indicator {
+    display: block;
+    width: 32%;
+    height: 0.2em;
+    margin: 0.9em auto 0;
+    border-radius: 999px;
+    background: rgba(232, 223, 208, 0.32);
+  }
+  .phone-pocket figcaption {
+    position: relative;
+    z-index: 1;
+    max-width: 24ch;
+    margin: 1.4rem auto 0;
+    color: rgba(232, 223, 208, 0.62);
+    font-size: 0.82rem;
+    text-align: center;
+  }
+  /* ------------------------------------------------------------ label */
+  .label-section {
+    padding: clamp(4rem, 9vw, 8rem) 0;
+  }
+  .label-shell {
+    width: var(--wrap);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(17rem, 0.72fr) minmax(0, 1fr) minmax(12rem, 0.42fr);
+    gap: clamp(1.8rem, 4vw, 4rem);
+    align-items: center;
+  }
+  .centre-label {
+    position: relative;
+    width: min(100%, 26rem);
+    aspect-ratio: 1;
+    margin: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, var(--black) 0 4%, transparent 4.3%),
+      radial-gradient(circle at 50% 38%, var(--cream) 0 22%, transparent 22.5%),
+      radial-gradient(circle at 50% 50%, var(--red) 0 58%, var(--red-deep) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+      inset 0 0 0 18px rgba(20, 16, 15, 0.08),
+      0 44px 80px -46px rgba(0, 0, 0, 0.95);
+  }
+  .label-ring {
+    position: absolute;
+    inset: var(--inset);
+    border: 1px solid rgba(232, 223, 208, 0.32);
+    border-radius: 50%;
+  }
+  .ring-a { --inset: 8%; }
+  .ring-b { --inset: 24%; border-color: rgba(20, 16, 15, 0.26); }
+  .ring-c { --inset: 42%; border-color: rgba(20, 16, 15, 0.22); }
+  .spindle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4.8%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--black);
+    box-shadow: 0 0 0 5px var(--cream);
+  }
+  .label-title,
+  .label-side {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--ink);
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    letter-spacing: -0.04em;
+  }
+  .label-title {
+    top: 24%;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+  }
+  .label-side {
+    bottom: 26%;
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+  }
+  .ownership-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    background: var(--light-rule);
+  }
+  .ownership-grid article {
+    padding: clamp(1.25rem, 2.4vw, 1.8rem);
+    background: rgba(232, 223, 208, 0.04);
+    border: 1px solid rgba(232, 223, 208, 0.11);
+  }
+  .label-copy h2,
+  .label-copy h3 {
+    color: var(--cream);
+  }
+  .ownership-grid p {
+    color: rgba(232, 223, 208, 0.68);
+  }
+  .label-stats {
+    display: grid;
+    gap: 1rem;
+    padding: 1.2rem 0 1.2rem 1.2rem;
+    border-left: 1px solid var(--light-rule);
+    font-size: 0.68rem;
+    line-height: 1.35;
+    color: rgba(232, 223, 208, 0.62);
+  }
+  .label-stats > span {
+    color: var(--red);
+  }
+  .label-stats p {
+    margin: 0;
+  }
+  .label-stats b {
+    display: block;
+    color: var(--cream);
+    font-family: 'Libre Caslon Display', Georgia, serif;
+    font-size: 2.1rem;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  /* ------------------------------------------------------------ back */
+  .back-cover {
+    padding: 0 0 clamp(3rem, 7vw, 6rem);
+  }
+  .back-wrap {
+    width: var(--wrap);
+    margin-inline: auto;
+    padding: clamp(2rem, 4vw, 4rem);
+  }
+  .back-head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.46fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: end;
+    padding-bottom: clamp(1.8rem, 4vw, 3rem);
+    border-bottom: 2px solid var(--ink);
+  }
+  .faq-tracks {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .faq-tracks li {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: clamp(1rem, 2vw, 2rem);
+    padding: 1.45rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .track-number {
+    padding-top: 0.24rem;
+    color: var(--red);
+    font-size: 0.78rem;
+  }
+  .final-cta {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.35fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-top: clamp(2.2rem, 5vw, 4rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 3px solid var(--ink);
+  }
+  .footer-lockup {
+    align-self: start;
+  }
+  .footer-copy h2 {
+    margin-top: 0;
+    font-size: clamp(2.6rem, 6vw, 6rem);
+  }
+  .footer-copy p {
+    margin-top: 0.6rem;
+    font-weight: 700;
+  }
+  .footer-actions {
+    margin-top: 1.4rem;
+  }
+  .final-cta .store {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--cream);
+    box-shadow: 8px 8px 0 rgba(200, 0, 40, 0.24);
+  }
+  .final-cta .store.is-pending {
+    background: transparent;
+    color: rgba(20, 16, 15, 0.62);
+    border-color: rgba(20, 16, 15, 0.42);
+  }
+  .final-cta .source-link:hover {
+    color: var(--red);
+  }
+  .fine-print {
+    grid-column: 1 / -1;
+    max-width: 86ch;
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.66rem;
+    line-height: 1.48;
+    color: rgba(20, 16, 15, 0.58);
+  }
+  .barcode {
+    position: absolute;
+    right: 0;
+    bottom: 0.18rem;
+    width: 10rem;
+    height: 3.4rem;
+    background:
+      linear-gradient(90deg,
+        var(--ink) 0 3px,
+        transparent 3px 7px,
+        var(--ink) 7px 9px,
+        transparent 9px 14px,
+        var(--ink) 14px 20px,
+        transparent 20px 25px,
+        var(--ink) 25px 27px,
+        transparent 27px 35px,
+        var(--ink) 35px 40px,
+        transparent 40px 44px,
+        var(--ink) 44px 47px,
+        transparent 47px 55px,
+        var(--ink) 55px 60px,
+        transparent 60px 66px,
+        var(--ink) 66px 69px,
+        transparent 69px 76px,
+        var(--ink) 76px 82px,
+        transparent 82px 88px,
+        var(--ink) 88px 91px,
+        transparent 91px 100%);
+    opacity: 0.55;
+  }
+  /* --------------------------------------------------------- responsive */
+  @media (min-width: 92rem) {
+    .cover-inner,
+    .spread,
+    .sleeve-wrap,
+    .label-shell,
+    .back-wrap {
+      width: min(1580px, calc(100% - 8rem));
+    }
+    .cover h1 {
+      max-width: 18ch;
+      font-size: clamp(6rem, 7.2vw, 9.4rem);
+    }
+  }
+  @media (max-width: 62rem) {
+    .gf::before,
+    .hero-hinge,
+    .spread-hinge {
+      display: none;
+    }
+    .cover-inner {
+      min-height: auto;
+    }
+    .cover {
+      min-height: calc(100svh - 42px);
+    }
+    .cover h1 {
+      max-width: 14.8ch;
+      font-size: clamp(3.4rem, 12vw, 5.8rem);
+    }
+    .hero-line {
+      font-size: clamp(1.55rem, 6.4vw, 2.6rem);
+    }
+    .spread {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+      gap: 1rem;
+    }
+    .side-pair,
+    .ownership-grid,
+    .stat-strip,
+    .final-cta,
+    .back-head,
+    .sleeve-wrap,
+    .label-shell {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .liner-columns {
+      column-count: 1;
+    }
+    .phone-pocket {
+      transform: rotate(-2deg);
+    }
+    .label-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-left: 0;
+      border-top: 1px solid var(--light-rule);
+      padding: 1.4rem 0 0;
+    }
+    .centre-label {
+      width: min(72vw, 25rem);
+      justify-self: center;
+    }
+    .barcode {
+      position: static;
+      grid-column: 1 / -1;
+      margin-top: 1.4rem;
+    }
+  }
+  @media (max-width: 42rem) {
+    .gf {
+      --wrap: min(100% - 1.5rem, 100%);
+      font-size: 16px;
+    }
+    .topline {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .catalogue {
+      text-align: left;
+    }
+    .cover-copy {
+      padding-top: clamp(2rem, 8vw, 3.5rem);
+      transform: translateY(-0.6rem);
+    }
+    .red-edge {
+      top: 51%;
+      right: -6vw;
+      width: 48vw;
+      transform: translateY(-20%);
+      opacity: 0.76;
+    }
+    .source-panel {
+      grid-template-columns: 2.2rem minmax(0, 1fr);
+    }
+    .source-mark {
+      display: none;
+    }
+    .panel,
+    .liner,
+    .back-wrap {
+      padding: 1.35rem;
+    }
+    .side-card {
+      min-height: 0;
+    }
+    .phone {
+      --pw: clamp(196px, 70vw, 260px);
+    }
+    .label-stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .faq-tracks li {
+      grid-template-columns: 2.6rem minmax(0, 1fr);
+    }
+    .actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .store,
+    .source-link {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cover-panel,
+    .spread .panel,
+    .store,
+    .equalizer i {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+    .fold-stage .panel-left,
+    .fold-stage .panel-right,
+    .spread-left,
+    .spread-right {
+      transform: rotateY(0deg) !important;
+    }
+    .equalizer i:nth-child(1) { height: 45%; }
+    .equalizer i:nth-child(2) { height: 100%; }
+    .equalizer i:nth-child(3) { height: 68%; }
+  }
+</style>

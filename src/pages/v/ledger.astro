@@ -1,0 +1,1176 @@
+---
+/**
+ * VARIANT — LEDGER
+ *
+ * Mozz as a printed catalogue index: ruled paper, folios, tabular numbers and
+ * an archival reading line. The only moving thing is a red fixed hairline whose
+ * bullet and active index row follow the reader through the continuous sheet.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Every record you own, indexed.';
+const SUPPORT = 'Mozz is a free player for the music on your own server.';
+
+const INDEX_ROWS = [
+  { no: '0001', artist: 'Sable Atlas', title: 'Penumbra Rooms', source: 'Plex', state: 'stream' },
+  { no: '0002', artist: 'Low Orchard', title: 'Glasshouse Sunday', source: 'Jellyfin', state: 'downloaded' },
+  { no: '0003', artist: 'Mara Vale', title: 'Quarter-inch Weather', source: 'Navidrome', state: 'stream' },
+  { no: '0004', artist: 'The Foundry Choir', title: 'Night Receipt', source: 'Plex', state: 'downloaded' },
+  { no: '0005', artist: 'Golden Index', title: 'Shelf Register', source: 'Jellyfin', state: 'stream' },
+  { no: '0006', artist: 'Aster House', title: 'Private Wing', source: 'Navidrome', state: 'downloaded' },
+  { no: '0007', artist: 'North Annex', title: 'Catalog Light', source: 'Plex', state: 'stream' },
+  { no: '0008', artist: 'Vera Signal', title: 'Plain Copy', source: 'Jellyfin', state: 'downloaded' },
+  { no: '0009', artist: 'Paper Channel', title: 'Third Drawer', source: 'Navidrome', state: 'stream' },
+  { no: '0010', artist: 'Rook & Rail', title: 'Platform Ledger', source: 'Plex', state: 'downloaded' },
+  { no: '0011', artist: 'Clerk of Waves', title: 'Filed Under Home', source: 'Jellyfin', state: 'stream' },
+  { no: '0012', artist: 'The Quiet Archive', title: 'Building Copy', source: 'Navidrome', state: 'downloaded' },
+  { no: '0013', artist: 'Mica Register', title: 'Stamped Copy', source: 'Plex', state: 'stream' },
+  { no: '0014', artist: 'After Annex', title: 'Dust Jacket', source: 'Jellyfin', state: 'downloaded' },
+  { no: '0015', artist: 'Catalog Clerk', title: 'Red Pencil', source: 'Navidrome', state: 'stream' },
+  { no: '0016', artist: 'Private Stacks', title: 'Overleaf', source: 'Plex', state: 'downloaded' },
+];
+
+const FEATURE_KEYS = ['SRC', 'OFF', 'FTS', 'START', 'RADIO', 'WEEK', 'EQ'];
+const TERMS = OWNERSHIP.map((item, index) => ({ ...item, no: `0${index + 1}` }));
+---
+
+<Layout
+  title={`${NAME} — Every record you own, indexed`}
+  description="A free, open source music player for iPhone and iPad. Point Mozz at Plex, Jellyfin or Navidrome, then stream at home or download for anywhere."
+  themeColor="#f2efe6"
+  noindex
+>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <main class="ledger">
+    <VariantBar slug="ledger" tone="cool" />
+
+    <div class="reading-line" aria-hidden="true">
+      <span class="reading-line__rule"></span>
+      <span class="reading-line__bullet"></span>
+    </div>
+
+    <header class="hero sheet" aria-labelledby="ledger-title">
+      <div class="hero__topbar">
+        <a class="lockup" href="/" aria-label="Mozz home">
+          <Mark size={30} decorative />
+          <span>{NAME}</span>
+        </a>
+        <p class="folio-label">Catalogue index / private library</p>
+      </div>
+
+      <div class="hero__grid">
+        <div class="hero__copy">
+          <p class="kicker">Folio 00 / Opening register</p>
+          <h1 id="ledger-title">{HEADLINE}</h1>
+          <p class="support">{SUPPORT}</p>
+          <p class="body-note">
+            Point Mozz at the server you already run, then keep the catalogue in
+            your pocket. The index treats streams and downloads as equal entries:
+            one library, one set of files, one owner.
+          </p>
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+                <span><small>Coming to the</small>App Store</span>
+              </span>
+            )}
+            <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <div class="index-table" aria-label="Sample music index entries">
+          <div class="column-heads" aria-hidden="true">
+            <span>No.</span>
+            <span>Artist</span>
+            <span>Title</span>
+            <span>Source</span>
+            <span>State</span>
+          </div>
+          {INDEX_ROWS.map((row) => (
+            <div class="index-row" data-index-row>
+              <span class="row-no">{row.no}</span>
+              <span>{row.artist}</span>
+              <span>{row.title}</span>
+              <span>{row.source}</span>
+              <span>{row.state}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    <section class="folio sheet" aria-labelledby="ledger-sources">
+      <span class="folio-no" aria-hidden="true">01</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 01</p>
+        <h2 id="ledger-sources">Sources</h2>
+        <p>Point Mozz at a server you already run. The entries below are not accounts with Mozz; they are doors into your own library.</p>
+      </div>
+      <div class="server-ledger">
+        {SERVERS.map((server, index) => (
+          <article class="server-entry" data-index-row>
+            <span class="entry-no">0{index + 1}</span>
+            <span class="server-mark"><ServerLogo name={server.name} size={34} /></span>
+            <div>
+              <h3>{server.name}</h3>
+              <p>{server.note}</p>
+              <small>connect via / existing server / no mozz account</small>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="folio sheet equal" aria-labelledby="ledger-equal">
+      <span class="folio-no" aria-hidden="true">02</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 02</p>
+        <h2 id="ledger-equal">Two columns, equal</h2>
+        <p>Streaming and offline are not a hierarchy. They occupy the same measure, the same rhythm, and the same weight in the index.</p>
+      </div>
+      <div class="equal-grid">
+        <article data-index-row>
+          <p class="column-code">STREAM / A</p>
+          <h3>At home over your own network.</h3>
+          <ul>
+            <li>Browse the catalogue on the server you control.</li>
+            <li>Tap a track and play from your own library.</li>
+            <li>Queue albums without leaving the house network.</li>
+            <li>Use the same interface across every server type.</li>
+          </ul>
+          <p class="tally"><span>004</span> live rows in the local register</p>
+        </article>
+        <article data-index-row>
+          <p class="column-code">OFFLINE / B</p>
+          <h3>Downloaded, plays with nothing.</h3>
+          <ul>
+            <li>Keep chosen records on the device before you leave.</li>
+            <li>Search the catalogue when the server is unreachable.</li>
+            <li>Play an album on the train with no signal at all.</li>
+            <li>Return home to the same library and same queue logic.</li>
+          </ul>
+          <p class="tally"><span>004</span> held rows in the pocket register</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="folio sheet instrument" aria-labelledby="ledger-instrument">
+      <span class="folio-no" aria-hidden="true">03</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 03</p>
+        <h2 id="ledger-instrument">The instrument</h2>
+        <p>The app is a reading room for the index: fast search, immediate playback, weekly routes and a proper equalizer without a paid tier.</p>
+      </div>
+      <div class="instrument-grid">
+        <ol class="feature-ledger" role="list">
+          {FEATURES.map((feature, index) => (
+            <li data-index-row>
+              <span class="feature-key">{FEATURE_KEYS[index]}</span>
+              <div>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <figure class="plate">
+          <div class="phone" aria-label="An iPhone running Mozz with a downloaded album ready to play offline" role="img">
+            <span class="phone-key key-one"></span>
+            <span class="phone-key key-two"></span>
+            <div class="phone-screen">
+              <div class="island"></div>
+              <div class="status"><span>9:41</span><span>▮▮▮ ▱</span></div>
+              <div class="app-title"><span>Now Playing</span><b>Your index</b></div>
+              <svg class="album-art" viewBox="0 0 100 100" aria-hidden="true">
+                <rect width="100" height="100" fill="#f2efe6" />
+                <rect x="8" y="8" width="84" height="84" fill="none" stroke="#131313" stroke-width="2" />
+                <path d="M0 68 L100 24 L100 100 L0 100 Z" fill="#c80028" />
+                <circle cx="35" cy="35" r="19" fill="none" stroke="#131313" stroke-width="3" />
+                <path d="M18 78 H84 M18 86 H74" stroke="#f2efe6" stroke-width="3" />
+              </svg>
+              <div class="track">
+                <strong>Filed Under Home</strong>
+                <span>The Quiet Archive</span>
+              </div>
+              <div class="scrub"><i></i></div>
+              <div class="times"><span>1:24</span><span>−3:11</span></div>
+              <div class="controls"><span>◀</span><b>▶</b><span>▶</span></div>
+              <div class="badge">downloaded · plays offline</div>
+            </div>
+          </div>
+          <figcaption>Fig. 03 — plate tipped into the ledger; screen composition drawn in paper, ink and red.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="folio sheet measured" aria-labelledby="ledger-measured">
+      <span class="folio-no" aria-hidden="true">04</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 04</p>
+        <h2 id="ledger-measured">Measured</h2>
+        <p>Four accounting rows, set plainly. The numerals are large because the claims are specific.</p>
+      </div>
+      <div class="stats-table">
+        {STATS.map((stat) => (
+          <article data-index-row>
+            <span>{stat.label}</span>
+            <strong>{stat.value}</strong>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="folio sheet terms" aria-labelledby="ledger-terms">
+      <span class="folio-no" aria-hidden="true">05</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 05</p>
+        <h2 id="ledger-terms">Terms</h2>
+        <p>The ownership argument is written as clauses because that is what it is: the conditions under which your library stays yours. GPL-3.0, plainly stated.</p>
+      </div>
+      <div class="clauses">
+        {TERMS.map((term) => (
+          <article data-index-row>
+            <span class="clause-mark">■</span>
+            <span class="clause-no">{term.no}</span>
+            <div>
+              <h3>{term.title}</h3>
+              <p>{term.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="folio sheet queries" aria-labelledby="ledger-queries">
+      <span class="folio-no" aria-hidden="true">06</span>
+      <div class="folio__head">
+        <p class="kicker">Folio 06</p>
+        <h2 id="ledger-queries">Queries</h2>
+        <p>Reader questions, filed in the same hand as the rest of the index.</p>
+      </div>
+      <div class="qa-ledger">
+        {FAQS.map((item, index) => (
+          <article data-index-row>
+            <span class="query-no">Q{index + 1}</span>
+            <div>
+              <h3>{item.q}</h3>
+              <p>{item.a}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <footer class="colophon sheet">
+      <div class="colophon__lockup">
+        <Mark size={36} decorative />
+        <span>{NAME}</span>
+      </div>
+      <div class="colophon__copy">
+        <h2>{TAGLINE}</h2>
+        <p>{SUBLINE}</p>
+      </div>
+      <div class="actions">
+        {APP_STORE_URL ? (
+          <a class="store" href={APP_STORE_URL}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+        ) : (
+          <span class="store is-pending" aria-disabled="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" /></svg>
+            <span><small>Coming to the</small>App Store</span>
+          </span>
+        )}
+        <a class="source-link" href={GITHUB_URL}>See the source on GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="fineprint">Colophon: {FAQS[3].a}</p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const page = document.querySelector('.ledger');
+  const rows = Array.from(document.querySelectorAll('[data-index-row]'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (page && rows.length) {
+    const setRestingState = () => {
+      page.style.setProperty('--read-alpha', '.9');
+      rows[0]?.classList.add('is-hot');
+    };
+
+    if (reduce.matches) {
+      setRestingState();
+    } else {
+      let queued = false;
+      const update = () => {
+        queued = false;
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const progress = Math.min(1, Math.max(0, window.scrollY / max));
+        page.style.setProperty('--read-alpha', `${0.52 + progress * 0.42}`);
+        const lineY = window.innerHeight * 0.52;
+        let active = rows[0];
+        let best = Infinity;
+        for (const row of rows) {
+          const rect = row.getBoundingClientRect();
+          const distance = Math.abs(rect.top + rect.height / 2 - lineY);
+          if (distance < best) {
+            best = distance;
+            active = row;
+          }
+        }
+        rows.forEach((row) => row.classList.toggle('is-hot', row === active));
+      };
+      const request = () => {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(update);
+        }
+      };
+      update();
+      window.addEventListener('scroll', request, { passive: true });
+      window.addEventListener('resize', request);
+    }
+  }
+</script>
+
+<style>
+  :global(html) {
+    background: #f2efe6;
+  }
+
+  :global(body) {
+    margin: 0;
+    color: #131313;
+    background: #f2efe6;
+    font-family: 'Newsreader', Georgia, serif;
+  }
+
+  :global(*:focus-visible) {
+    outline: 2px solid #c80028;
+    outline-offset: 4px;
+  }
+
+  .ledger {
+    --paper: #f2efe6;
+    --ink: #131313;
+    --rule: #cdc7b8;
+    --red: #c80028;
+    --rhythm: clamp(25px, 2.1vw, 34px);
+    --gutter: clamp(1rem, 5vw, 7rem);
+    --read-alpha: .68;
+    position: relative;
+    min-height: 100svh;
+    overflow-x: clip;
+    background:
+      repeating-linear-gradient(0deg, rgba(19,19,19,.018) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(90deg, rgba(19,19,19,.014) 0 1px, transparent 1px 11px),
+      var(--paper);
+  }
+
+  .sheet {
+    position: relative;
+    padding-inline: var(--gutter);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 calc(var(--rhythm) - 1px), var(--rule) calc(var(--rhythm) - 1px) var(--rhythm)),
+      linear-gradient(90deg, transparent 0, transparent calc(var(--gutter) - 1px), rgba(205,199,184,.65) calc(var(--gutter) - 1px) var(--gutter), transparent var(--gutter));
+  }
+
+  .reading-line {
+    position: fixed;
+    z-index: 90;
+    top: 52svh;
+    left: 0;
+    width: 100%;
+    height: 13px;
+    pointer-events: none;
+  }
+
+  .reading-line__rule {
+    position: absolute;
+    top: 6px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(200, 0, 40, .34);
+  }
+
+  .reading-line__bullet {
+    position: absolute;
+    top: 2px;
+    left: clamp(.75rem, 2.3vw, 3rem);
+    width: 9px;
+    height: 9px;
+    background: var(--red);
+    opacity: var(--read-alpha);
+    transform: translateX(-50%);
+  }
+
+  .lockup,
+  .colophon__lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .lockup span,
+  .colophon__lockup span {
+    font-size: 1.18rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+
+  .kicker,
+  .folio-label,
+  .column-heads,
+  .row-no,
+  .entry-no,
+  .feature-key,
+  .column-code,
+  .tally,
+  .clause-no,
+  .query-no,
+  .fineprint,
+  .store small,
+  .source-link,
+  .server-entry small {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+  }
+
+  .kicker,
+  .folio-label,
+  .column-heads,
+  .column-code,
+  .server-entry small {
+    color: rgba(19,19,19,.62);
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+  }
+
+  .hero {
+    min-height: calc(100svh - 42px);
+    padding-top: clamp(1.2rem, 2.4vw, 2.5rem);
+    padding-bottom: clamp(4rem, 8vw, 8rem);
+  }
+
+  .hero__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: var(--rhythm);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .column-heads {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(8rem, 1fr) minmax(10rem, 1.2fr) 8rem 8rem;
+    gap: 1rem;
+    align-items: end;
+    min-height: var(--rhythm);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, .92fr) minmax(580px, 1.08fr);
+    gap: clamp(2rem, 5vw, 6rem);
+    align-items: start;
+    padding-top: calc(var(--rhythm) * 1.2);
+  }
+
+  .hero__copy .kicker {
+    display: block;
+    margin-bottom: calc(var(--rhythm) * 1.15);
+    line-height: var(--rhythm);
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-optical-sizing: auto;
+    letter-spacing: -.035em;
+  }
+
+  h1 {
+    max-width: 11ch;
+    margin-bottom: calc(var(--rhythm) * .72);
+    font-size: clamp(3.6rem, 6.6vw, 7.8rem);
+    font-weight: 500;
+    line-height: .88;
+  }
+
+  .support {
+    max-width: 25ch;
+    margin-bottom: calc(var(--rhythm) * .55);
+    font-size: clamp(1.35rem, 1.85vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.04;
+  }
+
+  .body-note,
+  .folio__head p,
+  .equal-grid li,
+  .feature-ledger p,
+  .clauses p,
+  .qa-ledger p,
+  .colophon__copy p {
+    color: rgba(19,19,19,.74);
+    font-size: clamp(1rem, 1.08vw, 1.16rem);
+    line-height: 1.62;
+  }
+
+  .body-note {
+    max-width: 39ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .8rem 1rem;
+    margin-top: calc(var(--rhythm) * .9);
+  }
+
+  .store {
+    display: inline-flex;
+    min-height: 50px;
+    align-items: center;
+    gap: .72rem;
+    padding: .45rem 1rem;
+    border: 1px solid var(--ink);
+    color: var(--paper);
+    background: var(--ink);
+    text-decoration: none;
+  }
+
+  .store svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: grid;
+    font-weight: 600;
+    line-height: 1.04;
+  }
+
+  .store small {
+    font-size: .58rem;
+    letter-spacing: .08em;
+    opacity: .72;
+  }
+
+  .store.is-pending {
+    border-style: dashed;
+    color: rgba(19,19,19,.62);
+    background: transparent;
+    cursor: default;
+  }
+
+  .source-link {
+    color: var(--ink);
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-underline-offset: .3rem;
+  }
+
+  .index-table {
+    border-top: 1px solid var(--ink);
+  }
+
+  .index-row {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(8rem, 1fr) minmax(10rem, 1.2fr) 8rem 8rem;
+    gap: 1rem;
+    align-items: center;
+    min-height: var(--rhythm);
+    border-bottom: 1px solid var(--rule);
+    color: rgba(19,19,19,.45);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(.72rem, .86vw, .9rem);
+    font-variant-numeric: tabular-nums;
+    transition: color 120ms ease;
+  }
+
+  [data-index-row].is-hot {
+    color: var(--ink);
+  }
+
+  [data-index-row].is-hot .row-no,
+  [data-index-row].is-hot .entry-no,
+  [data-index-row].is-hot .feature-key,
+  [data-index-row].is-hot .clause-no,
+  [data-index-row].is-hot .query-no {
+    color: var(--red);
+  }
+
+  .folio {
+    padding-top: clamp(4rem, 8vw, 8rem);
+    padding-bottom: clamp(4rem, 8vw, 8rem);
+    border-top: 1px solid var(--ink);
+  }
+
+  .folio-no {
+    position: absolute;
+    top: clamp(4rem, 8vw, 8rem);
+    left: clamp(.75rem, 2.3vw, 3rem);
+    color: var(--red);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(1rem, 1.4vw, 1.45rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .folio__head {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(24rem, 1.1fr);
+    gap: clamp(2rem, 5vw, 6rem);
+    margin-bottom: calc(var(--rhythm) * 2);
+  }
+
+  .folio__head h2 {
+    margin-bottom: 0;
+    font-size: clamp(3rem, 7vw, 7.5rem);
+    font-weight: 500;
+    line-height: .92;
+  }
+
+  .folio__head p:last-child {
+    align-self: end;
+    max-width: 52ch;
+  }
+
+  .server-ledger,
+  .feature-ledger,
+  .clauses,
+  .qa-ledger {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--ink);
+  }
+
+  .server-entry {
+    display: grid;
+    grid-template-columns: 4rem 4.5rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    min-height: calc(var(--rhythm) * 3);
+    border-bottom: 1px solid var(--rule);
+    color: rgba(19,19,19,.45);
+  }
+
+  .server-mark {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    place-items: center;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+  }
+
+  .server-entry h3,
+  .feature-ledger h3,
+  .clauses h3,
+  .qa-ledger h3 {
+    margin-bottom: .25rem;
+    font-size: clamp(1.45rem, 2.4vw, 2.45rem);
+    font-weight: 500;
+    line-height: 1.05;
+  }
+
+  .server-entry p {
+    margin-bottom: .25rem;
+    color: rgba(19,19,19,.7);
+    font-size: 1.05rem;
+  }
+
+  .equal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .equal-grid article {
+    padding: calc(var(--rhythm) * 1.2) clamp(1rem, 3vw, 3rem);
+    color: rgba(19,19,19,.45);
+  }
+
+  .equal-grid article + article {
+    border-left: 1px solid var(--ink);
+  }
+
+  .equal-grid h3 {
+    max-width: 11ch;
+    margin-bottom: var(--rhythm);
+    font-size: clamp(2.4rem, 5vw, 5.5rem);
+    font-weight: 500;
+    line-height: .95;
+  }
+
+  .equal-grid ul {
+    display: grid;
+    gap: .65rem;
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .tally {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: calc(var(--rhythm) * 1.1) 0 0;
+    padding-top: calc(var(--rhythm) * .5);
+    border-top: 1px solid var(--rule);
+    font-size: .78rem;
+    letter-spacing: .08em;
+  }
+
+  .tally span {
+    color: var(--red);
+  }
+
+  .instrument-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, .6fr);
+    gap: clamp(2rem, 6vw, 7rem);
+    align-items: start;
+  }
+
+  .feature-ledger li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1.2rem;
+    min-height: calc(var(--rhythm) * 3.15);
+    padding-block: calc(var(--rhythm) * .55);
+    border-bottom: 1px solid var(--rule);
+    color: rgba(19,19,19,.45);
+  }
+
+  .feature-key {
+    padding-top: .35rem;
+    color: rgba(19,19,19,.5);
+    font-size: .8rem;
+    letter-spacing: .12em;
+  }
+
+  .plate {
+    position: sticky;
+    top: calc(42px + 2rem);
+    margin: 0;
+    padding: calc(var(--rhythm) * .8);
+    border: 1px solid var(--rule);
+    background: rgba(242,239,230,.72);
+    transform: rotate(1.1deg);
+  }
+
+  .plate figcaption {
+    margin-top: .9rem;
+    color: rgba(19,19,19,.6);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .66rem;
+    line-height: 1.55;
+    text-transform: uppercase;
+  }
+
+  .phone {
+    --pw: clamp(196px, 22vw, 320px);
+    position: relative;
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: calc(var(--pw) * .035);
+    border: 1px solid var(--ink);
+    border-radius: calc(var(--pw) * .148);
+    background: var(--ink);
+    box-shadow: 16px 18px 0 rgba(200,0,40,.16);
+  }
+
+  .phone-key {
+    position: absolute;
+    left: -3px;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    background: var(--ink);
+  }
+
+  .key-one { top: 19%; height: 6%; }
+  .key-two { top: 29%; height: 12%; }
+
+  .phone-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--pw) * .148 - var(--pw) * .035);
+    color: var(--paper);
+    background: #131313;
+    font-family: 'Newsreader', Georgia, serif;
+  }
+
+  .island {
+    position: absolute;
+    top: calc(var(--pw) * .027);
+    left: 50%;
+    width: 31%;
+    height: calc(var(--pw) * .07);
+    border-radius: 99px;
+    background: #030303;
+    transform: translateX(-50%);
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: calc(var(--pw) * .04) calc(var(--pw) * .07) 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: calc(var(--pw) * .028);
+  }
+
+  .app-title {
+    display: grid;
+    gap: .1em;
+    margin-top: calc(var(--pw) * .08);
+    padding-inline: calc(var(--pw) * .08);
+  }
+
+  .app-title span,
+  .badge,
+  .times {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: calc(var(--pw) * .021);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .app-title b {
+    font-size: calc(var(--pw) * .065);
+    font-weight: 500;
+  }
+
+  .album-art {
+    display: block;
+    width: 78%;
+    margin: calc(var(--pw) * .07) auto 0;
+    border: 1px solid rgba(242,239,230,.22);
+  }
+
+  .track {
+    display: grid;
+    gap: .15em;
+    width: 78%;
+    margin: calc(var(--pw) * .06) auto 0;
+  }
+
+  .track strong {
+    font-size: calc(var(--pw) * .052);
+    font-weight: 500;
+  }
+
+  .track span {
+    color: rgba(242,239,230,.62);
+    font-size: calc(var(--pw) * .032);
+  }
+
+  .scrub {
+    width: 78%;
+    height: calc(var(--pw) * .012);
+    margin: calc(var(--pw) * .052) auto 0;
+    background: rgba(242,239,230,.24);
+  }
+
+  .scrub i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    width: 78%;
+    margin: calc(var(--pw) * .018) auto 0;
+    color: rgba(242,239,230,.55);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--pw) * .08);
+    margin-top: calc(var(--pw) * .05);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: calc(var(--pw) * .05);
+  }
+
+  .controls b {
+    display: grid;
+    width: calc(var(--pw) * .13);
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--paper);
+    background: var(--red);
+  }
+
+  .badge {
+    display: table;
+    margin: calc(var(--pw) * .06) auto 0;
+    padding: .5em .65em;
+    border: 1px solid rgba(242,239,230,.2);
+    color: rgba(242,239,230,.72);
+  }
+
+  .stats-table {
+    border-top: 1px solid var(--ink);
+  }
+
+  .stats-table article {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: baseline;
+    min-height: calc(var(--rhythm) * 3);
+    border-bottom: 1px solid var(--rule);
+    color: rgba(19,19,19,.45);
+  }
+
+  .stats-table span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .stats-table strong {
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: clamp(4rem, 9vw, 9.5rem);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: .9;
+  }
+
+  .clauses article,
+  .qa-ledger article {
+    display: grid;
+    grid-template-columns: 2rem 4rem 1fr;
+    gap: 1rem;
+    min-height: calc(var(--rhythm) * 3.25);
+    padding-block: calc(var(--rhythm) * .65);
+    border-bottom: 1px solid var(--rule);
+    color: rgba(19,19,19,.45);
+  }
+
+  .clause-mark {
+    color: var(--red);
+  }
+
+  .qa-ledger article {
+    grid-template-columns: 4rem 1fr;
+  }
+
+  .colophon {
+    display: grid;
+    grid-template-columns: minmax(12rem, .55fr) minmax(0, 1fr) minmax(18rem, .75fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+    padding-top: clamp(3rem, 7vw, 6rem);
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+    border-top: 2px solid var(--ink);
+  }
+
+  .colophon__copy h2 {
+    max-width: 10ch;
+    margin-bottom: .75rem;
+    font-size: clamp(2.8rem, 6vw, 6.8rem);
+    font-weight: 500;
+    line-height: .92;
+  }
+
+  .fineprint {
+    grid-column: 1 / -1;
+    max-width: 82ch;
+    margin: calc(var(--rhythm) * 2) 0 0;
+    padding-top: var(--rhythm);
+    border-top: 1px solid var(--rule);
+    color: rgba(19,19,19,.6);
+    font-size: .7rem;
+    line-height: 1.65;
+    letter-spacing: .04em;
+  }
+
+  @media (min-width: 1700px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, .8fr) minmax(780px, 1.2fr);
+    }
+
+    .column-heads,
+    .index-row {
+      grid-template-columns: 6rem minmax(12rem, 1fr) minmax(16rem, 1.3fr) 10rem 10rem;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .hero__grid,
+    .folio__head,
+    .instrument-grid,
+    .colophon {
+      grid-template-columns: 1fr;
+    }
+
+    .column-heads {
+      display: none;
+    }
+
+    h1 {
+      line-height: .9;
+    }
+
+    .index-table {
+      overflow: hidden;
+    }
+
+    .index-row {
+      grid-template-columns: 4.5rem minmax(0, 1fr);
+      gap: .35rem 1rem;
+      min-height: auto;
+      padding-block: .75rem;
+    }
+
+    .index-row span:nth-child(3),
+    .index-row span:nth-child(4),
+    .index-row span:nth-child(5) {
+      grid-column: 2;
+    }
+
+    .equal-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .equal-grid article + article {
+      border-top: 1px solid var(--ink);
+      border-left: 0;
+    }
+
+    .plate {
+      position: relative;
+      top: auto;
+      justify-self: center;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .ledger {
+      --gutter: 1rem;
+      --rhythm: 24px;
+    }
+
+    h1 {
+      font-size: clamp(3.05rem, 13vw, 3.65rem);
+    }
+
+    .support {
+      font-size: clamp(1.15rem, 5.2vw, 1.4rem);
+    }
+
+    .reading-line {
+      top: 58svh;
+    }
+
+    .reading-line__bullet {
+      left: .45rem;
+    }
+
+    .hero__topbar,
+    .actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .folio-no {
+      position: static;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .server-entry,
+    .feature-ledger li,
+    .clauses article,
+    .qa-ledger article {
+      grid-template-columns: 1fr;
+      gap: .55rem;
+    }
+
+    .index-row:nth-of-type(n+6) {
+      display: none;
+    }
+
+    .server-mark {
+      width: 44px;
+      height: 44px;
+    }
+
+    .equal-grid article {
+      padding-inline: 0;
+    }
+
+    .stats-table article {
+      grid-template-columns: 1fr;
+      gap: .4rem;
+      padding-block: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .index-row,
+    .store,
+    .source-link {
+      transition: none !important;
+    }
+
+    .reading-line__bullet { opacity: .9; }
+  }
+</style>
