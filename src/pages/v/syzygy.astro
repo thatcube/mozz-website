@@ -33,6 +33,17 @@ import {
   APP_STORE_URL,
 } from '../../data/site';
 
+/*
+ * The mark's own geometry, straight out of src/brand/mozz-logo.svg: the disc
+ * silhouette, and the single path carrying both zz eyes and the smile. Held
+ * here so the hero can draw the disc more than once — as the light and as the
+ * body eclipsing it — without either copy being re-proportioned.
+ */
+const DISC =
+  'M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z';
+const FACE =
+  'M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19ZM15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z';
+
 const HEADLINE = 'Three things line up, and the music is yours.';
 const SUPPORT =
   'Your server, this app, your headphones. Nothing sits in between them — not an account, not a subscription, not a company.';
@@ -81,19 +92,29 @@ const WALL = [
         <span class="cone cone-pen"></span>
         <span class="cone cone-umb"></span>
 
-        <!-- 1. the light -->
-        <span class="body-light"></span>
+        <!-- the light bloom, which is light and so has no edge to pixelate -->
+        <span class="bloom"></span>
 
-        <!-- 2. the thing that crosses it: the mark, at eclipse scale -->
-        <svg class="body-mark" viewBox="0 0 32 32" aria-hidden="true">
-          <path
-            class="disc"
-            d="M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z"
-          ></path>
-          <path
-            class="face"
-            d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19ZM15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z"
-          ></path>
+        <!--
+          The eclipse, drawn as one picture on one grid.
+
+          Both bodies are the *same* pixel-art disc from the mark, offset from
+          each other by whole logo-pixels, so the crescent between them is built
+          from the same stair-steps as the mark itself. A smooth circle behind a
+          pixel circle reads as a rendering fault rather than a style, and two
+          circles of different construction never nest, which is what made the
+          crescent look ragged. shape-rendering keeps every step hard: an
+          antialiased pixel edge is the other half of that problem.
+        -->
+        <svg class="eclipse" viewBox="-7 -7 46 46" aria-hidden="true" focusable="false">
+          <!-- the light behind -->
+          <path class="sun" d={DISC}></path>
+
+          <!-- the body crossing it: the mark, in shadow but still lit -->
+          <g transform="translate(-4 -3)">
+            <path class="body" d={DISC}></path>
+            <path class="face" d={FACE}></path>
+          </g>
         </svg>
 
         <!-- 3. the wordmark, in three states of light -->
@@ -164,11 +185,15 @@ const WALL = [
           </div>
 
           <div class="art" aria-hidden="true">
-            <svg viewBox="0 0 120 120">
+            <!-- The sleeve carries the same eclipse, built the same way: two
+                 copies of the mark's disc a whole three units apart. A smooth
+                 crescent this close to a pixel one is the mismatch again. -->
+            <svg viewBox="0 0 120 120" shape-rendering="crispEdges">
               <rect width="120" height="120" fill="#efe9df"></rect>
-              <circle cx="60" cy="52" r="34" fill="#c80028"></circle>
-              <circle cx="52" cy="45" r="34" fill="#efe9df"></circle>
-              <circle cx="60" cy="52" r="41" fill="none" stroke="#c80028" stroke-width="1.4" opacity="0.5"></circle>
+              <g transform="translate(60 52) scale(2.615) translate(-16 -16)">
+                <path d={DISC} fill="#c80028"></path>
+                <path d={DISC} transform="translate(-4 -4)" fill="#efe9df"></path>
+              </g>
               <rect x="18" y="99" width="46" height="3.4" fill="#12111a" opacity="0.6"></rect>
               <rect x="18" y="107" width="26" height="3.4" fill="#12111a" opacity="0.32"></rect>
             </svg>
@@ -586,7 +611,8 @@ const WALL = [
     --sun: clamp(150px, 15vw, 250px);
     --pen: 25%;
     --umb: 11%;
-    --apex: 17%;
+    /* clear of the header rule, so nothing appears to slice the disc */
+    --apex: 25%;
 
     position: relative;
     overflow-x: clip;
@@ -617,49 +643,52 @@ const WALL = [
     user-select: none;
   }
 
-  /* --- body one: the light ------------------------------------------- */
+  /* --- the eclipse ---------------------------------------------------- */
 
-  .body-light {
+  .bloom {
     position: absolute;
     top: var(--apex);
     left: var(--axis);
-    width: var(--sun);
+    width: calc(var(--sun) * 4.6);
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    background: var(--cream);
-  }
-
-  .body-light::after {
-    content: '';
-    position: absolute;
-    inset: -125%;
-    border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(200, 0, 40, 0.5) 0 21%,
-      rgba(200, 0, 40, 0.22) 32%,
-      rgba(125, 0, 25, 0.1) 46%,
-      transparent 66%
+      rgba(216, 0, 44, 0.62) 0 11%,
+      rgba(200, 0, 40, 0.3) 18%,
+      rgba(150, 0, 30, 0.13) 30%,
+      transparent 58%
     );
   }
 
   /*
-   * The pixel disc fills 26 of the 32 units in the artwork, so the svg has to
-   * be 32/26 as wide as the cream disc for the two circles to match. Nudging it
-   * up and left by a fraction of its own width is what leaves the crescent.
+   * The disc occupies 26 of the 46 units in this viewBox, so the svg is
+   * 46/26 as wide as the disc we want. The second translate puts the
+   * *eclipsing* body on the axis rather than the light behind it, because the
+   * shadow has to leave from the thing casting it.
+   *
+   * The two discs are the same path at the same scale, moved apart by whole
+   * units, so every step in the crescent lines up with a step in the mark.
+   * Scaling one of them would put the two circles on different pitches and the
+   * meeting edge would go ragged again.
    */
-  .body-mark {
+  .eclipse {
     position: absolute;
     top: var(--apex);
     left: var(--axis);
-    width: calc(var(--sun) * 1.17);
+    width: calc(var(--sun) * 1.7695);
     height: auto;
-    transform: translate(-50%, -50%) translate(-7.5%, -4.2%);
+    transform: translate(-50%, -50%) translate(8.7%, 6.52%);
+    shape-rendering: crispEdges;
   }
 
-  .body-mark .disc { fill: #05040a; }
-  .body-mark .face { fill: var(--red); }
+  .eclipse .sun { fill: var(--cream); }
+
+  /* In shadow, but never a hole: the disc keeps its colour and the face stays
+     lit, so the mark still reads as the mark. */
+  .eclipse .body { fill: #1b040a; }
+  .eclipse .face { fill: #e4002f; }
 
   /* --- the shadow it throws ------------------------------------------ */
 
