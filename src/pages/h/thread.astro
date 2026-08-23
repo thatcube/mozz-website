@@ -1,0 +1,485 @@
+---
+/**
+ * HERO STUDY — THREAD
+ *
+ * IDEA: one thin red line. It leaves whichever server a listener runs, crosses
+ * into a phone where it becomes the progress bar of a now playing screen, and
+ * carries on to a pair of headphones. Server, player, ears — stated once,
+ * quietly, so the drawing explains the app rather than performing.
+ *
+ * The logos are a compatibility note, not a claim that Mozz pools several
+ * servers together. They sit under a small "works with" label for that reason.
+ *
+ * RULES OF THE STUDY: hero only. One viewport, one drawing, one headline, one
+ * short paragraph, two calls to action. Warm near-white, brand red, ink. The
+ * empty space is deliberate and stays empty.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+import { HERO_COPY } from '../../data/hero-copy';
+
+/* The drawing is one picture, so it carries one plain description. */
+const ART_LABEL =
+  'A thin red line running from the Plex, Jellyfin and Navidrome logos into a phone showing a now playing screen, and on to a pair of headphones.';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for the Plex, Jellyfin, Navidrome or Subsonic server you already run. Stream from home or download albums for offline listening."
+  themeColor="#f8f5ef"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="thread" />
+
+  <main class="th">
+    <section class="hero">
+      <div class="copy">
+        <div class="lockup">
+          <Mark size={28} decorative />
+          <span class="wordmark">{NAME}</span>
+        </div>
+
+        <h1>{HERO_COPY.headline}</h1>
+
+        <p class="lede">{HERO_COPY.body}</p>
+
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+
+          <a class="ghost" href={GITHUB_URL}>Source on GitHub</a>
+        </div>
+
+        <p class="meta">{HERO_COPY.support}</p>
+      </div>
+
+      <!--
+        Two cuts of the same drawing: one for a wide screen, one for a narrow
+        one. Only one is ever displayed, so only one reaches the accessibility
+        tree.
+      -->
+      <div class="art">
+        <svg
+          class="wide"
+          viewBox="0 0 1440 350"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label={ART_LABEL}
+        >
+          <!-- a compatibility note, not a claim of pooling servers together -->
+          <text class="tag works" x="101" y="166">works with</text>
+          <g class="logo"><g transform="translate(101,181)"><ServerLogo name="Plex" size={30} /></g></g>
+          <g class="logo"><g transform="translate(101,237)"><ServerLogo name="Jellyfin" size={30} /></g></g>
+          <g class="logo"><g transform="translate(101,293)"><ServerLogo name="Navidrome" size={30} /></g></g>
+
+          <g class="feeders" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round">
+            <path class="ln d1" pathLength="100" d="M141 196 C 225 196 235 252 320 252" />
+            <path class="ln d1" pathLength="100" d="M141 252 H 320" />
+            <path class="ln d1" pathLength="100" d="M141 308 C 225 308 235 252 320 252" />
+          </g>
+
+          <!-- one line in, across the player as its progress bar, and out -->
+          <g fill="none" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round">
+            <path class="ln d2" pathLength="100" d="M320 252 H 810" />
+            <path class="ln d3" pathLength="100" d="M810 252 H 1120" />
+            <path class="ln d4" pathLength="100" d="M1120 217 A 65 65 0 0 1 1240 217" />
+          </g>
+          <circle class="knob" cx="712" cy="252" r="4.5" fill="var(--red)" />
+
+          <!-- the player: album, track, progress, transport -->
+          <g class="device">
+            <rect
+              x="630" y="25" width="180" height="285" rx="26"
+              fill="none" stroke="var(--ink)" stroke-width="2.2"
+            />
+            <path d="M700 45 H 740" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" opacity="0.3" />
+            <rect x="654" y="62" width="132" height="132" rx="12" fill="var(--ink)" opacity="0.07" />
+            <rect x="654" y="62" width="132" height="132" rx="12" fill="none" stroke="var(--ink)" stroke-width="1.4" opacity="0.24" />
+            <path d="M654 212 H 738" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" opacity="0.34" />
+            <path d="M654 228 H 710" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" opacity="0.18" />
+            <g fill="var(--ink)" opacity="0.55">
+              <path d="M698 272 L686 280 L698 288 Z" />
+              <rect x="683" y="272" width="2.5" height="16" rx="1.2" />
+              <path d="M710 270 L730 280 L710 290 Z" />
+              <path d="M742 272 L754 280 L742 288 Z" />
+              <rect x="754.5" y="272" width="2.5" height="16" rx="1.2" />
+            </g>
+          </g>
+
+          <!-- headphones -->
+          <g class="cups" fill="var(--red)">
+            <rect x="1113" y="217" width="14" height="38" rx="7" />
+            <rect x="1233" y="217" width="14" height="38" rx="7" />
+          </g>
+          <g class="sound" fill="none" stroke="var(--red)" stroke-linecap="round">
+            <path d="M1261.2 214.8 A 30 30 0 0 1 1261.2 257.2" stroke-width="2.2" opacity="0.34" />
+            <path d="M1274 202 A 48 48 0 0 1 1274 270" stroke-width="2" opacity="0.16" />
+          </g>
+
+          <!-- what the line carries, said quietly -->
+          <g class="tags">
+            <text class="tag" x="380" y="276">stream</text>
+            <text class="tag" x="500" y="276">offline</text>
+            <text class="tag" x="880" y="276">radio</text>
+            <text class="tag" x="978" y="276">weekly mix</text>
+          </g>
+        </svg>
+
+        <svg
+          class="tall"
+          viewBox="0 0 390 400"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label={ART_LABEL}
+        >
+          <text class="tag works" x="195" y="13" text-anchor="middle">works with</text>
+          <g class="logo"><g transform="translate(97,21)"><ServerLogo name="Plex" size={26} /></g></g>
+          <g class="logo"><g transform="translate(182,21)"><ServerLogo name="Jellyfin" size={26} /></g></g>
+          <g class="logo"><g transform="translate(267,21)"><ServerLogo name="Navidrome" size={26} /></g></g>
+
+          <g class="feeders" fill="none" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round">
+            <path class="ln d1" pathLength="100" d="M110 50 C 110 68 195 62 195 80" />
+            <path class="ln d1" pathLength="100" d="M195 49 V 80" />
+            <path class="ln d1" pathLength="100" d="M280 50 C 280 68 195 62 195 80" />
+          </g>
+
+          <g fill="none" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round">
+            <path class="ln d2" pathLength="100" d="M195 80 V 96" />
+            <path class="ln d3" pathLength="100" d="M145 272 H 245" />
+            <path class="ln d3" pathLength="100" d="M195 326 V 343" />
+            <path class="ln d4" pathLength="100" d="M162 364 A 36 36 0 0 1 228 364" />
+          </g>
+          <circle class="knob" cx="184" cy="272" r="4" fill="var(--red)" />
+
+          <g class="device">
+            <rect
+              x="125" y="96" width="140" height="230" rx="22"
+              fill="none" stroke="var(--ink)" stroke-width="2"
+            />
+            <rect x="145" y="118" width="100" height="100" rx="10" fill="var(--ink)" opacity="0.07" />
+            <rect x="145" y="118" width="100" height="100" rx="10" fill="none" stroke="var(--ink)" stroke-width="1.3" opacity="0.24" />
+            <path d="M145 234 H 209" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" opacity="0.34" />
+            <path d="M145 248 H 187" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" opacity="0.18" />
+            <g fill="var(--ink)" opacity="0.55">
+              <rect x="166" y="294" width="2.2" height="12" rx="1.1" />
+              <path d="M178 294 L168.2 300 L178 306 Z" />
+              <path d="M187 292 L203 300 L187 308 Z" />
+              <path d="M212 294 L221.8 300 L212 306 Z" />
+              <rect x="221.8" y="294" width="2.2" height="12" rx="1.1" />
+            </g>
+          </g>
+
+          <g class="cups" fill="var(--red)">
+            <rect x="156" y="358" width="12" height="26" rx="6" />
+            <rect x="222" y="358" width="12" height="26" rx="6" />
+          </g>
+        </svg>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :root {
+    --ground: #f8f5ef;
+    --ink: #202124;
+    --red: #c80028;
+  }
+
+  .th {
+    min-height: 100svh;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  .hero {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    padding-top: calc(42px + clamp(1.25rem, 3.2vh, 2.3rem));
+    padding-bottom: clamp(0.6rem, 1.4vh, 1.4rem);
+  }
+
+  /* COPY ------------------------------------------------------------------ */
+
+  .copy {
+    padding-inline: clamp(1.5rem, 7vw, 7.5rem);
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: clamp(1.2rem, 3vh, 2.1rem);
+  }
+
+  .wordmark {
+    font-size: 1.18rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    max-width: 21ch;
+    font-size: clamp(1.75rem, min(3.1vw, 5vh), 2.85rem);
+    font-weight: 600;
+    line-height: 1.14;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 54ch;
+    margin-top: clamp(0.9rem, 2.2vh, 1.3rem);
+    font-size: clamp(0.97rem, 0.36vw + 0.9rem, 1.04rem);
+    line-height: 1.62;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem 1.3rem;
+    margin-top: clamp(1.2rem, 2.6vh, 1.7rem);
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem 0.64rem;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--ground);
+  }
+
+  .store svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+  }
+
+  .store small {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    opacity: 0.7;
+  }
+
+  /* There is no listing yet, so the badge stays outlined and says so instead
+     of dressing up as a working download. */
+  .store.is-pending {
+    cursor: default;
+    background: transparent;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 24%, transparent);
+  }
+
+  .ghost {
+    font-size: 0.93rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in srgb, var(--ink) 26%, transparent);
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+
+  .ghost:hover {
+    color: var(--ink);
+    text-decoration-color: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  .meta {
+    margin-top: clamp(0.9rem, 2vh, 1.2rem);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    letter-spacing: 0.005em;
+    color: color-mix(in srgb, var(--ink) 52%, transparent);
+    text-wrap: pretty;
+  }
+
+  a:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  /* ART ------------------------------------------------------------------- */
+
+  .art {
+    margin-top: auto;
+    padding-top: clamp(1.2rem, 3.2vh, 2.6rem);
+  }
+
+  .art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Matched on `.art svg` too, or the sizing rule above would out-rank it and
+     both cuts of the drawing would paint at once. */
+  .art svg.tall {
+    display: none;
+  }
+
+  .logo {
+    color: var(--ink);
+    opacity: 0.6;
+  }
+
+  .tag {
+    font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    fill: color-mix(in srgb, var(--ink) 42%, transparent);
+  }
+
+  /* MOTION ---------------------------------------------------------------- */
+
+  /* The line draws itself once, quickly, in the order it is read. */
+  .ln {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 0.75s cubic-bezier(0.33, 0.8, 0.4, 1) both;
+  }
+
+  .d1 { animation-delay: 0.06s; }
+  .d2 { animation-delay: 0.28s; }
+  .d3 { animation-delay: 0.5s; }
+  .d4 { animation-delay: 0.66s; }
+
+  .logo,
+  .device,
+  .knob,
+  .cups,
+  .sound,
+  .tags,
+  .works,
+  .copy > * {
+    animation: fade 0.55s ease-out both;
+  }
+
+  .logo { animation-delay: 0.04s; }
+  .works { animation-delay: 0.04s; }
+  .device { animation-delay: 0.34s; }
+  .knob { animation-delay: 0.9s; }
+  .cups { animation-delay: 0.7s; }
+  .sound { animation-delay: 0.95s; }
+  .tags { animation-delay: 1s; }
+
+  .lockup { animation-delay: 0.02s; }
+  h1 { animation-delay: 0.06s; }
+  .lede { animation-delay: 0.12s; }
+  .actions { animation-delay: 0.18s; }
+  .meta { animation-delay: 0.24s; }
+
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* The logo group carries its own resting opacity, so its fade lands there. */
+  @keyframes fadeLogo {
+    from { opacity: 0; }
+    to { opacity: 0.6; }
+  }
+
+  .logo { animation-name: fadeLogo; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ln {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+
+    .logo,
+    .device,
+    .knob,
+    .cups,
+    .sound,
+    .tags,
+    .works,
+    .copy > * {
+      animation: none;
+    }
+  }
+
+  /* RESPONSIVE ------------------------------------------------------------ */
+
+  /* A short window keeps the hero in one screen by letting the drawing sit
+     smaller, never by cropping it. */
+  @media (min-width: 761px) and (max-height: 820px) {
+    .art svg { max-height: 40svh; }
+  }
+
+  @media (max-width: 760px) {
+    .art svg.wide { display: none; }
+
+    .art svg.tall {
+      display: block;
+      max-height: 43svh;
+    }
+
+    .hero {
+      padding-top: calc(42px + 1.1rem);
+    }
+
+    h1 {
+      max-width: 20ch;
+      font-size: clamp(1.7rem, 7.2vw, 2.05rem);
+    }
+
+    .lede {
+      font-size: 0.95rem;
+      line-height: 1.56;
+    }
+
+    .art {
+      padding-top: 1.4rem;
+    }
+  }
+
+  @media (max-width: 760px) and (max-height: 780px) {
+    .art svg.tall { max-height: 37svh; }
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Mark from '../components/Mark.astro';
+import { HEROES } from '../data/heroes';
+import { NAME } from '../data/site';
+---
+
+<Layout
+  title={`${NAME} — hero studies`}
+  description="Ten quiet, direct hero directions for Mozz."
+  themeColor="#f6f4ee"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main>
+    <header>
+      <a class="back" href="/">← Full website concepts</a>
+      <div class="brand"><Mark size={38} decorative /><span>{NAME}</span></div>
+      <h1>Pick the opening note.</h1>
+      <p>
+        Ten hero studies only. Each one says what Mozz is, then uses one quiet
+        illustration to make the idea clearer.
+      </p>
+    </header>
+
+    <ol role="list">
+      {HEROES.map((hero) => (
+        <li>
+          <a class="study" href={`/h/${hero.slug}`}>
+            <span
+              class="preview"
+              style={`--a:${hero.swatch[0]};--b:${hero.swatch[1]};--c:${hero.swatch[2]}`}
+            >
+              <img
+                src={`/hero-thumbs/${hero.slug}.png`}
+                alt={`${hero.name} hero study`}
+                width="1440"
+                height="900"
+                loading="lazy"
+                onerror="this.remove()"
+              />
+            </span>
+            <span class="copy">
+              <strong>{hero.name}</strong>
+              <span>{hero.idea}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </main>
+</Layout>
+
+<style>
+  main {
+    min-height: 100vh;
+    padding: clamp(2rem, 5vw, 5rem) 1.25rem;
+    color: #202124;
+    background: #f6f4ee;
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  header, ol {
+    width: min(78rem, 100%);
+    margin-inline: auto;
+  }
+
+  header { margin-bottom: clamp(2.5rem, 6vw, 5rem); }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    color: #6a6862;
+    font-size: 0.875rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.75rem;
+    font-weight: 700;
+  }
+
+  h1 {
+    max-width: 12ch;
+    font-size: clamp(2.5rem, 6vw, 5.75rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  header p {
+    max-width: 38rem;
+    margin-top: 1.25rem;
+    color: #66645f;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.6;
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-bottom: 3rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .study {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .preview {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background:
+      linear-gradient(145deg, var(--a) 0 63%, var(--b) 63% 66%, var(--c) 66% 100%);
+    border: 1px solid rgba(32, 33, 36, 0.12);
+  }
+
+  .preview img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .copy {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .copy strong { font-size: 1.05rem; }
+  .copy span { color: #6a6862; line-height: 1.45; }
+
+  a:focus-visible {
+    outline: 2px solid #c80028;
+    outline-offset: 5px;
+  }
+
+  @media (max-width: 43rem) {
+    ol { grid-template-columns: 1fr; }
+    .copy { grid-template-columns: 5.5rem 1fr; }
+  }
+</style>

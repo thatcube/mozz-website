@@ -31,6 +31,10 @@ pocket, on a commute or in a kitchen, not a desk.
 **What they must believe:** this one is actually theirs — no account, no upsell,
 no telemetry, and it does not get slower as the library gets bigger.
 
+**Positioning language:** call Mozz a free player for self-hosted music. Most
+people use one server, so Plex, Jellyfin, Navidrome and Subsonic are
+compatibility proof — not an aggregation story or the main product benefit.
+
 ## Platforms
 
 - iPhone and iPad today. SwiftUI, iOS 17 deployment target.

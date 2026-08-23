@@ -1,0 +1,909 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { APP_STORE_URL, NAME } from '../../data/site';
+import { HERO_COPY } from '../../data/hero-copy';
+---
+
+<Layout
+  title={`${NAME} — ${HERO_COPY.headline}`}
+  description={HERO_COPY.body}
+  themeColor="#f4f7f3"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500,600,700&family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="journey" />
+
+  <main>
+    <section class="hero" aria-labelledby="journey-title">
+      <div class="brand">
+        <Mark size={40} decorative />
+        <span>{NAME}</span>
+      </div>
+
+      <header class="station-copy">
+        <h1 id="journey-title">{HERO_COPY.headline}</h1>
+        <p class="intro">{HERO_COPY.body}</p>
+        <p class="support">{HERO_COPY.support}</p>
+
+        {
+          APP_STORE_URL ? (
+            <a class="store-link" href={APP_STORE_URL}>
+              <span class="store-glyph" aria-hidden="true">↓</span>
+              <span>
+                <small>Download on the</small>
+                <strong>App Store</strong>
+              </span>
+              <span class="action-arrow" aria-hidden="true">→</span>
+            </a>
+          ) : (
+            <span
+              class="store-link is-pending"
+              aria-label="Download on the App Store — coming soon"
+            >
+              <span class="store-glyph" aria-hidden="true">↓</span>
+              <span>
+                <small>Download on the</small>
+                <strong>App Store</strong>
+              </span>
+              <span class="soon">SOON</span>
+            </span>
+          )
+        }
+      </header>
+
+      <figure class="route-field">
+        <svg
+          class="route route-wide"
+          viewBox="0 0 1600 900"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            class="route-shadow"
+            d="M70 535 C250 520 420 548 620 526 C800 504 970 542 1190 523 C1330 511 1450 526 1530 518"
+          />
+          <path
+            class="route-stream"
+            d="M70 535 C250 520 420 548 620 526 C710 516 785 519 870 522"
+          />
+          <path
+            class="route-download"
+            d="M870 522 C970 530 1060 534 1190 523 C1330 511 1450 526 1530 518"
+          />
+          <path
+            class="route-branch"
+            d="M975 530 C1025 525 1055 483 1110 457"
+          />
+          <circle class="branch-stop" cx="1110" cy="457" r="8" />
+        </svg>
+
+        <svg
+          class="route route-tall"
+          viewBox="0 0 420 820"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            class="route-shadow"
+            d="M62 108 C52 250 72 408 61 530 C52 610 70 690 60 762"
+          />
+          <path
+            class="route-stream"
+            d="M62 108 C52 250 72 408 61 530"
+          />
+          <path
+            class="route-download"
+            d="M61 530 C52 610 70 690 60 762"
+          />
+          <path
+            class="route-branch"
+            d="M60 600 C112 602 155 585 207 570"
+          />
+          <circle class="branch-stop" cx="207" cy="570" r="7" />
+        </svg>
+
+        <div class="home-stop">
+          <span class="station-label">Works with</span>
+          <div class="server-home">
+            <span class="roof" aria-hidden="true"></span>
+            <div class="server-cluster" aria-label="Plex, Jellyfin and Navidrome">
+              <ServerLogo name="Plex" size={22} brand />
+              <ServerLogo name="Jellyfin" size={22} brand />
+              <ServerLogo name="Navidrome" size={22} brand />
+            </div>
+          </div>
+          <span class="stop-dot" aria-hidden="true"></span>
+        </div>
+
+        <span class="mode-label stream-label">STREAM</span>
+
+        <div class="train-stop">
+          <span class="train-icon" aria-hidden="true">
+            <span class="train-window"></span>
+            <span class="train-window"></span>
+          </span>
+          <span class="stop-dot" aria-hidden="true"></span>
+          <span class="station-label">Train</span>
+        </div>
+
+        <div class="signal-stop">
+          <span class="signal-bars" aria-hidden="true">
+            <i></i><i></i><i></i>
+          </span>
+          <span>offline from here</span>
+        </div>
+
+        <span class="mode-label download-label">DOWNLOADED</span>
+
+        <div class="radio-stop">
+          <span class="station-label">Radio</span>
+          <span class="station-note">from your library</span>
+        </div>
+
+        <div class="weekly-stop">
+          <span class="weekly-badge" aria-hidden="true">W</span>
+          <span class="stop-dot" aria-hidden="true"></span>
+          <span class="station-label">Mozz Weekly</span>
+          <span class="station-note">a fresh mix each week</span>
+        </div>
+
+        <div class="listener-stop">
+          <span class="listener-icon" aria-hidden="true">
+            <i class="head"></i>
+            <i class="headphones"></i>
+            <i class="body"></i>
+          </span>
+          <span class="stop-dot" aria-hidden="true"></span>
+          <span class="station-label">Park · listening</span>
+        </div>
+
+        <span class="track-token" aria-hidden="true">
+          <i></i>
+        </span>
+
+        <figcaption class="sr-only">
+          One track travels on a continuous line from a home server, through a
+          train ride where the signal ends, to a listener in the park. The solid
+          streaming route becomes a dotted downloaded route without stopping.
+          Radio branches gently from the line and Mozz Weekly appears as a new
+          stop.
+        </figcaption>
+      </figure>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :global(body) {
+    min-height: 0;
+  }
+
+  :root {
+    --field: #f4f7f3;
+    --paper: #ffffff;
+    --ink: #17362d;
+    --green: #4e836a;
+    --green-pale: #dce9e1;
+    --muted: #698176;
+    --red: #c80028;
+  }
+
+  main {
+    min-height: 0;
+    color: var(--ink);
+    background: var(--field);
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 42px);
+    margin-top: 42px;
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, transparent 0 49.95%, rgba(23, 54, 45, 0.035) 50%, transparent 50.05%),
+      var(--field);
+  }
+
+  .brand {
+    position: absolute;
+    top: clamp(1.3rem, 3vw, 2.5rem);
+    left: clamp(1.25rem, 4vw, 4rem);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .station-copy {
+    position: absolute;
+    top: clamp(6.2rem, 15vh, 9rem);
+    left: clamp(17rem, 26vw, 31rem);
+    z-index: 4;
+    width: min(47rem, 52vw);
+  }
+
+  h1 {
+    max-width: none;
+    font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    font-size: clamp(3.35rem, 4.7vw, 4.25rem);
+    font-weight: 600;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+
+  .intro {
+    max-width: 34rem;
+    margin-top: clamp(1.35rem, 2.5vh, 2rem);
+    color: #486158;
+    font-size: clamp(0.95rem, 1.25vw, 1.15rem);
+    line-height: 1.58;
+  }
+
+  .support {
+    max-width: 34rem;
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: clamp(0.72rem, 0.9vw, 0.84rem);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .store-link {
+    display: inline-grid;
+    grid-template-columns: auto auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 14.5rem;
+    margin-top: 1.25rem;
+    padding: 0.62rem 0.72rem;
+    color: var(--paper);
+    background: var(--ink);
+    border-radius: 0.35rem;
+    box-shadow: 0 5px 14px rgba(23, 54, 45, 0.1);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  a.store-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(23, 54, 45, 0.18);
+  }
+
+  .store-link small,
+  .store-link strong {
+    display: block;
+  }
+
+  .store-link small {
+    margin-bottom: 0.06rem;
+    font-size: 0.62rem;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
+  .store-link strong {
+    font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    font-size: 1.06rem;
+    line-height: 1.08;
+  }
+
+  .store-glyph {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    font-weight: 700;
+  }
+
+  .action-arrow {
+    margin-left: 0.4rem;
+    font-size: 1.2rem;
+  }
+
+  .is-pending {
+    cursor: default;
+    opacity: 0.82;
+  }
+
+  .soon {
+    margin-left: 0.3rem;
+    color: #b8cec2;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .route-field {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    margin: 0;
+  }
+
+  .route {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+  }
+
+  .route-tall {
+    display: none;
+  }
+
+  .route path {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .route-shadow {
+    stroke: var(--green-pale);
+    stroke-width: 15;
+    stroke-linecap: round;
+  }
+
+  .route-stream,
+  .route-download,
+  .route-branch {
+    stroke: var(--green);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+  }
+
+  .route-download {
+    stroke-dasharray: 1 13;
+  }
+
+  .route-branch {
+    stroke-width: 2.25;
+  }
+
+  .branch-stop {
+    fill: var(--field);
+    stroke: var(--green);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .home-stop,
+  .train-stop,
+  .signal-stop,
+  .radio-stop,
+  .weekly-stop,
+  .listener-stop,
+  .mode-label {
+    position: absolute;
+    z-index: 2;
+  }
+
+  .station-label,
+  .station-note,
+  .mode-label,
+  .signal-stop {
+    white-space: nowrap;
+  }
+
+  .station-label,
+  .mode-label,
+  .signal-stop {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .station-note {
+    color: var(--muted);
+    font-size: 0.66rem;
+  }
+
+  .stop-dot {
+    position: absolute;
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
+    background: var(--field);
+    border: 3px solid var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 5px var(--green-pale);
+  }
+
+  .home-stop {
+    top: 59.45%;
+    left: 4.4%;
+    width: 7.4rem;
+    transform: translate(-0.52rem, -100%);
+  }
+
+  .home-stop > .station-label {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .server-home {
+    position: relative;
+    width: 7rem;
+    padding: 1rem 0.55rem 0.52rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(23, 54, 45, 0.14);
+    border-radius: 0.25rem;
+    box-shadow: 0 8px 24px rgba(23, 54, 45, 0.07);
+  }
+
+  .roof {
+    position: absolute;
+    right: 0.42rem;
+    bottom: 100%;
+    left: 0.42rem;
+    height: 0.65rem;
+    background: var(--ink);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  .server-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+
+  .home-stop .stop-dot {
+    bottom: -1.02rem;
+    left: 0;
+  }
+
+  .mode-label {
+    color: var(--green);
+  }
+
+  .stream-label {
+    top: 61.2%;
+    left: 15%;
+  }
+
+  .train-stop {
+    top: 58.45%;
+    left: 44.5%;
+    width: 4.8rem;
+    text-align: center;
+    transform: translate(-50%, -3.15rem);
+  }
+
+  .train-icon {
+    display: grid;
+    grid-template-columns: repeat(2, 0.72rem);
+    gap: 0.28rem;
+    width: 3.25rem;
+    height: 2.2rem;
+    margin: 0 auto;
+    padding: 0.43rem;
+    background: var(--ink);
+    border-radius: 0.45rem 0.45rem 0.28rem 0.28rem;
+  }
+
+  .train-icon::before,
+  .train-icon::after {
+    position: absolute;
+    top: 1.88rem;
+    width: 0.42rem;
+    height: 0.42rem;
+    content: '';
+    background: var(--field);
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .train-icon::before { left: 1.2rem; }
+  .train-icon::after { right: 1.2rem; }
+
+  .train-window {
+    height: 0.72rem;
+    background: var(--field);
+    border-radius: 0.1rem;
+    opacity: 0.9;
+  }
+
+  .train-stop .stop-dot {
+    top: 2.7rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .train-stop .station-label {
+    display: block;
+    margin-top: 1.18rem;
+  }
+
+  .signal-stop {
+    top: 53.2%;
+    left: 54.35%;
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    color: var(--muted);
+    transform: translateX(-50%);
+  }
+
+  .signal-bars {
+    display: flex;
+    align-items: end;
+    gap: 0.16rem;
+    height: 1.1rem;
+  }
+
+  .signal-bars i {
+    display: block;
+    width: 0.22rem;
+    background: var(--green);
+    border-radius: 99px;
+  }
+
+  .signal-bars i:nth-child(1) { height: 0.4rem; }
+  .signal-bars i:nth-child(2) { height: 0.7rem; opacity: 0.55; }
+  .signal-bars i:nth-child(3) { height: 1rem; opacity: 0.18; }
+
+  .download-label {
+    top: 60.8%;
+    left: 57%;
+  }
+
+  .radio-stop {
+    top: 50.15%;
+    left: 69.4%;
+    display: grid;
+    justify-items: center;
+    transform: translate(-50%, -0.15rem);
+  }
+
+  .weekly-stop {
+    top: 58.05%;
+    left: 74.35%;
+    display: grid;
+    justify-items: center;
+    transform: translate(-50%, -3.5rem);
+  }
+
+  .weekly-badge {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    color: var(--paper);
+    background: var(--green);
+    border-radius: 50% 50% 50% 0.4rem;
+    font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    transform: rotate(-8deg);
+  }
+
+  .weekly-badge + .stop-dot {
+    top: 3rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .weekly-stop .station-label {
+    margin-top: 1.18rem;
+  }
+
+  .listener-stop {
+    top: 57.55%;
+    left: 95.6%;
+    display: grid;
+    justify-items: center;
+    transform: translate(-50%, -4.1rem);
+  }
+
+  .listener-icon {
+    position: relative;
+    display: block;
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  .listener-icon .head {
+    position: absolute;
+    top: 0.15rem;
+    left: 50%;
+    width: 1.35rem;
+    height: 1.35rem;
+    background: var(--field);
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  .listener-icon .headphones {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2rem;
+    height: 1.75rem;
+    border: 3px solid var(--red);
+    border-bottom: 0;
+    border-radius: 1.3rem 1.3rem 0 0;
+    transform: translateX(-50%);
+  }
+
+  .listener-icon .body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2.7rem;
+    height: 1.4rem;
+    background: var(--ink);
+    border-radius: 1.5rem 1.5rem 0.3rem 0.3rem;
+    transform: translateX(-50%);
+  }
+
+  .listener-stop .stop-dot {
+    top: 3.8rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .listener-stop .station-label {
+    margin-top: 1.22rem;
+  }
+
+  .track-token {
+    position: absolute;
+    z-index: 3;
+    top: 59.45%;
+    left: 4.4%;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    overflow: hidden;
+    background: var(--red);
+    border: 4px solid var(--paper);
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 16px rgba(23, 54, 45, 0.22);
+    transform: translate(-50%, -50%);
+    animation: ride-wide 13s cubic-bezier(0.55, 0.12, 0.45, 0.88) infinite alternate;
+  }
+
+  .track-token::before,
+  .track-token::after,
+  .track-token i {
+    position: absolute;
+    display: block;
+    content: '';
+    border: 2px solid rgba(255, 255, 255, 0.88);
+    border-radius: 50%;
+  }
+
+  .track-token::before {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .track-token::after {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .track-token i {
+    width: 0.22rem;
+    height: 0.22rem;
+    background: white;
+    border: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes ride-wide {
+    0% { top: 59.45%; left: 4.4%; }
+    22% { top: 58.3%; left: 26%; }
+    43% { top: 58.45%; left: 44.5%; }
+    58% { top: 58%; left: 54.35%; }
+    77% { top: 58.1%; left: 74.35%; }
+    100% { top: 57.55%; left: 95.6%; }
+  }
+
+  @media (max-width: 52rem) {
+    .hero {
+      min-height: max(48rem, calc(100svh - 42px));
+      background: var(--field);
+    }
+
+    .brand {
+      top: 1rem;
+      left: 1rem;
+    }
+
+    .station-copy {
+      top: 13.5%;
+      left: 25%;
+      width: min(70%, 31rem);
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2.8rem, 12.4vw, 4.7rem);
+      line-height: 0.9;
+    }
+
+    .intro {
+      margin-top: 1rem;
+      font-size: clamp(0.82rem, 3.5vw, 1rem);
+      line-height: 1.48;
+    }
+
+    .store-link {
+      min-width: 0;
+      margin-top: 0.9rem;
+      padding: 0.55rem 0.62rem;
+    }
+
+    .route-wide {
+      display: none;
+    }
+
+    .route-tall {
+      display: block;
+    }
+
+    .home-stop {
+      top: 13.15%;
+      left: 14.75%;
+      width: 5.5rem;
+      transform: translate(-0.52rem, -100%);
+    }
+
+    .home-stop > .station-label {
+      font-size: 0.55rem;
+    }
+
+    .server-home {
+      width: 5.4rem;
+      padding: 0.72rem 0.35rem 0.38rem;
+    }
+
+    .server-cluster {
+      gap: 0.25rem;
+      transform: scale(0.78);
+      transform-origin: center;
+    }
+
+    .stream-label {
+      display: none;
+    }
+
+    .train-stop {
+      top: 65.85%;
+      left: 14.5%;
+      transform: translate(-50%, -3.1rem);
+    }
+
+    .signal-stop {
+      top: 72%;
+      left: 1.5%;
+      justify-items: start;
+      transform: none;
+    }
+
+    .download-label {
+      display: none;
+    }
+
+    .radio-stop {
+      top: 73.2%;
+      left: 49.25%;
+      justify-items: start;
+      transform: translate(0, -100%);
+    }
+
+    .weekly-stop {
+      top: 82.5%;
+      left: 14.5%;
+      width: 10rem;
+      justify-items: start;
+      transform: translate(-1.25rem, -3.5rem);
+    }
+
+    .weekly-badge + .stop-dot {
+      left: 1.25rem;
+    }
+
+    .weekly-stop .station-label,
+    .weekly-stop .station-note {
+      margin-left: 3rem;
+    }
+
+    .weekly-stop .station-label {
+      margin-top: -0.1rem;
+    }
+
+    .listener-stop {
+      top: 94%;
+      left: 14.3%;
+      width: 12rem;
+      justify-items: start;
+      transform: translate(-1.6rem, -4rem);
+    }
+
+    .listener-stop .stop-dot {
+      left: 1.6rem;
+    }
+
+    .listener-stop .station-label {
+      margin-top: 1.1rem;
+      margin-left: 2rem;
+    }
+
+    .track-token {
+      top: 13.15%;
+      left: 14.75%;
+      width: 2.4rem;
+      height: 2.4rem;
+      animation-name: ride-tall;
+    }
+  }
+
+  @media (max-width: 28rem) and (max-height: 48rem) {
+    .station-copy {
+      top: 12%;
+    }
+
+    .intro {
+      max-width: 26rem;
+      font-size: 0.78rem;
+    }
+
+    .store-link {
+      transform: scale(0.9);
+      transform-origin: left top;
+    }
+  }
+
+  @keyframes ride-tall {
+    0% { top: 13.15%; left: 14.75%; }
+    50% { top: 65.85%; left: 14.5%; }
+    65% { top: 72%; left: 14.25%; }
+    82% { top: 82.5%; left: 14.5%; }
+    100% { top: 94%; left: 14.3%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track-token {
+      top: 58%;
+      left: 54.35%;
+      animation: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) and (max-width: 52rem) {
+    .track-token {
+      top: 72%;
+      left: 14.25%;
+    }
+  }
+</style>

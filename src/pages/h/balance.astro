@@ -1,0 +1,482 @@
+---
+/**
+ * HERO STUDY — BALANCE
+ *
+ * Direction: airy minimalism. A flat near-white field, one slate hue, ink, and
+ * the brand red used only where the app itself appears.
+ *
+ * The assigned metaphor is a hanging mobile, kept only as far as it explains the
+ * product at a glance. It carries two things: a record, and the Mozz app icon
+ * with a download arrow under it. That is the whole drawing — a music player
+ * that also plays with the server switched off.
+ *
+ * Deliberately NOT drawn: several servers converging on one app. Most people run
+ * a single server, so the server marks are not the subject. They appear once,
+ * small and quiet, under the copy — proof that a particular server is supported,
+ * not a proposition about pooling libraries.
+ *
+ * The rig is nested DOM rather than one flat SVG, for two reasons. Each rod's
+ * sway is inherited by everything below it, which is how a real mobile behaves;
+ * and the real logo art can sit inside the page instead of being redrawn.
+ *
+ * Geometry lives in a single unit (`--u`) so the whole thing scales as a piece,
+ * and the rod carries a small resting tilt (`--rest`) with its children
+ * counter-rotated by the same amount — so the rod leans and the wires hang plumb.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+import { HERO_COPY } from '../../data/hero-copy';
+
+const ALT =
+  'A small hanging mobile: a record on the long arm, balanced by the red Mozz ' +
+  'app icon on the short arm, with a download arrow hanging below it.';
+---
+
+<Layout
+  title={`${NAME} — balance`}
+  description={HERO_COPY.body}
+  themeColor="#f8f7f3"
+  noindex
+>
+  <link
+    slot="head"
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+  />
+
+  <HeroBar slug="balance" />
+
+  <main>
+    <section class="hero">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={28} decorative />
+        <span>{NAME}</span>
+      </a>
+
+      <!-- A record and the player, balanced. Nothing else hangs here. -->
+      <div class="field">
+        <div class="stage" role="img" aria-label={ALT}>
+          <div class="anchor">
+            <!-- The pivot sits right of centre: the long light arm carries the
+                 record, the short arm carries the heavier player. -->
+            <div class="limb" style="--drop:7; --w:34; --p:0.62; --rest:-1.2deg; --sway:0.8deg; --dur:19s; --delay:-5s">
+              <i class="wire wire--sky"></i>
+              <div class="rod">
+                <div class="limb hangs-l" style="--drop:13; --rest:1.2deg; --sway:0.9deg; --dur:16s; --delay:-3s">
+                  <i class="wire"></i>
+                  <div class="pod pod--record" style="--d:11; --dh:11"></div>
+                </div>
+
+                <div class="limb hangs-r" style="--drop:5.5; --rest:1.2deg; --sway:0.7deg; --dur:17s; --delay:-9s">
+                  <i class="wire"></i>
+                  <div class="pod pod--mozz" style="--d:18; --dh:18">
+                    <Mark size={64} decorative />
+
+                    <!-- Downloads: the music keeps playing with the server off. -->
+                    <div class="limb under" style="--drop:5; --rest:0deg; --sway:1deg; --dur:14s; --delay:-7s">
+                      <i class="wire"></i>
+                      <span class="token" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 3.5v11" />
+                          <path d="M7.2 10.6 12 15.4l4.8-4.8" />
+                          <path d="M5 19.6h14" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="say">
+        <h1>{HERO_COPY.headline}</h1>
+        <p class="lede">{HERO_COPY.body}</p>
+
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Source on GitHub</a>
+        </div>
+
+        <!-- Compatibility proof, not a claim. The servers are already named in
+             the sentence above, so this is just their marks. -->
+        <p class="works">
+          <span class="works__label">Works with</span>
+          <span class="works__marks">
+            <ServerLogo name="Plex" size={16} />
+            <ServerLogo name="Jellyfin" size={16} />
+            <ServerLogo name="Navidrome" size={16} />
+          </span>
+        </p>
+
+        <p class="fine">{HERO_COPY.support}</p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  main {
+    --paper: #f8f7f3;
+    --ink: #1b1c1e;
+    --slate: #31566b;
+    --red: #c80028;
+
+    /* The armature reads as a drawn line, never as structure, so it stays
+       behind the two things it carries. */
+    --wire: rgba(49, 86, 107, 0.34);
+    --rod: rgba(49, 86, 107, 0.46);
+
+    /* One unit governs the whole rig. Width binds on phones, height on
+       laptops, so the drawing always sits inside the fold with air to spare. */
+    --u: clamp(3.4px, min(1.5vw, 0.95vh), 10.5px);
+    --hair: max(1px, calc(var(--u) * 0.11));
+    --stage-w: 54;
+    --stage-h: 42;
+    /* The player outweighs the record, so the rig hangs a little right of the
+       stage centre and the drawing as a whole lands centred. */
+    --stage-shift: 2.3;
+
+    min-height: 100svh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100svh;
+    padding: calc(42px + clamp(0.6rem, 2vh, 1.9rem)) clamp(1.1rem, 4vw, 2.5rem)
+      clamp(1.1rem, 3vh, 2.6rem);
+  }
+
+  /* ---- corner lockup ------------------------------------------------- */
+
+  /* The wordmark is the one piece of brand that has to stay legible at a
+     glance, so it sits a step above the fine type in weight and size. */
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    align-self: flex-start;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.018em;
+  }
+
+  .lockup span { line-height: 1; }
+
+  /* ---- the mobile ---------------------------------------------------- */
+
+  .field {
+    display: grid;
+    place-items: center;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    padding: clamp(0.3rem, 1.2vh, 1.2rem) 0 clamp(0.6rem, 2vh, 1.8rem);
+  }
+
+  .stage {
+    position: relative;
+    width: calc(var(--stage-w) * var(--u));
+    height: calc(var(--stage-h) * var(--u));
+  }
+
+  .anchor {
+    position: absolute;
+    top: 0;
+    left: calc(50% + var(--stage-shift) * var(--u));
+  }
+
+  /* A limb is a hang point with no size of its own. It pivots exactly where its
+     wire meets the rod above, so everything below inherits the swing. */
+  .limb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+    animation: sway var(--dur, 16s) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .hangs-l { left: 0; }
+  .hangs-r { left: 100%; }
+
+  .under {
+    top: 100%;
+    left: 50%;
+  }
+
+  .wire {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--hair);
+    height: calc(var(--drop) * var(--u));
+    margin-left: calc(var(--hair) / -2);
+    background: var(--wire);
+  }
+
+  /* The rig hangs from a ceiling the page never draws. */
+  .wire--sky {
+    background: linear-gradient(to bottom, rgba(49, 86, 107, 0), var(--wire) 55%);
+  }
+
+  .rod {
+    position: absolute;
+    top: calc(var(--drop) * var(--u));
+    left: calc(-1 * var(--p) * var(--w) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: var(--hair);
+    margin-top: calc(var(--hair) / -2);
+    background: var(--rod);
+    border-radius: var(--hair);
+  }
+
+  .pod {
+    --rest: 0deg;
+    --sway: 0.5deg;
+    position: absolute;
+    top: calc(var(--drop) * var(--u));
+    left: 0;
+    width: calc(var(--d) * var(--u));
+    height: calc(var(--dh) * var(--u));
+    margin-left: calc(var(--d) * var(--u) / -2);
+    transform-origin: 50% 0;
+    /* Counter-swings its wire, the way a hanging cut-out settles upright. */
+    animation: sway var(--dur, 16s) ease-in-out infinite alternate-reverse;
+    animation-delay: var(--delay, 0s);
+  }
+
+  /* A record: one flat disc, one groove, one spindle hole. */
+  .pod--record {
+    border-radius: 50%;
+    background: var(--slate);
+  }
+
+  .pod--record::before,
+  .pod--record::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .pod--record::before {
+    width: 62%;
+    height: 62%;
+    border: var(--hair) solid rgba(248, 247, 243, 0.42);
+  }
+
+  .pod--record::after {
+    width: calc(var(--u) * 1.2);
+    height: calc(var(--u) * 1.2);
+    background: var(--paper);
+  }
+
+  /* The player is the mark itself — already a red disc, so nothing around it. */
+  .pod--mozz :global(.mozz-mark),
+  .pod--mozz :global(.mozz-mark svg) {
+    width: calc(var(--d) * var(--u));
+    height: calc(var(--d) * var(--u));
+  }
+
+  .token {
+    position: absolute;
+    top: calc(var(--drop) * var(--u));
+    left: 0;
+    display: block;
+    width: calc(var(--u) * 4.4);
+    height: calc(var(--u) * 4.4);
+    margin-left: calc(var(--u) * -2.2);
+    color: var(--slate);
+  }
+
+  .token svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes sway {
+    from { transform: rotate(calc(var(--rest, 0deg) - var(--sway, 1deg))); }
+    to { transform: rotate(calc(var(--rest, 0deg) + var(--sway, 1deg))); }
+  }
+
+  /* ---- the words ----------------------------------------------------- */
+
+  .say {
+    flex: none;
+    max-width: 44rem;
+    text-align: center;
+  }
+
+  h1 {
+    max-width: 24ch;
+    margin: 0 auto;
+    /* Height-aware as well as width-aware: on a short window the headline
+       gives up size before the drawing does. */
+    font-size: clamp(1.5rem, min(3.1vw, 4.2vh), 2.15rem);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.021em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 50ch;
+    margin: clamp(0.6rem, 1.5vh, 0.95rem) auto 0;
+    font-size: clamp(0.93rem, 1.05vw, 1rem);
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem 1.1rem;
+    margin-top: clamp(1rem, 2.2vh, 1.6rem);
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.62rem 1.15rem 0.66rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fbfaf7;
+    transition: transform 0.2s ease;
+  }
+
+  .store svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  .store small {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.66;
+  }
+
+  a.store:hover { transform: translateY(-1px); }
+
+  /* There is no listing yet, so the button reads as pending — never as a dead
+     link pretending to work. */
+  .store.is-pending {
+    background: none;
+    color: color-mix(in srgb, var(--ink) 64%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+    cursor: default;
+  }
+
+  .ghost {
+    padding-bottom: 1px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--ink) 76%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
+    transition: border-color 0.2s ease;
+  }
+
+  .ghost:hover { border-bottom-color: color-mix(in srgb, var(--ink) 60%, transparent); }
+
+  /* The server marks live here and nowhere else: small, monochrome, and read as
+     a compatibility note rather than as the subject of the page. */
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem 0.6rem;
+    margin-top: clamp(1rem, 2.4vh, 1.5rem);
+    font-size: 0.78rem;
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
+  }
+
+  .works__label {
+    letter-spacing: 0.02em;
+  }
+
+  .works__marks {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: color-mix(in srgb, var(--slate) 74%, transparent);
+  }
+
+  .fine {
+    margin-top: clamp(0.5rem, 1.3vh, 0.85rem);
+    font-size: 0.77rem;
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
+  }
+
+  :where(a):focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 30rem) {
+    .lockup { font-size: 0.9rem; }
+    .lede { font-size: 0.92rem; line-height: 1.55; }
+    .works { margin-top: clamp(0.7rem, 1.8vh, 1.1rem); }
+    /* Short phones have no spare height, so the air comes out of the gaps
+       around the drawing before it comes out of the type. */
+    .field { padding: 0 0 clamp(0.4rem, 1.2vh, 1rem); }
+  }
+
+  /* Nothing here has to move to be understood — but the rod keeps its resting
+     lean, or the mobile flattens into a diagram. */
+  @media (prefers-reduced-motion: reduce) {
+    .limb {
+      animation: none;
+      transform: rotate(var(--rest, 0deg));
+    }
+
+    .pod {
+      animation: none;
+      transform: none;
+    }
+
+    .store { transition: none; }
+  }
+</style>

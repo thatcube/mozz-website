@@ -48,6 +48,7 @@ import { VARIANTS, NAME, GITHUB_URL, SITE } from '../data/site';
         listing to point it at. Every illustration is drawn in CSS and SVG, so
         nothing here is waiting on an image.
       </p>
+      <a class="hero-studies" href="/heroes">Compare the 10 hero-only studies →</a>
     </header>
 
     <ol class="grid" role="list">
@@ -146,6 +147,15 @@ import { VARIANTS, NAME, GITHUB_URL, SITE } from '../data/site';
     color: var(--dim);
     max-width: 68ch;
     text-wrap: pretty;
+  }
+
+  .hero-studies {
+    display: inline-block;
+    margin-top: 1.25rem;
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   .grid {

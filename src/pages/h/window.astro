@@ -1,0 +1,510 @@
+---
+/**
+ * HERO STUDY — WINDOW
+ *
+ * An open window onto the place your music already lives: your server sits on
+ * a shelf at home on the far side, a few albums come through the opening, and
+ * they land in an ordinary player control on this side. The sill tray holds
+ * the ones that have been downloaded.
+ *
+ * The server logos are not part of the scene — they sit under the words as a
+ * plain "works with these" row, so they read as compatibility rather than as
+ * three servers pooled into one library.
+ *
+ * The drawing is kept deliberately plain — it is there to say "music player,
+ * your own library, works offline" at a glance, not to be looked at for its own
+ * sake. Everything is one inline SVG so it scales without a raster asset, and
+ * the headline is real HTML under the sill rather than lettering inside the
+ * drawing, so it stays selectable, translatable and responsive.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL, SERVERS } from '../../data/site';
+import { HERO_COPY } from '../../data/hero-copy';
+
+const HEADLINE = HERO_COPY.headline;
+
+/** Albums coming through the opening: nearer means larger. */
+const ALBUMS = [
+  { cls: 'a1', x: 740, y: 438, s: 52, r: -7, fill: '#cfe3ea' },
+  { cls: 'a2', x: 726, y: 496, s: 84, r: 6, fill: '#a8cbd8' },
+  { cls: 'a3', x: 762, y: 588, s: 122, r: -6, fill: '#e6d6bc' },
+];
+
+/** Offline albums, folded down onto the sill tray. */
+const TRAY = [
+  { x: 288, y: 694, r: -4 },
+  { x: 330, y: 699, r: 2 },
+  { x: 372, y: 704, r: -2 },
+];
+
+const SCENE =
+  'A large open window in a plain, bright room. On the far side, under a house-shaped roof, one small server sits on a shelf. Three album squares come through the opening, growing larger as they get nearer, and a thin line follows them down into a simple play button and progress bar in the room. A tray folded down from the sill holds three downloaded albums beside a download arrow.';
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play music from your Plex, Jellyfin, Navidrome or Subsonic server, or download albums to listen offline."
+  themeColor="#f7f3eb"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="window" />
+
+  <main class="win">
+    <a class="lockup" href="/">
+      <Mark size={30} decorative />
+      <span>Mozz</span>
+    </a>
+
+    <div class="stage">
+      <figure class="art">
+        <svg class="scene" viewBox="0 130 1200 730" preserveAspectRatio="xMidYMid meet" role="img" aria-label={SCENE}>
+          <defs>
+            <linearGradient id="w-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#e7f2f7" />
+              <stop offset="0.6" stop-color="#f5fafc" />
+              <stop offset="1" stop-color="#fdfbf7" />
+            </linearGradient>
+            <linearGradient id="w-glass" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.97" />
+              <stop offset="1" stop-color="#e3eff4" stop-opacity="0.8" />
+            </linearGradient>
+            <linearGradient id="w-pool" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d9edf4" stop-opacity="0.8" />
+              <stop offset="1" stop-color="#d9edf4" stop-opacity="0" />
+            </linearGradient>
+            <filter id="w-cast" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#4a4132" flood-opacity="0.13" />
+            </filter>
+            <filter id="w-cast-sm" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#4a4132" flood-opacity="0.11" />
+            </filter>
+          </defs>
+
+          <!-- The light the window lets in, pooling across the floor. -->
+          <path d="M336 668 L892 668 L1064 852 L164 852 Z" fill="url(#w-pool)" />
+
+          <!-- OPENING --------------------------------------------------------- -->
+          <rect x="318" y="202" width="564" height="432" rx="4" fill="url(#w-sky)" />
+          <rect x="318" y="470" width="564" height="164" fill="#f1f8f7" opacity="0.7" />
+
+          <!-- The far side: your own server, on a shelf at home. Nothing else. -->
+          <g class="home">
+            <path
+              d="M486 436 L600 376 L714 436"
+              fill="none"
+              stroke="#22262a"
+              stroke-width="3.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <g stroke="#22262a" stroke-width="3" stroke-linecap="round" opacity="0.34">
+              <path d="M486 436v20" /><path d="M714 436v20" />
+            </g>
+            <rect x="500" y="454" width="200" height="9" rx="4.5" fill="#22262a" opacity="0.78" />
+            <g class="server">
+              <rect
+                x="556"
+                y="410"
+                width="88"
+                height="44"
+                rx="7"
+                fill="#ffffff"
+                stroke="#22262a"
+                stroke-width="2.6"
+              />
+              <circle cx="576" cy="432" r="9" fill="none" stroke="#22262a" stroke-width="2.4" opacity="0.55" />
+              <circle cx="576" cy="432" r="2" fill="#22262a" opacity="0.55" />
+              <g stroke="#22262a" stroke-width="2.4" stroke-linecap="round" opacity="0.28">
+                <path d="M598 425h30" /><path d="M598 433h30" /><path d="M598 441h18" />
+              </g>
+              <circle cx="632" cy="441" r="3.4" fill="#c80028" />
+            </g>
+          </g>
+
+          <!-- Two albums still on the far side of the sill. -->
+          {ALBUMS.slice(0, 2).map((a) => (
+            <g class={`drift ${a.cls}`}>
+              <g transform={`translate(${a.x} ${a.y}) rotate(${a.r} ${a.s / 2} ${a.s / 2})`} filter="url(#w-cast-sm)">
+                <rect width={a.s} height={a.s} rx={a.s * 0.16} fill={a.fill} />
+                <rect
+                  width={a.s}
+                  height={a.s}
+                  rx={a.s * 0.16}
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="2.5"
+                  opacity="0.85"
+                />
+                <circle cx={a.s / 2} cy={a.s / 2} r={a.s * 0.15} fill="#ffffff" opacity="0.55" />
+              </g>
+            </g>
+          ))}
+
+          <!-- THE WINDOW ------------------------------------------------------ -->
+          <rect
+            x="296"
+            y="180"
+            width="608"
+            height="476"
+            rx="10"
+            fill="none"
+            stroke="#22262a"
+            stroke-width="3.4"
+          />
+          <rect x="318" y="202" width="564" height="432" rx="4" fill="none" stroke="#22262a" stroke-width="2.4" opacity="0.5" />
+          <!-- sill -->
+          <rect x="270" y="654" width="660" height="22" rx="7" fill="#ffffff" stroke="#22262a" stroke-width="3.4" />
+
+          <!-- The line the albums travel in on, ending at the player. -->
+          <path
+            class="flow"
+            d="M598 464 C654 506 692 544 738 588 C792 640 832 690 776 726 C716 764 618 764 560 754"
+            fill="none"
+            stroke="#c80028"
+            stroke-width="3"
+            stroke-linecap="round"
+            opacity="0.42"
+          />
+
+          <!-- The nearest album, through the opening and into the room. -->
+          {ALBUMS.slice(2).map((a) => (
+            <g class={`drift ${a.cls}`}>
+              <g transform={`translate(${a.x} ${a.y}) rotate(${a.r} ${a.s / 2} ${a.s / 2})`} filter="url(#w-cast)">
+                <rect width={a.s} height={a.s} rx={a.s * 0.16} fill={a.fill} />
+                <rect
+                  width={a.s}
+                  height={a.s}
+                  rx={a.s * 0.16}
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="3"
+                  opacity="0.9"
+                />
+                <circle cx={a.s / 2} cy={a.s / 2} r={a.s * 0.15} fill="#ffffff" opacity="0.6" />
+              </g>
+            </g>
+          ))}
+
+          <!-- Both panes, swung inward into the room. -->
+          <g class="panes" stroke="#22262a" stroke-width="3.4" stroke-linejoin="round">
+            <path d="M318 202 L162 160 L162 676 L318 634 Z" fill="url(#w-glass)" />
+            <path d="M300 224 L180 192 L180 644 L300 612 Z" fill="none" stroke="#bcd6de" stroke-width="2" />
+            <rect x="166" y="352" width="13" height="50" rx="6.5" fill="#ffffff" stroke-width="3" />
+
+            <path d="M882 202 L1038 160 L1038 676 L882 634 Z" fill="url(#w-glass)" />
+            <path d="M900 224 L1020 192 L1020 644 L900 612 Z" fill="none" stroke="#bcd6de" stroke-width="2" />
+            <rect x="1021" y="352" width="13" height="50" rx="6.5" fill="#ffffff" stroke-width="3" />
+          </g>
+
+          <!-- The sill tray, folded down, holding what is already downloaded. -->
+          <g class="tray" filter="url(#w-cast-sm)">
+            <path d="M290 674 L424 674 L446 748 L262 748 Z" fill="#ffffff" stroke="#22262a" stroke-width="3" stroke-linejoin="round" />
+            {TRAY.map((t) => (
+              <g transform={`translate(${t.x} ${t.y}) rotate(${t.r} 15 15)`}>
+                <rect width="30" height="30" rx="6" fill="#cfe3ea" stroke="#ffffff" stroke-width="2" />
+              </g>
+            ))}
+            <g stroke="#22262a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" fill="none">
+              <path d="M408 698v18" /><path d="M400 709l8 8 8-8" />
+            </g>
+          </g>
+
+          <!-- Where the line ends up: one simple player. -->
+          <g class="player" filter="url(#w-cast)">
+            <rect x="448" y="716" width="304" height="68" rx="34" fill="#ffffff" stroke="#e2dbcd" stroke-width="2" />
+            <circle cx="492" cy="750" r="21" fill="#c80028" />
+            <path d="M486 741 L505 750 L486 759 Z" fill="#ffffff" />
+            <path d="M532 750h184" stroke="#e6dfd1" stroke-width="6" stroke-linecap="round" />
+            <path d="M532 750h108" stroke="#c80028" stroke-width="6" stroke-linecap="round" />
+            <circle cx="640" cy="750" r="7.5" fill="#ffffff" stroke="#c80028" stroke-width="3" />
+          </g>
+        </svg>
+      </figure>
+
+      <div class="copy">
+        <h1>{HEADLINE}</h1>
+        <p class="lede">{HERO_COPY.body}</p>
+
+        <ul class="works">
+          {SERVERS.map((s) => (
+            <li>
+              <ServerLogo name={s.name} size={20} brand />
+              <span>{s.name}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="cta">
+          {APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Download on the</small>App Store</span>
+            </a>
+          ) : (
+            <span class="store is-pending" aria-disabled="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span><small>Coming to the</small>App Store</span>
+            </span>
+          )}
+          <a class="ghost" href={GITHUB_URL}>Read the source</a>
+        </div>
+
+        <p class="fine">{HERO_COPY.support}</p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .win {
+    --ink: #22262a;
+    --muted: #5c6570;
+    --line: #ddd5c6;
+    --red: #c80028;
+
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.9rem, 2.6vh, 1.5rem);
+    padding: calc(42px + clamp(0.9rem, 2.6vh, 1.5rem)) 1.25rem clamp(1.25rem, 3vh, 2.25rem);
+    background:
+      radial-gradient(130% 100% at 50% -10%, #fffdf8 0%, #f9f5ee 46%, #f4eee2 100%);
+    color: var(--ink);
+    font-family: 'Satoshi', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-weight: 400;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    align-self: flex-start;
+    width: 100%;
+    max-width: 1100px;
+    font-weight: 700;
+    font-size: 1.28rem;
+    letter-spacing: -0.02em;
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 2.6vh, 2rem);
+    width: 100%;
+  }
+
+  /* The drawing is the page, so it takes every pixel the viewport can spare —
+     width first, then clipped by height so the words under the sill still fit. */
+  .art {
+    width: max(300px, min(94vw, 1000px, calc((100svh - 30.5rem) * 1.64)));
+    margin: 0;
+  }
+
+  .scene {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .copy {
+    max-width: 56ch;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 2.9vw, 2.25rem);
+    font-weight: 500;
+    line-height: 1.14;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin-top: 0.8rem;
+    max-width: 50ch;
+    margin-inline: auto;
+    color: var(--muted);
+    font-size: clamp(0.98rem, 1.35vw, 1.12rem);
+    line-height: 1.55;
+    text-wrap: balance;
+  }
+
+  /* Compatibility proof, not a proposition: the logos simply say these work. */
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem 1.15rem;
+    margin-top: 1rem;
+    list-style: none;
+  }
+
+  .works li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.2rem;
+  }
+
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.2rem 0.62rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fbf8f2;
+    line-height: 1.05;
+  }
+
+  .store svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  .store span {
+    display: flex;
+    flex-direction: column;
+    font-weight: 700;
+    font-size: 1.02rem;
+    letter-spacing: -0.01em;
+  }
+
+  .store small {
+    font-weight: 500;
+    font-size: 0.63rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  .store.is-pending {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px dashed var(--line);
+    cursor: default;
+  }
+
+  .ghost {
+    font-weight: 500;
+    font-size: 0.98rem;
+    color: var(--muted);
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: 2px;
+  }
+
+  .ghost:hover {
+    color: var(--ink);
+    border-bottom-color: var(--red);
+  }
+
+  .fine {
+    margin-top: 0.9rem;
+    text-wrap: balance;
+    color: var(--muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+    opacity: 0.85;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  /* MOTION — one slow drift, nothing that asks to be watched. -------------- */
+  .drift {
+    animation: bob 12s ease-in-out infinite alternate;
+  }
+  .a2 { animation-duration: 14s; animation-delay: -4s; }
+  .a3 { animation-duration: 16s; animation-delay: -8s; }
+
+  @keyframes bob {
+    from { transform: translateY(-3px); }
+    to { transform: translateY(3px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  /* NARROW ---------------------------------------------------------------- */
+  @media (max-width: 720px) {
+    .art {
+      width: min(96vw, 560px);
+    }
+
+    /* The shelf is meant to look small and far away, but on a phone it has to
+       stay readable, so it comes up a touch in scale. */
+    .home {
+      transform: translate(0, 8px) scale(1.16);
+      transform-origin: 600px 420px;
+    }
+
+    .copy {
+      max-width: 34ch;
+    }
+
+    .cta {
+      gap: 0.8rem;
+    }
+
+    .works {
+      gap: 0.3rem 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+
+  /* SHORT ----------------------------------------------------------------- */
+  /* When there is little height to spend, the drawing gives way first so the
+     words and the buttons still land in one view. */
+  @media (max-height: 700px) {
+    .art {
+      width: max(200px, min(94vw, 1000px, calc((100svh - 32rem) * 1.64)));
+    }
+
+    .works {
+      margin-top: 0.7rem;
+    }
+
+    .cta {
+      margin-top: 0.9rem;
+    }
+
+    .fine {
+      margin-top: 0.7rem;
+    }
+  }
+</style>

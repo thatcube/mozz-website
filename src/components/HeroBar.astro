@@ -1,0 +1,77 @@
+---
+import { HEROES } from '../data/heroes';
+
+export interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const current = HEROES.findIndex((hero) => hero.slug === slug);
+---
+
+<nav class="hero-bar" aria-label="Hero studies">
+  <a href="/heroes" class="all">All heroes</a>
+  <ol role="list">
+    {HEROES.map((hero) => (
+      <li>
+        <a href={`/h/${hero.slug}`} aria-current={hero.slug === slug ? 'page' : undefined}>
+          {hero.name}
+        </a>
+      </li>
+    ))}
+  </ol>
+  <span>{current + 1} / {HEROES.length}</span>
+</nav>
+
+<style>
+  .hero-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 42px;
+    padding: 0.45rem 0.8rem;
+    overflow-x: auto;
+    color: #202124;
+    background: color-mix(in srgb, #fff 88%, transparent);
+    border-bottom: 1px solid rgba(20, 20, 22, 0.12);
+    backdrop-filter: blur(14px);
+    font: 600 12px/1 ui-sans-serif, system-ui, sans-serif;
+    scrollbar-width: none;
+  }
+
+  .hero-bar::-webkit-scrollbar { display: none; }
+
+  .all, .hero-bar > span { flex: none; }
+  .all { font-weight: 800; }
+  .hero-bar > span { margin-left: auto; opacity: 0.48; }
+
+  ol {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ol a {
+    display: block;
+    padding: 0.45rem 0.55rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    opacity: 0.55;
+  }
+
+  ol a:hover, ol a[aria-current='page'] {
+    opacity: 1;
+    background: rgba(20, 20, 22, 0.07);
+  }
+
+  a:focus-visible {
+    outline: 2px solid #c80028;
+    outline-offset: 2px;
+  }
+</style>
