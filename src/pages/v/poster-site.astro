@@ -1,0 +1,2064 @@
+---
+/**
+ * VARIANT — POSTER SITE
+ *
+ * A direct extension of the hero study at /h/poster, not a new idea.
+ *
+ * The hero is kept: cream stock, a screenprinted concentric cone bleeding off
+ * the right edge, halftone and grain over the whole sheet, the bill of fare
+ * ruled top and bottom, and MOZZ set in condensed display type stretched to
+ * the full measure of the page.
+ *
+ * One deliberate change from the study: the second plate is black rather than
+ * blue, so the whole site prints in red, white and black. Everything still
+ * overprints — the ink layer multiplies over the red, so where they cross you
+ * get the darker mix a two-colour press would actually give you.
+ *
+ * The enormous wordmark is a hero gesture and is used as one: once at the top,
+ * once at the very bottom, and nowhere in between. Each section below is
+ * marked by its chapter number, a rule, or a change of plate.
+ *
+ * No photography anywhere — every sleeve is generated below as SVG.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  SITE,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  DONATE_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+/* The only copy written on this page. Everything else comes from site.ts. */
+const HEADLINE = 'A free player for the music on your own server.';
+const BODY =
+  'Point Mozz at Plex, Jellyfin or Navidrome. Stream it at home, or download an album and play it with no signal at all.';
+const META =
+  'Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline.';
+
+const domain = SITE.replace(/^https?:\/\//, '');
+
+/* The bill of fare is the feature set itself, so it can never drift from it
+   and never needs a number written into the prose. */
+const BILL = FEATURES.map((f) => f.title);
+
+const PARITY = [FEATURES[0], FEATURES[1]];
+const WEEKLY = FEATURES[5];
+const ALOUD = FEATURES[7];
+const REST = [FEATURES[2], FEATURES[3], FEATURES[4], FEATURES[6]];
+
+/* ------------------------------------------------------------------ prints */
+
+const STOCK = '#f5efe2';
+const RED = '#e03e2d';
+const INK = '#141110';
+
+type Trio = [string, string, string];
+
+/** Two plates and the bare stock, in every arrangement a press could give. */
+const PLATES: Trio[] = [
+  [STOCK, RED, INK],
+  [RED, STOCK, INK],
+  [INK, STOCK, RED],
+  [STOCK, INK, RED],
+  [RED, INK, STOCK],
+  [INK, RED, STOCK],
+  [STOCK, RED, RED],
+];
+
+const CUTS = [
+  'cone',
+  'target',
+  'wedge',
+  'stack',
+  'burst',
+  'arch',
+  'ladder',
+  'moon',
+  'dot',
+  'column',
+  'cross',
+  'sweep',
+] as const;
+
+function cut(kind: string, g: string, a: string, b: string): string {
+  switch (kind) {
+    case 'cone':
+      return `<g fill="none" stroke="${a}" stroke-width="6"><circle cx="50" cy="50" r="42"/><circle cx="50" cy="50" r="30"/><circle cx="50" cy="50" r="18"/></g>
+        <circle cx="50" cy="50" r="8" fill="${b}"/>`;
+    case 'target':
+      return `<circle cx="50" cy="50" r="44" fill="${a}"/>
+        <circle cx="50" cy="50" r="30" fill="${g}"/>
+        <circle cx="50" cy="50" r="16" fill="${b}"/>`;
+    case 'wedge':
+      return `<path d="M0 0H100L0 100Z" fill="${a}"/>
+        <circle cx="70" cy="70" r="18" fill="${b}"/>`;
+    case 'stack': {
+      let out = '';
+      for (let i = 0; i < 5; i += 1)
+        out += `<rect x="8" y="${12 + i * 16}" width="${84 - i * 6}" height="9" fill="${
+          i === 2 ? b : a
+        }"/>`;
+      return out;
+    }
+    case 'burst': {
+      let out = '';
+      for (let i = 0; i < 12; i += 1)
+        out += `<rect x="48.6" y="2" width="2.8" height="46" fill="${a}" transform="rotate(${
+          (i * 360) / 12
+        } 50 50)"/>`;
+      return `${out}<circle cx="50" cy="50" r="11" fill="${b}"/>`;
+    }
+    case 'arch':
+      return `<path d="M22 96V52a28 28 0 0 1 56 0v44Z" fill="${a}"/>
+        <circle cx="50" cy="50" r="11" fill="${b}"/>
+        <rect y="90" width="100" height="10" fill="${b}"/>`;
+    case 'ladder': {
+      let out = '';
+      for (let i = 0; i < 7; i += 1)
+        out += `<rect x="10" y="${10 + i * 12}" width="80" height="6" fill="${
+          i === 3 ? b : a
+        }"/>`;
+      return out;
+    }
+    case 'moon':
+      return `<circle cx="44" cy="50" r="34" fill="${a}"/>
+        <circle cx="62" cy="44" r="32" fill="${g}"/>
+        <circle cx="20" cy="18" r="6" fill="${b}"/>`;
+    case 'dot': {
+      let out = '';
+      for (let r = 0; r < 5; r += 1)
+        for (let c = 0; c < 5; c += 1)
+          out += `<circle cx="${14 + c * 18}" cy="${14 + r * 18}" r="${
+            2.4 + ((r + c) % 3) * 2.2
+          }" fill="${r === 2 && c === 2 ? b : a}"/>`;
+      return out;
+    }
+    case 'column': {
+      let out = '';
+      for (let i = 0; i < 5; i += 1)
+        out += `<rect x="${10 + i * 17}" y="${14 + (i % 2) * 20}" width="11" height="${
+          72 - (i % 2) * 20
+        }" fill="${i === 2 ? b : a}"/>`;
+      return out;
+    }
+    case 'cross':
+      return `<rect x="42" y="6" width="16" height="88" fill="${a}"/>
+        <rect x="6" y="42" width="88" height="16" fill="${a}"/>
+        <circle cx="50" cy="50" r="10" fill="${b}"/>`;
+    case 'sweep':
+    default:
+      return `<path d="M0 100A100 100 0 0 1 100 0v100Z" fill="${a}"/>
+        <rect x="8" y="10" width="46" height="7" fill="${b}"/>
+        <rect x="8" y="24" width="30" height="7" fill="${b}"/>`;
+  }
+}
+
+function print(index: number): string {
+  const kind = CUTS[index % CUTS.length];
+  const [g, a, b] = PLATES[(index * 3 + 1) % PLATES.length];
+  return `<svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+    <rect width="100" height="100" fill="${g}"/>${cut(kind, g, a, b)}</svg>`;
+}
+
+const STRIP_A = Array.from({ length: 10 }, (_, i) => i);
+const STRIP_B = Array.from({ length: 12 }, (_, i) => i + 4);
+const PASTE = Array.from({ length: 60 }, (_, i) => i * 5 + 2);
+/* Hand-shuffled rather than a stride, so no two rows of the grid repeat. */
+const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 10, 3, 8, 1, 6];
+---
+
+<Layout title={`${NAME} — a free player for your self-hosted music`} description={META} themeColor="#f5efe2">
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </Fragment>
+
+  <VariantBar slug="poster-site" tone="cool" />
+
+  <main class="poster">
+    <!-- ============================================================== HERO
+         The study at /h/poster, preserved — with the blue plate swapped for
+         black so the sheet prints in red, white and black. -->
+    <section class="sheet" aria-labelledby="po-hero">
+      <div class="press" aria-hidden="true">
+        <svg class="cone" viewBox="0 0 400 400">
+          <defs>
+            <pattern id="pos-dots" width="9" height="9" patternUnits="userSpaceOnUse">
+              <circle cx="4.5" cy="4.5" r="2.6" fill="#e03e2d"></circle>
+            </pattern>
+          </defs>
+          <circle cx="188" cy="186" r="196" fill="url(#pos-dots)" opacity="0.85"></circle>
+          <g fill="none" stroke="#e03e2d">
+            <circle cx="200" cy="200" r="192" stroke-width="12"></circle>
+            <circle cx="200" cy="200" r="171" stroke-width="20"></circle>
+          </g>
+          <circle cx="200" cy="200" r="152" fill="#e03e2d"></circle>
+          <g fill="none" stroke="#f5efe2" stroke-width="5">
+            <circle cx="200" cy="200" r="136"></circle>
+            <circle cx="200" cy="200" r="118"></circle>
+            <circle cx="200" cy="200" r="99"></circle>
+            <circle cx="200" cy="200" r="79"></circle>
+          </g>
+          <circle cx="200" cy="200" r="58" fill="#f5efe2"></circle>
+          <circle cx="200" cy="200" r="48" fill="#e03e2d"></circle>
+          <g fill="#e03e2d">
+            <circle cx="200" cy="16" r="11"></circle>
+            <circle cx="200" cy="384" r="11"></circle>
+            <circle cx="16" cy="200" r="11"></circle>
+            <circle cx="384" cy="200" r="11"></circle>
+          </g>
+        </svg>
+
+        <svg class="bars" viewBox="0 0 120 20" preserveAspectRatio="none">
+          <g fill="#e03e2d">
+            <rect x="0" y="11" width="4" height="9"></rect>
+            <rect x="6" y="6" width="4" height="14"></rect>
+            <rect x="12" y="14" width="4" height="6"></rect>
+            <rect x="18" y="3" width="4" height="17"></rect>
+            <rect x="24" y="9" width="4" height="11"></rect>
+            <rect x="30" y="16" width="4" height="4"></rect>
+            <rect x="36" y="7" width="4" height="13"></rect>
+            <rect x="42" y="12" width="4" height="8"></rect>
+            <rect x="48" y="2" width="4" height="18"></rect>
+            <rect x="54" y="10" width="4" height="10"></rect>
+            <rect x="60" y="15" width="4" height="5"></rect>
+            <rect x="66" y="5" width="4" height="15"></rect>
+            <rect x="72" y="13" width="4" height="7"></rect>
+            <rect x="78" y="8" width="4" height="12"></rect>
+            <rect x="84" y="1" width="4" height="19"></rect>
+            <rect x="90" y="11" width="4" height="9"></rect>
+            <rect x="96" y="6" width="4" height="14"></rect>
+            <rect x="102" y="14" width="4" height="6"></rect>
+            <rect x="108" y="4" width="4" height="16"></rect>
+            <rect x="114" y="10" width="4" height="10"></rect>
+          </g>
+        </svg>
+
+        <span class="halftone"></span>
+        <span class="grain"></span>
+      </div>
+
+      <div class="ink">
+        <header class="billing">
+          <a class="bill-mark" href="#po-hero">
+            <Mark size={22} decorative /> Self-hosted music player
+          </a>
+          <span class="bill-fine">{SUBLINE}</span>
+        </header>
+
+        <div class="word">
+          <svg class="wordmark" viewBox="0 0 1000 214" role="img" aria-label={NAME}>
+            <text x="500" y="196" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs">
+              MOZZ
+            </text>
+          </svg>
+        </div>
+
+        <ul class="bill-list" role="list">
+          {BILL.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <div class="say">
+          <h1 id="po-hero">{HEADLINE}</h1>
+          <p>{BODY}</p>
+        </div>
+
+        <div class="foot">
+          <div class="actions">
+            <a class="source" href={GITHUB_URL}>Get the source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="store" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="store is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+
+          <div class="works">
+            <span class="works-label">Works with</span>
+            {
+              SERVERS.map((s) => (
+                <span class="server">
+                  <ServerLogo name={s.name} size={15} />
+                  {s.name}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+
+        <footer class="colophon">
+          <span>No account · no tracking · GPL-3.0</span>
+          <span>{domain}</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ========================================================== SERVERS -->
+    <section class="band servers" aria-labelledby="po-servers-t">
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>01</b>Where the music already is</p>
+        <h2 id="po-servers-t">Point it at the machine you already own.</h2>
+
+        <ul class="panels" role="list">
+          {
+            SERVERS.map((s, i) => (
+              <li class="panel reveal" style={`--i:${i}`}>
+                <span class="panel-mark">
+                  <ServerLogo name={s.name} size={28} />
+                </span>
+                <h3>{s.name}</h3>
+                <p>{s.note}</p>
+                <span class="panel-no">{String(i + 1).padStart(2, '0')}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="aside">{FAQS[0].a}</p>
+      </div>
+    </section>
+
+    <!-- ================================================= STREAMING / OFFLINE -->
+    <section class="band parity" aria-labelledby="po-parity-t">
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>02</b>Two plates, equal weight</p>
+        <h2 id="po-parity-t">At home, or nowhere near it.</h2>
+
+        <div class="halves">
+          {
+            PARITY.map((f, i) => (
+              <article class={`half ${i === 0 ? 'is-red' : 'is-ink'} reveal`} style={`--i:${i}`}>
+                <span class="half-tag">{i === 0 ? 'Streaming' : 'Offline'}</span>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+                <svg class="half-illo" viewBox="0 0 132 68" aria-hidden="true">
+                  {i === 0 ? (
+                    <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+                      <rect x="3" y="16" width="26" height="36" rx="3" />
+                      <path d="M10 45h5" />
+                      <path d="M41 25a16 16 0 0 1 0 18" />
+                      <path d="M52 17a28 28 0 0 1 0 34" opacity="0.6" />
+                      <path d="M63 9a40 40 0 0 1 0 50" opacity="0.34" />
+                      <rect x="99" y="11" width="28" height="46" rx="6" />
+                      <circle cx="113" cy="34" r="6" fill="currentColor" stroke="none" />
+                    </g>
+                  ) : (
+                    <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+                      <path d="M3 34h46" opacity="0.45" stroke-dasharray="4 7" />
+                      <path d="M59 23 77 45M77 23 59 45" />
+                      <rect x="99" y="11" width="28" height="46" rx="6" />
+                      <circle cx="113" cy="34" r="6" fill="currentColor" stroke="none" />
+                    </g>
+                  )}
+                </svg>
+              </article>
+            ))
+          }
+        </div>
+
+        <ul class="stats" role="list">
+          {
+            STATS.map((s, i) => (
+              <li class="reveal" style={`--i:${i}`}>
+                <b>{s.value}</b>
+                <span>{s.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================================================== MARQUEE
+         /h/marquee, printed rather than projected: a run of two-colour
+         miniatures drifting past on the press, with the halftone laid over
+         the top so it reads as one sheet coming off the roller. -->
+    <section class="band weekly" aria-labelledby="po-weekly-t">
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>03</b>Featured</p>
+        <h2 id="po-weekly-t">{WEEKLY.title}</h2>
+        <p class="lede">{WEEKLY.body}</p>
+      </div>
+
+      <div class="roller" aria-hidden="true">
+        <div class="roll-row">
+          <div class="roll-track">
+            {[0, 1].map(() => STRIP_A.map((n) => <span class="chip" set:html={print(n)} />))}
+          </div>
+        </div>
+        <div class="roll-row is-small">
+          <div class="roll-track is-rev">
+            {[0, 1].map(() => STRIP_B.map((n) => <span class="chip" set:html={print(n)} />))}
+          </div>
+        </div>
+        <span class="roll-screen"></span>
+        <span class="roll-fade roll-fade-l"></span>
+        <span class="roll-fade roll-fade-r"></span>
+      </div>
+    </section>
+
+    <!-- ========================================================= FEATURES -->
+    <section class="band does" aria-labelledby="po-does-t">
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>04</b>What it does with them</p>
+        <h2 id="po-does-t">Everything it does, in the free app.</h2>
+
+        <ul class="cards" role="list">
+          {
+            REST.map((f, i) => (
+              <li class="card reveal" style={`--i:${i}`}>
+                <span class="card-no">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ ALOUD -->
+    <section class="band aloud" aria-labelledby="po-aloud-t">
+      <div class="wrap aloud-grid">
+        <div>
+          <p class="chapter"><i aria-hidden="true"></i><b>05</b>Past the phone</p>
+          <h2 id="po-aloud-t">{ALOUD.title}</h2>
+          <p class="lede">{ALOUD.body}</p>
+        </div>
+
+        <svg
+          class="aloud-illo"
+          viewBox="0 0 440 210"
+          role="img"
+          aria-label="A HomePod handing a request to an iPhone, which plays it and AirPlays the sound back."
+        >
+          <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <rect x="34" y="52" width="86" height="122" rx="42"></rect>
+            <ellipse cx="77" cy="66" rx="30" ry="10" opacity="0.5"></ellipse>
+            <path d="M52 96h50M52 110h50M52 124h50M58 138h38" opacity="0.4"></path>
+            <rect x="330" y="38" width="74" height="140" rx="16"></rect>
+            <rect x="342" y="56" width="50" height="104" rx="6" opacity="0.45"></rect>
+            <circle cx="367" cy="108" r="13" fill="currentColor" stroke="none"></circle>
+            <path d="M136 78C196 52 268 50 316 62"></path>
+            <path d="M304 52l14 10-13 11"></path>
+            <path d="M316 158C258 180 190 178 138 160" opacity="0.75"></path>
+            <path d="M150 150l-14 10 13 11" opacity="0.75"></path>
+          </g>
+          <g class="aloud-label" font-size="12" letter-spacing="1.8">
+            <text x="77" y="197" text-anchor="middle">HOMEPOD</text>
+            <text x="367" y="197" text-anchor="middle">IPHONE</text>
+            <text x="226" y="44" text-anchor="middle">REQUEST</text>
+            <text x="226" y="188" text-anchor="middle">AIRPLAY BACK</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============================================================ SPLIT
+         /h/split, off the hero and set against the press rather than a
+         device: the cone reversed out of the black plate on one side, the
+         ownership argument on the other. -->
+    <section class="split" aria-labelledby="po-own-t">
+      <div class="field field-press">
+        <svg class="reverse-cone" viewBox="0 0 400 400" role="img" aria-label="The Mozz cone, reversed out of the black plate.">
+          <g fill="none" stroke="#e03e2d">
+            <circle cx="200" cy="200" r="192" stroke-width="10"></circle>
+            <circle cx="200" cy="200" r="173" stroke-width="18"></circle>
+          </g>
+          <circle cx="200" cy="200" r="152" fill="#e03e2d"></circle>
+          <g fill="none" stroke="#141110" stroke-width="6">
+            <circle cx="200" cy="200" r="136"></circle>
+            <circle cx="200" cy="200" r="118"></circle>
+            <circle cx="200" cy="200" r="99"></circle>
+            <circle cx="200" cy="200" r="79"></circle>
+          </g>
+          <circle cx="200" cy="200" r="58" fill="#f5efe2"></circle>
+          <g transform="translate(174 174) scale(1.62)">
+            <path
+              d="M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z"
+              fill="#e03e2d"
+              shape-rendering="crispEdges"></path>
+            <path
+              d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19ZM15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z"
+              fill="#f5efe2"
+              shape-rendering="crispEdges"></path>
+          </g>
+        </svg>
+        <p class="field-note"><span class="dot" aria-hidden="true"></span>{TAGLINE}</p>
+      </div>
+
+      <div class="field field-own">
+        <span class="seam-mark" aria-hidden="true">
+          <i></i>
+          <span>06 &middot; nobody in between</span>
+        </span>
+        <div class="own">
+          <p class="chapter"><i aria-hidden="true"></i><b>06</b>Why it is built this way</p>
+          <h2 id="po-own-t">Nothing in the middle.</h2>
+          <ul role="list">
+            {
+              OWNERSHIP.map((o, i) => (
+                <li class="reveal" style={`--i:${i}`}>
+                  <h3>{o.title}</h3>
+                  <p>{o.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= PAIR -->
+    <section class="band pair" aria-labelledby="po-pair-t">
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>07</b>Both screens</p>
+        <h2 id="po-pair-t">iPhone and iPad, one app.</h2>
+        <p class="lede">{FAQS[4].a}</p>
+      </div>
+
+      <div class="rig" role="img" aria-label="An iPad showing the Mozz library beside an iPhone playing a downloaded album.">
+        <div class="pad">
+          <div class="pad-screen">
+            <aside class="pad-side">
+              <span class="pad-brand"><Mark size={16} decorative /><b>{NAME}</b></span>
+              <span class="pad-nav is-on">Library</span>
+              <span class="pad-nav">Radio</span>
+              <span class="pad-nav">Downloads</span>
+              <span class="pad-nav">Playlists</span>
+              <span class="pad-weekly"><i aria-hidden="true"></i>Mozz Weekly</span>
+            </aside>
+            <div class="pad-main">
+              <div class="pad-top">
+                <span class="pad-h">Albums</span>
+                <span class="pad-search"></span>
+              </div>
+              <div class="pad-grid">
+                {PAD_TILES.map((n) => <span class="pad-tile" set:html={print(n)} />)}
+              </div>
+              <div class="pad-now">
+                <span class="pad-now-art" set:html={print(1)} />
+                <span class="pad-now-meta"><b>Second Press</b><i>Register Mark</i></span>
+                <span class="pad-now-bar"><i></i></span>
+                <span class="pad-now-play"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini">
+          <div class="mini-screen">
+            <span class="mini-island" aria-hidden="true"></span>
+            <span class="mini-art" set:html={print(1)} />
+            <span class="mini-title">Second Press</span>
+            <span class="mini-sub">Register Mark</span>
+            <span class="mini-bar"><i></i></span>
+            <span class="mini-ctrl"><i></i><b></b><i></i></span>
+            <span class="mini-chip">downloaded</span>
+            <span class="mini-home" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== FAQ
+         /h/wall, demoted to a paste-up behind the questions. -->
+    <section class="band faq" aria-labelledby="po-faq-t">
+      <div class="paste" aria-hidden="true">
+        {PASTE.map((n) => <span class="paste-tile" set:html={print(n)} />)}
+      </div>
+
+      <div class="wrap">
+        <p class="chapter"><i aria-hidden="true"></i><b>08</b>Before you ask</p>
+        <h2 id="po-faq-t">Questions, answered plainly.</h2>
+
+        <dl class="qa">
+          {
+            FAQS.map((f, i) => (
+              <div class="qa-row reveal" style={`--i:${i}`}>
+                <dt>{f.q}</dt>
+                <dd>{f.a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============================================================ CLOSE
+         The bottom of the sheet: the wordmark once more, ruled off, with the
+         equaliser bars printing along the very edge exactly as they do in
+         the hero. -->
+    <footer class="close" aria-labelledby="po-close-t">
+      <div class="wrap close-inner">
+        <div class="close-rule" aria-hidden="true"></div>
+        <h2 id="po-close-t">{TAGLINE}</h2>
+        <p class="close-sub">{SUBLINE}</p>
+
+        <div class="actions">
+          <a class="source" href={GITHUB_URL}>Get the source on GitHub</a>
+          {
+            APP_STORE_URL ? (
+              <a class="store" href={APP_STORE_URL}>
+                Download on the App Store
+              </a>
+            ) : (
+              <span class="store is-pending" aria-disabled="true">
+                Coming to the App Store
+              </span>
+            )
+          }
+          <a class="plain" href={DONATE_URL}>Sponsor the work</a>
+        </div>
+
+        <div class="word close-word">
+          <svg class="wordmark" viewBox="0 0 1000 214" aria-hidden="true">
+            <text x="500" y="196" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs">
+              MOZZ
+            </text>
+          </svg>
+        </div>
+
+        <div class="colophon">
+          <span>No account · no tracking · GPL-3.0</span>
+          <span>MZ–11 · Poster</span>
+          <span>{domain}</span>
+        </div>
+      </div>
+
+      <svg class="close-bars" viewBox="0 0 120 20" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="#e03e2d">
+          <rect x="0" y="11" width="4" height="9"></rect>
+          <rect x="6" y="6" width="4" height="14"></rect>
+          <rect x="12" y="14" width="4" height="6"></rect>
+          <rect x="18" y="3" width="4" height="17"></rect>
+          <rect x="24" y="9" width="4" height="11"></rect>
+          <rect x="30" y="16" width="4" height="4"></rect>
+          <rect x="36" y="7" width="4" height="13"></rect>
+          <rect x="42" y="12" width="4" height="8"></rect>
+          <rect x="48" y="2" width="4" height="18"></rect>
+          <rect x="54" y="10" width="4" height="10"></rect>
+          <rect x="60" y="15" width="4" height="5"></rect>
+          <rect x="66" y="5" width="4" height="15"></rect>
+          <rect x="72" y="13" width="4" height="7"></rect>
+          <rect x="78" y="8" width="4" height="12"></rect>
+          <rect x="84" y="1" width="4" height="19"></rect>
+          <rect x="90" y="11" width="4" height="9"></rect>
+          <rect x="96" y="6" width="4" height="14"></rect>
+          <rect x="102" y="14" width="4" height="6"></rect>
+          <rect x="108" y="4" width="4" height="16"></rect>
+          <rect x="114" y="10" width="4" height="10"></rect>
+        </g>
+      </svg>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const items = document.querySelectorAll<HTMLElement>('.reveal, .rig');
+  if (items.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.15 },
+    );
+    for (const item of items) io.observe(item);
+  }
+</script>
+
+<style is:global>
+  body {
+    background: #f5efe2;
+  }
+</style>
+
+<style>
+  .poster {
+    --paper: #f5efe2;
+    --red: #e03e2d;
+    /* The study printed its second plate in blue. Here it is black, so the
+       whole sheet is red, white and black — the overprint behaves the same. */
+    --ink: #141110;
+    --pad: clamp(18px, 3.4vw, 46px);
+    --measure: 1320px;
+
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  }
+
+  .wrap {
+    width: min(100%, var(--measure));
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  /* --------------------------------------------------------------- hero */
+
+  .sheet {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-height: calc(100svh - 42px);
+    padding: clamp(20px, 3vh, 34px) var(--pad) clamp(16px, 2.6vh, 30px);
+    overflow: hidden;
+  }
+
+  .press {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .cone {
+    position: absolute;
+    top: 50%;
+    right: -13%;
+    width: min(92vh, 66%);
+    aspect-ratio: 1;
+    transform: translateY(-54%);
+  }
+
+  .bars {
+    position: absolute;
+    inset: auto 0 0;
+    width: 100%;
+    height: clamp(38px, 8vh, 74px);
+    opacity: 0.9;
+  }
+
+  .halftone {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, rgba(224, 62, 45, 0.62) 1.7px, transparent 1.9px);
+    background-size: 8px 8px;
+    -webkit-mask-image: linear-gradient(152deg, rgba(0, 0, 0, 0.72) 3%, rgba(0, 0, 0, 0.34) 26%, transparent 48%);
+    mask-image: linear-gradient(152deg, rgba(0, 0, 0, 0.72) 3%, rgba(0, 0, 0, 0.34) 26%, transparent 48%);
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(40, 30, 20, 0.4) 0.5px, transparent 0.6px);
+    background-size: 3px 3px;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+  }
+
+  /* Every mark of black is one plate, printed on top — so where it crosses
+     the red it overprints instead of hiding it. */
+  .ink {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    mix-blend-mode: multiply;
+  }
+
+  .billing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--ink);
+    font-size: clamp(10px, 1vw, 12.5px);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .bill-mark {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .bill-fine {
+    opacity: 0.78;
+  }
+
+  .word {
+    margin-top: clamp(10px, 2.4vh, 26px);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .wordmark {
+    width: 100%;
+    height: auto;
+  }
+
+  .wordmark text {
+    font-family: 'Big Shoulders Display', 'Haettenschweiler', 'Arial Narrow', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: 268px;
+    fill: var(--ink);
+  }
+
+  .bill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1.1rem;
+    margin-top: 0.5rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(14px, 1.55vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.15;
+  }
+
+  .bill-list li:not(:last-child)::after {
+    content: '✳';
+    margin-left: 1.1rem;
+    font-size: 0.7em;
+    vertical-align: 0.12em;
+    color: var(--red);
+  }
+
+  .say {
+    margin-top: auto;
+    padding-top: clamp(14px, 3.4vh, 40px);
+  }
+
+  .sheet h1 {
+    max-width: 17em;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(29px, 5.6vw, 80px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+  }
+
+  .say p {
+    max-width: 44ch;
+    margin-top: clamp(0.7rem, 1.8vh, 1.3rem);
+    font-size: clamp(13px, 1.15vw, 16.5px);
+    line-height: 1.42;
+    font-weight: 500;
+  }
+
+  /* Kept to the left half of the sheet: pushed to the right edge it lands on
+     the cone, and black ink multiplied over red is not a legible line. */
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 2.2rem;
+    align-items: center;
+    margin-top: clamp(16px, 3vh, 34px);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .source,
+  .store {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.62rem 1.05rem;
+    font-size: clamp(11.5px, 1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .source {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 5px 5px 0 var(--red);
+    transition:
+      transform 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  .source:hover {
+    box-shadow: 2px 2px 0 var(--red);
+    transform: translate(3px, 3px);
+  }
+
+  .store.is-pending {
+    border: 2px dashed var(--ink);
+    opacity: 0.82;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.85rem;
+    align-items: center;
+    font-size: clamp(10.5px, 0.85vw, 12.5px);
+    font-weight: 500;
+  }
+
+  .works-label {
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .server {
+    display: inline-flex;
+    gap: 0.32rem;
+    align-items: center;
+  }
+
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    justify-content: space-between;
+    margin-top: clamp(12px, 2.4vh, 26px);
+    padding-top: 0.5rem;
+    border-top: 3px solid var(--ink);
+    font-size: clamp(9.5px, 0.8vw, 11.5px);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  a:focus-visible,
+  .store:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* --------------------------------------------------- shared band type */
+
+  .band {
+    position: relative;
+    padding-block: clamp(58px, 8.5vh, 118px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .chapter {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: clamp(10px, 0.9vw, 12px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .chapter i {
+    width: 30px;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .chapter b {
+    color: var(--red);
+  }
+
+  .band h2 {
+    max-width: 17ch;
+    margin-top: 0.8rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(34px, 5.4vw, 84px);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 52ch;
+    margin-top: 1.1rem;
+    font-size: clamp(13.5px, 1.06vw, 16.5px);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .reveal {
+    opacity: 1;
+  }
+
+  :global(html.js) .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 0.7, 0.2, 1),
+      transform 0.6s cubic-bezier(0.22, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  :global(html.js) .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ------------------------------------------------------------ servers */
+
+  /* The rules between cells are gaps in an ink field, the way a ruled block
+     is actually printed — not a border hung off each cell. */
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
+    margin-top: clamp(28px, 4.6vh, 54px);
+    background: var(--ink);
+    border: 3px solid var(--ink);
+  }
+
+  .panel {
+    position: relative;
+    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px) clamp(28px, 2.8vw, 40px);
+    background: var(--paper);
+  }
+
+  .panel-mark {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .panel h3 {
+    margin-top: 1rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(24px, 2.2vw, 36px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.92;
+  }
+
+  .panel p {
+    margin-top: 0.5rem;
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.5;
+    font-weight: 500;
+    opacity: 0.82;
+  }
+
+  .panel-no {
+    position: absolute;
+    right: clamp(14px, 1.6vw, 22px);
+    bottom: clamp(9px, 1.1vw, 15px);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(20px, 2vw, 32px);
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  .aside {
+    max-width: 62ch;
+    margin-top: clamp(20px, 2.8vh, 32px);
+    padding-top: 0.7rem;
+    border-top: 3px solid var(--red);
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.55;
+    font-weight: 500;
+  }
+
+  /* ------------------------------------------------- streaming / offline */
+
+  .halves {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(12px, 1.6vw, 22px);
+    margin-top: clamp(28px, 4.6vh, 54px);
+  }
+
+  .half {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(22px, 2.6vw, 40px);
+    min-height: clamp(280px, 34vh, 380px);
+  }
+
+  .half.is-red {
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .half.is-ink {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .half-tag {
+    font-size: clamp(10px, 0.9vw, 12px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .half h3 {
+    margin-top: 0.7rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(26px, 2.7vw, 44px);
+    font-weight: 800;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  .half p {
+    margin-top: 0.8rem;
+    max-width: 42ch;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.5;
+    font-weight: 500;
+    opacity: 0.88;
+  }
+
+  .half-illo {
+    width: min(220px, 62%);
+    height: auto;
+    margin-top: auto;
+    padding-top: 1.6rem;
+    opacity: 0.9;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.6vw, 24px);
+    margin-top: clamp(24px, 3.4vh, 40px);
+  }
+
+  .stats li {
+    padding-top: clamp(8px, 1.2vh, 14px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .stats li:first-child {
+    border-top-color: var(--red);
+  }
+
+  .stats b {
+    display: block;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(38px, 4.6vw, 76px);
+    font-weight: 900;
+    line-height: 0.9;
+  }
+
+  .stats li:first-child b {
+    color: var(--red);
+  }
+
+  .stats span {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: clamp(11.5px, 0.9vw, 13.5px);
+    line-height: 1.35;
+    font-weight: 500;
+    opacity: 0.78;
+  }
+
+  /* ------------------------------------------------------------ marquee */
+
+  .roller {
+    position: relative;
+    margin-top: clamp(30px, 4.6vh, 60px);
+    padding-block: clamp(14px, 2vw, 26px);
+    border-block: 3px solid var(--ink);
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .roll-row {
+    overflow: hidden;
+  }
+
+  .roll-row.is-small {
+    margin-top: clamp(8px, 1vw, 14px);
+  }
+
+  .roll-track {
+    display: flex;
+    width: max-content;
+    gap: clamp(8px, 1vw, 14px);
+    will-change: transform;
+    animation: roll 66s linear infinite;
+  }
+
+  .roll-row.is-small .roll-track {
+    animation-duration: 98s;
+  }
+
+  .roll-track.is-rev {
+    animation-direction: reverse;
+  }
+
+  @keyframes roll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(calc(-50% - clamp(4px, 0.5vw, 7px)), 0, 0);
+    }
+  }
+
+  .chip {
+    display: block;
+    flex: none;
+    width: clamp(112px, 14vw, 200px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    outline: 3px solid var(--ink);
+    outline-offset: -3px;
+  }
+
+  .roll-row.is-small .chip {
+    width: clamp(62px, 7.6vw, 112px);
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+
+  .chip :global(svg),
+  .pad-tile :global(svg),
+  .pad-now-art :global(svg),
+  .mini-art :global(svg),
+  .paste-tile :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* The screen laid over the run, so the strip reads as printed rather than
+     as a row of pictures. */
+  .roll-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 50% 50%, rgba(20, 17, 16, 0.4) 1.1px, transparent 1.3px);
+    background-size: 5px 5px;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+  }
+
+  .roll-fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    width: clamp(30px, 7vw, 120px);
+    pointer-events: none;
+  }
+
+  .roll-fade-l {
+    left: 0;
+    background: linear-gradient(to right, var(--paper), rgba(245, 239, 226, 0));
+  }
+
+  .roll-fade-r {
+    right: 0;
+    background: linear-gradient(to left, var(--paper), rgba(245, 239, 226, 0));
+  }
+
+  /* ----------------------------------------------------------- features */
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+    margin-top: clamp(28px, 4.6vh, 54px);
+    background: var(--ink);
+    border: 3px solid var(--ink);
+  }
+
+  .card {
+    position: relative;
+    padding: clamp(22px, 2.6vw, 40px);
+    background: var(--paper);
+  }
+
+  .card-no {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(20px, 1.9vw, 30px);
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  .card h3 {
+    margin-top: 0.4rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(24px, 2.3vw, 38px);
+    font-weight: 800;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .card p {
+    margin-top: 0.7rem;
+    max-width: 44ch;
+    font-size: clamp(13px, 1vw, 15px);
+    line-height: 1.5;
+    font-weight: 500;
+    opacity: 0.84;
+  }
+
+  /* -------------------------------------------------------------- aloud */
+
+  .aloud-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+  }
+
+  .aloud-illo {
+    width: 100%;
+    height: auto;
+    padding: clamp(18px, 2.4vw, 38px);
+    border: 3px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .aloud-label {
+    fill: var(--red);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-weight: 800;
+  }
+
+  /* -------------------------------------------------------------- split */
+
+  .split {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48% 1fr;
+    min-height: clamp(560px, 92svh, 900px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: clamp(40px, 6vh, 90px) clamp(22px, 4vw, 70px);
+  }
+
+  .field-press {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .reverse-cone {
+    width: min(100%, 440px);
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .field-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: clamp(22px, 3vh, 38px);
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(15px, 1.5vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .field-note .dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .field-own {
+    background: var(--paper);
+  }
+
+  .seam-mark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-block: clamp(22px, 4vh, 48px);
+    pointer-events: none;
+  }
+
+  .seam-mark i {
+    flex: 1;
+    width: 3px;
+    background: var(--red);
+  }
+
+  .seam-mark span {
+    flex: none;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    writing-mode: vertical-rl;
+  }
+
+  .own {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 640px);
+  }
+
+  .own h2 {
+    max-width: 12ch;
+    margin-top: 0.8rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(40px, 5.4vw, 88px);
+    font-weight: 900;
+    line-height: 0.84;
+    text-transform: uppercase;
+  }
+
+  .own ul {
+    margin-top: clamp(20px, 2.8vh, 34px);
+  }
+
+  .own li {
+    padding-block: clamp(13px, 1.7vh, 20px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .own li:last-child {
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .own h3 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(20px, 1.9vw, 30px);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+
+  .own p {
+    margin-top: 0.3rem;
+    max-width: 48ch;
+    font-size: clamp(12.5px, 0.98vw, 14.5px);
+    line-height: 1.5;
+    font-weight: 500;
+    opacity: 0.84;
+  }
+
+  /* --------------------------------------------------------------- pair */
+
+  .pair {
+    overflow: hidden;
+  }
+
+  .rig {
+    position: relative;
+    width: min(100% - var(--pad) * 2, 1000px);
+    margin: clamp(32px, 5vh, 70px) auto 0;
+    padding-bottom: 7%;
+  }
+
+  .pad {
+    width: 100%;
+    aspect-ratio: 1.43;
+    padding: clamp(8px, 0.9vw, 14px);
+    border: 3px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 10px 10px 0 var(--red);
+  }
+
+  .pad-screen {
+    display: grid;
+    grid-template-columns: clamp(120px, 19%, 190px) 1fr;
+    height: 100%;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .pad-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: clamp(12px, 1.5vw, 22px);
+    border-right: 2px solid rgba(245, 239, 226, 0.2);
+    font-size: clamp(9.5px, 0.86vw, 12.5px);
+    font-weight: 600;
+  }
+
+  .pad-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .pad-brand b {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: 1.5em;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .pad-nav {
+    padding: 0.3rem 0.45rem;
+    color: rgba(245, 239, 226, 0.62);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .pad-nav.is-on {
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .pad-weekly {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 2px solid rgba(245, 239, 226, 0.2);
+    color: rgba(245, 239, 226, 0.72);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .pad-weekly i {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    background: var(--red);
+  }
+
+  .pad-main {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(12px, 1.5vw, 22px);
+    min-width: 0;
+  }
+
+  .pad-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(10px, 1.2vw, 16px);
+  }
+
+  .pad-h {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(16px, 1.8vw, 28px);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .pad-search {
+    width: clamp(70px, 22%, 190px);
+    height: clamp(14px, 1.5vw, 22px);
+    background: rgba(245, 239, 226, 0.16);
+  }
+
+  .pad-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(5px, 0.7vw, 10px);
+    align-content: start;
+    min-height: 0;
+  }
+
+  .pad-tile {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .pad-now {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1.6fr) auto;
+    align-items: center;
+    gap: clamp(8px, 1vw, 16px);
+    margin-top: auto;
+    padding-top: clamp(10px, 1.2vw, 18px);
+    border-top: 2px solid rgba(245, 239, 226, 0.2);
+  }
+
+  .pad-now-art {
+    display: block;
+    width: clamp(26px, 3.4vw, 46px);
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .pad-now-meta {
+    display: grid;
+    min-width: 0;
+    font-size: clamp(9px, 0.82vw, 12px);
+  }
+
+  .pad-now-meta b {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pad-now-meta i {
+    font-style: normal;
+    opacity: 0.6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pad-now-bar {
+    display: block;
+    height: 4px;
+    background: rgba(245, 239, 226, 0.24);
+  }
+
+  .pad-now-bar i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .pad-now-play {
+    width: clamp(18px, 2.2vw, 30px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .mini {
+    position: absolute;
+    right: 1.5%;
+    bottom: 0;
+    width: 18.5%;
+    min-width: 84px;
+    aspect-ratio: 71.6 / 147.6;
+    padding: clamp(4px, 0.5vw, 8px);
+    border: 3px solid var(--ink);
+    border-radius: clamp(14px, 1.7vw, 26px);
+    background: var(--paper);
+    box-shadow: 8px 8px 0 var(--red);
+    transform: rotate(3deg);
+    transform-origin: 50% 100%;
+  }
+
+  .mini-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: clamp(6px, 0.7vw, 11px);
+    border-radius: clamp(10px, 1.3vw, 20px);
+    background: var(--ink);
+    color: var(--paper);
+    overflow: hidden;
+    font-size: clamp(6px, 0.62vw, 9px);
+  }
+
+  .mini-island {
+    width: 34%;
+    height: 0.9em;
+    margin: 0.2em auto 0.7em;
+    border-radius: 999px;
+    background: rgba(245, 239, 226, 0.2);
+  }
+
+  .mini-art {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .mini-title {
+    margin-top: 0.8em;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: 1.6em;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+
+  .mini-sub {
+    opacity: 0.6;
+  }
+
+  .mini-bar {
+    display: block;
+    height: 0.3em;
+    margin-top: 0.7em;
+    background: rgba(245, 239, 226, 0.24);
+  }
+
+  .mini-bar i {
+    display: block;
+    width: 46%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .mini-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9em;
+    margin-top: auto;
+  }
+
+  .mini-ctrl i {
+    width: 0.7em;
+    height: 0.7em;
+    background: rgba(245, 239, 226, 0.8);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .mini-ctrl i:first-child {
+    transform: scaleX(-1);
+  }
+
+  .mini-ctrl b {
+    width: 1.9em;
+    height: 1.9em;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .mini-chip {
+    margin-top: 0.7em;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.68;
+  }
+
+  .mini-home {
+    width: 32%;
+    height: 0.25em;
+    margin: 0.6em auto 0;
+    border-radius: 999px;
+    background: rgba(245, 239, 226, 0.5);
+  }
+
+  :global(html.js) .rig .pad,
+  :global(html.js) .rig .mini {
+    opacity: 0;
+    transition:
+      opacity 0.75s cubic-bezier(0.2, 0.75, 0.2, 1),
+      transform 0.75s cubic-bezier(0.2, 0.75, 0.2, 1);
+  }
+
+  :global(html.js) .rig .pad {
+    transform: translateY(58px);
+  }
+
+  :global(html.js) .rig .mini {
+    transform: translateY(78px) rotate(9deg);
+    transition-delay: 160ms;
+  }
+
+  :global(html.js) .rig.is-in .pad {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html.js) .rig.is-in .mini {
+    opacity: 1;
+    transform: rotate(3deg);
+  }
+
+  /* ---------------------------------------------------------------- faq */
+
+  .faq {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .paste {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 3px;
+    opacity: 0.13;
+    pointer-events: none;
+    -webkit-mask-image:
+      radial-gradient(110% 70% at 84% 30%, #000 0%, rgba(0, 0, 0, 0.28) 44%, transparent 74%),
+      linear-gradient(to bottom, transparent 0%, #000 22%, #000 74%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(110% 70% at 84% 30%, #000 0%, rgba(0, 0, 0, 0.28) 44%, transparent 74%),
+      linear-gradient(to bottom, transparent 0%, #000 22%, #000 74%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  .paste-tile {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .faq .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  .qa {
+    margin-top: clamp(26px, 4.2vh, 50px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .qa-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+    gap: clamp(12px, 3vw, 46px);
+    padding-block: clamp(16px, 2.2vh, 26px);
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .qa dt {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(20px, 1.9vw, 30px);
+    font-weight: 800;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .qa dd {
+    margin: 0;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.52;
+    font-weight: 500;
+    opacity: 0.86;
+  }
+
+  /* -------------------------------------------------------------- close */
+
+  .close {
+    position: relative;
+    padding-top: clamp(56px, 8vh, 108px);
+    padding-bottom: clamp(46px, 8vh, 82px);
+    border-top: 3px solid var(--ink);
+    overflow: hidden;
+  }
+
+  .close-rule {
+    height: 8px;
+    margin-bottom: clamp(18px, 2.6vh, 30px);
+    background: var(--red);
+  }
+
+  .close h2 {
+    max-width: 14ch;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(40px, 6.4vw, 104px);
+    font-weight: 900;
+    line-height: 0.84;
+    text-transform: uppercase;
+  }
+
+  .close-sub {
+    margin-top: 0.7rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(20px, 2.2vw, 36px);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .close .actions {
+    margin-top: clamp(20px, 2.8vh, 32px);
+  }
+
+  .plain {
+    font-size: clamp(11.5px, 1vw, 14px);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--red);
+  }
+
+  /* The one reprise the enormous type gets. */
+  .close-word {
+    margin-top: clamp(26px, 4vh, 52px);
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .close-word .wordmark text {
+    fill: var(--ink);
+  }
+
+  .close .colophon {
+    border-top: 0;
+    margin-top: 0.6rem;
+  }
+
+  .close-bars {
+    position: absolute;
+    inset: auto 0 0;
+    width: 100%;
+    height: clamp(30px, 5vh, 54px);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* ----------------------------------------------------------- narrower */
+
+  @media (max-width: 1080px) {
+    .split {
+      grid-template-columns: 46% 1fr;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .panels,
+    .halves,
+    .cards,
+    .aloud-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    .field {
+      min-height: clamp(380px, 62svh, 560px);
+    }
+
+    .seam-mark {
+      display: none;
+    }
+
+    .qa-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+
+    .pad-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .cone {
+      top: 40%;
+      right: -24%;
+      width: 96%;
+    }
+
+    .sheet h1 {
+      max-width: none;
+      font-size: clamp(30px, 8.7vw, 48px);
+    }
+
+    .say p {
+      font-size: 14.5px;
+    }
+
+    .bill-list {
+      font-size: 15px;
+      gap: 0.1rem 0.75rem;
+    }
+
+    .foot {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .stats {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    .mini {
+      right: 0;
+      width: 26%;
+    }
+
+    .paste {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .pad {
+      box-shadow: 6px 6px 0 var(--red);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .source,
+    .source:hover {
+      transform: none;
+      transition: none;
+    }
+
+    .roll-track {
+      animation: none;
+    }
+
+    :global(html.js) .reveal,
+    :global(html.js) .rig .pad,
+    :global(html.js) .rig .mini {
+      opacity: 1;
+      transform: none;
+    }
+
+    :global(html.js) .rig .mini {
+      transform: rotate(3deg);
+    }
+  }
+</style>

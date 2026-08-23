@@ -605,4 +605,56 @@ export const VARIANTS: Variant[] = [
     swatch: ['#0a070d', '#d8002d', '#fdf6ec'],
     mood: 'dark',
   },
+
+  /* ------------------------------------------------------------------ *
+   * Round nine — four complete sites, each one a direct extension of a
+   * hero study under /h rather than a new idea. The hero composition is
+   * preserved at the top of the page and the rest of the document is
+   * built in that same hero's visual language, red / white / black.
+   *
+   * Every one of them pays off four other studies further down: a
+   * drifting marquee recoloured into its own palette, a full-height
+   * split against something that is not a phone, iPhone and iPad
+   * arriving together on scroll, and a wall of sleeves demoted to
+   * decoration.
+   *
+   * Appended as a block, at the very end, on purpose.
+   * ------------------------------------------------------------------ */
+  {
+    slug: 'umbra-site',
+    name: 'Umbra Site',
+    vibe: 'the whole site stands in the shadow the app casts',
+    blurb:
+      'Extends the Umbra hero. One colossal MOZZ falls from cream to red to nothing as the app crosses it, and every section below is another reading of the same light: lit, penumbra, umbra.',
+    swatch: ['#0a070d', '#d8002d', '#eeeae2'],
+    mood: 'dark',
+  },
+  {
+    slug: 'eclipse-site',
+    name: 'Eclipse Site',
+    vibe: 'a transit that turns everything it crosses red',
+    blurb:
+      'Extends the Eclipse hero. Ink on paper, the wordmark cropped by the page, and a red band that follows the app down the document — every section is lit differently because of what is passing in front of it.',
+    swatch: ['#eeeae2', '#d8002d', '#14101a'],
+    mood: 'light',
+  },
+  {
+    slug: 'cover-site',
+    name: 'Cover Site',
+    vibe: 'a record sleeve the size of the window',
+    blurb:
+      'Extends the Cover hero. The tilted phone stays in front of a wordmark printed at 37vw, and the page keeps going as sleeves, catalogue numbers, halo rings and hard red on black.',
+    swatch: ['#0a070d', '#d8002d', '#fdf6ec'],
+    mood: 'dark',
+  },
+  {
+    slug: 'poster-site',
+    name: 'Poster Site',
+    vibe: 'a two-colour screenprint that keeps unrolling',
+    blurb:
+      'Extends the Poster hero. Two plates, red and black, overprinting on cream stock — the bill of fare, the halftone cone and the grain carry all the way down to the colophon.',
+    swatch: ['#f5efe2', '#e03e2d', '#141110'],
+    mood: 'light',
+  },
+
 ];
