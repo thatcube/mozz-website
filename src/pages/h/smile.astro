@@ -1,0 +1,433 @@
+---
+/**
+ * Smile — the mark, at the size it deserves.
+ *
+ * The Mozz logo is a red disc wearing a dozing face, and it has only ever been
+ * seen at 32px in the corner of a page. Here it is drawn once at display size
+ * and set into the wordmark where the O belongs, so the two `z` eyes and the
+ * two Z's of MOZZ are the same joke told once. The disc is deliberately larger
+ * than the cap height: the face is too big for the word it lives in.
+ *
+ * The geometry is not eyeballed. Every coordinate below is measured off the
+ * shipped 32x32 artwork and kept: disc r=14 on centre (16,16); each `z` four
+ * units wide and five tall, the pair spanning x 11-21; the smile spanning the
+ * same x 11-21 and y 18-22. Only the rasterisation is gone — the stair-stepped
+ * diagonals become one stroke weight, because a sprite's stair-steps are an
+ * artefact of 32 pixels, not a feature of the drawing.
+ *
+ * The page is two flat fields — warm paper above, near-black below — and the
+ * mark straddles the join like a record coming up over a horizon. Everything
+ * in the lockup flips value on that line: the letters go ink to paper, and the
+ * disc goes deep red to bright. The mark's own geometry does the rest — the
+ * eyes land above the horizon and the smile below it.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at your own Plex, Jellyfin or Navidrome server, stream at home, or download an album and play it with no signal at all."
+  themeColor="#fdf6ec"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="smile" />
+
+  <main class="sheet">
+    <section class="sky">
+      <header class="brow">
+        <span>Self-hosted music player</span>
+        <span class="brow-b">Free forever · open source</span>
+      </header>
+
+      <h1>Mozz is a <em>free</em> player for the music on your own server.</h1>
+
+      <!-- The wordmark, set once, with the mark standing in for the O. -->
+      <p class="lockup" role="img" aria-label="Mozz">
+        <span class="ltr" aria-hidden="true">M</span>
+        <span class="orb" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation" focusable="false">
+            <defs>
+              <!-- 50% of the disc's own box is the horizon, because the lockup
+                   centres the disc on it. Same line as the letters' split. -->
+              <linearGradient id="smileHorizon" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="50%" stop-color="#7d0019" />
+                <stop offset="50%" stop-color="#d8002d" />
+              </linearGradient>
+            </defs>
+            <circle cx="16" cy="16" r="14" fill="url(#smileHorizon)" />
+            <g class="eyes">
+              <path d="M11.5 11.75H14.6L11.5 15.25H14.6" />
+              <path d="M17.5 11.75H20.6L17.5 15.25H20.6" />
+            </g>
+            <path class="mouth" d="M11.95 18.95Q16 23.15 20.05 18.95" />
+          </svg>
+        </span>
+        <span class="ltr" aria-hidden="true">Z</span>
+        <span class="ltr ltr--last" aria-hidden="true">Z</span>
+      </p>
+    </section>
+
+    <section class="ground">
+      <p class="body">
+        Point it at <b>Plex</b>, <b>Jellyfin</b> or <b>Navidrome</b>. Stream it at home, or
+        download an album and play it with no signal at all.
+      </p>
+
+      <div class="do">
+        <a class="btn btn--go" href={GITHUB_URL}>Get the source on GitHub</a>
+        {
+          APP_STORE_URL ? (
+            <a class="btn btn--wait" href={APP_STORE_URL}>
+              Download on the App Store
+            </a>
+          ) : (
+            <span class="btn btn--wait" aria-disabled="true">
+              Coming to the App Store
+            </span>
+          )
+        }
+      </div>
+
+      <p class="fine">iPhone and iPad · no account, no tracking · GPL-3.0</p>
+    </section>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #0a070d;
+  }
+</style>
+
+<style>
+  .sheet {
+    --paper: #fdf6ec;
+    --shade: #eeeae2;
+    --ink: #191320;
+    --black: #0a070d;
+    --red: #d8002d;
+    --hot: #f10233;
+
+    /* One number drives the whole composition: the diameter of the face. */
+    --w: min(42vh, 33vw);
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    background: var(--black);
+    color: var(--paper);
+    font-family: 'Archivo', 'Helvetica Neue', system-ui;
+    font-variation-settings: 'wdth' 108;
+  }
+
+  /* ---- paper: the claim ------------------------------------------------- */
+
+  .sky {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(52px, 6.4vh, 76px) clamp(20px, 3.6vw, 54px) 0;
+    background: linear-gradient(179deg, var(--paper) 0%, var(--shade) 100%);
+    color: var(--ink);
+    text-align: center;
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.2rem;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    font-size: clamp(10px, 0.86vw, 12px);
+    font-weight: 700;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+  }
+
+  .brow-b {
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
+  }
+
+  h1 {
+    max-width: 21ch;
+    margin: auto 0;
+    padding: clamp(14px, 3vh, 40px) 0;
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: clamp(26px, 3.5vw, 50px);
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: -0.006em;
+    text-wrap: balance;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--red);
+  }
+
+  /* ---- the face, sitting on the horizon --------------------------------- */
+
+  .lockup {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: clamp(2px, 0.4vw, 8px);
+    margin-bottom: calc(var(--w) / -2);
+    font-size: calc(var(--w) * 0.62);
+    font-weight: 800;
+    font-variation-settings: 'wdth' 120;
+    line-height: 0.72;
+    letter-spacing: -0.02em;
+  }
+
+  /* The horizon runs through the centre of the lockup, so it runs through the
+     centre of every letter: each one is ink above the line and paper below it,
+     cut at exactly the point the ground changes. */
+  .ltr {
+    color: transparent;
+    background-image: linear-gradient(to bottom, var(--ink) 0 50%, var(--paper) 50% 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .ltr {
+      color: var(--ink);
+      background-image: none;
+    }
+  }
+
+  .ltr--last {
+    margin-right: -0.04em;
+  }
+
+  /* A flex box, so the span hugs the artwork exactly: any baseline gap under an
+     inline-block would push the disc off the horizon it is meant to sit on. */
+  .orb {
+    display: flex;
+  }
+
+  .orb svg {
+    display: block;
+    width: var(--w);
+    height: var(--w);
+  }
+
+  /* One stroke weight for both eyes. The source draws the diagonal two pixels
+     wide and the bars one, which is what a 4x5 grid does to a diagonal, not a
+     decision; a single weight is the same letter drawn properly. Mitred, so the
+     corners come to the point a Z's corners come to. */
+  .eyes path {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 1.1;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    stroke-miterlimit: 4;
+  }
+
+  .mouth {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+  }
+
+  /* ---- black: the detail ------------------------------------------------ */
+
+  .ground {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(var(--w) / 2 + clamp(18px, 3.6vh, 46px)) clamp(20px, 3.6vw, 54px)
+      clamp(16px, 2.6vh, 28px);
+    text-align: center;
+  }
+
+  .body {
+    max-width: 47ch;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--paper) 82%, transparent);
+    text-wrap: pretty;
+  }
+
+  .body b {
+    font-weight: 700;
+    color: var(--paper);
+  }
+
+  .do {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    justify-content: center;
+    margin-top: clamp(0.9rem, 2.4vh, 1.6rem);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1.2rem;
+    border-radius: 999px;
+    font-size: clamp(12px, 0.95vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+  }
+
+  .btn--go {
+    background: var(--red);
+    color: var(--paper);
+    transition: transform 150ms ease, background 150ms ease;
+  }
+
+  .btn--go:hover {
+    background: var(--hot);
+    transform: translateY(-2px);
+  }
+
+  .btn--wait {
+    border: 1.5px dashed color-mix(in srgb, var(--paper) 42%, transparent);
+    color: color-mix(in srgb, var(--paper) 74%, transparent);
+  }
+
+  .fine {
+    margin-top: clamp(0.9rem, 2.2vh, 1.5rem);
+    font-size: clamp(9.5px, 0.78vw, 11px);
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--paper) 45%, transparent);
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- it comes up over the horizon ------------------------------------- */
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .lockup > * {
+    animation: rise 640ms cubic-bezier(0.2, 0.74, 0.24, 1) both;
+  }
+
+  .lockup > *:nth-child(1) {
+    animation-delay: 60ms;
+  }
+
+  .lockup > *:nth-child(3) {
+    animation-delay: 150ms;
+  }
+
+  .lockup > *:nth-child(4) {
+    animation-delay: 220ms;
+  }
+
+  .orb {
+    animation-delay: 260ms;
+    animation-duration: 720ms;
+  }
+
+  /* ---- the phone -------------------------------------------------------- */
+
+  @media (max-width: 720px) {
+    .sheet {
+      --w: min(44vw, 34vh);
+    }
+
+    .brow {
+      justify-content: center;
+      gap: 0.12rem 0.9rem;
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+    }
+
+    /* The wordmark is allowed past the text margin, so the phone's own edge is
+       what stops it. */
+    .lockup {
+      margin-inline: -12px;
+      font-size: calc(var(--w) * 0.41);
+    }
+
+    h1 {
+      max-width: 14ch;
+      font-size: clamp(31px, 10.2vw, 45px);
+    }
+
+    .body {
+      max-width: 32ch;
+      font-size: 13.5px;
+    }
+
+    .fine {
+      font-size: 9px;
+      letter-spacing: 0.09em;
+    }
+  }
+
+  /* ---- short windows: the face gives way before the copy does ----------- */
+
+  @media (max-height: 780px) and (min-width: 721px) {
+    .sheet {
+      --w: min(35vh, 30vw);
+    }
+  }
+
+  /* Small, old phones. The claim keeps its line count by dropping a step, and
+     the paper field loses its top air rather than the wordmark losing size. */
+  @media (max-width: 720px) and (max-height: 700px) {
+    .sheet {
+      --w: min(40vw, 34vh);
+    }
+
+    .sky {
+      padding-top: 48px;
+    }
+
+    h1 {
+      max-width: 15ch;
+      font-size: clamp(22px, 8.4vw, 30px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lockup > *,
+    .orb {
+      animation: none;
+    }
+
+    .btn--go,
+    .btn--go:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

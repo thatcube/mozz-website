@@ -1,0 +1,1167 @@
+---
+/**
+ * Umbra — one colossal MOZZ running off both edges of the viewport, and the app
+ * standing in front of it.
+ *
+ * The occlusion is not a cut-out. The word is lit cream at the edges of the
+ * frame, falls to red as it nears the phone, and goes to ground black directly
+ * behind it — light, penumbra, umbra. The phone does not sit on top of the
+ * wordmark; it eats a hole in the light.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const SUPPORT =
+  'Listen at home over your own network, or keep an album on the phone and play it with no signal at all.';
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run, listen at home, or download an album and play it offline."
+  themeColor="#0a070d"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..200,300..800&family=Wix+Madefor+Text:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="umbra" />
+
+  <main class="umbra">
+    <div class="glow" aria-hidden="true"></div>
+
+    <!-- ---------------- the stage: full viewport, nothing padded ---------------- -->
+    <div class="stage" aria-hidden="true">
+      <div class="wl lit"><span>MOZZ</span></div>
+      <div class="wl pen"><span>MOZZ</span></div>
+      <div class="wl deep"><span>MOZZ</span></div>
+      <div class="wl umb"><span>MOZZ</span></div>
+
+      <svg class="illo arcs" viewBox="0 0 46 84">
+        <path
+          d="M6 10a44 44 0 0 1 0 64M20 21a28 28 0 0 1 0 42M34 32a13 13 0 0 1 0 20"
+          fill="none"
+          stroke="#d8002d"
+          stroke-width="2.6"
+          stroke-linecap="round"></path>
+      </svg>
+
+      <svg class="illo spark" viewBox="0 0 40 40">
+        <path
+          d="M20 0c1.1 11.3 8.7 18.9 20 20-11.3 1.1-18.9 8.7-20 20-1.1-11.3-8.7-18.9-20-20 11.3-1.1 18.9-8.7 20-20Z"
+          fill="#eeeae2"></path>
+      </svg>
+
+      <!--
+        The mark at large format. Both paths are the *exact* geometry lifted from
+        src/brand/mozz-logo.svg (the 32x32 pixel art) - the disc body and the
+        single path that carries both zz eyes and the smile. Nothing is redrawn
+        or re-proportioned; it is the real artwork, recoloured for the dark
+        ground and bitten by the same shadow that swallows the wordmark.
+      -->
+      <!--
+        The mark at large format. Not the real <Mark /> - that sprite is ten
+        different reds and only blends optically at header size; blown up it
+        goes blotchy. This is a clean large-format drawing of the same shapes:
+        the exact pixel-art disc silhouette and the exact path carrying both zz
+        eyes and the smile, taken from src/brand/mozz-logo.svg so nothing is
+        re-proportioned, rendered flat in one red with no dither and no gradient.
+      -->
+      <svg class="illo moon" viewBox="0 0 32 32">
+        <path
+          class="disc"
+          d="M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z"
+          fill="#d8002d"></path>
+        <path
+          class="face"
+          d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19ZM15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z"
+          fill="#eeeae2"></path>
+      </svg>
+
+      <svg class="illo bars" viewBox="0 0 34 26">
+        <rect class="b1" x="0" y="6" width="6" height="20" fill="#eeeae2" opacity="0.7"></rect>
+        <rect class="b2" x="10" y="0" width="6" height="26" fill="#d8002d"></rect>
+        <rect class="b3" x="20" y="11" width="6" height="15" fill="#eeeae2" opacity="0.7"></rect>
+        <rect class="b4" x="30" y="17" width="4" height="9" fill="#d8002d" opacity="0.65"></rect>
+      </svg>
+    </div>
+
+    <!-- ---------------- the phone, in the hole it made ---------------- -->
+    <div
+      class="phone"
+      role="img"
+      aria-label="An iPhone running Mozz, playing a downloaded album from a home server."
+    >
+      <div class="screen">
+        <div class="island" aria-hidden="true"></div>
+
+        <div class="status" aria-hidden="true">
+          <span>9:41</span>
+          <span class="glyphs">
+            <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z"></path></svg>
+            <svg viewBox="0 0 26 12">
+              <rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+              <rect x="3" y="3" width="14" height="6" rx="1.4"></rect>
+              <path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z"></path>
+            </svg>
+          </span>
+        </div>
+
+        <div class="head" aria-hidden="true">
+          <svg class="chev" viewBox="0 0 16 16"
+            ><path
+              d="M3 6.2 8 11l5-4.8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path></svg
+          >
+          <span>playing from your server</span>
+          <span class="eq"><i></i><i></i><i></i></span>
+        </div>
+
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <rect width="120" height="120" fill="#f2e9df"></rect>
+            <rect width="52" height="120" fill="#d8002d"></rect>
+            <circle cx="52" cy="50" r="30" fill="#140a11"></circle>
+            <rect x="66" y="86" width="40" height="3.4" fill="#140a11" opacity="0.55"></rect>
+            <rect x="66" y="95" width="24" height="3.4" fill="#140a11" opacity="0.3"></rect>
+            <rect x="12" y="99" width="18" height="7" fill="#f2e9df"></rect>
+          </svg>
+        </div>
+
+        <div class="meta">
+          <strong>Second Shadow</strong>
+          <span>Halo North &middot; Nightside</span>
+        </div>
+
+        <div class="bar" aria-hidden="true"><i></i></div>
+        <div class="times" aria-hidden="true"><span>1:52</span><span>&minus;2:14</span></div>
+
+        <div class="ctrl" aria-hidden="true">
+          <svg viewBox="0 0 20 20"
+            ><path d="M17.4 3.4v13.2L7.6 10z"></path><rect x="2.6" y="3.4" width="2.6" height="13.2" rx="1.2"></rect></svg
+          >
+          <span class="play"
+            ><svg viewBox="0 0 20 20"
+              ><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.3"></rect><rect
+                x="11.1"
+                y="4.4"
+                width="3.3"
+                height="11.2"
+                rx="1.3"></rect></svg
+            ></span
+          >
+          <svg viewBox="0 0 20 20"
+            ><path d="M2.6 3.4v13.2L12.4 10z"></path><rect x="14.8" y="3.4" width="2.6" height="13.2" rx="1.2"></rect></svg
+          >
+        </div>
+
+        <div class="pill" aria-hidden="true">
+          <svg viewBox="0 0 16 16"
+            ><circle cx="8" cy="8" r="7" fill="#d8002d"></circle><path
+              d="M4.9 8.2 6.9 10.3 11 5.9"
+              fill="none"
+              stroke="#fdf6ec"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path></svg
+          >
+          <span>downloaded &middot; plays offline</span>
+        </div>
+
+        <span class="home" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- ---------------- the words ---------------- -->
+    <div class="ui">
+      <header class="top">
+        <span class="lockup">
+          <Mark size={26} decorative />
+          <b>Mozz</b>
+          <i aria-hidden="true"></i>
+          <span>self&#8209;hosted music player</span>
+        </span>
+        <span class="fine">free forever &middot; gpl&#8209;3.0 &middot; no account</span>
+      </header>
+
+      <p class="works">
+        <span class="tag">plays from</span>
+        {
+          SERVERS.map((s, i) => (
+            <>
+              {i > 0 && <i aria-hidden="true" />}
+              <b>{s}</b>
+            </>
+          ))
+        }
+      </p>
+
+      <div class="mid" aria-hidden="true"></div>
+
+      <section class="say">
+        <div class="words">
+          <h1>{HEADLINE}</h1>
+          <p class="sup">{SUPPORT}</p>
+
+          <div class="acts">
+            <a class="btn solid" href={GITHUB_URL}>Source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost pending" aria-disabled="true">
+                  <i aria-hidden="true" />
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+
+        <span class="ref">mz&#8209;16 &middot; umbra</span>
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  body {
+    background: #0a070d;
+  }
+</style>
+
+<style>
+  .umbra {
+    --void: #0a070d;
+    --ink: #140a11;
+    --cream: #eeeae2;
+    --paper: #fdf6ec;
+    --red: #d8002d;
+    --deep: #a10020;
+
+    /* Where the app stands, and therefore where the light stops. Light comes
+       from the left, so the zones are not symmetrical: the word runs cream,
+       red, deep red, then out entirely behind the phone, and the shadow is
+       still falling as it leaves the right-hand edge. */
+    --cx: 63.5%;
+    --pw: 300px;
+
+    --umb-l: 206px;
+    --umb-ls: 28px;
+    --umb-r: 196px;
+    --umb-rs: 30px;
+
+    --deep-l: 300px;
+    --deep-ls: 48px;
+    --deep-r: 296px;
+    --deep-rs: 54px;
+
+    --pen-l: 480px;
+    --pen-ls: 86px;
+    --pen-r: 1400px;
+    --pen-rs: 60px;
+
+    --word-size: min(44vw, 74vh);
+    --word-bottom: 30%;
+    --ph-top: 10.5%;
+    --ph-h: 77%;
+
+    --pad: clamp(20px, 4.2vw, 62px);
+    --barpad: calc(42px + clamp(12px, 1.6vh, 22px));
+
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background: var(--void);
+    color: var(--cream);
+    font-family: 'Wix Madefor Text', 'Avenir Next', 'Helvetica Neue', Arial;
+  }
+
+  .glow {
+    position: absolute;
+    left: var(--cx);
+    top: 44%;
+    width: min(1180px, 128vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(216, 0, 45, 0.2), rgba(216, 0, 45, 0) 62%);
+    pointer-events: none;
+  }
+
+  /* ---------------- the enormous word ---------------- */
+
+  .stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .wl {
+    position: absolute;
+    inset: 0;
+  }
+
+  .wl span {
+    position: absolute;
+    left: 50%;
+    bottom: var(--word-bottom, 30%);
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: 'Bricolage Grotesque', 'Wix Madefor Text', 'Helvetica Neue', Arial;
+    font-variation-settings: 'opsz' 96, 'wdth' 152, 'wght' 800;
+    font-size: var(--word-size, 33.5vw);
+    line-height: 0.74;
+    letter-spacing: -0.028em;
+    user-select: none;
+  }
+
+  .wl.lit span {
+    color: var(--cream);
+  }
+
+  /* the bright band: light bending as it nears the object */
+  .wl.pen span {
+    color: var(--red);
+  }
+
+  .wl.pen {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--pen-l) - var(--pen-ls)),
+      #000 calc(var(--cx) - var(--pen-l)),
+      #000 calc(var(--cx) + var(--pen-r)),
+      transparent calc(var(--cx) + var(--pen-r) + var(--pen-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--pen-l) - var(--pen-ls)),
+      #000 calc(var(--cx) - var(--pen-l)),
+      #000 calc(var(--cx) + var(--pen-r)),
+      transparent calc(var(--cx) + var(--pen-r) + var(--pen-rs))
+    );
+  }
+
+  /* the penumbra: half the light gone */
+  .wl.deep span {
+    color: var(--deep);
+  }
+
+  .wl.deep {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--deep-l) - var(--deep-ls)),
+      #000 calc(var(--cx) - var(--deep-l)),
+      #000 calc(var(--cx) + var(--deep-r)),
+      transparent calc(var(--cx) + var(--deep-r) + var(--deep-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--deep-l) - var(--deep-ls)),
+      #000 calc(var(--cx) - var(--deep-l)),
+      #000 calc(var(--cx) + var(--deep-r)),
+      transparent calc(var(--cx) + var(--deep-r) + var(--deep-rs))
+    );
+  }
+
+  /* the umbra proper: the letters go to ground behind the phone */
+  .wl.umb span {
+    color: var(--void);
+  }
+
+  .wl.umb {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--umb-l) - var(--umb-ls)),
+      #000 calc(var(--cx) - var(--umb-l)),
+      #000 calc(var(--cx) + var(--umb-r)),
+      transparent calc(var(--cx) + var(--umb-r) + var(--umb-rs))
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent calc(var(--cx) - var(--umb-l) - var(--umb-ls)),
+      #000 calc(var(--cx) - var(--umb-l)),
+      #000 calc(var(--cx) + var(--umb-r)),
+      transparent calc(var(--cx) + var(--umb-r) + var(--umb-rs))
+    );
+  }
+
+  /* ---------------- the four small marks ---------------- */
+
+  .illo {
+    position: absolute;
+    height: auto;
+  }
+
+  /* Everything floats around the app, in the black the letters do not reach. */
+
+  .arcs {
+    left: calc(var(--cx) + var(--pw) * 0.5 + clamp(26px, 3.2vw, 56px));
+    bottom: 24%;
+    width: clamp(28px, 2.6vw, 40px);
+    animation: breathe 9s ease-in-out infinite;
+  }
+
+  .spark {
+    left: calc(var(--cx) - var(--pw) * 0.5 - clamp(30px, 3.4vw, 56px));
+    top: 6.5%;
+    width: clamp(15px, 1.5vw, 22px);
+    animation: twinkle 6.5s ease-in-out infinite;
+  }
+
+  .moon {
+    left: auto;
+    right: clamp(16px, 4.6vw, 74px);
+    bottom: 11%;
+    width: clamp(60px, 9.2vw, 134px);
+    animation: float 11s ease-in-out infinite;
+  }
+
+  .moon .disc,
+  .moon .face {
+    shape-rendering: crispEdges;
+  }
+
+  .bars {
+    left: calc(var(--cx) - var(--pw) * 0.5 - clamp(34px, 4.6vw, 78px));
+    bottom: 14%;
+    width: clamp(24px, 2.2vw, 32px);
+    opacity: 0.9;
+  }
+
+  .bars rect {
+    transform-origin: 50% 100%;
+    animation: pump 1.25s ease-in-out infinite alternate;
+  }
+
+  .bars .b2 {
+    animation-duration: 0.86s;
+  }
+  .bars .b3 {
+    animation-duration: 1.55s;
+  }
+  .bars .b4 {
+    animation-duration: 1.05s;
+  }
+
+  @keyframes pump {
+    from {
+      transform: scaleY(0.42);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: translateX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(5px);
+    }
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.82) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(45deg);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-9px);
+    }
+  }
+
+  /* ---------------- the phone ---------------- */
+
+  .phone {
+    position: absolute;
+    left: var(--cx);
+    top: var(--ph-top, 12.5%);
+    z-index: 2;
+    width: var(--pw);
+    height: var(--ph-h, 60%);
+    transform: translateX(-50%);
+    padding: 9px;
+    border-radius: 40px;
+    background: linear-gradient(158deg, #fdf6ec, #cdc6bb 46%, #efe9e0);
+    box-shadow:
+      0 2px 0 rgba(255, 255, 255, 0.5) inset,
+      0 44px 90px rgba(0, 0, 0, 0.62),
+      0 0 0 1px rgba(10, 7, 13, 0.5),
+      0 0 130px 40px rgba(216, 0, 45, 0.16);
+  }
+
+  .screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px 14px 12px;
+    border-radius: 32px;
+    background: #140a11;
+    color: var(--paper);
+    overflow: hidden;
+  }
+
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 9px;
+    width: 84px;
+    height: 22px;
+    transform: translateX(-50%);
+    border-radius: 14px;
+    background: #06040a;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 24px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .glyphs svg {
+    height: 8.5px;
+    width: auto;
+    fill: currentColor;
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: 'Azeret Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 7.4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(253, 246, 236, 0.6);
+  }
+
+  .head .chev {
+    width: 11px;
+    height: 11px;
+    flex: none;
+    color: rgba(253, 246, 236, 0.75);
+  }
+
+  .head span:not(.eq) {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 11px;
+    flex: none;
+  }
+
+  .eq i {
+    width: 2px;
+    height: 100%;
+    background: var(--red);
+    transform-origin: 50% 100%;
+    animation: pump 0.9s ease-in-out infinite alternate;
+  }
+
+  .eq i:nth-child(2) {
+    animation-duration: 1.35s;
+  }
+  .eq i:nth-child(3) {
+    animation-duration: 0.68s;
+  }
+
+  .art {
+    margin-top: 11px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  }
+
+  .art svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .meta {
+    margin-top: 13px;
+    display: grid;
+    gap: 2px;
+  }
+
+  .meta strong {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+  }
+
+  .meta span {
+    font-size: 10.5px;
+    color: rgba(253, 246, 236, 0.56);
+  }
+
+  .bar {
+    margin-top: 13px;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(253, 246, 236, 0.2);
+  }
+
+  .bar i {
+    display: block;
+    width: 45%;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 8px;
+    color: rgba(253, 246, 236, 0.45);
+  }
+
+  .ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-top: auto;
+    padding-top: 12px;
+  }
+
+  .ctrl > svg {
+    width: 17px;
+    height: 17px;
+    fill: rgba(253, 246, 236, 0.86);
+  }
+
+  .play {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .play svg {
+    width: 19px;
+    height: 19px;
+    fill: var(--paper);
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 13px;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 7.2px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(253, 246, 236, 0.68);
+  }
+
+  .pill svg {
+    width: 10px;
+    height: 10px;
+    flex: none;
+  }
+
+  .home {
+    display: block;
+    width: 96px;
+    height: 4px;
+    margin: 9px auto 0;
+    border-radius: 4px;
+    background: rgba(253, 246, 236, 0.35);
+  }
+
+  /* ---------------- the words over the top ---------------- */
+
+  .ui {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    height: 100%;
+    padding: var(--barpad) var(--pad) clamp(16px, 2.4vh, 30px);
+    pointer-events: none;
+  }
+
+  .top {
+    grid-row: 1;
+  }
+
+  .works {
+    grid-row: 2;
+  }
+
+  .mid {
+    grid-row: 3;
+  }
+
+  .say {
+    grid-row: 4;
+  }
+
+  .ui a,
+  .ui .btn,
+  .ui .lockup {
+    pointer-events: auto;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: clamp(11.5px, 0.95vw, 13px);
+  }
+
+  .lockup b {
+    font-family: 'Bricolage Grotesque', 'Wix Madefor Text', Arial;
+    font-variation-settings: 'opsz' 14, 'wdth' 108, 'wght' 800;
+    font-size: 1.3em;
+    letter-spacing: -0.015em;
+  }
+
+  .lockup i {
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .lockup > span {
+    opacity: 0.6;
+  }
+
+  .fine {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: clamp(9px, 0.76vw, 10.5px);
+    letter-spacing: 0.02em;
+    color: rgba(238, 234, 226, 0.48);
+  }
+
+  .say {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-self: end;
+  }
+
+  .words {
+    max-width: min(48vw, 660px);
+  }
+
+  .say h1 {
+    font-family: 'Bricolage Grotesque', 'Wix Madefor Text', Arial;
+    font-variation-settings: 'opsz' 48, 'wdth' 104, 'wght' 750;
+    font-size: clamp(26px, 3.16vw, 47px);
+    line-height: 1.02;
+    letter-spacing: -0.026em;
+    text-wrap: balance;
+  }
+
+  .sup {
+    max-width: 40ch;
+    margin-top: 0.7em;
+    font-size: clamp(12.5px, 1vw, 14.5px);
+    line-height: 1.48;
+    color: rgba(238, 234, 226, 0.66);
+  }
+
+  .works {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: clamp(9px, 1.5vh, 17px);
+    font-size: clamp(12.5px, 1.06vw, 15px);
+  }
+
+  .works .tag {
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(238, 234, 226, 0.42);
+  }
+
+  .works b {
+    font-weight: 700;
+    letter-spacing: -0.008em;
+  }
+
+  .works i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: clamp(14px, 2vh, 24px);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 42px;
+    padding: 0 1.15rem;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+  }
+
+  .solid {
+    background: var(--red);
+    color: var(--paper);
+    transition: background 0.18s ease;
+  }
+
+  .solid:hover {
+    background: #f10334;
+  }
+
+  .ghost {
+    border: 1px dashed rgba(238, 234, 226, 0.34);
+    color: rgba(238, 234, 226, 0.66);
+  }
+
+  .pending i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .ref {
+    display: block;
+    flex: none;
+    padding-bottom: 4px;
+    font-family: 'Azeret Mono', ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(238, 234, 226, 0.3);
+  }
+
+  .ui a:focus-visible,
+  .ui .btn:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 3px;
+  }
+
+  /* ---------------- narrower desktops ---------------- */
+
+  @media (max-width: 1180px) {
+    .umbra {
+      --cx: 62%;
+      --pw: 262px;
+      --umb-l: 178px;
+      --umb-r: 184px;
+      --deep-l: 258px;
+      --deep-ls: 60px;
+      --deep-r: 294px;
+      --deep-rs: 70px;
+      --pen-l: 410px;
+      --pen-ls: 110px;
+    }
+
+    .words {
+      max-width: min(52vw, 520px);
+    }
+  }
+
+  /* Under 900 the frame is too narrow to hold four zones side by side, so the
+     word drops below the app instead of behind it: the phone covers the top of
+     the letters, and the light still falls off from the left. */
+  @media (max-width: 900px) {
+    .umbra {
+      --cx: 50%;
+      --pw: min(196px, 47vw);
+      --deep-l: 62px;
+      --deep-ls: 78px;
+      --deep-r: 700px;
+      --deep-rs: 40px;
+      --ph-top: 10.5%;
+      --ph-h: 49%;
+      --word-bottom: 34%;
+      --word-size: min(45vw, 21vh);
+    }
+
+    .wl.pen,
+    .wl.umb {
+      display: none;
+    }
+
+    .wl.deep span {
+      color: var(--red);
+    }
+
+    .glow {
+      top: 30%;
+      width: 160vw;
+    }
+
+    .ui {
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+    }
+
+    .mid {
+      grid-row: 2;
+    }
+
+    .works {
+      grid-row: 3;
+      margin-top: 0;
+      margin-bottom: clamp(10px, 1.6vh, 18px);
+    }
+
+    .say {
+      grid-row: 4;
+      display: block;
+    }
+
+    .words {
+      max-width: none;
+    }
+
+    .ref {
+      margin-top: clamp(9px, 1.3vh, 15px);
+      padding-bottom: 0;
+    }
+
+    .top {
+      flex-wrap: wrap;
+      gap: 0.4rem 1rem;
+    }
+
+    .spark {
+      left: clamp(16px, 6vw, 46px);
+      top: 17%;
+      width: 17px;
+    }
+
+    .bars {
+      left: clamp(14px, 5vw, 40px);
+      bottom: auto;
+      top: 33%;
+      width: 26px;
+    }
+
+    .arcs {
+      left: auto;
+      right: clamp(12px, 4vw, 34px);
+      bottom: auto;
+      top: 20%;
+      width: 28px;
+    }
+
+    .moon {
+      left: auto;
+      right: clamp(12px, 4.6vw, 44px);
+      bottom: auto;
+      top: 35.5%;
+      width: clamp(46px, 13vw, 60px);
+    }
+  }
+
+  @media (max-width: 900px) and (min-width: 641px) {
+    .umbra {
+      --pw: min(230px, 30vw);
+      --ph-h: 55%;
+      --word-size: min(34vw, 24vh);
+      --word-bottom: 30%;
+      --deep-l: 180px;
+      --deep-ls: 120px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .umbra {
+      --pad: 18px;
+      --pw: min(188px, 48vw);
+      --ph-top: 10%;
+      --ph-h: 48%;
+      --word-size: min(45vw, 20.5vh);
+      --word-bottom: 35%;
+    }
+
+    .phone {
+      padding: 7px;
+      border-radius: 32px;
+    }
+
+    .screen {
+      border-radius: 26px;
+      padding: 7px 11px 10px;
+    }
+
+    .head {
+      font-size: 6.3px;
+      letter-spacing: 0.045em;
+      gap: 5px;
+    }
+
+    .head .chev {
+      width: 9.5px;
+      height: 9.5px;
+    }
+
+    .island {
+      width: 70px;
+      height: 19px;
+    }
+
+    .art {
+      margin-top: 9px;
+    }
+
+    .meta {
+      margin-top: 10px;
+    }
+
+    .meta strong {
+      font-size: 13px;
+    }
+
+    .meta span {
+      font-size: 9.5px;
+    }
+
+    .ctrl {
+      gap: 16px;
+      padding-top: 8px;
+    }
+
+    .play {
+      width: 34px;
+      height: 34px;
+    }
+
+    .play svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .ctrl > svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .home {
+      width: 74px;
+      margin-top: 7px;
+    }
+
+    .btn {
+      height: 40px;
+      font-size: 12.5px;
+      padding: 0 0.95rem;
+    }
+
+    .sup {
+      max-width: 42ch;
+    }
+
+    .fine {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arcs,
+    .spark,
+    .moon,
+    .bars rect,
+    .eq i {
+      animation: none;
+    }
+
+    .spark {
+      opacity: 0.85;
+    }
+
+    .arcs {
+      opacity: 0.85;
+    }
+
+    .eq i:nth-child(1) {
+      height: 45%;
+    }
+    .eq i:nth-child(2) {
+      height: 100%;
+    }
+    .eq i:nth-child(3) {
+      height: 65%;
+    }
+  }
+</style>

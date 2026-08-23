@@ -1,10 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Mark from '../components/Mark.astro';
-import { APP_HEROES, ART_HEROES } from '../data/heroes';
+import { APP_HEROES, ART_HEROES, NEW_HEROES } from '../data/heroes';
 import { NAME } from '../data/site';
 
 const SETS = [
+  {
+    id: 'new',
+    title: 'Current set',
+    note: 'Nineteen studies in red, white and black. Each names Plex, Jellyfin and Navidrome directly, while the first four — Umbra, Penumbra, Occlude and Corona — cross the Eclipse palette with the Cover layout.',
+    heroes: NEW_HEROES,
+  },
   {
     id: 'app',
     title: 'With the app',
@@ -22,7 +28,7 @@ const SETS = [
 
 <Layout
   title={`${NAME} — hero studies`}
-  description="Twenty hero directions for Mozz."
+description="Thirty-nine hero directions for Mozz."
   themeColor="#f6f4ee"
   noindex
 >
@@ -39,10 +45,10 @@ const SETS = [
       <div class="brand"><Mark size={38} decorative /><span>{NAME}</span></div>
       <h1>Pick the opening note.</h1>
       <p>
-        Twenty heroes, two ways of solving the same page. Ten put the app on
-        screen. Ten draw the idea instead, so the website never goes stale when
-        the app is redesigned. Only the hero is built — the rest of the page
-        follows whichever one wins.
+        Thirty-nine ways to introduce a free music player for Plex, Jellyfin and
+        Navidrome. The current set explores the red, white and black direction;
+        the earlier studies show the app or carry the idea through illustration.
+        Only the hero is built — the rest of the page follows whichever one wins.
       </p>
     </header>
 

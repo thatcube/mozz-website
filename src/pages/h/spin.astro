@@ -1,0 +1,646 @@
+---
+/**
+ * Spin — the mark is the O, and the O is the only thing moving.
+ *
+ * Poster's skeleton (one enormous wordmark carrying the page) with the second
+ * letter cut out and replaced by a real, turning disc. Everything else is
+ * nailed down: the type, the rules, and the light.
+ *
+ * Top left is the real <Mark />, exact and untouched — that instance is the
+ * logo doing its job, and small is the size it is good at. The O is a
+ * large-format drawing of the same mark, because the 32px original is built
+ * from ten near-identical reds that blend at 24px and break into blotches at
+ * 230px. Drawn large it is what those ten reds are trying to be: one flat disc,
+ * #d8002d, and nothing on it but the face.
+ *
+ * The face is not approximated. The two `zz` eyes and the smile are the source
+ * artwork's own path data, placed through translate(50 50) scale(44/13)
+ * translate(-16 -16) — the exact transform that maps the mark's 13-unit disc
+ * onto this one. Every proportion, weight and relationship is therefore
+ * identical to the real mark by construction, not by eye. Nothing is added to
+ * it: no label, no grooves, no gloss, no tonearm, no 1979.
+ *
+ * Which leaves the motion nowhere to live but off the mark, which is the better
+ * place for it anyway. The disc sits inside a still hairline track, and two
+ * markers ride that track at different speeds and in opposite directions: a
+ * long dim red run at 30s, a short bright cue at 18s. They pass each other
+ * twice a minute. Slow enough to read as a transport, never as a spinner.
+ *
+ * What moves:  two arcs on a fixed track, and only those.
+ * What does not: the mark, the wordmark, the rules, the light. The smile never
+ *              goes upside down because the smile never goes anywhere.
+ *
+ * Ink: red, white, black. Depth is value — deep red to red to paper — never a
+ * second hue, and never texture standing in for detail.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, SITE, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const BODY =
+  'Point it at the server you already run. Stream it at home, or download an album and play it with no signal at all.';
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+const domain = SITE.replace(/^https?:\/\//, '');
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline."
+  themeColor="#0a070d"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="spin" />
+
+  <main class="stage">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="echo" aria-hidden="true"></div>
+
+    <header class="eyebrow">
+      <span class="tag">
+        <span class="chip"><Mark size={17} decorative /></span>
+        Self-hosted music player
+      </span>
+      <span class="tag tag-end">Free forever · iPhone &amp; iPad</span>
+    </header>
+
+    <div class="middle">
+      <div class="lockup-row">
+        <span class="rule" aria-hidden="true"></span>
+
+        <div class="lockup" role="img" aria-label="Mozz">
+          <span class="ltr">M</span>
+
+          <span class="oh">
+            <span class="disc">
+              <svg class="d-art" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <!-- The mark. One flat red disc, and nothing on it but the
+                     face — which is the source artwork's own path data. -->
+                <circle cx="50" cy="50" r="44" fill="#d8002d"></circle>
+
+                <g
+                  class="d-glyph"
+                  fill="#fdf6ec"
+                  transform="translate(50 50) scale(3.384615) translate(-16 -16)"
+                >
+                  <path
+                    d="M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19Z"
+                  ></path>
+                  <path
+                    d="M15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z"
+                  ></path>
+                </g>
+
+                <!-- The track is fixed. Two markers ride it. -->
+                <circle
+                  class="d-rail"
+                  cx="50"
+                  cy="50"
+                  r="51.5"
+                  fill="none"
+                  stroke="#7d0019"
+                  stroke-width="1"></circle>
+                <circle
+                  class="d-run"
+                  cx="50"
+                  cy="50"
+                  r="51.5"
+                  fill="none"
+                  stroke="#d8002d"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-dasharray="107.9 215.7"></circle>
+                <circle
+                  class="d-cue"
+                  cx="50"
+                  cy="50"
+                  r="51.5"
+                  fill="none"
+                  stroke="#fdf6ec"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-dasharray="23.4 300.2"></circle>
+              </svg>
+            </span>
+          </span>
+
+          <span class="brk" aria-hidden="true"></span>
+          <span class="ltr">Z</span>
+          <span class="ltr ltr-last">Z</span>
+        </div>
+
+        <span class="rule rule-end" aria-hidden="true"></span>
+      </div>
+
+      <ul class="works" role="list">
+        {SERVERS.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+
+    <div class="band">
+      <h1>{HEADLINE}</h1>
+
+      <div class="aside">
+        <p>{BODY}</p>
+
+        <div class="actions">
+          <a class="btn go" href={GITHUB_URL}>Get the source on GitHub</a>
+          {APP_STORE_URL ? (
+            <a class="btn store" href={APP_STORE_URL}>Download on the App Store</a>
+          ) : (
+            <span class="btn store is-pending" aria-disabled="true">
+              <i aria-hidden="true"></i>Coming to the App Store
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <span>No account · no tracking · no subscription</span>
+      <span class="dom">GPL-3.0 · {domain}</span>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .stage {
+    --ink: #0a070d;
+    --coal: #191320;
+    --bone: #fdf6ec;
+    --dim: rgba(253, 246, 236, 0.62);
+    --faint: rgba(253, 246, 236, 0.32);
+    --red: #d8002d;
+    --deep: #7d0019;
+    /* One number drives the whole lockup: letters, disc and gaps are all em. */
+    --w: min(23vw, 33svh);
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    overflow: hidden;
+    padding: calc(42px + clamp(14px, 2.6svh, 26px)) clamp(20px, 3.8vw, 58px)
+      clamp(16px, 2.8svh, 30px);
+    background: var(--ink);
+    color: var(--bone);
+    font-family: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
+
+  /* The room the disc is lit in. */
+  .glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(52% 42% at 50% 42%, rgba(216, 0, 45, 0.26), transparent 70%),
+      radial-gradient(96% 86% at 50% 46%, rgba(216, 0, 45, 0.1), transparent 72%),
+      radial-gradient(120% 100% at 50% 128%, rgba(10, 7, 13, 0.62), transparent 62%);
+    pointer-events: none;
+  }
+
+  /* The same object much further back, falling out of the bottom-right corner:
+     the flat disc and its track, nothing more. Perfectly still — only one thing
+     in this room is moving, and it is two arcs. */
+  .echo {
+    position: absolute;
+    z-index: 0;
+    right: -17vw;
+    bottom: -30vw;
+    width: 62vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      conic-gradient(
+        from 186deg,
+        transparent 0deg,
+        rgba(253, 246, 236, 0.05) 30deg,
+        rgba(216, 0, 45, 0.1) 78deg,
+        transparent 132deg
+      ),
+      radial-gradient(
+        circle closest-side,
+        rgba(150, 4, 34, 0.15) 0 87%,
+        transparent 87.4% 95.6%,
+        rgba(255, 176, 190, 0.2) 96% 97.2%,
+        transparent 97.6%
+      );
+    -webkit-mask-image: linear-gradient(
+      318deg,
+      #000 30%,
+      rgba(0, 0, 0, 0.52) 64%,
+      transparent 88%
+    );
+    mask-image: linear-gradient(318deg, #000 30%, rgba(0, 0, 0, 0.52) 64%, transparent 88%);
+    pointer-events: none;
+  }
+
+  .stage > *:not(.glow):not(.echo) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- billing line --------------------------------------------------- */
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(253, 246, 236, 0.14);
+    font-size: clamp(9.5px, 0.83vw, 11.5px);
+    font-weight: 500;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .tag {
+    display: inline-flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .chip {
+    width: 17px;
+    height: 17px;
+    flex: none;
+  }
+
+  /* ---- the word, which does not move ---------------------------------- */
+
+  .middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto 0;
+    padding: clamp(10px, 2.4svh, 30px) 0 0;
+  }
+
+  .lockup-row {
+    display: flex;
+    gap: clamp(12px, 2.2vw, 30px);
+    align-items: center;
+    width: 100%;
+  }
+
+  .rule {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(253, 246, 236, 0.26));
+  }
+
+  .rule-end {
+    background: linear-gradient(90deg, rgba(253, 246, 236, 0.26), transparent);
+  }
+
+  .lockup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.01em;
+    align-items: center;
+    justify-content: center;
+    flex: 0 1 auto;
+    font-family: 'Unbounded', 'Trebuchet MS', system-ui;
+    font-size: var(--w);
+    font-weight: 800;
+    line-height: 0.78;
+    letter-spacing: -0.028em;
+  }
+
+  .ltr {
+    display: block;
+    /* Optical: the disc is a perfect circle, the letters need the nudge. */
+    transform: translateY(0.012em);
+  }
+
+  .ltr-last {
+    margin-right: -0.05em;
+  }
+
+  .brk {
+    display: none;
+  }
+
+  .oh {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 0.83em;
+    height: 0.83em;
+    margin: 0 0.03em 0 0.05em;
+  }
+
+  /* ---- the disc, which does ------------------------------------------- */
+
+  .disc {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+    border-radius: 50%;
+  }
+
+  .disc > * {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border-radius: 50%;
+  }
+
+  /* The mark, drawn large: one flat disc and the face, nothing else. The face
+     is the source artwork's own path data, mapped by the exact transform that
+     fits the 13-unit brand disc to this 44-unit one, so nothing about the
+     eyes, the smile or their spacing is guessed. */
+  .d-art {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* Top left is the real artwork, exact — and small, which is its best size. */
+  .chip :global(.mozz-mark) {
+    display: block;
+  }
+
+  /* The track the markers ride. It never moves. */
+  .d-rail {
+    opacity: 1;
+  }
+
+  .d-run,
+  .d-cue {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* A long dim run, the wrong way round, slowly. */
+  .d-run {
+    opacity: 0.62;
+    animation: rev 30s linear infinite reverse;
+  }
+
+  /* And one bright cue, the right way round, faster. They cross twice a
+     minute, which is the whole trick: you never see it start or stop. */
+  .d-cue {
+    animation: rev 18s linear infinite;
+  }
+
+  @keyframes rev {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ---- the three names ------------------------------------------------ */
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem clamp(0.9rem, 2.6vw, 2.6rem);
+    justify-content: center;
+    margin: clamp(14px, 2.6svh, 30px) 0 0;
+    padding: 0;
+    font-family: 'Unbounded', 'Trebuchet MS', system-ui;
+    font-size: clamp(11px, 1.42vw, 20px);
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .works li {
+    position: relative;
+  }
+
+  .works li + li::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: clamp(-1.3rem, -1.3vw, -0.45rem);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--red);
+    transform: translate(-50%, -50%);
+  }
+
+  /* ---- what it is ----------------------------------------------------- */
+
+  .band {
+    display: grid;
+    grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+    gap: clamp(18px, 4vw, 72px);
+    align-items: end;
+    /* Auto below as well as auto above .middle: on a tall window the slack
+       splits three ways instead of pooling into one hole under the word. */
+    margin-top: clamp(12px, 3svh, 34px);
+    margin-bottom: auto;
+  }
+
+  h1 {
+    max-width: 12.5em;
+    font-family: 'Unbounded', 'Trebuchet MS', system-ui;
+    font-size: clamp(21px, 2.85vw, 41px);
+    font-weight: 400;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(0.85rem, 2.4svh, 1.5rem);
+  }
+
+  .aside p {
+    max-width: 40ch;
+    font-size: clamp(12px, 1vw, 14px);
+    line-height: 1.62;
+    color: var(--dim);
+  }
+
+  /* ---- the bottom ----------------------------------------------------- */
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.72rem 1.15rem;
+    border-radius: 999px;
+    font-size: clamp(11px, 0.88vw, 12.5px);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .go {
+    background: var(--bone);
+    color: #0a070d;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .go:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(216, 0, 45, 0.35);
+  }
+
+  .is-pending {
+    border: 1px solid rgba(253, 246, 236, 0.26);
+    color: var(--dim);
+  }
+
+  .is-pending i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    flex: none;
+  }
+
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.4rem;
+    justify-content: space-between;
+    margin-top: clamp(14px, 3svh, 32px);
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(253, 246, 236, 0.14);
+    font-size: clamp(9px, 0.78vw, 10.5px);
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  a:focus-visible {
+    outline: 2px solid #ffc9d3;
+    outline-offset: 3px;
+  }
+
+  /* ---- small screens: the word stacks, the disc stays the O ----------- */
+
+  @media (max-width: 760px) {
+    .stage {
+      --w: min(40vw, 22.5svh);
+      padding-bottom: clamp(12px, 2.2svh, 24px);
+    }
+
+    .oh {
+      margin: 0 0.025em;
+    }
+
+    .rule {
+      display: none;
+    }
+
+    .brk {
+      display: block;
+      flex-basis: 100%;
+      height: 0.06em;
+    }
+
+    .eyebrow {
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+    }
+
+    .tag-end {
+      display: none;
+    }
+
+    .middle {
+      padding-top: 0;
+    }
+
+    .colophon {
+      margin-top: clamp(10px, 2svh, 20px);
+      padding-top: 0.6rem;
+    }
+
+    .works {
+      font-size: 12.5px;
+      gap: 0.25rem 1.5rem;
+      margin-top: clamp(10px, 2svh, 20px);
+    }
+
+    .works li + li::before {
+      left: -0.75rem;
+    }
+
+    .band {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(10px, 2svh, 18px);
+      margin-top: clamp(10px, 2.2svh, 22px);
+    }
+
+    .aside {
+      gap: clamp(0.7rem, 1.8svh, 1rem);
+    }
+
+    .actions {
+      gap: 0.45rem;
+    }
+
+    h1 {
+      max-width: none;
+      font-size: clamp(19px, 5.3vw, 24px);
+    }
+
+    .aside p {
+      max-width: none;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .echo {
+      right: -30vw;
+      bottom: -46vw;
+      width: 108vw;
+    }
+
+    .btn {
+      padding: 0.62rem 0.95rem;
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+    }
+
+    .colophon .dom {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .d-run,
+    .d-cue {
+      animation: none;
+    }
+
+    .go,
+    .go:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

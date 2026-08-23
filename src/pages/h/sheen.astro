@@ -1,0 +1,673 @@
+---
+/**
+ * Sheen — the mark is a disc, and the page is what the disc reflects.
+ *
+ * One red plate. Everything that is not red on this page is the light moving
+ * across it: a specular band that rakes the letterforms, and the same light
+ * thrown wide off the mark as printed arcs. The tones are value steps of the
+ * one red, the way a single-ink press works — no second hue anywhere, and the
+ * mark itself is the real artwork, untouched.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, SITE, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const BODY =
+  'Point it at the server you already run, and it plays what is on it. Stream at home, or download an album and play it with no signal at all.';
+const SERVERS = [
+  { name: 'Plex', ink: 'var(--red)' },
+  { name: 'Jellyfin', ink: 'var(--deep)' },
+  { name: 'Navidrome', ink: 'var(--ink)' },
+];
+const domain = SITE.replace(/^https?:\/\//, '');
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline."
+  themeColor="#fdf6ec"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="sheen">
+    <div class="wash" aria-hidden="true"></div>
+
+    <header class="rule top">
+      <span class="tag">
+        <Mark size={16} decorative />
+        Mozz — self-hosted music player
+      </span>
+      <span class="tag dim">iPhone &amp; iPad · GPL-3.0</span>
+    </header>
+
+    <section class="stage">
+      <div class="plate">
+        <div class="word" aria-hidden="true">M<i class="hole"><span class="disc"><svg class="face" viewBox="2 2 28 28" aria-hidden="true"><path d="M11 11H15V12L12.4 15H15V16H11V15L13.6 12H11Z" /><path d="M17 11H21V12L18.4 15H21V16H17V15L19.6 12H17Z" /><path class="grin" d="M11.457 18.73A5.3 5.3 0 0 0 20.543 18.73" /></svg></span></i><br class="brk" />ZZ</div>
+      </div>
+      <p class="caption">
+        <span class="dot"></span>One disc, one red. Everything else is light.
+      </p>
+    </section>
+
+    <section class="foot">
+      <div class="say">
+        <h1>{HEADLINE}</h1>
+        <p>{BODY}</p>
+      </div>
+
+      <div class="act">
+        <a class="src" href={GITHUB_URL}>Source on GitHub</a>
+        {
+          APP_STORE_URL ? (
+            <a class="store" href={APP_STORE_URL}>
+              Download on the App Store
+            </a>
+          ) : (
+            <span class="store pending" aria-disabled="true">
+              <span class="soon"></span>Coming to the App Store
+            </span>
+          )
+        }
+      </div>
+    </section>
+
+    <footer class="rule bottom">
+      <span class="works">
+        <span class="works-label">Works with</span>
+        {
+          SERVERS.map((s) => (
+            <span class="server">
+              <i style={`background:${s.ink}`} aria-hidden="true" />
+              {s.name}
+            </span>
+          ))
+        }
+      </span>
+      <span class="tag dim">Free forever · no account · no tracking · {domain}</span>
+    </footer>
+  </main>
+</Layout>
+
+<script is:inline>
+  /* The disc is the O — it sits in the flow as a real gap in the word, so the
+     lockup is exact without measuring anything. This only tells the spectrum
+     where that gap is, so every band on the page radiates from the disc's
+     centre: the sheen inside the letters, and the wash that escapes them. */
+  (() => {
+    const place = () => {
+      const word = document.querySelector('.sheen .word');
+      const plate = document.querySelector('.sheen .plate');
+      const hole = document.querySelector('.sheen .disc');
+      const sheen = document.querySelector('.sheen');
+      if (!word || !plate || !hole || !sheen) return;
+      const o = hole.getBoundingClientRect();
+      const b = word.getBoundingClientRect();
+      const s = sheen.getBoundingClientRect();
+      if (!o.width || !b.width) return;
+      const cx = o.left + o.width / 2;
+      const cy = o.top + o.height / 2;
+      plate.style.setProperty('--cx', (((cx - b.left) / b.width) * 100).toFixed(2) + '%');
+      plate.style.setProperty('--cy', (((cy - b.top) / b.height) * 100).toFixed(2) + '%');
+      sheen.style.setProperty('--wx', (((cx - s.left) / s.width) * 100).toFixed(2) + '%');
+      sheen.style.setProperty('--wy', (((cy - s.top) / s.height) * 100).toFixed(2) + '%');
+    };
+    const run = () => (document.fonts ? document.fonts.ready.then(place) : place());
+    run();
+    addEventListener('resize', place);
+  })();
+</script>
+
+<style>
+  @property --ang {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0deg;
+  }
+
+  .sheen {
+    --paper: #fdf6ec;
+    --off: #eeeae2;
+    --ink: #191320;
+    --black: #0a070d;
+    --red: #d8002d;
+    --deep: #7d0019;
+
+    /* One red, stepped by value — what a single plate can do with light. */
+    --t1: #7d0019;
+    --t2: #a30021;
+    --t3: #d8002d;
+    --t4: #e33a55;
+    --t5: #ee7c8d;
+    --t6: #f9cdd3;
+
+    /* Where the disc sits on the page; the script refines it. */
+    --wx: 43%;
+    --wy: 27%;
+
+    position: relative;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: clamp(16px, 2.4vh, 26px) 4vw clamp(14px, 2vh, 22px);
+    overflow: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Chivo', 'Helvetica Neue', system-ui;
+    animation: tilt 13s ease-in-out infinite alternate;
+  }
+
+  @keyframes tilt {
+    from {
+      --ang: -2.6deg;
+    }
+    to {
+      --ang: 3.2deg;
+    }
+  }
+
+  /* ---- the sheen that escapes the letters ------------------------------ */
+
+  /*
+   * The same light, off the same disc, but unclipped: groove arcs that wrap the
+   * disc the way they wrap a real one, thrown down and to the right across the
+   * empty half of the page. One red, stepped down in value as it travels, and
+   * multiplied into the paper so it stays ink rather than glow. Cut to a single
+   * wedge so it reads as one throw of light, not a haze.
+   */
+  .wash {
+    --wa: 92deg;
+    --wk: 1.28;
+    --wr: 1.12;
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.44;
+    background-image:
+      repeating-radial-gradient(
+        circle at var(--wx) var(--wy),
+        transparent 0 9px,
+        #fff 9px 22px
+      ),
+      conic-gradient(
+        from calc(var(--wa) + var(--ang) * 2) at var(--wx) var(--wy),
+        transparent 0deg,
+        transparent calc(5deg * var(--wk)),
+        var(--t3) calc(11deg * var(--wk)),
+        var(--t3) calc(16deg * var(--wk)),
+        var(--t4) calc(26deg * var(--wk)),
+        var(--t5) calc(40deg * var(--wk)),
+        var(--t6) calc(52deg * var(--wk)),
+        transparent calc(58deg * var(--wk)),
+        transparent 360deg
+      );
+    mask-image: radial-gradient(
+      farthest-corner at var(--wx) var(--wy),
+      transparent 0 calc(13% * var(--wr)),
+      #000 calc(30% * var(--wr)),
+      #000 calc(48% * var(--wr)),
+      rgba(0, 0, 0, 0.55) calc(68% * var(--wr)),
+      transparent calc(88% * var(--wr))
+    );
+    -webkit-mask-image: radial-gradient(
+      farthest-corner at var(--wx) var(--wy),
+      transparent 0 calc(13% * var(--wr)),
+      #000 calc(30% * var(--wr)),
+      #000 calc(48% * var(--wr)),
+      rgba(0, 0, 0, 0.55) calc(68% * var(--wr)),
+      transparent calc(88% * var(--wr))
+    );
+    mix-blend-mode: multiply;
+  }
+
+  /* ---- hairline rules, top and bottom ---------------------------------- */
+
+  .rule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    align-items: baseline;
+    justify-content: space-between;
+    flex: none;
+  }
+
+  .top {
+    padding-bottom: clamp(8px, 1.2vh, 13px);
+    border-bottom: 1px solid rgba(25, 19, 32, 0.18);
+  }
+
+  .bottom {
+    padding-top: clamp(8px, 1.2vh, 13px);
+    border-top: 1px solid rgba(25, 19, 32, 0.18);
+  }
+
+  .tag {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: clamp(10px, 0.82vw, 12px);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .dim {
+    color: rgba(25, 19, 32, 0.5);
+  }
+
+  .tag :global(.mozz-mark) {
+    flex: none;
+    translate: 0 0.5px;
+  }
+
+  /* ---- the lockup: MOZZ, with the disc as its O ------------------------ */
+
+  .stage {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: clamp(12px, 2vh, 22px);
+    min-height: 0;
+    padding-top: clamp(22px, 9.4vh, 92px);
+  }
+
+  .plate {
+    --cx: 42.1%;
+    --cy: 46.6%;
+    --fs: min(19.4vw, 33vh);
+    position: relative;
+    width: 100%;
+    font-size: var(--fs);
+  }
+
+  .brk {
+    display: none;
+  }
+
+  /*
+   * One fan of light off the disc, clipped to the letterforms. The hues bleed
+   * into one another and the bands are unequal, the way a spectrum is; a veil
+   * of the same ink rides on top, so the colour is strongest where it leaves
+   * the disc and has burned back to ink by the far end of the word.
+   */
+  .word {
+    font-family: 'Syne', 'Helvetica Neue', system-ui;
+    font-weight: 800;
+    font-size: 1em;
+    line-height: 0.78;
+    letter-spacing: -0.012em;
+    text-align: center;
+    white-space: nowrap;
+    background-image:
+      radial-gradient(
+        farthest-corner at var(--cx) var(--cy),
+        rgba(25, 19, 32, 0) 0%,
+        rgba(25, 19, 32, 0) 30%,
+        rgba(25, 19, 32, 0.16) 54%,
+        rgba(25, 19, 32, 0.42) 80%,
+        rgba(25, 19, 32, 0.6) 100%
+      ),
+      conic-gradient(
+        from calc(89.3deg + var(--ang)) at var(--cx) var(--cy),
+        var(--ink) 0deg,
+        var(--t1) 0.004deg,
+        var(--t2) 1.008deg,
+        var(--t3) 2.184deg,
+        var(--t4) 3.192deg,
+        var(--t5) 3.864deg,
+        var(--t6) 4.175deg,
+        var(--t6) 4.225deg,
+        var(--t5) 4.62deg,
+        var(--t4) 5.292deg,
+        var(--t3) 6.3deg,
+        var(--t2) 7.392deg,
+        var(--t1) 8.396deg,
+        var(--ink) 8.4deg,
+        var(--ink) 177.7deg,
+        var(--t1) 177.70399999999998deg,
+        var(--t2) 179.092deg,
+        var(--t3) 180.716deg,
+        var(--t4) 182.108deg,
+        var(--t5) 183.036deg,
+        var(--t6) 183.465deg,
+        var(--t6) 183.535deg,
+        var(--t5) 184.08deg,
+        var(--t4) 185.008deg,
+        var(--t3) 186.4deg,
+        var(--t2) 187.908deg,
+        var(--t1) 189.29600000000002deg,
+        var(--ink) 189.3deg,
+        var(--ink) 360deg
+      );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hole {
+    display: inline-block;
+    position: relative;
+    width: 0.76em;
+    height: 0;
+    vertical-align: baseline;
+  }
+
+  /* The mark at poster scale, rebuilt to the artwork's own measurements: disc
+   * r14 in a 32 box, the two z eyes 4x5 on a 1-unit stroke, and a grin that is
+   * an arc concentric with the disc itself. Nothing is eyeballed. Because it is
+   * a true circle it can hold the light: the same raking band that crosses the
+   * letters crosses the disc at its equator, passing behind the face and out
+   * the other side. The header keeps the real artwork; this is its large twin. */
+  .disc {
+    position: absolute;
+    top: -0.315em;
+    left: 50%;
+    width: 0.685em;
+    height: 0.685em;
+    translate: -50% -50%;
+    line-height: 0;
+    border-radius: 50%;
+    background: linear-gradient(
+      calc(180deg + var(--ang)),
+      var(--red) 0%,
+      var(--red) 48.4%,
+      var(--t4) 49.5%,
+      var(--t6) 49.88%,
+      var(--t6) 50.12%,
+      var(--t4) 50.5%,
+      var(--red) 51.6%,
+      var(--red) 100%
+    );
+    box-shadow: inset 0 0 0 0.026em var(--deep);
+  }
+
+  .face {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: var(--paper);
+  }
+
+  .grin {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 1.15;
+  }
+
+  .caption {
+    display: flex;
+    gap: 0.55rem;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: clamp(11px, 0.86vw, 13px);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(25, 19, 32, 0.56);
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* ---- what it is ------------------------------------------------------ */
+
+  .foot {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    gap: clamp(16px, 2.4vw, 36px);
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: clamp(14px, 2.4vh, 26px);
+    margin-bottom: clamp(0px, 7vh, 70px);
+  }
+
+  .say {
+    max-width: 46ch;
+  }
+
+  h1 {
+    font-family: 'Syne', 'Helvetica Neue', system-ui;
+    font-size: clamp(23px, 2.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+  }
+
+  .say p {
+    max-width: 44ch;
+    margin-top: 0.7rem;
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.48;
+    color: rgba(25, 19, 32, 0.66);
+  }
+
+  .act {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .src,
+  .store {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.72rem 1.05rem;
+    border-radius: 3px;
+    font-size: clamp(12.5px, 0.95vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+
+  .src {
+    position: relative;
+    background: var(--black);
+    color: var(--paper);
+    transition: translate 140ms ease;
+  }
+
+  .src:hover {
+    translate: 0 -2px;
+  }
+
+  .store.pending {
+    background: var(--off);
+    border: 1px solid rgba(25, 19, 32, 0.28);
+    color: rgba(25, 19, 32, 0.58);
+  }
+
+  .soon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(25, 19, 32, 0.32);
+  }
+
+  /* ---- the three servers ---------------------------------------------- */
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.05rem;
+    align-items: center;
+    font-size: clamp(11.5px, 0.95vw, 14px);
+    font-weight: 600;
+  }
+
+  .works-label {
+    font-size: clamp(10px, 0.82vw, 12px);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(25, 19, 32, 0.5);
+  }
+
+  .server {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .server i {
+    width: 9px;
+    height: 9px;
+    flex: none;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow ---------------------------------------------------------- */
+
+  @media (max-width: 760px) {
+    .sheen {
+      padding-inline: 5vw;
+    }
+
+    .plate {
+      --fs: min(34vw, 26vh);
+    }
+
+    .wash {
+      --wa: 120deg;
+      --wk: 1.7;
+      --wr: 0.45;
+      opacity: 0.5;
+    }
+
+    .word {
+      background-image:
+        radial-gradient(
+          farthest-corner at var(--cx) var(--cy),
+          rgba(25, 19, 32, 0) 0%,
+          rgba(25, 19, 32, 0) 34%,
+          rgba(25, 19, 32, 0.14) 58%,
+          rgba(25, 19, 32, 0.4) 82%,
+          rgba(25, 19, 32, 0.56) 100%
+        ),
+        conic-gradient(
+          from calc(89.3deg + var(--ang)) at var(--cx) var(--cy),
+          var(--ink) 0deg,
+          var(--t1) 0.004deg,
+          var(--t2) 1.008deg,
+          var(--t3) 2.184deg,
+          var(--t4) 3.192deg,
+          var(--t5) 3.864deg,
+          var(--t6) 4.175deg,
+          var(--t6) 4.225deg,
+          var(--t5) 4.62deg,
+          var(--t4) 5.292deg,
+          var(--t3) 6.3deg,
+          var(--t2) 7.392deg,
+          var(--t1) 8.396deg,
+          var(--ink) 8.4deg,
+          var(--ink) 148.5deg,
+          var(--t1) 148.504deg,
+          var(--t2) 150.192deg,
+          var(--t3) 152.166deg,
+          var(--t4) 153.858deg,
+          var(--t5) 154.986deg,
+          var(--t6) 155.508deg,
+          var(--t6) 155.592deg,
+          var(--t5) 156.255deg,
+          var(--t4) 157.383deg,
+          var(--t3) 159.075deg,
+          var(--t2) 160.908deg,
+          var(--t1) 162.596deg,
+          var(--ink) 162.6deg,
+          var(--ink) 177.7deg,
+          var(--t1) 177.70399999999998deg,
+          var(--t2) 179.092deg,
+          var(--t3) 180.716deg,
+          var(--t4) 182.108deg,
+          var(--t5) 183.036deg,
+          var(--t6) 183.465deg,
+          var(--t6) 183.535deg,
+          var(--t5) 184.08deg,
+          var(--t4) 185.008deg,
+          var(--t3) 186.4deg,
+          var(--t2) 187.908deg,
+          var(--t1) 189.29600000000002deg,
+          var(--ink) 189.3deg,
+          var(--ink) 360deg
+        );
+    }
+
+    .brk {
+      display: block;
+    }
+
+    .word {
+      line-height: 0.86;
+    }
+
+    .stage {
+      justify-content: flex-start;
+      gap: clamp(14px, 2.6vh, 24px);
+      padding-top: clamp(14px, 8vh, 76px);
+    }
+
+    .foot {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.3rem;
+    }
+
+    h1 {
+      font-size: clamp(24px, 6.6vw, 34px);
+      max-width: 18ch;
+    }
+
+    .say p {
+      font-size: 14px;
+    }
+
+    .rule {
+      gap: 0.35rem 0.9rem;
+    }
+
+    .top .dim {
+      display: none;
+    }
+
+    .bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheen {
+      animation: none;
+      --ang: 1deg;
+    }
+
+    .src,
+    .src:hover {
+      translate: none;
+      transition: none;
+    }
+  }
+</style>

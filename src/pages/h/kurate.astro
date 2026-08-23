@@ -1,0 +1,805 @@
+---
+import Mark from '../../components/Mark.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <meta
+      name="description"
+      content="Mozz is a free, open source self-hosted music player for iPhone and iPad. Play from Plex, Jellyfin or Navidrome."
+    />
+    <meta name="theme-color" content="#0a070d" />
+    <title>Mozz — a free player for your self-hosted music</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Unbounded:wght@700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <main class="stage">
+      <div class="atmosphere" aria-hidden="true"></div>
+
+      <header class="masthead">
+        <p class="identity">
+          <span class="mini-mark"><Mark size={24} decorative /></span>
+          <span>Mozz</span>
+          <span class="identity-rule"></span>
+          <span class="category">Self-hosted music player</span>
+        </p>
+        <p class="promise">Free forever <span>·</span> Open source</p>
+      </header>
+
+      <figure class="media-card media-card--left">
+        <div
+          class="media-art media-art--album"
+          role="img"
+          aria-label="Abstract album artwork in red, white and black"
+        >
+          <span class="album-orbit"></span>
+          <span class="album-core"></span>
+          <span class="album-line"></span>
+        </div>
+        <figcaption><b>01</b> Downloaded album</figcaption>
+      </figure>
+
+      <figure class="media-card media-card--right">
+        <div
+          class="media-art media-art--signal"
+          role="img"
+          aria-label="A small now-playing equalizer"
+        >
+          <span class="signal-name">Playing from home</span>
+          <span class="signal-bars" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </span>
+          <span class="signal-time">02:14</span>
+        </div>
+        <figcaption><b>02</b> Your library, live</figcaption>
+      </figure>
+
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="mega" role="img" aria-label="Mozz">
+          <span class="mega-m">M</span>
+          <span class="mega-o" aria-hidden="true">
+            <svg class="hero-mark" viewBox="0 0 100 100" role="presentation">
+              <circle cx="50" cy="50" r="48" />
+              <path d="M27 31h18v8L36 47h9v8H26v-9l9-8h-8z" />
+              <path d="M55 31h18v8l-9 8h9v8H54v-9l9-8h-8z" />
+              <path d="M27 60h9v4c3.8 4.7 8.5 7 14 7s10.2-2.3 14-7v-4h9v8h-4.1C64.2 76 57.9 80 50 80s-14.2-4-18.9-12H27z" />
+            </svg>
+          </span>
+          <span class="mega-zz">ZZ</span>
+          <sup>iOS</sup>
+        </div>
+
+        <h1 id="hero-title">
+          <span class="headline-line">Mozz is the free player</span>
+          <span class="headline-line">
+            for the music
+            <span class="inline-player" aria-hidden="true">
+              <span class="inline-cover"></span>
+              <span class="inline-eq">
+                <i></i><i></i><i></i><i></i><i></i>
+              </span>
+              <span class="inline-dot"></span>
+            </span>
+            on
+          </span>
+          <span class="headline-line">your own server.</span>
+        </h1>
+
+        <p class="lede">
+          For iPhone and iPad. Stream at home, or download albums and listen with no signal.
+        </p>
+      </section>
+
+      <nav class="dock" aria-label="Mozz links and supported servers">
+        <p class="dock-brand">
+          <span class="status-dot" aria-hidden="true"></span>
+          Your music stays yours
+        </p>
+        <p class="server-list" aria-label="Works with Plex, Jellyfin and Navidrome">
+          <span class="works-with">Works with</span>
+          <span>Plex</span>
+          <i></i>
+          <span>Jellyfin</span>
+          <i></i>
+          <span>Navidrome</span>
+        </p>
+        <div class="dock-actions">
+          <a href="https://github.com/thatcube/Mozz">GitHub <span aria-hidden="true">↗</span></a>
+          <span class="pending" aria-disabled="true">App Store · coming soon</span>
+        </div>
+      </nav>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --night: #0a070d;
+    --ink: #191320;
+    --bone: #fdf6ec;
+    --off-white: #eeeae2;
+    --muted: rgba(238, 234, 226, 0.68);
+    --red: #d8002d;
+    --deep-red: #7d0019;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--night);
+  }
+
+  body {
+    color: var(--bone);
+    font-family: 'Onest', 'Avenir Next', system-ui, sans-serif;
+    text-rendering: geometricPrecision;
+  }
+
+  p,
+  h1,
+  figure {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 4px;
+    border-radius: 999px;
+  }
+
+  .stage {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100svh;
+    min-height: 35rem;
+    overflow: hidden;
+    background-color: var(--night);
+    background-image:
+      radial-gradient(ellipse 44% 72% at -8% 43%, rgba(216, 0, 45, 0.16), transparent 72%),
+      radial-gradient(ellipse 40% 64% at 106% 62%, rgba(125, 0, 25, 0.22), transparent 72%),
+      linear-gradient(rgba(238, 234, 226, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(238, 234, 226, 0.035) 1px, transparent 1px);
+    background-size: auto, auto, 64px 64px, 64px 64px;
+  }
+
+  .stage::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 47%, transparent 22%, rgba(0, 0, 0, 0.24) 78%, rgba(0, 0, 0, 0.6) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.1), transparent 20%, transparent 77%, rgba(0, 0, 0, 0.32));
+    content: '';
+    pointer-events: none;
+  }
+
+  .atmosphere {
+    position: absolute;
+    z-index: -1;
+    right: 6%;
+    bottom: -10%;
+    width: 32rem;
+    height: 18rem;
+    border-radius: 50%;
+    background: rgba(125, 0, 25, 0.18);
+    filter: blur(110px);
+    animation: breathe 9s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  .masthead {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: clamp(1.25rem, 3.3vw, 2.85rem) clamp(1.15rem, 3.5vw, 3.2rem);
+    font-family: 'Space Mono', 'SFMono-Regular', monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .mini-mark {
+    display: inline-flex;
+    line-height: 0;
+  }
+
+  .identity-rule {
+    width: 2.15rem;
+    height: 1px;
+    margin-inline: 0.08rem;
+    background: rgba(238, 234, 226, 0.26);
+  }
+
+  .category,
+  .promise {
+    color: var(--muted);
+  }
+
+  .promise span {
+    margin-inline: 0.35rem;
+    color: var(--red);
+  }
+
+  .hero {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 6.5rem 4vw 7.25rem;
+    text-align: center;
+  }
+
+  .mega {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 0 clamp(2rem, 4.3vh, 2.8rem);
+    color: var(--bone);
+    font-family: 'Unbounded', 'Arial Black', sans-serif;
+    font-size: clamp(6.35rem, 21.1vw, 18.75rem);
+    font-weight: 900;
+    letter-spacing: -0.115em;
+    line-height: 0.72;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .mega-m,
+  .mega-zz {
+    display: block;
+  }
+
+  .mega-o {
+    flex: none;
+    display: block;
+    width: 0.83em;
+    height: 0.83em;
+    margin: 0 -0.04em 0 -0.045em;
+    line-height: 0;
+  }
+
+  .mega-o .hero-mark {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .mega-o .hero-mark circle {
+    fill: var(--red);
+  }
+
+  .mega-o .hero-mark path {
+    fill: var(--bone);
+  }
+
+  .mega sup {
+    align-self: flex-start;
+    margin: -0.12em 0 0 1.4em;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.027em;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    line-height: 1;
+  }
+
+  h1 {
+    max-width: 60rem;
+    color: var(--bone);
+    font-size: clamp(2.55rem, 3.9vw, 3.6rem);
+    font-weight: 300;
+    letter-spacing: -0.052em;
+    line-height: 0.98;
+  }
+
+  .headline-line {
+    display: block;
+  }
+
+  .inline-player {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 2.95em;
+    height: 0.72em;
+    margin: 0 0.08em;
+    overflow: hidden;
+    border: 1px solid rgba(238, 234, 226, 0.22);
+    border-radius: 999px;
+    background: rgba(216, 0, 45, 0.12);
+    box-shadow:
+      inset 0 0 1.2rem rgba(238, 234, 226, 0.035),
+      0 0.18rem 1.4rem rgba(0, 0, 0, 0.3);
+    transform: translateY(0.07em);
+    vertical-align: baseline;
+  }
+
+  .inline-cover {
+    flex: none;
+    width: 0.72em;
+    height: 0.72em;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--night) 0 11%, transparent 12%),
+      conic-gradient(from 30deg, var(--red) 0 26%, var(--deep-red) 26% 51%, var(--off-white) 51% 72%, var(--night) 72%);
+    box-shadow: 0 0 0 1px rgba(238, 234, 226, 0.1);
+    animation: turn 7s linear infinite;
+  }
+
+  .inline-eq {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.075em;
+    flex: 1;
+    height: 54%;
+    padding-inline: 0.24em;
+  }
+
+  .inline-eq i {
+    width: 0.055em;
+    min-width: 2px;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--red);
+    transform-origin: bottom;
+    animation: beat 1.05s ease-in-out infinite alternate;
+  }
+
+  .inline-eq i:nth-child(2) { animation-delay: -0.77s; }
+  .inline-eq i:nth-child(3) { animation-delay: -0.42s; }
+  .inline-eq i:nth-child(4) { animation-delay: -0.93s; }
+  .inline-eq i:nth-child(5) { animation-delay: -0.18s; }
+
+  .inline-dot {
+    flex: none;
+    width: 0.12em;
+    height: 0.12em;
+    margin-right: 0.26em;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .lede {
+    max-width: 40rem;
+    margin-top: clamp(1rem, 2.2vh, 1.4rem);
+    color: var(--muted);
+    font-size: clamp(0.72rem, 0.88vw, 0.82rem);
+    font-weight: 400;
+    letter-spacing: 0.015em;
+    line-height: 1.5;
+  }
+
+  .media-card {
+    position: absolute;
+    z-index: 3;
+    top: 29%;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.55rem;
+    color: rgba(238, 234, 226, 0.52);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .media-card--left {
+    left: clamp(1.25rem, 3vw, 2.75rem);
+  }
+
+  .media-card--right {
+    right: clamp(1.25rem, 3vw, 2.75rem);
+    flex-direction: row-reverse;
+    transform: translateY(2.8rem);
+  }
+
+  .media-card figcaption {
+    display: flex;
+    gap: 0.35rem;
+    padding-bottom: 0.15rem;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+  }
+
+  .media-card--right figcaption {
+    transform: rotate(180deg);
+  }
+
+  .media-card figcaption b {
+    color: var(--red);
+    font-weight: 400;
+  }
+
+  .media-art {
+    position: relative;
+    width: 7rem;
+    height: 4.55rem;
+    overflow: hidden;
+    border: 1px solid rgba(238, 234, 226, 0.16);
+    background: rgba(25, 19, 32, 0.78);
+    box-shadow: 0 0.8rem 2.8rem rgba(0, 0, 0, 0.44);
+  }
+
+  .media-art--album {
+    background:
+      linear-gradient(135deg, transparent 52%, rgba(216, 0, 45, 0.82) 52% 68%, transparent 68%),
+      linear-gradient(40deg, var(--deep-red), var(--night) 65%);
+  }
+
+  .album-orbit {
+    position: absolute;
+    top: 50%;
+    left: 48%;
+    width: 3.1rem;
+    height: 3.1rem;
+    border: 1px solid rgba(238, 234, 226, 0.7);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .album-core {
+    position: absolute;
+    top: 50%;
+    left: 48%;
+    width: 0.58rem;
+    height: 0.58rem;
+    border-radius: 50%;
+    background: var(--off-white);
+    transform: translate(-50%, -50%);
+  }
+
+  .album-line {
+    position: absolute;
+    right: 0.45rem;
+    bottom: 0.5rem;
+    width: 2.6rem;
+    height: 1px;
+    background: var(--bone);
+    opacity: 0.45;
+  }
+
+  .media-art--signal {
+    display: grid;
+    grid-template: auto 1fr auto / 1fr;
+    padding: 0.58rem 0.62rem 0.5rem;
+  }
+
+  .signal-name,
+  .signal-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.42rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .signal-name { color: rgba(238, 234, 226, 0.64); }
+  .signal-time { color: var(--red); }
+
+  .signal-bars {
+    display: flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding-block: 0.35rem 0.2rem;
+  }
+
+  .signal-bars i {
+    width: 2px;
+    height: var(--h);
+    background: var(--red);
+    opacity: 0.88;
+  }
+
+  .signal-bars i:nth-child(1) { --h: 28%; }
+  .signal-bars i:nth-child(2) { --h: 67%; }
+  .signal-bars i:nth-child(3) { --h: 42%; }
+  .signal-bars i:nth-child(4) { --h: 88%; }
+  .signal-bars i:nth-child(5) { --h: 54%; }
+  .signal-bars i:nth-child(6) { --h: 74%; }
+  .signal-bars i:nth-child(7) { --h: 35%; }
+  .signal-bars i:nth-child(8) { --h: 58%; }
+
+  .dock {
+    position: absolute;
+    z-index: 5;
+    bottom: clamp(1rem, 2.5vh, 1.55rem);
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.1rem;
+    width: min(calc(100% - 3rem), 68rem);
+    min-height: 3.7rem;
+    padding: 0.64rem 0.74rem 0.64rem 1rem;
+    border: 1px solid rgba(238, 234, 226, 0.13);
+    border-radius: 999px;
+    background: rgba(238, 234, 226, 0.055);
+    box-shadow:
+      inset 0 1px rgba(255, 255, 255, 0.045),
+      0 1rem 3rem rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(22px);
+    transform: translateX(-50%);
+  }
+
+  .dock p,
+  .dock a,
+  .pending {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .dock-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.58rem;
+    padding-right: 1.1rem;
+    border-right: 1px solid rgba(238, 234, 226, 0.12);
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 0.43rem;
+    height: 0.43rem;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .server-list {
+    display: flex;
+    align-items: center;
+    gap: 0.72rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .server-list .works-with {
+    color: rgba(238, 234, 226, 0.48);
+  }
+
+  .server-list i {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .dock-actions a,
+  .pending {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.3rem;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+  }
+
+  .dock-actions a {
+    background: var(--bone);
+    color: var(--night);
+    font-weight: 700;
+  }
+
+  .dock-actions a span {
+    margin-left: 0.48rem;
+    color: var(--red);
+  }
+
+  .pending {
+    border: 1px solid rgba(238, 234, 226, 0.12);
+    color: rgba(238, 234, 226, 0.5);
+  }
+
+  @keyframes turn {
+    to { transform: rotate(1turn); }
+  }
+
+  @keyframes beat {
+    0% { transform: scaleY(0.25); }
+    45% { transform: scaleY(0.72); }
+    100% { transform: scaleY(1); }
+  }
+
+  @keyframes breathe {
+    to {
+      opacity: 0.55;
+      transform: translate3d(-3rem, -1rem, 0) scale(0.92);
+    }
+  }
+
+  @media (max-width: 68rem) {
+    .media-card {
+      display: none;
+    }
+  }
+
+  @media (max-width: 45rem) {
+    .stage {
+      background-size: auto, auto, 48px 48px, 48px 48px;
+      background-position: center;
+    }
+
+    .masthead {
+      align-items: flex-start;
+      padding: 1rem 1rem 0;
+      font-size: 0.52rem;
+      letter-spacing: 0.065em;
+    }
+
+    .identity {
+      gap: 0.48rem;
+    }
+
+    .identity-rule,
+    .category {
+      display: none;
+    }
+
+    .promise {
+      max-width: none;
+      padding-top: 0.18rem;
+      text-align: right;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+    .hero {
+      padding: 4.75rem 0.75rem 7.8rem;
+      transform: translateY(-0.25rem);
+    }
+
+    .mega {
+      margin-bottom: 2.1rem;
+      font-size: clamp(6.35rem, 26.2vw, 7.5rem);
+      letter-spacing: -0.13em;
+    }
+
+    .mega-o {
+      margin-right: -0.055em;
+    }
+
+    .mega sup {
+      margin-left: 1.25em;
+      font-size: 0.032em;
+    }
+
+    h1 {
+      width: 100%;
+      font-size: clamp(1.9rem, 8.05vw, 2.18rem);
+      letter-spacing: -0.055em;
+      line-height: 1.02;
+    }
+
+    .inline-player {
+      width: 2.65em;
+    }
+
+    .lede {
+      max-width: 21rem;
+      margin-top: 1.1rem;
+      padding-inline: 0.6rem;
+      font-size: 0.69rem;
+      line-height: 1.45;
+    }
+
+    .dock {
+      bottom: max(0.75rem, env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      width: calc(100% - 1.5rem);
+      min-height: 0;
+      padding: 0.68rem 0.74rem 0.72rem;
+      border-radius: 1.35rem;
+    }
+
+    .dock-brand {
+      display: none;
+    }
+
+    .server-list {
+      gap: 0.53rem;
+      width: 100%;
+      padding-bottom: 0.58rem;
+      border-bottom: 1px solid rgba(238, 234, 226, 0.1);
+    }
+
+    .server-list .works-with {
+      display: none;
+    }
+
+    .dock-actions {
+      justify-content: center;
+      padding-top: 0.58rem;
+    }
+
+    .dock p,
+    .dock a,
+    .pending {
+      font-size: 0.5rem;
+    }
+
+    .dock-actions a,
+    .pending {
+      min-height: 1.95rem;
+      padding-inline: 0.7rem;
+    }
+  }
+
+  @media (max-height: 42rem) and (min-width: 46rem) {
+    .hero {
+      padding-block: 4.6rem 5.5rem;
+    }
+
+    .mega {
+      margin-bottom: 1.3rem;
+      font-size: min(17vw, 12rem);
+    }
+
+    h1 {
+      font-size: min(3.3vw, 2.8rem);
+    }
+
+    .lede {
+      margin-top: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atmosphere,
+    .inline-cover,
+    .inline-eq i {
+      animation: none;
+    }
+  }
+</style>

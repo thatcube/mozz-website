@@ -1,0 +1,597 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const GITHUB_URL = 'https://github.com/thatcube/Mozz';
+---
+
+<Layout
+  title="Mozz — a free player for your self-hosted music"
+  description="Mozz is a free, open source music player for iPhone and iPad. Play your Plex, Jellyfin or Navidrome library at home or offline."
+  themeColor="#fdf6ec"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Mono:wght@400;500&family=Familjen+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="press" />
+
+  <main class="press">
+    <header class="masthead">
+      <div class="identity">
+        <Mark size={29} class="mini-mark" decorative />
+        <span>Self-hosted music player</span>
+      </div>
+      <div class="edition" aria-label="Free forever and open source">
+        <span>Free forever</span>
+        <i></i>
+        <span>Open source</span>
+      </div>
+    </header>
+
+    <section class="word-stage" aria-label="Mozz">
+      <div class="wordmark" role="img" aria-label="Mozz">
+        <span class="letter letter-m" aria-hidden="true">M</span>
+        <span class="word-disc" aria-hidden="true">
+          <span class="plate plate-shadow"></span>
+          <span class="plate plate-tint"></span>
+          <svg class="hero-mark" viewBox="0 0 100 100" role="presentation">
+            <circle cx="50" cy="50" r="47" fill="#d8002d" />
+            <path
+              d="M23 32h20v8l-10 9h10v8H23v-8l10-9H23V32Zm34 0h20v8l-10 9h10v8H57v-8l10-9H57V32Z"
+              fill="#fdf6ec"
+            />
+            <path
+              d="M25 65c4 12 13 18 25 18s21-6 25-18"
+              fill="none"
+              stroke="#fdf6ec"
+              stroke-width="9"
+              stroke-linecap="square"
+            />
+          </svg>
+        </span>
+        <span class="letter" aria-hidden="true">Z</span>
+        <span class="letter letter-last" aria-hidden="true">Z</span>
+      </div>
+      <div class="registration" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </section>
+
+    <section class="servers" aria-label="Works with Plex, Jellyfin and Navidrome">
+      <p>Works with the server you already run</p>
+      <div class="server plex">Plex</div>
+      <div class="server jellyfin">Jellyfin</div>
+      <div class="server navidrome">Navidrome</div>
+    </section>
+
+    <section class="message">
+      <h1>{HEADLINE}</h1>
+      <div class="support">
+        <p>
+          Stream on iPhone and iPad, or download albums for when the signal
+          disappears. No Mozz account, tracking, subscription or paid tier.
+        </p>
+        <div class="actions">
+          <span class="store" aria-disabled="true">Coming to the App Store</span>
+          <a class="source" href={GITHUB_URL}>
+            View on GitHub
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>For iPhone + iPad</span>
+      <span>GPL-3.0</span>
+      <span class="footer-mark">Your library stays yours.</span>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) {
+    background: #fdf6ec;
+  }
+
+  :global(body) {
+    overflow: hidden;
+    background: #fdf6ec;
+  }
+
+  .press {
+    --paper: #fdf6ec;
+    --off-white: #eeeae2;
+    --tint: #f1c9d2;
+    --red: #d8002d;
+    --deep-red: #7d0019;
+    --ink: #191320;
+    --black: #0a070d;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    gap: clamp(10px, 1.7vh, 18px);
+    width: 100%;
+    height: 100svh;
+    padding: clamp(56px, 6.8vh, 68px) clamp(16px, 2.6vw, 38px) clamp(14px, 2.2vh, 24px);
+    overflow: hidden;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: 'Familjen Grotesk', 'Arial', sans-serif;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: clamp(7px, 1.1vh, 11px);
+    border-bottom: 4px solid var(--black);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: clamp(9px, 0.82vw, 12px);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .identity,
+  .edition {
+    display: flex;
+    align-items: center;
+  }
+
+  .identity {
+    gap: 0.65rem;
+  }
+
+  :global(.mini-mark) {
+    width: clamp(23px, 2vw, 29px);
+    height: auto;
+    flex: none;
+  }
+
+  .edition {
+    gap: clamp(8px, 1.2vw, 16px);
+  }
+
+  .edition i {
+    width: 8px;
+    aspect-ratio: 1;
+    background: var(--red);
+    transform: rotate(45deg);
+  }
+
+  .word-stage {
+    position: relative;
+    display: grid;
+    min-height: 0;
+    align-items: center;
+    margin-top: clamp(70px, 10vh, 96px);
+  }
+
+  .wordmark {
+    display: grid;
+    grid-template-columns: 1.12fr 0.94fr 0.86fr 0.86fr;
+    align-items: center;
+    width: calc(100% - clamp(20px, 2.5vw, 36px));
+    margin-inline: auto;
+    color: var(--ink);
+    line-height: 0.72;
+  }
+
+  .letter {
+    min-width: 0;
+    font-family: 'Bowlby One', 'Arial Black', sans-serif;
+    font-size: min(22.4vw, 34vh);
+    font-weight: 400;
+    letter-spacing: -0.09em;
+    line-height: 0.72;
+    text-align: center;
+  }
+
+  .letter-m {
+    color: var(--deep-red);
+    text-align: left;
+  }
+
+  .letter-last {
+    color: var(--red);
+    text-align: right;
+    transform: translateX(-0.09em);
+  }
+
+  .word-disc {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: min(18.5vw, 28vh);
+    max-width: 100%;
+    aspect-ratio: 1;
+    place-self: center;
+    place-items: center;
+  }
+
+  .hero-mark {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0.75vw 0 var(--deep-red));
+  }
+
+  .plate {
+    position: absolute;
+    width: 86%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+
+  .plate-shadow {
+    top: -2%;
+    left: -6%;
+    background: var(--black);
+  }
+
+  .plate-tint {
+    right: -7%;
+    bottom: -4%;
+    background: var(--tint);
+  }
+
+  .registration {
+    position: absolute;
+    right: 0;
+    bottom: -4px;
+    display: flex;
+    gap: 5px;
+  }
+
+  .registration span {
+    width: clamp(6px, 0.7vw, 10px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .registration span:nth-child(2) { background: var(--deep-red); }
+  .registration span:nth-child(3) { background: var(--ink); }
+  .registration span:nth-child(4) {
+    border: 1px solid var(--black);
+    background: var(--off-white);
+  }
+
+  .servers {
+    display: grid;
+    grid-template-columns: minmax(190px, 0.8fr) repeat(3, 1fr);
+    gap: 3px;
+    min-height: clamp(56px, 7.5vh, 72px);
+    border: 3px solid var(--black);
+    background: var(--black);
+  }
+
+  .servers p,
+  .server {
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(12px, 1.6vw, 22px);
+  }
+
+  .servers p {
+    background: var(--paper);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: clamp(9px, 0.75vw, 11px);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .server {
+    justify-content: center;
+    font-family: 'Bowlby One', 'Arial Black', sans-serif;
+    font-size: clamp(18px, 2vw, 28px);
+    line-height: 1;
+  }
+
+  .plex {
+    color: var(--off-white);
+    background: var(--red);
+  }
+
+  .jellyfin {
+    color: var(--off-white);
+    background: var(--black);
+  }
+
+  .navidrome {
+    color: var(--deep-red);
+    background: var(--off-white);
+  }
+
+  .message {
+    display: block;
+    padding-top: clamp(12px, 1.8vh, 18px);
+  }
+
+  h1 {
+    align-self: start;
+    max-width: 21ch;
+    font-size: clamp(34px, 4.25vw, 64px);
+    font-weight: 700;
+    line-height: 0.94;
+    letter-spacing: -0.052em;
+  }
+
+  .support {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
+    align-items: center;
+    gap: clamp(24px, 4vw, 64px);
+    margin-top: clamp(16px, 2vh, 22px);
+    padding-block: clamp(9px, 1.3vh, 13px);
+    border-block: 3px solid var(--black);
+  }
+
+  .support p {
+    max-width: 48ch;
+    font-size: clamp(13px, 1.12vw, 16px);
+    font-weight: 500;
+    line-height: 1.42;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0.66rem 0.88rem;
+    border: 2px solid var(--black);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: clamp(10px, 0.74vw, 11px);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .store {
+    background: var(--tint);
+  }
+
+  .source {
+    gap: 0.55rem;
+    color: var(--off-white);
+    background: var(--black);
+    transition: color 130ms ease, background 130ms ease;
+  }
+
+  .source svg {
+    width: 16px;
+  }
+
+  .source:hover {
+    color: var(--off-white);
+    background: var(--red);
+  }
+
+  .source:focus-visible {
+    outline: 4px solid var(--deep-red);
+    outline-offset: 3px;
+  }
+
+  footer {
+    grid-row: 5;
+    display: flex;
+    gap: 0.7rem 1.6rem;
+    align-items: center;
+    padding-top: clamp(7px, 1vh, 11px);
+    border-top: 4px solid var(--black);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: clamp(9px, 0.76vw, 11px);
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .footer-mark {
+    margin-left: auto;
+  }
+
+  @media (max-width: 700px) {
+    :global(html),
+    :global(body) {
+      background: #fdf6ec;
+    }
+
+    .press {
+      grid-template-rows: repeat(5, auto);
+      gap: 0;
+      align-content: center;
+      height: auto;
+      min-height: 100dvh;
+      padding: 75px 13px 35px;
+    }
+
+    .masthead {
+      padding-bottom: 7px;
+      border-bottom-width: 3px;
+      font-size: 8.5px;
+      letter-spacing: 0.045em;
+    }
+
+    .identity {
+      gap: 0.45rem;
+    }
+
+    .edition {
+      gap: 6px;
+    }
+
+    .edition i {
+      width: 6px;
+    }
+
+    .wordmark {
+      grid-template-columns: 1.12fr 0.94fr 0.86fr 0.86fr;
+      width: calc(100% - 10px);
+    }
+
+    .word-stage {
+      margin-top: 52px;
+      margin-bottom: 22px;
+    }
+
+    .letter {
+      font-size: 23.5vw;
+    }
+
+    .word-disc {
+      width: 21.5vw;
+    }
+
+    .hero-mark {
+      filter: drop-shadow(3px 0 var(--deep-red));
+    }
+
+    .registration {
+      display: none;
+    }
+
+    .servers {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2px;
+      min-height: 76px;
+      border-width: 2px;
+    }
+
+    .servers p {
+      grid-column: 1 / -1;
+      justify-content: center;
+      min-height: 25px;
+      padding: 0 8px;
+      font-size: 8px;
+    }
+
+    .server {
+      min-width: 0;
+      padding: 0 5px;
+      font-size: clamp(12px, 3.75vw, 15px);
+    }
+
+    .message {
+      display: block;
+      min-height: 0;
+      padding-top: 22px;
+    }
+
+    h1 {
+      max-width: 11.5em;
+      font-size: clamp(34px, 9.6vw, 40px);
+      line-height: 0.96;
+    }
+
+    .support {
+      align-self: stretch;
+      display: block;
+      margin-top: 20px;
+      padding-block: 0;
+      border-block: 0;
+    }
+
+    .support p {
+      max-width: 42ch;
+      font-size: 12.5px;
+      line-height: 1.36;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    .store,
+    .source {
+      min-height: 38px;
+      padding: 0.58rem 0.65rem;
+      font-size: 8.5px;
+    }
+
+    footer {
+      gap: 0.6rem 0.9rem;
+      margin-top: 34px;
+      padding-top: 7px;
+      border-top-width: 3px;
+      font-size: 8px;
+      letter-spacing: 0.035em;
+    }
+
+    .footer-mark {
+      display: none;
+    }
+  }
+
+  @media (max-height: 720px) {
+    .press {
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+      gap: 7px;
+      align-content: stretch;
+      padding-top: 51px;
+      padding-bottom: 9px;
+    }
+
+    .word-stage {
+      min-height: 90px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    .servers {
+      min-height: 61px;
+    }
+
+    h1 {
+      font-size: clamp(29px, 8.8vw, 36px);
+    }
+
+    .support {
+      margin-top: 6px;
+    }
+
+    .support p {
+      font-size: 11.5px;
+    }
+
+    .actions {
+      margin-top: 6px;
+    }
+
+    .store,
+    .source {
+      min-height: 34px;
+      padding-block: 0.45rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .source {
+      transition: none;
+    }
+  }
+</style>

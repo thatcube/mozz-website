@@ -1,0 +1,731 @@
+---
+/**
+ * overprint — two inks, four values.
+ *
+ * A screenprint made of one red and one black. Red is the base ink and stays
+ * the base ink; every other value on the page is what happens where ink lands
+ * on ink. Red printed twice makes the deep red under the band. Black printed
+ * over red makes the blacker-than-black the server names are set in. Nothing
+ * here is decoration — the overlaps are the illustration.
+ *
+ * The mark is never redrawn. In the header it is the artwork exactly as it
+ * ships. At poster scale it is the same artwork run twice through the press as
+ * two separations: one flat red plate for the body, one paper plate for the
+ * knockout. Flattening is what a screen does — it cannot hold the sprite's ten
+ * reds, so it holds one — and it is the only reason the mark survives at 270px
+ * where the untouched sprite goes blotchy. Not one coordinate moves.
+ */
+import Mark from '../../components/Mark.astro';
+
+const GITHUB_URL = 'https://github.com/thatcube/Mozz';
+const HEADLINE = 'Mozz is a free player for the music on the server you already run.';
+const SERVERS = ['Plex', 'Jellyfin', 'Navidrome'];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mozz — a free player for your self-hosted music</title>
+    <meta
+      name="description"
+      content="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#fdf6ec" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Newsreader:opsz,wght@6..72,400..600&family=Spline+Sans+Mono:wght@400..600&display=swap"
+    />
+  </head>
+
+  <body>
+    <main class="sheet">
+      <!-- one plate carrying both inks: a red stripe across the word, turning
+           down the page in black so the headline is printed on it, not under it -->
+      <div class="plate band" aria-hidden="true"></div>
+
+      <!-- black laid over red — the names come out blacker than the black plate -->
+      <p class="names">{SERVERS.join(' · ')}</p>
+
+      <!-- the mark at poster scale: the real 32px artwork, separated. plate one
+           is every shape of it flattened into the single red a screen can hold,
+           printed over the band so the band's edge cuts the disc into two
+           values at the eye line. plate two is the knockout, in register on top,
+           so the zz and the smile stay paper on both halves.
+
+           drawn for this size rather than scaled up from the 32px sprite: the
+           sprite is ten reds that only blend optically when small, and its
+           silhouette is 28 of 32 units, so this disc is this disc is r=14 on a 32 box in two
+           densities of one red, no keyline and no dither, and
+           lands on the same coordinates. eyes x11-15 and x17-21 y11-16, smile
+           x11-21 y18-22, struck on a circle centred on the disc's own centre -->
+      <div class="markplate" aria-hidden="true">
+        <svg class="sep sep-body" viewBox="0 0 32 32">
+          <circle class="mk-disc" cx="16" cy="16" r="14" />
+          <path class="mk-dense" d="M 2 16 A 14 14 0 0 0 30 16 Z" />
+        </svg>
+        <svg class="sep sep-face" viewBox="0 0 32 32">
+          <polygon class="mk-eye" transform="translate(11 11)"
+            points="0,0 4,0 4,1.15 1.55,3.85 4,3.85 4,5 0,5 0,3.85 2.45,1.15 0,1.15" />
+          <polygon class="mk-eye" transform="translate(17 11)"
+            points="0,0 4,0 4,1.15 1.55,3.85 4,3.85 4,5 0,5 0,3.85 2.45,1.15 0,1.15" />
+          <path class="mk-smile" d="M 12 19 A 5 5 0 0 0 20 19" />
+        </svg>
+      </div>
+
+      <!-- red, the base ink. where the M crosses the mark, red hits red -->
+      <div class="plate wordplate">
+        <h1 class="word" aria-label="Mozz">MOZZ</h1>
+      </div>
+
+      <header class="tag">
+        <span class="tag-l">
+          <span class="seal"><Mark size={26} decorative /></span>
+          <b>Mozz</b>
+          <span class="rule" aria-hidden="true"></span>
+          self-hosted music player
+        </span>
+        <span class="tag-r">free forever · GPL&#8209;3.0 · iPhone and iPad</span>
+      </header>
+
+      <section class="stage">
+        <!-- paper knocked back out of every plate -->
+        <div class="phone" aria-hidden="true">
+          <div class="screen">
+            <p class="app-src">from your server</p>
+            <div class="art">
+              <span class="art-a"></span>
+              <span class="art-b"></span>
+              <span class="art-c"></span>
+            </div>
+            <p class="app-title">Overprint</p>
+            <p class="app-artist">Side Room · downloaded</p>
+            <div class="app-bar"><span></span></div>
+            <div class="app-time"><span>1:12</span><span>3:48</span></div>
+            <div class="app-ctrl">
+              <svg viewBox="0 0 24 24"><path d="M18 5 8 12l10 7V5ZM7 5H5v14h2V5Z"></path></svg>
+              <svg class="play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8V4Z"></path></svg>
+              <svg viewBox="0 0 24 24"><path d="M6 5l10 7L6 19V5ZM17 5h2v14h-2V5Z"></path></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="say">
+        <div class="say-l">
+          <p class="head">{HEADLINE}</p>
+          <p class="sub">
+            Stream it at home, or download an album and play it with no signal at all.
+          </p>
+        </div>
+
+        <div class="say-r">
+          <div class="acts">
+            <a class="btn btn-go" href={GITHUB_URL}>Get the source on GitHub</a>
+            <span class="btn btn-wait" aria-disabled="true">Coming to the App&nbsp;Store</span>
+          </div>
+          <p class="colophon">
+            <span class="chips" aria-hidden="true">
+              <i style="background:var(--paper)"></i>
+              <i style="background:var(--red)"></i>
+              <i style="background:var(--deep)"></i>
+              <i style="background:var(--ink)"></i>
+            </span>
+            two inks · four values
+          </p>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #fdf6ec;
+    --off: #eeeae2;
+    --red: #d8002d;
+    --deep: #7d0019;
+    --ink: #191320;
+    --black: #0a070d;
+    --pad: clamp(16px, 2.1vw, 34px);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  a:focus-visible,
+  .btn:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 4px;
+  }
+</style>
+
+<style>
+  .sheet {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(8px, 1.2vh, 18px);
+    padding: var(--pad);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* ─── top billing ─────────────────────────────────────────── */
+
+  .tag {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.83vw, 13px);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .tag-l {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+
+  .tag-l b {
+    font-family: 'Archivo', sans-serif;
+    font-variation-settings: 'wdth' 112;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .seal {
+    display: block;
+    flex: none;
+    line-height: 0;
+  }
+
+  .seal :global(.mozz-mark) {
+    width: 1.95em;
+    height: 1.95em;
+  }
+
+  .rule {
+    width: clamp(14px, 3vw, 54px);
+    height: 2px;
+    background: var(--ink);
+    opacity: 0.35;
+  }
+
+  .tag-r {
+    opacity: 0.62;
+    text-align: right;
+    flex: none;
+  }
+
+  /* ─── the press sheet ─────────────────────────────────────── */
+
+  .stage {
+    position: relative;
+    margin-inline: calc(-1 * var(--pad));
+    overflow: hidden;
+  }
+
+  .plate {
+    position: absolute;
+    mix-blend-mode: multiply;
+    animation: register 1.05s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  }
+
+  @keyframes register {
+    from {
+      translate: var(--dx, 0) var(--dy, 0);
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+
+  .band {
+    --dx: 0;
+    --dy: 15px;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 0 31%,
+      var(--red) 31% 62%,
+      var(--ink) 62% 100%
+    );
+    clip-path: polygon(0 31%, 100% 31%, 100% 62%, 47% 62%, 47% 100%, 0 100%);
+    animation-delay: 0.02s;
+  }
+
+  .names {
+    --dx: 0;
+    --dy: 15px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin: 0;
+    mix-blend-mode: multiply;
+    animation: register 1.05s 0.02s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+    color: var(--ink);
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: min(2.9vw, 5.8vh);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .wordplate {
+    --dx: -12px;
+    --dy: 6px;
+    left: 0;
+    right: 2%;
+    top: 25.5%;
+    transform: translateY(-50%);
+    animation-delay: 0.12s;
+  }
+
+  .word {
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--red);
+    font-weight: 900;
+    font-variation-settings: 'wdth' 118;
+    font-size: min(18.6vw, 36vh);
+    line-height: 0.78;
+    letter-spacing: -0.012em;
+  }
+
+  /* the artwork is centred on the band's edge: the disc's own centre line is the
+     eye line, so the zz land on paper and the smile lands on red, and the M of
+     MOZZ overprints its right shoulder red on red */
+  .markplate {
+    position: absolute;
+    width: min(19.2vw, 37vh);
+    aspect-ratio: 1;
+    left: var(--pad);
+    top: calc(31% - min(9.6vw, 18.5vh));
+    --dx: 14px;
+    --dy: -14px;
+  }
+
+  /* the register animation lives on the plates, not on the box that holds them:
+     an animated translate would isolate them and the body plate would have no
+     band left to multiply against */
+  /* two plates, one register */
+  .sep {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: register 1.05s 0.24s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  }
+
+  /* plate one — one screen holds one ink, so the whole disc is the base red
+     with a single darker keyline, printed over the band: the band's edge is
+     what darkens its lower half, exactly at the eye line */
+  .sep-body {
+    mix-blend-mode: multiply;
+  }
+
+  .mk-disc {
+    fill: var(--red);
+  }
+
+  /* the half below the band edge takes a second hit of ink, so it is laid down
+     denser: deep over band red reads ~#690004, which keeps the circle's
+     silhouette legible where a single red would vanish into the band */
+  /* second hit */
+  .mk-dense {
+    fill: var(--deep);
+  }
+
+  /* plate two — the knockout, in register on top, opaque so paper stays paper */
+  .mk-eye {
+    fill: var(--paper);
+  }
+
+  .mk-smile {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  /* ─── the phone, knocked out of every plate ───────────────── */
+
+  .phone {
+    position: absolute;
+    right: 3%;
+    bottom: 0;
+    height: 86%;
+    aspect-ratio: 258 / 500;
+    border-radius: clamp(18px, 2vw, 32px);
+    background: var(--off);
+    border: 3px solid var(--ink);
+    padding: 3.4%;
+    animation: settle 0.7s 0.5s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      translate: 0 16px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  .screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5%;
+    container-type: inline-size;
+  }
+
+  .screen p {
+    margin: 0;
+  }
+
+  .app-src {
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 7.2cqw;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--paper);
+    isolation: isolate;
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  .art span {
+    position: absolute;
+    mix-blend-mode: multiply;
+  }
+
+  .art-a {
+    left: 8%;
+    top: 14%;
+    width: 58%;
+    height: 58%;
+    background: var(--red);
+  }
+
+  .art-b {
+    right: 7%;
+    bottom: 12%;
+    width: 62%;
+    height: 62%;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .art-c {
+    left: 0;
+    right: 0;
+    top: 52%;
+    height: 15%;
+    background: var(--red);
+  }
+
+  .app-title {
+    font-weight: 800;
+    font-variation-settings: 'wdth' 108;
+    font-size: 11.5cqw;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .app-artist {
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 7cqw;
+    opacity: 0.58;
+    margin-top: -1.5% !important;
+  }
+
+  .app-bar {
+    height: 4px;
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+    overflow: hidden;
+  }
+
+  .app-bar span {
+    display: block;
+    height: 100%;
+    width: 31%;
+    background: var(--red);
+    animation: creep 26s linear infinite;
+  }
+
+  @keyframes creep {
+    from {
+      width: 26%;
+    }
+    to {
+      width: 74%;
+    }
+  }
+
+  .app-time {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 6.6cqw;
+    opacity: 0.5;
+  }
+
+  .app-ctrl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11%;
+    padding-block: 2% 1%;
+  }
+
+  .app-ctrl svg {
+    width: 13cqw;
+    height: 13cqw;
+    fill: var(--ink);
+  }
+
+  .app-ctrl .play {
+    width: 19cqw;
+    height: 19cqw;
+    fill: var(--red);
+  }
+
+  /* ─── the words underneath ────────────────────────────────── */
+
+  .say {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 54px);
+    align-items: start;
+    padding-top: clamp(14px, 4.6vh, 46px);
+  }
+
+  .say-l {
+    color: var(--paper);
+  }
+
+  .head {
+    margin: 0;
+    max-width: 23ch;
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(26px, 3.5vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.008em;
+    text-wrap: balance;
+  }
+
+  .sub {
+    margin: 0.5em 0 0;
+    max-width: 42ch;
+    font-size: clamp(12px, 0.98vw, 15px);
+    line-height: 1.42;
+    opacity: 0.75;
+  }
+
+  .say-r {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(10px, 1.4vh, 16px);
+  }
+
+  .acts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    display: block;
+    text-align: center;
+    padding: 0.9em 1.15em;
+    font-size: clamp(12px, 0.95vw, 15px);
+    font-weight: 700;
+    font-variation-settings: 'wdth' 106;
+    letter-spacing: 0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-go {
+    background: var(--black);
+    color: var(--paper);
+  }
+
+  .btn-go:hover {
+    background: var(--red);
+  }
+
+  .btn-wait {
+    color: color-mix(in srgb, var(--ink) 62%, transparent);
+    border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
+    cursor: default;
+  }
+
+  .colophon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    margin: 0;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.8vw, 12.5px);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .chips {
+    display: flex;
+  }
+
+  .chips i {
+    width: 1.05em;
+    height: 1.05em;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 24%, transparent);
+  }
+
+  /* ─── narrow ──────────────────────────────────────────────── */
+
+  @media (max-width: 760px) {
+    .tag-r {
+      display: none;
+    }
+
+    .stage {
+      min-height: 40svh;
+    }
+
+    .word {
+      font-size: min(25.5vw, 26vh);
+    }
+
+    .wordplate {
+      top: 16.6%;
+    }
+
+    /* the same single plate, printed as two shapes with the disc bridging them */
+    .band {
+      clip-path: none;
+      background: linear-gradient(
+        to bottom,
+        transparent 0 17.9%,
+        var(--red) 17.9% 27.9%,
+        transparent 27.9% 47%,
+        var(--red) 47% 69%,
+        var(--ink) 69% 100%
+      );
+    }
+
+    .names {
+      top: 21.9%;
+      font-size: 4.9vw;
+      letter-spacing: 0.045em;
+    }
+
+    .markplate {
+      width: min(46vw, 23vh);
+      left: var(--pad);
+      top: calc(47% - min(23vw, 11.5vh));
+    }
+
+    /* the copy prints on the black plate down here, so the red does the calling */
+    .btn-go {
+      background: var(--red);
+      color: var(--paper);
+    }
+
+    .btn-wait {
+      color: color-mix(in srgb, var(--paper) 88%, transparent);
+      border-color: color-mix(in srgb, var(--paper) 55%, transparent);
+    }
+
+    .phone {
+      right: 2%;
+      height: 62%;
+      border-width: 2.5px;
+    }
+
+    .say {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .say-r {
+      align-items: flex-start;
+    }
+
+    .acts {
+      align-items: stretch;
+    }
+
+    .colophon {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plate,
+    .sep,
+    .phone {
+      animation: none;
+      translate: none;
+      opacity: 1;
+    }
+
+    .app-bar span {
+      animation: none;
+    }
+  }
+</style>

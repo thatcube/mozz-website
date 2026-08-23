@@ -1,0 +1,725 @@
+---
+/**
+ * Tile — the page is four flat blocks of colour, edge to edge.
+ *
+ * Nothing floats on a background because there is no background: the wordmark
+ * is a block, the app is a block, the servers are a block. The mark is laid
+ * across the point where three of them meet and printed three times, once per
+ * block, so the seams cut straight through it. One ink each — red, paper,
+ * black — and the face is always the block colour knocked back through it.
+ *
+ * The big disc is a large-format redraw: flat colour, true circle, the two z
+ * eyes and the smile at the proportions of the 32px artwork (eyes x11–21,
+ * smile the same width, face centred a half unit below the disc centre). The
+ * real Mark component is used at 20px in the brow, where its ten reds blend
+ * into one and it is meant to be seen.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on your own server.';
+const BODY =
+  'Stream from the server you already run, or download an album and play it with no signal at all. iPhone and iPad.';
+const SERVER_NAMES = ['Plex', 'Jellyfin', 'Navidrome'];
+
+/* The mark is placed three times and clipped to a block each time. Same
+   centre, same size, same shapes — only the single ink changes at the seams. */
+const REGIONS = ['word', 'say', 'srv'];
+---
+
+<Layout
+  title={`${NAME} — a free player for your self-hosted music`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline."
+  themeColor="#fdf6ec"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=DM+Mono:wght@400;500&family=Familjen+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="tile" />
+
+  <main class="tile">
+    <!-- block one: the wordmark, run off the edge and cut by the app -->
+    <section class="block b-word">
+      <div class="brow">
+        <span class="brow-id"><Mark size={20} decorative />Self-hosted music player</span>
+        <span class="brow-end">Free forever · GPL-3.0</span>
+      </div>
+      <svg class="wordmark" viewBox="0 0 1000 224" role="img" aria-label="Mozz">
+        <text x="0" y="216" textLength="1000" lengthAdjust="spacingAndGlyphs">MOZZ</text>
+      </svg>
+      <p class="stamp">No account · no tracking · nothing to sign up for</p>
+    </section>
+
+    <!-- block two: what it is -->
+    <section class="block b-say">
+      <h1>{HEADLINE}</h1>
+      <p class="body">{BODY}</p>
+      <div class="acts">
+        <a class="act act-src" href={GITHUB_URL}>Source on GitHub</a>
+        {APP_STORE_URL ? (
+          <a class="act act-store" href={APP_STORE_URL}>Download on the App Store</a>
+        ) : (
+          <span class="act act-store is-pending" aria-disabled="true">Coming to the App Store</span>
+        )}
+      </div>
+    </section>
+
+    <!-- block three: the servers, which is the only list on the page -->
+    <section class="block b-srv">
+      <p class="srv-label">Works with</p>
+      <ul class="srv-list" role="list">
+        {SERVER_NAMES.map((name) => <li>{name}</li>)}
+      </ul>
+      <p class="srv-note">and any Subsonic server</p>
+    </section>
+
+    <!-- block four: this one happens to be the app -->
+    <section class="block b-app" aria-hidden="true">
+      <div class="status">
+        <span class="clock">9:41</span>
+        <svg class="sys" viewBox="0 0 42 12" fill="currentColor">
+          <rect x="0" y="7" width="2.4" height="5" />
+          <rect x="3.8" y="5" width="2.4" height="7" />
+          <rect x="7.6" y="3" width="2.4" height="9" />
+          <rect x="11.4" y="1" width="2.4" height="11" />
+          <path d="M18 4.6a7.6 7.6 0 0 1 9 0l-1.5 1.9a5.2 5.2 0 0 0-6 0zM20.4 7.7a3.8 3.8 0 0 1 4.2 0l-2.1 2.7z" />
+          <rect x="30" y="2" width="10" height="8" rx="1.6" opacity="0.45" />
+          <rect x="31.2" y="3.2" width="6" height="5.6" rx="0.8" />
+        </svg>
+      </div>
+
+      <div class="art">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <rect width="100" height="100" fill="#7d0019" />
+          <rect x="22" width="78" height="52" fill="#d8002d" />
+          <rect x="48" y="52" width="52" height="48" fill="#fdf6ec" />
+        </svg>
+      </div>
+
+      <div class="np">
+        <div class="np-head">
+          <div class="np-txt">
+            <p class="np-title">Long Way Round</p>
+            <p class="np-artist">Ekko Field</p>
+          </div>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </div>
+
+        <div class="bar"><span></span></div>
+        <div class="times"><span>1:12</span><span>3:48</span></div>
+
+        <div class="transport">
+          <svg class="t-side" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 4v16l-11-8zM9 4v16H6V4z" />
+          </svg>
+          <span class="t-play">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5h3.4v14H8zM12.6 5H16v14h-3.4z" /></svg>
+          </span>
+          <svg class="t-side" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 4v16l11-8zM15 4v16h3V4z" />
+          </svg>
+        </div>
+
+        <p class="src">Jellyfin · downloaded</p>
+      </div>
+    </section>
+
+    <!-- the mark itself, cut by every seam it crosses -->
+    <div class="discs" aria-hidden="true">
+      {REGIONS.map((region) => (
+        <div class={`region r-${region}`}>
+          <svg class="markart" viewBox="0 0 32 32">
+            <circle class="mk-disc" cx="16" cy="16" r="13.5" />
+            <path class="mk-eye" d="M11 11H15V12L12.28 15H15V16H11V15L13.72 12H11Z" />
+            <path class="mk-eye" d="M17 11H21V12L18.28 15H21V16H17V15L19.72 12H17Z" />
+            <path class="mk-smile" d="M11.85 18.35A4.15 2.75 0 0 0 20.15 18.35" />
+          </svg>
+        </div>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .tile {
+    /* red, white, black — nothing else */
+    --paper: #fdf6ec;
+    --offwhite: #eeeae2;
+    --red: #d8002d;
+    --deep: #7d0019;
+    --ink: #191320;
+    --black: #0a070d;
+
+    /* where the blocks meet — the discs read these too */
+    --c1: 52%;
+    --c2: 22%;
+    --r1: 56%;
+    --jx: var(--c1);
+    --jy: var(--r1);
+    --disc: min(clamp(224px, 29vw, 416px), 60vh);
+    --pad: clamp(20px, 2.2vw, 34px);
+
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--c1) var(--c2) 1fr;
+    grid-template-rows: var(--r1) 1fr;
+    grid-template-areas:
+      'word word app'
+      'say  srv  app';
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--paper);
+    font-family: 'Familjen Grotesk', 'Trebuchet MS', system-ui;
+  }
+
+  .block {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---- block one: the word -------------------------------------------- */
+
+  .b-word {
+    grid-area: word;
+    display: flex;
+    flex-direction: column;
+    padding: calc(46px + var(--pad) * 0.5) 0 0 var(--pad);
+    background: var(--paper);
+    color: var(--black);
+  }
+
+  .brow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    align-items: center;
+    padding-right: var(--pad);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.86vw, 12.5px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* The real artwork, at the size it was drawn for. */
+  .brow-id {
+    display: inline-flex;
+    gap: 0.7em;
+    align-items: center;
+  }
+
+  .brow-end {
+    opacity: 0.55;
+  }
+
+  /* The word is set wider than its block, so the app tile cuts the last Z.
+     Nothing is floating over it — the block simply stops. */
+  .wordmark {
+    width: 111%;
+    max-width: none;
+    height: auto;
+    margin-top: clamp(10px, 2.2vh, 26px);
+  }
+
+  .wordmark text {
+    font-family: 'Archivo', 'Arial Narrow', system-ui;
+    font-size: 288px;
+    font-weight: 900;
+    font-stretch: 125%;
+    fill: var(--black);
+  }
+
+  /* One quiet line printed into the empty half of the block. */
+  .stamp {
+    margin-top: auto;
+    padding: 0 var(--pad) calc(var(--pad) * 0.7) 0;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.8vw, 12px);
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+
+  /* ---- block two: the sentence ---------------------------------------- */
+
+  .b-say {
+    grid-area: say;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--pad);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  h1 {
+    max-width: 15.5ch;
+    font-family: 'Archivo', system-ui;
+    font-size: clamp(24px, 2.75vw, 42px);
+    font-weight: 700;
+    font-stretch: 100%;
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+  }
+
+  .body {
+    max-width: 38ch;
+    margin-top: clamp(0.6rem, 1.6vh, 1.1rem);
+    font-size: clamp(13px, 1.02vw, 15.5px);
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--paper) 82%, var(--ink));
+  }
+
+  .acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: clamp(0.9rem, 2.4vh, 1.6rem);
+  }
+
+  .act {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.62rem 1.05rem;
+    font-size: clamp(12px, 0.94vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .act-src {
+    background: var(--paper);
+    color: var(--black);
+    transition: transform 130ms ease, background-color 130ms ease;
+  }
+
+  .act-src:hover {
+    background: var(--red);
+    color: var(--paper);
+    transform: translateY(-2px);
+  }
+
+  .act-store.is-pending {
+    border: 1.5px dashed color-mix(in srgb, var(--paper) 58%, transparent);
+    color: color-mix(in srgb, var(--paper) 78%, var(--ink));
+  }
+
+  /* ---- block three: the servers --------------------------------------- */
+
+  .b-srv {
+    grid-area: srv;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--pad);
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .srv-label {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.82vw, 12px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .srv-list {
+    margin: 0.35rem 0 0;
+    font-family: 'Archivo', system-ui;
+    font-size: clamp(18px, 2vw, 30px);
+    font-weight: 800;
+    font-stretch: 112%;
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .srv-note {
+    margin-top: 0.5rem;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(9.5px, 0.76vw, 11.5px);
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+  }
+
+  /* ---- block four: the app -------------------------------------------- */
+
+  .b-app {
+    grid-area: app;
+    display: flex;
+    flex-direction: column;
+    padding: calc(46px + var(--pad) * 0.4) 0 var(--pad);
+    background: var(--black);
+    color: var(--offwhite);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--pad);
+    opacity: 0.72;
+  }
+
+  .clock {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .sys {
+    width: 42px;
+    height: 12px;
+  }
+
+  /* The art is not a square thumbnail — it is another block, and it takes all
+     the room between the status strip and the controls so nothing sits empty. */
+  .art {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: clamp(14px, 2.6vh, 30px);
+    margin-bottom: clamp(18px, 3.4vh, 40px);
+  }
+
+  .art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .np {
+    margin-top: auto;
+    padding: 0 var(--pad);
+  }
+
+  .np-head {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .np-title {
+    font-family: 'Archivo', system-ui;
+    font-size: clamp(16px, 1.4vw, 21px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .np-artist {
+    margin-top: 0.15rem;
+    font-size: clamp(11.5px, 0.94vw, 13.5px);
+    opacity: 0.6;
+  }
+
+  .eq {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 18px;
+    flex: none;
+  }
+
+  .eq i {
+    width: 3px;
+    height: 100%;
+    background: var(--red);
+    transform-origin: bottom;
+    animation: eq-rise 900ms ease-in-out infinite alternate;
+  }
+
+  .eq i:nth-child(2) { animation-duration: 620ms; }
+  .eq i:nth-child(3) { animation-duration: 1080ms; }
+  .eq i:nth-child(4) { animation-duration: 760ms; }
+
+  @keyframes eq-rise {
+    from { transform: scaleY(0.22); }
+    to { transform: scaleY(1); }
+  }
+
+  .bar {
+    height: 3px;
+    margin-top: clamp(14px, 2vh, 22px);
+    background: var(--deep);
+  }
+
+  .bar span {
+    display: block;
+    width: 31%;
+    height: 100%;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.45rem;
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: 11px;
+    opacity: 0.55;
+  }
+
+  .transport {
+    display: flex;
+    gap: clamp(14px, 1.6vw, 24px);
+    align-items: center;
+    justify-content: center;
+    margin-top: clamp(14px, 2.4vh, 26px);
+  }
+
+  .t-side {
+    width: clamp(20px, 1.7vw, 25px);
+    height: auto;
+    opacity: 0.68;
+  }
+
+  .t-play {
+    display: grid;
+    place-items: center;
+    width: clamp(44px, 3.7vw, 54px);
+    height: clamp(44px, 3.7vw, 54px);
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--black);
+  }
+
+  .t-play svg {
+    width: 46%;
+    height: auto;
+  }
+
+  .src {
+    margin-top: clamp(12px, 2vh, 20px);
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-size: clamp(10px, 0.8vw, 11.5px);
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  /* ---- the disc, cut by the seams ------------------------------------- */
+
+  .discs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Each region is the whole frame, clipped to one block. The mark inside sits
+     at the same point in all three, so the disc is continuous and only the ink
+     it is printed in changes as it crosses a join. One flat ink per block, and
+     the face is always the block's own colour showing back through. */
+  .region {
+    position: absolute;
+    inset: 0;
+  }
+
+  .r-word {
+    /* on paper: printed red */
+    --tdisc: var(--red);
+    --tface: var(--paper);
+    clip-path: inset(0 0 calc(100% - var(--jy)) 0);
+  }
+
+  .r-say {
+    /* on black: printed paper-white */
+    --tdisc: var(--paper);
+    --tface: var(--ink);
+    clip-path: inset(var(--jy) calc(100% - var(--jx)) 0 0);
+  }
+
+  .r-srv {
+    /* on red: printed black */
+    --tdisc: var(--black);
+    --tface: var(--red);
+    clip-path: inset(var(--jy) calc(100% - var(--jx) - var(--c2)) 0 var(--jx));
+  }
+
+  .region .markart {
+    position: absolute;
+    top: var(--jy);
+    left: var(--jx);
+    display: block;
+    width: var(--disc);
+    height: var(--disc);
+    transform: translate(-50%, -50%);
+    overflow: visible;
+  }
+
+  .mk-disc {
+    fill: var(--tdisc);
+  }
+
+  .mk-eye {
+    fill: var(--tface);
+  }
+
+  .mk-smile {
+    fill: none;
+    stroke: var(--tface);
+    stroke-width: 1.75;
+  }
+
+  /* ---- focus ----------------------------------------------------------- */
+
+  .act:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* ---- narrow: four bands, the app becomes the player bar -------------- */
+
+  @media (max-width: 860px) {
+    .tile {
+      --r1: 34%;
+      --jx: 71%;
+      --jy: var(--r1);
+      --disc: min(256px, 68vw, 34vh);
+      --pad: 18px;
+      grid-template-columns: 1fr;
+      grid-template-rows: var(--r1) 1fr auto auto;
+      grid-template-areas:
+        'word'
+        'say'
+        'srv'
+        'app';
+    }
+
+    .b-word {
+      padding: calc(42px + 12px) 0 0 var(--pad);
+    }
+
+    .wordmark {
+      width: 106%;
+      margin-top: clamp(8px, 1.6vh, 18px);
+    }
+
+    .stamp {
+      display: none;
+    }
+
+    .b-say {
+      justify-content: flex-end;
+      padding-bottom: calc(var(--pad) + 4px);
+    }
+
+    h1 {
+      max-width: 17ch;
+      font-size: clamp(23px, 6.6vw, 30px);
+    }
+
+    .body {
+      max-width: none;
+      font-size: 13.5px;
+    }
+
+    .b-srv {
+      justify-content: center;
+      gap: 1px;
+      padding: 13px var(--pad);
+    }
+
+    .srv-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.7rem;
+      font-size: clamp(17px, 5.2vw, 23px);
+    }
+
+    .srv-note {
+      margin-top: 1px;
+    }
+
+    .b-app {
+      flex-direction: row;
+      gap: 12px;
+      align-items: center;
+      padding: 12px var(--pad);
+    }
+
+    .status,
+    .bar,
+    .times,
+    .t-side,
+    .src {
+      display: none;
+    }
+
+    .art {
+      width: 46px;
+      flex: none;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    .art svg {
+      height: auto;
+      aspect-ratio: 1;
+    }
+
+    .np {
+      display: flex;
+      flex: 1;
+      gap: 12px;
+      align-items: center;
+      min-width: 0;
+      margin-top: 0;
+      padding: 0;
+    }
+
+    .np-head {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .np-title,
+    .np-artist {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .np-title { font-size: 15px; }
+    .np-artist { font-size: 12px; }
+
+    .transport {
+      margin-top: 0;
+      flex: none;
+    }
+
+    .t-play {
+      width: 40px;
+      height: 40px;
+    }
+
+    .r-srv {
+      display: none;
+    }
+
+    .r-say {
+      clip-path: inset(var(--jy) 0 0 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .eq i {
+      animation: none;
+      transform: scaleY(0.55);
+    }
+
+    .act-src,
+    .act-src:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

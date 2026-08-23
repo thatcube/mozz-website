@@ -1,0 +1,939 @@
+---
+/**
+ * Occlude — the wordmark blown up until it stops being a word.
+ *
+ * MOZZ is set so large that the viewport only holds the O; the M runs off the
+ * left edge and the first Z off the right, both cut by the screen itself and
+ * not by any container. What is left reads as a black ring on a red field, and
+ * the phone stands whole inside its counter, covering the ring top and bottom.
+ * The phone is the only complete object on the page.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HeroBar from '../../components/HeroBar.astro';
+import Mark from '../../components/Mark.astro';
+import { NAME, GITHUB_URL, APP_STORE_URL } from '../../data/site';
+
+const HEADLINE = 'Mozz is a free player for the music on the server you already run.';
+---
+
+<Layout
+  title={`${NAME} — a free player for the music on your own server`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Point it at your own Plex, Jellyfin or Navidrome server, listen at home, or download an album and play it with no signal."
+  themeColor="#d8002d"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;900&family=Onest:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <HeroBar slug="occlude" />
+
+  <main class="occlude">
+    <div class="frame">
+      <header class="bar">
+        <span class="lockup">
+          <span class="badge"><Mark size={26} decorative /></span>
+          <b>Mozz</b>
+          <i aria-hidden="true"></i>
+          <span>self-hosted music player</span>
+        </span>
+        <span class="fine">free forever · gpl-3.0 · no account</span>
+      </header>
+
+      <div class="stage">
+        <span class="word" aria-hidden="true"
+          ><span class="off">M</span><span class="on">O</span><span class="off">ZZ</span></span
+        >
+
+        <div class="sleeves" aria-hidden="true">
+          <span class="sleeve b">
+            <svg viewBox="0 0 100 100">
+              <rect width="100" height="100" fill="#d8002d"></rect>
+              <rect y="20" width="100" height="13" fill="#fdf6ec"></rect>
+              <rect y="45" width="68" height="13" fill="#fdf6ec"></rect>
+              <rect y="70" width="100" height="13" fill="#0a070d"></rect>
+            </svg>
+          </span>
+          <span class="sleeve a">
+            <svg viewBox="0 0 100 100">
+              <rect width="100" height="100" fill="#fdf6ec"></rect>
+              <circle cx="50" cy="42" r="28" fill="#0a070d"></circle>
+              <rect y="70" width="100" height="13" fill="#d8002d"></rect>
+            </svg>
+          </span>
+        </div>
+
+        <div class="cast" aria-hidden="true"></div>
+
+        <div
+          class="phone"
+          role="img"
+          aria-label="The Mozz now playing screen on an iPhone: Low Ceiling by Marbled Hall, streaming from your own server and already downloaded to the phone."
+        >
+          <div class="screen">
+            <span class="island" aria-hidden="true"></span>
+
+            <div class="status">
+              <span>9:41</span>
+              <span class="glyphs" aria-hidden="true">
+                <svg viewBox="0 0 18 12"
+                  ><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" fill="currentColor"
+                  ></path></svg
+                >
+                <svg viewBox="0 0 26 12"
+                  ><rect
+                    x="0.7"
+                    y="0.7"
+                    width="20.6"
+                    height="10.6"
+                    rx="3.2"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"></rect><rect
+                    x="2.6"
+                    y="2.6"
+                    width="14.4"
+                    height="6.8"
+                    rx="1.6"
+                    fill="currentColor"></rect><path
+                    d="M23.3 4.3v3.4a2 2 0 0 0 0-3.4z"
+                    fill="currentColor"></path></svg
+                >
+              </span>
+            </div>
+
+            <div class="head">
+              <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"
+                ><path
+                  d="M3 6l5 5 5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></path></svg
+              >
+              <span class="from">playing from your server</span>
+              <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            </div>
+
+            <div class="art" aria-hidden="true">
+              <svg viewBox="0 0 120 120">
+                <rect width="120" height="120" fill="#d8002d"></rect>
+                <circle cx="50" cy="55" r="33" fill="#fdf6ec"></circle>
+                <rect x="60" y="10" width="33" height="100" rx="3" fill="#0a070d"></rect>
+                <rect x="14" y="99" width="28" height="4" fill="#fdf6ec" opacity="0.5"></rect>
+              </svg>
+            </div>
+
+            <div class="meta">
+              <strong>Low Ceiling</strong>
+              <span>Marbled Hall · Slow Cut</span>
+            </div>
+
+            <div class="bar-line"><span></span></div>
+            <div class="times"><span>1:47</span><span>−2:25</span></div>
+
+            <div class="ctrls" aria-hidden="true">
+              <svg viewBox="0 0 20 20"
+                ><path d="M17 3.5v13L7.5 10z" fill="currentColor"></path><rect
+                  x="3"
+                  y="3.5"
+                  width="2.4"
+                  height="13"
+                  rx="1"
+                  fill="currentColor"></rect></svg
+              >
+              <span class="play"
+                ><svg viewBox="0 0 20 20"
+                  ><rect x="5.7" y="4.4" width="3.2" height="11.2" rx="1.2" fill="currentColor"
+                  ></rect><rect
+                    x="11.1"
+                    y="4.4"
+                    width="3.2"
+                    height="11.2"
+                    rx="1.2"
+                    fill="currentColor"></rect></svg
+                ></span
+              >
+              <svg viewBox="0 0 20 20"
+                ><path d="M3 3.5v13L12.5 10z" fill="currentColor"></path><rect
+                  x="14.6"
+                  y="3.5"
+                  width="2.4"
+                  height="13"
+                  rx="1"
+                  fill="currentColor"></rect></svg
+              >
+            </div>
+
+            <div class="vol" aria-hidden="true">
+              <svg viewBox="0 0 16 16"
+                ><path d="M4 6h2.3L9.3 3.4v9.2L6.3 10H4z" fill="currentColor"></path></svg
+              >
+              <span class="rail"><i></i></span>
+              <svg viewBox="0 0 16 16"
+                ><path d="M2.4 6h2.3L7.7 3.4v9.2L4.7 10H2.4z" fill="currentColor"></path><path
+                  d="M10.3 5.6a3.3 3.3 0 0 1 0 4.8M12.3 3.5a6.3 6.3 0 0 1 0 9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linecap="round"></path></svg
+              >
+            </div>
+
+            <div class="queue">
+              <span class="tag">up next</span>
+              <p><b>Dry Season</b> · Halve</p>
+              <p><b>Cold Open</b> · Nine Verge</p>
+            </div>
+
+            <span class="home" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <p class="chip">
+          <span class="tick" aria-hidden="true"
+            ><svg viewBox="0 0 16 16"
+              ><path
+                d="M3.8 8.3 6.6 11l5.6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.1"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path></svg
+            ></span
+          >
+          <span>downloaded once<br />plays with no signal</span>
+        </p>
+      </div>
+
+      <footer class="base">
+        <h1>{HEADLINE}</h1>
+        <div class="row">
+          <p class="sub">
+            Point it at <b>Plex</b>, <b>Jellyfin</b> or <b>Navidrome</b>, then listen at home or keep
+            an album on the phone and play it anywhere.
+          </p>
+          <div class="acts">
+            <a class="btn" href={GITHUB_URL}>Source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn ghost" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn ghost pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    background: #d8002d;
+  }
+</style>
+
+<style>
+  .occlude {
+    --red: #d8002d;
+    --red-lit: #e5122f;
+    --deep: #7d0019;
+    --ink: #191320;
+    --black: #0a070d;
+    --paper: #fdf6ec;
+    --soft: #eeeae2;
+
+    /* The giant letter. Sized from the O's own ink box (0.785em tall,
+       0.912em wide, measured) so the crop is predictable: height-led on a
+       desktop, width-led on a phone, and always past both viewport edges. */
+    --oh: min(78svh, 150vw);
+    --fs: calc(var(--oh) / 0.785);
+    --pw: clamp(168px, calc((100svh - 336px) / 2.17), 288px);
+    --pad: clamp(18px, 3.4vw, 54px);
+
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 46%, var(--red-lit) 0%, var(--red) 40%, #b4001f 100%);
+    color: var(--paper);
+    font-family: 'Onest', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ---------- the letter, cut by the viewport ---------- */
+
+  .word {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 0;
+    display: block;
+    color: var(--black);
+    font-family: 'Unbounded', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;    font-weight: 900;
+    font-size: var(--fs);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    /* 0.134em walks the O's ink centre onto the box centre, so the letter the
+       phone stands in is dead centre and the M and Z leave by the edges. */
+    transform: translate(calc(-50% + 0.134em), -50%);
+    animation: swell 1100ms cubic-bezier(0.18, 0.82, 0.22, 1) both;
+  }
+
+  @keyframes swell {
+    from {
+      opacity: 0;
+      transform: translate(calc(-50% + 0.134em), -50%) scale(1.06);
+    }
+  }
+
+  /* One word, one colour. The O is the letter the phone stands in; the M and
+     the Z it sits between are cut by the screen, not by a container. */
+  .off,
+  .on {
+    color: var(--black);
+  }
+
+  /* ---------- top strip ---------- */
+
+  .frame {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(10px, 1.8vh, 20px);
+    height: 100%;
+    padding: calc(42px + clamp(12px, 1.8vh, 22px)) var(--pad) clamp(16px, 2.4vh, 26px);
+  }
+
+  .bar {
+    position: relative;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: clamp(11.5px, 0.95vw, 13px);
+  }
+
+  .badge {
+    display: grid;
+    place-items: center;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow: 0 4px 12px rgba(10, 7, 13, 0.28);
+  }
+
+  .lockup b {
+    font-family: 'Unbounded', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1.28em;
+    letter-spacing: -0.05em;
+  }
+
+  .lockup i {
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  .lockup > span:last-child {
+    opacity: 0.82;
+  }
+
+  .fine {
+    font-family: 'Spline Sans Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: clamp(10px, 0.8vw, 11.5px);
+    letter-spacing: 0.02em;
+    opacity: 0.78;
+  }
+
+  /* ---------- the stage ---------- */
+
+  .stage {
+    position: relative;
+    min-height: 0;
+  }
+
+  .phone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 4;
+    width: var(--pw);
+    aspect-ratio: 9 / 19.5;
+    padding: calc(var(--pw) * 0.032);
+    border-radius: calc(var(--pw) * 0.158);
+    background: var(--paper);
+    transform: translate(-50%, -50%);
+    animation: rise 950ms 120ms cubic-bezier(0.16, 0.86, 0.24, 1) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translate(-50%, calc(-50% + 26px));
+    }
+  }
+
+  .cast {
+    position: absolute;
+    top: calc(50% + 26px);
+    left: calc(50% + 22px);
+    z-index: 4;
+    width: var(--pw);
+    aspect-ratio: 9 / 19.5;
+    border-radius: calc(var(--pw) * 0.158);
+    background: rgba(10, 7, 13, 0.55);
+    transform: translate(-50%, -50%);
+    filter: blur(14px);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .screen {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    padding: 0 calc(var(--pw) * 0.055);
+    border-radius: calc(var(--pw) * 0.128);
+    overflow: hidden;
+    background: var(--black);
+    color: var(--paper);
+    font-size: calc(var(--pw) / 17);
+  }
+
+  .island {
+    position: absolute;
+    top: 0.6em;
+    left: 50%;
+    width: 30%;
+    height: 1.05em;
+    border-radius: 999px;
+    background: #000;
+    transform: translateX(-50%);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7em 0.3em 0;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 0.6em;
+    opacity: 0.75;
+  }
+
+  .glyphs {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .glyphs svg:first-child {
+    width: 0.95em;
+    height: 0.64em;
+  }
+
+  .glyphs svg:last-child {
+    width: 1.4em;
+    height: 0.64em;
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-top: 1.45em;
+    padding: 0 0.15em;
+  }
+
+  .chev {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+    opacity: 0.7;
+  }
+
+  .from {
+    flex: 1;
+    overflow: hidden;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 0.5em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.62;
+  }
+
+  .eq {
+    display: flex;
+    height: 0.78em;
+    flex: none;
+    align-items: flex-end;
+    gap: 0.13em;
+  }
+
+  .eq i {
+    width: 0.13em;
+    border-radius: 1px;
+    background: var(--red);
+    animation: level 1.15s ease-in-out infinite;
+  }
+
+  .eq i:nth-child(1) {
+    height: 56%;
+    animation-delay: -0.35s;
+  }
+  .eq i:nth-child(2) {
+    height: 100%;
+  }
+  .eq i:nth-child(3) {
+    height: 40%;
+    animation-delay: -0.72s;
+  }
+
+  @keyframes level {
+    0%,
+    100% {
+      transform: scaleY(0.4);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .art {
+    margin-top: 1em;
+  }
+
+  .art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.3em;
+  }
+
+  .meta {
+    margin-top: 1.05em;
+    padding: 0 0.15em;
+  }
+
+  .meta strong {
+    display: block;
+    font-size: 1.08em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .meta span {
+    display: block;
+    margin-top: 0.2em;
+    font-size: 0.64em;
+    opacity: 0.56;
+  }
+
+  .bar-line {
+    height: 0.2em;
+    margin: 1em 0.15em 0;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(253, 246, 236, 0.2);
+  }
+
+  .bar-line span {
+    display: block;
+    width: 43%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--red);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.45em 0.15em 0;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    font-size: 0.53em;
+    opacity: 0.5;
+  }
+
+  .ctrls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.3em;
+    margin-top: 0.85em;
+  }
+
+  .ctrls > svg {
+    width: 1.1em;
+    height: 1.1em;
+    opacity: 0.86;
+  }
+
+  .play {
+    display: grid;
+    width: 2.3em;
+    height: 2.3em;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .play svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .vol {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 1.3em 0.3em 0;
+    opacity: 0.4;
+  }
+
+  .vol svg {
+    width: 0.7em;
+    height: 0.7em;
+    flex: none;
+  }
+
+  .vol .rail {
+    position: relative;
+    height: 0.15em;
+    flex: 1;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.3);
+  }
+
+  .vol .rail i {
+    position: absolute;
+    inset: 0 44% 0 0;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.85);
+  }
+
+  .queue {
+    margin: auto 0.15em 0.7em;
+    padding-top: 0.8em;
+    border-top: 1px solid rgba(253, 246, 236, 0.14);
+    font-size: 0.55em;
+  }
+
+  .queue .tag {
+    display: block;
+    margin-bottom: 0.45em;
+    font-family: 'Spline Sans Mono', ui-monospace, monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.42;
+  }
+
+  .queue p {
+    margin: 0 0 0.35em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.68;
+  }
+
+  .queue b {
+    font-weight: 600;
+    opacity: 1;
+  }
+  .home {
+    display: block;
+    width: 32%;
+    height: 0.2em;
+    margin: 0 auto 0.55em;
+    border-radius: 999px;
+    background: rgba(253, 246, 236, 0.45);
+  }
+
+  /* ---------- the few things around it ---------- */
+
+  .sleeves {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - var(--pw) / 2);
+    z-index: 3;
+    transform: translateY(-50%);
+  }
+
+  .sleeve {
+    position: absolute;
+    display: block;
+    width: 112px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 18px 34px -14px rgba(10, 7, 13, 0.8);
+    animation: drift 9s ease-in-out infinite;
+  }
+
+  .sleeve svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .sleeve.a {
+    top: -66px;
+    left: -110px;
+    transform: rotate(-5deg);
+  }
+
+  .sleeve.b {
+    top: -170px;
+    left: -186px;
+    width: 88px;
+    transform: rotate(6deg);
+    animation-delay: -4.5s;
+  }
+
+  @keyframes drift {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -9px;
+    }
+  }
+
+  .chip {
+    position: absolute;
+    top: calc(50% - 112px);
+    left: calc(50% + var(--pw) / 2 + 46px);
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.62rem 0.9rem 0.62rem 0.62rem;
+    border: 1px solid rgba(253, 246, 236, 0.22);
+    border-radius: 11px;
+    background: var(--black);
+    font-family: 'Spline Sans Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 10.5px;
+    line-height: 1.5;
+    box-shadow: 0 18px 34px -16px rgba(10, 7, 13, 0.8);
+  }
+
+  .tick {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .tick svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* ---------- the words ---------- */
+
+  .base {
+    position: relative;
+    z-index: 8;
+  }
+
+  h1 {
+    max-width: 32ch;
+    margin: 0;
+    font-size: clamp(26px, 2.9vw, 42px);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.4rem;
+    margin-top: clamp(12px, 1.8vh, 20px);
+  }
+
+  .sub {
+    max-width: 46ch;
+    margin: 0;
+    font-size: clamp(12.5px, 1vw, 14.5px);
+    line-height: 1.5;
+    opacity: 0.86;
+  }
+
+  .sub b {
+    font-weight: 600;
+    opacity: 1;
+  }
+
+  .acts {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.68rem 1.05rem;
+    border: 1px solid var(--paper);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--black);
+    font-size: clamp(12px, 0.95vw, 13.5px);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform 160ms ease,
+      background 160ms ease;
+  }
+
+  .btn.ghost {
+    border-color: rgba(253, 246, 236, 0.5);
+    background: transparent;
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  .btn.pending {
+    cursor: default;
+    border-style: dashed;
+  }
+
+  .btn.pending::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--paper);
+    opacity: 0.7;
+  }
+
+  a.btn:hover {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--paper);
+    transform: translateY(-2px);
+  }
+
+  a:focus-visible {
+    border-radius: 6px;
+    outline: 3px solid var(--paper);
+    outline-offset: 4px;
+  }
+
+  /* ---------- narrower ---------- */
+
+  @media (max-width: 1240px) {
+    .chip {
+      left: calc(50% + var(--pw) / 2 + 26px);
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .chip {
+      display: none;
+    }
+
+    .row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* Portrait and square windows: the M and the Z have gone past the edges, so
+     the O itself takes over and bleeds instead. */
+  @media (max-aspect-ratio: 1/1) {
+    .occlude {
+      --oh: min(96svh, 158vw);
+      --pw: clamp(200px, min(46vw, calc((100svh - 348px) / 2.17)), 400px);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .occlude {
+      --oh: min(96svh, 158vw);
+      --pw: clamp(168px, min(56vw, calc((100svh - 402px) / 2.17)), 226px);
+    }
+
+    .sleeves {
+      display: none;
+    }
+
+    .bar {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    h1 {
+      max-width: 22ch;
+      font-size: clamp(25px, 7.2vw, 32px);
+    }
+
+    .sub {
+      font-size: 12.5px;
+    }
+
+    .acts {
+      width: 100%;
+    }
+
+    .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+      padding: 0.66rem 0.8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .word,
+    .phone,
+    .sleeve,
+    .eq i {
+      animation: none !important;
+    }
+  }
+</style>

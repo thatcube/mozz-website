@@ -1,0 +1,1032 @@
+---
+import Mark from '../../components/Mark.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Mozz is a free, open source player for music on your Plex, Jellyfin or Navidrome server."
+    />
+    <meta name="theme-color" content="#0a070d" />
+    <meta name="robots" content="noindex" />
+    <title>Mozz — a free player for your self-hosted music</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..125,700..900&family=Geologica:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="hero">
+      <div class="halo" aria-hidden="true"></div>
+      <svg class="spark spark-one" viewBox="0 0 70 70" aria-hidden="true">
+        <path d="M35 3v64M3 35h64M12.4 12.4l45.2 45.2M57.6 12.4 12.4 57.6" />
+      </svg>
+      <svg class="spark spark-two" viewBox="0 0 70 70" aria-hidden="true">
+        <path d="M35 3v64M3 35h64" />
+      </svg>
+
+      <header class="topbar">
+        <a class="identity" href="/" aria-label="Mozz home">
+          <span class="brand-mark"><Mark size={38} decorative /></span>
+          <span>
+            <strong>Mozz</strong>
+            <small>Self-hosted music player</small>
+          </span>
+        </a>
+
+        <div class="actions">
+          <span class="store" aria-disabled="true">Coming to the App Store</span>
+          <a class="source" href="https://github.com/thatcube/Mozz">
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </header>
+
+      <section class="copy">
+        <p class="eyebrow">For iPhone and iPad</p>
+        <h1>Mozz is a free player for the music on your server.</h1>
+        <p class="summary">
+          Stream your library at home or download albums and listen with no signal.
+        </p>
+        <p class="compatibility">
+          <span>Plays from</span>
+          <strong>Plex</strong>
+          <i aria-hidden="true"></i>
+          <strong>Jellyfin</strong>
+          <i aria-hidden="true"></i>
+          <strong>Navidrome</strong>
+        </p>
+      </section>
+
+      <div class="wordmark" aria-hidden="true">MOZZ</div>
+
+      <div
+        class="phone"
+        role="img"
+        aria-label="An angled iPhone showing the Mozz now playing screen for Half-light by Air Index"
+      >
+        <span class="side side-one" aria-hidden="true"></span>
+        <span class="side side-two" aria-hidden="true"></span>
+        <span class="side side-three" aria-hidden="true"></span>
+
+        <div class="screen">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons" aria-hidden="true">
+              <svg viewBox="0 0 18 12">
+                <path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z" />
+              </svg>
+              <svg viewBox="0 0 20 12">
+                <path d="M1 4.5c4.5-4 13.5-4 18 0l-2 2c-3.4-3-10.6-3-14 0zm4 3.2c2.5-2.2 7.5-2.2 10 0l-2 2c-1.5-1.2-4.5-1.2-6 0zM9 11h2v1H9z" />
+              </svg>
+              <svg viewBox="0 0 26 12">
+                <rect x="1" y="1" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" />
+                <path d="M23 4h2v4h-2z" />
+                <rect x="3" y="3" width="15" height="6" rx="1" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="appbar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </svg>
+            <div>
+              <small>PLAYING FROM YOUR LIBRARY</small>
+              <span>Quiet Geometry</span>
+            </div>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="5" cy="12" r="1.5" />
+              <circle cx="12" cy="12" r="1.5" />
+              <circle cx="19" cy="12" r="1.5" />
+            </svg>
+          </div>
+
+          <div class="album" aria-hidden="true">
+            <span class="album-sun"></span>
+            <span class="album-arch"></span>
+            <span class="album-step step-one"></span>
+            <span class="album-step step-two"></span>
+            <span class="album-step step-three"></span>
+            <span class="album-rule"></span>
+            <span class="album-title">QUIET<br />GEOMETRY</span>
+            <span class="album-code">AI–008</span>
+          </div>
+
+          <div class="track">
+            <span>
+              <strong>Half-light</strong>
+              <small>Air Index</small>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M20.8 4.7a5.4 5.4 0 0 0-7.7 0L12 5.8l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7L12 21l8.8-8.6a5.4 5.4 0 0 0 0-7.7Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+            </svg>
+          </div>
+
+          <div class="progress" aria-hidden="true">
+            <span class="progress-line"><i></i></span>
+            <span class="times"><b>1:46</b><b>−2:28</b></span>
+          </div>
+
+          <div class="controls" aria-hidden="true">
+            <svg viewBox="0 0 28 28">
+              <path d="M4 9h4c5 0 6 10 11 10h5m-4-4 4 4-4 4M4 19h4c2 0 3-1.5 4.5-3.5M17 9c1-1 2-1 3-1h4m-4-4 4 4-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" />
+            </svg>
+            <svg viewBox="0 0 32 32"><path d="M7 7v18M26 7 10 16l16 9z" /></svg>
+            <span class="play">
+              <svg viewBox="0 0 36 36"><path d="m13 8 17 10-17 10z" /></svg>
+            </span>
+            <svg viewBox="0 0 32 32"><path d="M25 7v18M6 7l16 9-16 9z" /></svg>
+            <svg viewBox="0 0 28 28">
+              <path d="M5 9h14a5 5 0 0 1 5 5v1m-4-10 4 4-4 4M23 19H9a5 5 0 0 1-5-5v-1m4 10-4-4 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" />
+            </svg>
+          </div>
+
+          <div class="output">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.7" />
+              <path d="M8 21h8M12 17v4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" />
+            </svg>
+            <span>This iPhone</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h12M4 12h12M4 17h8m7-2v6l4-3z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" />
+            </svg>
+          </div>
+
+          <span class="home-indicator" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <footer class="footnote">
+        <span>Free forever</span>
+        <span aria-hidden="true">◆</span>
+        <span>Open source</span>
+        <span aria-hidden="true">◆</span>
+        <span>No account or tracking</span>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    font-family: 'Geologica', 'Avenir Next', system-ui, sans-serif;
+    background: #0a070d;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body {
+    color: #fdf6ec;
+    background: #0a070d;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .hero {
+    --black: #0a070d;
+    --near-black: #191320;
+    --paper: #fdf6ec;
+    --soft: #eeeae2;
+    --red: #d8002d;
+    --deep-red: #7d0019;
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100svh;
+    min-height: 620px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 68% 55%, rgba(125, 0, 25, 0.24), transparent 28rem),
+      var(--black);
+  }
+
+  .topbar {
+    position: absolute;
+    z-index: 8;
+    top: clamp(22px, 3.4vh, 34px);
+    right: clamp(22px, 3.3vw, 52px);
+    left: clamp(22px, 3.3vw, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .identity {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+  }
+
+  .identity > span {
+    display: grid;
+    gap: 1px;
+  }
+
+  .identity strong {
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+    font-size: 17px;
+    font-stretch: 115%;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .identity small {
+    color: rgba(238, 234, 226, 0.58);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .store,
+  .source {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 99px;
+    padding: 0 16px;
+  }
+
+  .store {
+    border: 1px solid rgba(238, 234, 226, 0.34);
+    color: rgba(238, 234, 226, 0.7);
+  }
+
+  .source {
+    gap: 7px;
+    color: var(--paper);
+    background: var(--red);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .source:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  a:focus-visible {
+    border-radius: 5px;
+    outline: 3px solid var(--paper);
+    outline-offset: 4px;
+  }
+
+  .copy {
+    position: absolute;
+    z-index: 4;
+    top: clamp(98px, 12.5vh, 118px);
+    left: 50%;
+    width: min(88vw, 980px);
+    text-align: center;
+    transform: translateX(-50%);
+    animation: copy-in 750ms 100ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .eyebrow {
+    margin: 0 0 15px;
+    color: var(--red);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 18em;
+    margin: 0 auto;
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+    font-size: clamp(40px, 4.15vw, 60px);
+    font-stretch: 96%;
+    font-weight: 750;
+    line-height: 0.96;
+    letter-spacing: -0.05em;
+  }
+
+  .summary {
+    max-width: 44ch;
+    margin: 20px auto 0;
+    color: rgba(238, 234, 226, 0.72);
+    font-size: clamp(12px, 1vw, 14px);
+    line-height: 1.55;
+  }
+
+  .compatibility {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin: 23px 0 0;
+    color: var(--paper);
+    font-size: clamp(10px, 0.86vw, 12px);
+    line-height: 1;
+  }
+
+  .compatibility span {
+    color: rgba(238, 234, 226, 0.5);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .compatibility strong {
+    font-weight: 500;
+  }
+
+  .compatibility i {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .wordmark {
+    position: absolute;
+    z-index: 2;
+    top: 42%;
+    left: 50%;
+    color: var(--red);
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+    font-size: clamp(330px, 37vw, 535px);
+    font-stretch: 125%;
+    font-weight: 900;
+    letter-spacing: -0.09em;
+    line-height: 0.74;
+    white-space: nowrap;
+    text-rendering: geometricPrecision;
+    transform: translateX(-50%) scaleX(1.05);
+    transform-origin: center;
+    animation: word-in 900ms cubic-bezier(0.16, 0.8, 0.24, 1) both;
+  }
+
+  .phone {
+    --phone-w: clamp(314px, 24vw, 358px);
+    position: absolute;
+    z-index: 5;
+    top: 42%;
+    left: 50%;
+    width: var(--phone-w);
+    aspect-ratio: 9 / 19.5;
+    padding: calc(var(--phone-w) * 0.029);
+    transform: translateX(-50%) rotate(-11deg);
+    border: 1px solid rgba(238, 234, 226, 0.24);
+    border-radius: calc(var(--phone-w) * 0.15);
+    background: linear-gradient(135deg, #191320 0%, #0a070d 24%, #030204 74%, #191320 100%);
+    box-shadow:
+      -20px 36px 80px rgba(0, 0, 0, 0.48),
+      0 0 0 2px rgba(0, 0, 0, 0.8),
+      0 0 0 3px rgba(255, 255, 255, 0.09);
+    animation: phone-in 950ms 120ms cubic-bezier(0.16, 0.86, 0.24, 1) both;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    z-index: 8;
+    top: calc(var(--phone-w) * 0.035);
+    left: 50%;
+    width: 28%;
+    height: calc(var(--phone-w) * 0.072);
+    transform: translateX(-50%);
+    border-radius: 99px;
+    background: #030204;
+  }
+
+  .phone::after {
+    content: '';
+    position: absolute;
+    z-index: 9;
+    top: calc(var(--phone-w) * 0.055);
+    left: 57%;
+    width: calc(var(--phone-w) * 0.021);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #0a070d;
+    box-shadow: 0 0 0 2px #191320;
+  }
+
+  .side {
+    position: absolute;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    background: #0a070d;
+  }
+
+  .side-one {
+    top: 18%;
+    left: -5px;
+    height: 6.5%;
+  }
+
+  .side-two {
+    top: 27%;
+    left: -5px;
+    height: 11%;
+  }
+
+  .side-three {
+    top: 25%;
+    right: -5px;
+    height: 15%;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(var(--phone-w) * 0.121);
+    color: var(--paper);
+    background:
+      radial-gradient(circle at 74% 18%, rgba(125, 0, 25, 0.2), transparent 38%),
+      var(--black);
+    font-family: 'Geologica', 'Avenir Next', system-ui, sans-serif;
+  }
+
+  .screen::after {
+    content: '';
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(106deg, rgba(255, 255, 255, 0.1), transparent 19%, transparent 76%, rgba(255, 255, 255, 0.035));
+  }
+
+  .status {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    height: calc(var(--phone-w) * 0.106);
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(var(--phone-w) * 0.025) calc(var(--phone-w) * 0.066) 0;
+    font-size: calc(var(--phone-w) * 0.025);
+    font-weight: 600;
+  }
+
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--phone-w) * 0.012);
+  }
+
+  .status-icons svg {
+    width: calc(var(--phone-w) * 0.038);
+    height: calc(var(--phone-w) * 0.027);
+    fill: currentColor;
+  }
+
+  .status-icons svg:last-child {
+    width: calc(var(--phone-w) * 0.052);
+  }
+
+  .appbar {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 4.5fr 1fr;
+    min-height: calc(var(--phone-w) * 0.115);
+    align-items: center;
+    padding: 0 calc(var(--phone-w) * 0.035);
+    text-align: center;
+  }
+
+  .appbar svg {
+    width: calc(var(--phone-w) * 0.046);
+  }
+
+  .appbar svg:last-child {
+    justify-self: end;
+    fill: currentColor;
+  }
+
+  .appbar small,
+  .appbar span {
+    display: block;
+  }
+
+  .appbar small {
+    margin-bottom: 3px;
+    color: rgba(238, 234, 226, 0.5);
+    font-size: calc(var(--phone-w) * 0.012);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .appbar span {
+    font-size: calc(var(--phone-w) * 0.024);
+    font-weight: 500;
+  }
+
+  .album {
+    position: relative;
+    z-index: 2;
+    width: 80%;
+    aspect-ratio: 1;
+    margin: calc(var(--phone-w) * 0.025) auto 0;
+    overflow: hidden;
+    border-radius: calc(var(--phone-w) * 0.015);
+    background: var(--red);
+    box-shadow:
+      0 calc(var(--phone-w) * 0.05) calc(var(--phone-w) * 0.1) rgba(0, 0, 0, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+
+  .album-sun {
+    position: absolute;
+    top: -13%;
+    right: -10%;
+    width: 60%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--soft);
+  }
+
+  .album-arch {
+    position: absolute;
+    bottom: -18%;
+    left: 18%;
+    width: 64%;
+    height: 78%;
+    border: calc(var(--phone-w) * 0.07) solid var(--black);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+  }
+
+  .album-step {
+    position: absolute;
+    right: -8%;
+    height: 12%;
+    background: var(--deep-red);
+    transform: skewX(-24deg);
+  }
+
+  .step-one {
+    top: 44%;
+    width: 42%;
+  }
+
+  .step-two {
+    top: 59%;
+    width: 55%;
+  }
+
+  .step-three {
+    top: 74%;
+    width: 68%;
+  }
+
+  .album-rule {
+    position: absolute;
+    top: -3%;
+    left: 13%;
+    width: 3%;
+    height: 62%;
+    background: var(--paper);
+    transform: rotate(31deg);
+    transform-origin: top center;
+  }
+
+  .album-title {
+    position: absolute;
+    top: 8%;
+    left: 7%;
+    color: var(--black);
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+    font-size: calc(var(--phone-w) * 0.052);
+    font-stretch: 110%;
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    line-height: 0.78;
+  }
+
+  .album-code {
+    position: absolute;
+    right: 5%;
+    bottom: 4%;
+    color: var(--black);
+    font-size: calc(var(--phone-w) * 0.014);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+  }
+
+  .track {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 80%;
+    align-items: center;
+    justify-content: space-between;
+    margin: calc(var(--phone-w) * 0.047) auto 0;
+  }
+
+  .track > span {
+    display: grid;
+    gap: 3px;
+  }
+
+  .track strong {
+    font-size: calc(var(--phone-w) * 0.038);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .track small {
+    color: rgba(238, 234, 226, 0.54);
+    font-size: calc(var(--phone-w) * 0.026);
+  }
+
+  .track svg {
+    width: calc(var(--phone-w) * 0.049);
+    color: var(--red);
+  }
+
+  .progress {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 80%;
+    gap: calc(var(--phone-w) * 0.012);
+    margin: calc(var(--phone-w) * 0.038) auto 0;
+  }
+
+  .progress-line {
+    position: relative;
+    height: 3px;
+    border-radius: 99px;
+    background: rgba(238, 234, 226, 0.18);
+  }
+
+  .progress-line::before {
+    content: '';
+    display: block;
+    width: 42%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--paper);
+  }
+
+  .progress-line i {
+    position: absolute;
+    top: 50%;
+    left: 42%;
+    width: calc(var(--phone-w) * 0.018);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(238, 234, 226, 0.4);
+    font-size: calc(var(--phone-w) * 0.018);
+  }
+
+  .times b {
+    font-weight: 400;
+  }
+
+  .controls {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 80%;
+    align-items: center;
+    justify-content: space-between;
+    margin: calc(var(--phone-w) * 0.023) auto 0;
+  }
+
+  .controls > svg {
+    width: calc(var(--phone-w) * 0.051);
+    fill: currentColor;
+  }
+
+  .controls > svg:nth-of-type(2),
+  .controls > svg:nth-of-type(3) {
+    width: calc(var(--phone-w) * 0.066);
+  }
+
+  .play {
+    display: grid;
+    width: calc(var(--phone-w) * 0.12);
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--black);
+    background: var(--paper);
+  }
+
+  .play svg {
+    width: 62%;
+    fill: currentColor;
+  }
+
+  .output {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 80%;
+    align-items: center;
+    margin: calc(var(--phone-w) * 0.035) auto 0;
+    color: var(--soft);
+    font-size: calc(var(--phone-w) * 0.021);
+    font-weight: 500;
+  }
+
+  .output svg {
+    width: calc(var(--phone-w) * 0.037);
+    margin-right: 6px;
+  }
+
+  .output svg:last-child {
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: calc(var(--phone-w) * 0.017);
+    left: 50%;
+    width: 34%;
+    height: 4px;
+    transform: translateX(-50%);
+    border-radius: 99px;
+    background: rgba(238, 234, 226, 0.72);
+  }
+
+  .halo {
+    position: absolute;
+    z-index: 1;
+    top: 33%;
+    left: 50%;
+    width: min(41vw, 560px);
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border: 2px solid rgba(238, 234, 226, 0.22);
+    border-radius: 50%;
+  }
+
+  .halo::after {
+    content: '';
+    position: absolute;
+    inset: 15%;
+    border: 1px solid rgba(216, 0, 45, 0.34);
+    border-radius: 50%;
+  }
+
+  .spark {
+    position: absolute;
+    z-index: 2;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 2;
+  }
+
+  .spark-one {
+    top: 31%;
+    right: 7.5%;
+    width: 24px;
+    color: var(--soft);
+  }
+
+  .spark-two {
+    bottom: 18%;
+    left: 5%;
+    width: 17px;
+    color: var(--red);
+    transform: rotate(19deg);
+  }
+
+  .footnote {
+    position: absolute;
+    z-index: 3;
+    bottom: clamp(20px, 3.2vh, 32px);
+    left: clamp(24px, 5.4vw, 78px);
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: rgba(238, 234, 226, 0.54);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .footnote span[aria-hidden] {
+    color: var(--red);
+    font-size: 6px;
+  }
+
+  @keyframes copy-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -12px);
+    }
+  }
+
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateX(-54%) scaleX(1.05);
+    }
+  }
+
+  @keyframes phone-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 80px) rotate(-6deg);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      min-height: 0;
+      background:
+        radial-gradient(circle at 84% 59%, rgba(125, 0, 25, 0.28), transparent 20rem),
+        var(--black);
+    }
+
+    .topbar {
+      top: 17px;
+      right: 16px;
+      left: 16px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+    }
+
+    .identity strong {
+      font-size: 15px;
+    }
+
+    .identity small,
+    .store {
+      display: none;
+    }
+
+    .source {
+      min-height: 34px;
+      padding: 0 13px;
+      font-size: 10px;
+    }
+
+    .copy {
+      top: 76px;
+      left: 50%;
+      width: calc(100% - 30px);
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+      font-size: 8px;
+    }
+
+    h1 {
+      max-width: 9.8em;
+      font-size: clamp(34px, 9.7vw, 40px);
+      line-height: 0.95;
+    }
+
+    .summary {
+      max-width: 30ch;
+      margin-top: 14px;
+      font-size: 11px;
+      line-height: 1.42;
+    }
+
+    .compatibility {
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      margin-top: 15px;
+      font-size: 9px;
+    }
+
+    .compatibility span {
+      width: 100%;
+      font-size: 7px;
+    }
+
+    .wordmark {
+      top: 42%;
+      left: 50%;
+      font-size: 39vw;
+      letter-spacing: -0.09em;
+      transform: translateX(-50%) scaleX(1.05);
+    }
+
+    .phone {
+      --phone-w: min(62vw, 249px);
+      top: 39%;
+      left: 50%;
+      transform: translateX(-50%) rotate(-9deg);
+    }
+
+    .halo {
+      top: 36%;
+      left: 50%;
+      width: 104vw;
+      transform: translateX(-50%);
+    }
+
+    .spark-one {
+      top: 36%;
+      right: 5%;
+      width: 19px;
+    }
+
+    .spark-two {
+      bottom: 16%;
+      left: 5%;
+      width: 14px;
+    }
+
+    .footnote {
+      display: none;
+    }
+  }
+
+  @media (max-height: 700px) and (min-width: 721px) {
+    .copy {
+      top: 90px;
+    }
+
+    h1 {
+      font-size: 52px;
+    }
+
+    .summary {
+      margin-top: 10px;
+    }
+
+    .compatibility {
+      margin-top: 12px;
+    }
+
+    .wordmark {
+      top: 38%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .copy,
+    .phone,
+    .wordmark {
+      animation: none;
+    }
+
+    .source {
+      transition: none;
+    }
+  }
+</style>

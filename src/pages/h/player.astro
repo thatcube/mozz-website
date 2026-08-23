@@ -1,0 +1,550 @@
+---
+import Mark from '../../components/Mark.astro';
+
+const githubUrl = 'https://github.com/thatcube/Mozz';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Mozz is a free, open source music player for your Plex, Jellyfin or Navidrome server."
+    />
+    <meta name="theme-color" content="#fdf6ec" />
+    <meta name="robots" content="noindex" />
+    <title>Mozz — the free player for your self-hosted music</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Fragment+Mono:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="hero">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Mozz home">
+          <Mark size={30} decorative />
+          <span>Mozz</span>
+        </a>
+        <span class="category">Self-hosted music player</span>
+        <span class="platform">For iPhone + iPad</span>
+      </header>
+
+      <section class="word-stage" aria-label="Mozz">
+        <span class="letter m" aria-hidden="true">M</span>
+
+        <div class="transport" aria-hidden="true">
+          <div class="transport-shadow"></div>
+          <div class="transport-body">
+            <span class="transport-label">Digital transport</span>
+            <span class="transport-state"><i></i> Playing</span>
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="disc">
+              <svg viewBox="0 0 400 400" role="presentation">
+                <circle cx="200" cy="200" r="180" fill="#d8002d" />
+                <g fill="none" stroke="#fdf6ec" stroke-width="23" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M103 128h64l-61 57h67" />
+                  <path d="M226 128h64l-61 57h67" />
+                  <path d="M102 239c26 80 166 87 196 0" />
+                </g>
+              </svg>
+            </div>
+            <span class="readout">00:00:12</span>
+            <span class="quality">Local / lossless</span>
+          </div>
+        </div>
+
+        <span class="letter zz" aria-hidden="true">zz</span>
+      </section>
+
+      <section class="copy">
+        <h1>Mozz is a free player for music on your own server.</h1>
+        <p>Stream at home or download albums for the moments with no signal.</p>
+      </section>
+
+      <footer class="footer">
+        <div class="compatibility">
+          <span class="works-label">Works with</span>
+          <span>Plex</span>
+          <i></i>
+          <span>Jellyfin</span>
+          <i></i>
+          <span>Navidrome</span>
+        </div>
+        <div class="actions">
+          <a href={githubUrl}>View on GitHub <span aria-hidden="true">↗</span></a>
+          <span class="pending" aria-disabled="true">Coming to the App Store</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --lavender: #fdf6ec;
+    --lavender-light: #eeeae2;
+    --ink: #191320;
+    --blue: #0a070d;
+    --red: #d8002d;
+    --coral: #d8002d;
+    --wine: #7d0019;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    background: var(--lavender);
+  }
+
+  body {
+    color: var(--ink);
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+  }
+
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    min-height: 560px;
+    padding: clamp(20px, 3.4vh, 34px) clamp(18px, 4vw, 58px) clamp(18px, 3.2vh, 30px);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--lavender);
+  }
+
+  .topbar,
+  .footer,
+  .compatibility,
+  .actions,
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .topbar {
+    position: relative;
+    z-index: 5;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: 'Fragment Mono', 'Courier New', monospace;
+    font-size: clamp(10px, 0.85vw, 12px);
+    text-transform: uppercase;
+  }
+
+  .topbar,
+  .word-stage,
+  .copy,
+  .footer {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .brand {
+    gap: 0.55rem;
+    color: inherit;
+    font-family: 'Anybody', 'Arial Black', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  .category {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 0.08em;
+  }
+
+  .platform {
+    opacity: 0.68;
+  }
+
+  .word-stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 0;
+    align-self: end;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto clamp(14px, 2.2vh, 22px);
+    transform: translateY(-1%);
+  }
+
+  .letter {
+    position: relative;
+    z-index: 1;
+    display: block;
+    font-size: clamp(118px, 22.4vw, 324px);
+    font-stretch: 140%;
+    font-variation-settings: 'wdth' 145, 'wght' 850;
+    font-weight: 850;
+    line-height: 0.65;
+    letter-spacing: -0.13em;
+  }
+
+  .m {
+    margin-right: -0.02em;
+  }
+
+  .zz {
+    margin-left: -0.08em;
+  }
+
+  .transport {
+    position: relative;
+    z-index: 3;
+    flex: 0 0 auto;
+    width: clamp(178px, 25.5vw, 350px);
+    aspect-ratio: 1;
+    margin: 0 clamp(-8px, -0.5vw, -2px);
+  }
+
+  .transport-shadow {
+    position: absolute;
+    inset: 4% -4% -4% 4%;
+    border-radius: 24%;
+    background: var(--coral);
+    transform: rotate(-4deg);
+  }
+
+  .transport-body {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    border-radius: 24%;
+    background: var(--blue);
+    box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.1);
+  }
+
+  .transport-body::before,
+  .transport-body::after {
+    position: absolute;
+    z-index: 0;
+    content: '';
+    background: rgba(238, 234, 226, 0.28);
+  }
+
+  .transport-body::before {
+    top: 16%;
+    right: -10%;
+    width: 78%;
+    height: 2px;
+    transform: rotate(-45deg);
+    transform-origin: right center;
+  }
+
+  .transport-body::after {
+    bottom: 17%;
+    left: -10%;
+    width: 78%;
+    height: 2px;
+    transform: rotate(-45deg);
+    transform-origin: left center;
+  }
+
+  .disc {
+    position: absolute;
+    z-index: 3;
+    inset: 13%;
+    filter: drop-shadow(0 12px 10px rgba(10, 7, 13, 0.28));
+  }
+
+  .disc svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .orbit {
+    position: absolute;
+    z-index: 2;
+    border: 2px solid var(--lavender-light);
+    border-radius: 50%;
+  }
+
+  .orbit-one {
+    inset: 7%;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    transform: rotate(18deg);
+  }
+
+  .orbit-two {
+    inset: 4%;
+    border: 1px dashed rgba(238, 234, 226, 0.6);
+  }
+
+  .transport-label,
+  .transport-state,
+  .readout,
+  .quality {
+    position: absolute;
+    z-index: 4;
+    font-family: 'Fragment Mono', 'Courier New', monospace;
+    font-size: clamp(5px, 0.55vw, 8px);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .transport-label {
+    top: 8%;
+    left: 10%;
+    color: white;
+  }
+
+  .transport-state {
+    top: 8%;
+    right: 10%;
+    color: white;
+  }
+
+  .transport-state i {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 3px;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 0 3px rgba(216, 0, 45, 0.22);
+  }
+
+  .readout {
+    bottom: 8%;
+    left: 10%;
+    padding: 2px 4px;
+    background: var(--ink);
+    color: var(--lavender-light);
+  }
+
+  .quality {
+    right: 10%;
+    bottom: 8%;
+    color: white;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(240px, 0.55fr);
+    gap: clamp(18px, 4vw, 70px);
+    align-items: end;
+    align-items: last baseline;
+    padding-bottom: clamp(18px, 2.7vh, 28px);
+  }
+
+  h1,
+  .copy p {
+    margin: 0;
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-size: clamp(32px, 4.2vw, 64px);
+    font-variation-settings: 'wdth' 110, 'wght' 720;
+    font-weight: 720;
+    line-height: 0.97;
+    letter-spacing: -0.055em;
+  }
+
+  .copy p {
+    max-width: 36ch;
+    padding-bottom: 0;
+    font-family: 'Fragment Mono', 'Courier New', monospace;
+    font-size: clamp(11px, 1vw, 14px);
+    line-height: 1.55;
+  }
+
+  .footer {
+    position: relative;
+    z-index: 5;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: clamp(12px, 2vh, 18px);
+    border-top: 2px solid var(--ink);
+    font-family: 'Fragment Mono', 'Courier New', monospace;
+    font-size: clamp(9px, 0.8vw, 11px);
+  }
+
+  .compatibility {
+    gap: clamp(7px, 1vw, 15px);
+    white-space: nowrap;
+  }
+
+  .works-label {
+    opacity: 0.55;
+    text-transform: uppercase;
+  }
+
+  .compatibility i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .actions {
+    gap: 0.6rem;
+    white-space: nowrap;
+  }
+
+  .actions a,
+  .pending {
+    padding: 0.72rem 1rem;
+  }
+
+  .actions a {
+    background: var(--ink);
+    color: white;
+    text-decoration: none;
+  }
+
+  .actions a:hover {
+    background: var(--red);
+  }
+
+  .pending {
+    border: 1px solid rgba(25, 19, 32, 0.42);
+    color: rgba(25, 19, 32, 0.64);
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--coral);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 680px) {
+    .hero {
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      min-height: 580px;
+      padding: 18px 16px 14px 21px;
+      background: var(--lavender);
+    }
+
+    .topbar {
+      align-items: flex-start;
+    }
+
+    .category {
+      position: static;
+      max-width: 13ch;
+      margin-left: auto;
+      text-align: right;
+      transform: none;
+    }
+
+    .platform {
+      display: none;
+    }
+
+    .word-stage {
+      width: 100%;
+      margin: 0 0 10px;
+      transform: translateY(-1%);
+    }
+
+    .letter {
+      font-size: clamp(84px, 22.5vw, 94px);
+      font-variation-settings: 'wdth' 125, 'wght' 850;
+      letter-spacing: -0.17em;
+    }
+
+    .transport {
+      width: clamp(142px, 38vw, 152px);
+    }
+
+    .transport-shadow {
+      inset: 5% -3% -3% 5%;
+    }
+
+    .copy {
+      display: block;
+      padding-bottom: 15px;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(34px, 9.9vw, 42px);
+      line-height: 0.95;
+    }
+
+    .copy p {
+      max-width: 33ch;
+      margin-top: 10px;
+      padding: 0;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .footer {
+      display: block;
+      padding-top: 11px;
+    }
+
+    .compatibility {
+      justify-content: space-between;
+      width: 100%;
+      gap: 5px;
+      font-size: 8.5px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 8.5px;
+      text-align: center;
+    }
+
+    .actions a,
+    .pending {
+      display: flex;
+      min-height: 35px;
+      align-items: center;
+      justify-content: center;
+      padding: 0.55rem 0.35rem;
+    }
+  }
+
+  @media (max-height: 700px) and (min-width: 681px) {
+    .transport {
+      width: min(34vh, 290px);
+    }
+
+    .letter {
+      font-size: min(31vh, 250px);
+    }
+
+    h1 {
+      font-size: clamp(30px, 5.5vh, 48px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .actions a {
+      transition: none;
+    }
+  }
+</style>

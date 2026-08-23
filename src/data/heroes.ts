@@ -15,12 +15,145 @@
 export interface HeroStudy {
   slug: string;
   name: string;
-  kind: 'app' | 'art';
+  kind: 'new' | 'app' | 'art';
   idea: string;
   swatch: [string, string, string];
 }
 
 export const HEROES: HeroStudy[] = [
+  {
+    slug: 'umbra',
+    name: 'Umbra',
+    kind: 'new',
+    idea: 'Eclipse and Cover crossed: the wordmark bleeding edge to edge, the phone eclipsing it.',
+    swatch: ['#0a070d', '#d8002d', '#fdf6ec'],
+  },
+  {
+    slug: 'penumbra',
+    name: 'Penumbra',
+    kind: 'new',
+    idea: 'The same occlusion on paper — red and black on cream, nothing else.',
+    swatch: ['#fdf6ec', '#d8002d', '#191320'],
+  },
+  {
+    slug: 'occlude',
+    name: 'Occlude',
+    kind: 'new',
+    idea: 'Scale pushed until the wordmark is a crop and the phone is the only whole thing.',
+    swatch: ['#fdf6ec', '#7d0019', '#0a070d'],
+  },
+  {
+    slug: 'corona',
+    name: 'Corona',
+    kind: 'new',
+    idea: 'What the covered word throws off — light around the phone, red on black.',
+    swatch: ['#0a070d', '#d8002d', '#eeeae2'],
+  },
+  {
+    slug: 'press',
+    name: 'Press',
+    kind: 'new',
+    idea: 'Poster taken further: the wordmark at full width, more ink than red alone.',
+    swatch: ['#f5efe2', '#c80028', '#1c3f94'],
+  },
+  {
+    slug: 'overprint',
+    name: 'Overprint',
+    kind: 'new',
+    idea: 'Two inks laid over each other, the overlap doing the illustrating.',
+    swatch: ['#f2efe6', '#e5133f', '#10b3ad'],
+  },
+  {
+    slug: 'eclipse',
+    name: 'Eclipse',
+    kind: 'new',
+    idea: 'MOZZ set enormous, with the app passing across the middle of it.',
+    swatch: ['#eeece7', '#16111a', '#c80028'],
+  },
+  {
+    slug: 'cover',
+    name: 'Cover',
+    kind: 'new',
+    idea: 'The wordmark half-hidden behind the thing that plays it.',
+    swatch: ['#f6f3ec', '#c80028', '#6b4bf2'],
+  },
+  {
+    slug: 'spin',
+    name: 'Spin',
+    kind: 'new',
+    idea: 'The disc actually turning, and the type holding still around it.',
+    swatch: ['#14121a', '#c80028', '#f7a51c'],
+  },
+  {
+    slug: 'player',
+    name: 'Player',
+    kind: 'new',
+    idea: 'The mark drawn at full fidelity, sitting in something modern that plays it.',
+    swatch: ['#1b1a20', '#c80028', '#10b3ad'],
+  },
+  {
+    slug: 'sheen',
+    name: 'Sheen',
+    kind: 'new',
+    idea: 'The one thing a disc does that nothing else does: split light.',
+    swatch: ['#0f0e14', '#6b4bf2', '#10b3ad'],
+  },
+  {
+    slug: 'kurate',
+    name: 'Kurate',
+    kind: 'new',
+    idea: 'Dark, gridded, one huge drawn wordmark carrying the whole page.',
+    swatch: ['#0a0a0b', '#f4f4f5', '#12706a'],
+  },
+  {
+    slug: 'smile',
+    name: 'Smile',
+    kind: 'new',
+    idea: 'The face from the mark, cropped big enough to become the layout.',
+    swatch: ['#c80028', '#f7f3ec', '#16111a'],
+  },
+  {
+    slug: 'beam',
+    name: 'Beam',
+    kind: 'new',
+    idea: 'Sound leaving the server and arriving, drawn with almost nothing.',
+    swatch: ['#f7f5ef', '#c80028', '#2fc96b'],
+  },
+  {
+    slug: 'swiss',
+    name: 'Swiss',
+    kind: 'new',
+    idea: 'A strict grid, enormous type, and exactly one thing out of place.',
+    swatch: ['#efefec', '#16111a', '#c80028'],
+  },
+  {
+    slug: 'bars',
+    name: 'Bars',
+    kind: 'new',
+    idea: 'Level meters as the only drawing on the page.',
+    swatch: ['#16111a', '#e5133f', '#f7a51c'],
+  },
+  {
+    slug: 'hush',
+    name: 'Hush',
+    kind: 'new',
+    idea: 'Mostly empty. Quiet type, one small red thing, a great deal of air.',
+    swatch: ['#faf8f4', '#16111a', '#c80028'],
+  },
+  {
+    slug: 'stack',
+    name: 'Stack',
+    kind: 'new',
+    idea: 'A few sleeves, flatly drawn, and the type doing the rest.',
+    swatch: ['#f2ede3', '#c80028', '#e0399b'],
+  },
+  {
+    slug: 'tile',
+    name: 'Tile',
+    kind: 'new',
+    idea: 'Flat blocks of colour, one of which happens to be the app.',
+    swatch: ['#f4f2ec', '#c80028', '#10b3ad'],
+  },
   {
     slug: 'bloom',
     name: 'Bloom',
@@ -163,5 +296,6 @@ export const HEROES: HeroStudy[] = [
   },
 ];
 
+export const NEW_HEROES = HEROES.filter((hero) => hero.kind === 'new');
 export const APP_HEROES = HEROES.filter((hero) => hero.kind === 'app');
 export const ART_HEROES = HEROES.filter((hero) => hero.kind === 'art');

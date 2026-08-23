@@ -1,0 +1,751 @@
+---
+/**
+ * swiss — International Style, one viewport.
+ *
+ * A 12 × 8 modular grid is drawn on the page and then genuinely used: every
+ * rule, every text block and every button starts on a module line.
+ *
+ * One element refuses: the mark itself, at ten column modules across. It is the
+ * real 32 × 32 artwork, untouched — so its own pixel unit becomes a second,
+ * coarser grid, set here to 5/14 of a column module and left hard-edged. It is
+ * cropped by three edges of the sheet at once (top, right, bottom), so it reads
+ * as a detail of something far larger, and it passes in *front* of the
+ * headline: the last letters of all four lines disappear under it and re-emerge
+ * in cream, knocked out through the artwork's own silhouette, stair-steps and
+ * all. The red rule runs from the margin into the mark, changes to cream at the
+ * edge, threads the gap between the eyes and the smile, and stops dead on the
+ * mark's centre axis. The hairline grid is multiplied back over all of it, so
+ * the system is still visibly there, running across the thing that broke it.
+ *
+ * Red, cream and near-black only. Nothing here is drawn by hand.
+ */
+import Mark from '../../components/Mark.astro';
+
+const GITHUB_URL = 'https://github.com/thatcube/Mozz';
+const APP_STORE_URL = '';
+
+const HEADLINE = 'Mozz is a free<br />player for the<br />music on your<br />own server.';
+
+const SERVERS = [
+  { name: 'Plex', note: 'Sign in and pick a library' },
+  { name: 'Jellyfin', note: 'Quick Connect or a password' },
+  { name: 'Navidrome', note: 'Any Subsonic-compatible server' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mozz — a free player for the music on your own server</title>
+    <meta
+      name="description"
+      content="Mozz is a free, open source music player for iPhone and iPad. Point it at the Plex, Jellyfin or Navidrome server you already run."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#fdf6ec" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700;800&family=Chivo+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <main class="sheet">
+      <div class="frame">
+        <!-- Type the disc passes in front of. -->
+        <div class="plane under">
+          <h1 class="hl" set:html={HEADLINE}></h1>
+          <span class="rule" aria-hidden="true"></span>
+        </div>
+
+        <!-- The one element that leaves the grid: the mark drawn for this size,
+             carrying its own knockout of the type it covers. Same 32-unit
+             geometry as the real artwork — disc r14 on centre, eyes in units
+             11–21 across and 11–16 down, smile an arc of radius 5 struck from
+             the disc's own centre — but set as true curves, because the 32px
+             artwork's pixel steps and ten reds are only right at 32px. -->
+        <div class="disc" aria-hidden="true">
+          <svg class="big" viewBox="0 0 32 32" focusable="false">
+            <circle cx="16" cy="16" r="14" />
+            <path d="M11 11H15V12L12.55 15H15V16H11V15L13.45 12H11Z" />
+            <path d="M17 11H21V12L18.55 15H21V16H17V15L19.45 12H17Z" />
+            <path class="smile" d="M12 19A5 5 0 0 0 20 19" />
+          </svg>
+
+          <div class="knockclip">
+            <div class="plane knock">
+              <span class="hl" set:html={HEADLINE}></span>
+              <span class="rule"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid + margin frame, composited over everything. -->
+        <div class="grid" aria-hidden="true">
+          <span class="tick tl"></span>
+          <span class="tick tr"></span>
+          <span class="tick bl"></span>
+          <span class="tick br"></span>
+        </div>
+
+        <div class="plane content">
+          <header class="ident">
+            <Mark size={24} decorative class="idm" />
+            <span class="wm">Mozz</span>
+            <span class="cat">Self-hosted music player</span>
+          </header>
+
+          <p class="tag">Free forever · GPL&#8209;3.0</p>
+
+          <p class="lede">
+            Point it at the Plex, Jellyfin or Navidrome server you already run. Stream at home, or
+            download albums and play them with no signal at all.
+          </p>
+
+          <ul class="servers" role="list">
+            {
+              SERVERS.map((s) => (
+                <li>
+                  <span class="sq" aria-hidden="true" />
+                  <span class="nm">{s.name}</span>
+                  <span class="nt">{s.note}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="actions">
+            <a class="btn src" href={GITHUB_URL}>Get the source on GitHub</a>
+            {
+              APP_STORE_URL ? (
+                <a class="btn store" href={APP_STORE_URL}>
+                  Download on the App Store
+                </a>
+              ) : (
+                <span class="btn store is-pending" aria-disabled="true">
+                  Coming to the App Store
+                </span>
+              )
+            }
+          </div>
+
+          <p class="meta">No account · No tracking · No subscription · iPhone and iPad</p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Chivo', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  :root {
+    --paper: #fdf6ec;
+    --ink: #191320;
+    --ink-2: #0a070d;
+    --red: #d8002d;
+    --red-2: #7d0019;
+    --line: rgba(25, 19, 32, 0.09);
+    --frame: rgba(25, 19, 32, 0.32);
+    --m: 48px;
+    --cols: 12;
+    --rows: 8;
+    /* one module, measured off the frame itself */
+    --col: calc(100cqw / var(--cols));
+    --row: calc(100cqh / var(--rows));
+    /* the red rule, which several other measurements are taken from */
+    --rule-h: 5px;
+    --rule-mt: 16px;
+    /*
+     * The mark. `--unit` is one pixel of the 32×32 artwork; nine column
+     * modules of disc makes it 9/28 of a module, and the artwork's box is 32
+     * of those. The disc's left edge sits on column line 6 and its top edge on
+     * the top line of the frame — from there it just leaves, cropped by the
+     * right and bottom edges of the sheet.
+     */
+    --unit: calc(9 * var(--col) / 28);
+    --box: calc(32 * var(--unit));
+    --dvx: calc(5 * var(--col));
+    --dvy: 0px;
+    --dx: calc(var(--dvx) - 2 * var(--unit));
+    --dy: calc(var(--dvy) - 2 * var(--unit));
+    /* the disc itself, used to cut the type it passes in front of */
+    --disc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23000'/%3E%3C/svg%3E");
+    --mono: 'Chivo Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  .sheet {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--paper);
+  }
+
+  .frame {
+    position: absolute;
+    inset: var(--m);
+    container-type: size;
+  }
+
+  /* --- planes: three layers, one shared grid --------------------------- */
+
+  .plane {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+  }
+
+  .plane > * {
+    margin: 0;
+  }
+
+  .under {
+    z-index: 1;
+  }
+
+  .content {
+    z-index: 4;
+  }
+
+  /* --- the drawn grid ------------------------------------------------- */
+
+  .grid {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    mix-blend-mode: multiply;
+    border: 1px solid var(--frame);
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        var(--line) 0 1px,
+        transparent 1px calc(100% / var(--cols))
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        var(--line) 0 1px,
+        transparent 1px calc(100% / var(--rows))
+      );
+  }
+
+  .tick {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+
+  .tick::before,
+  .tick::after {
+    content: '';
+    position: absolute;
+    background: var(--frame);
+  }
+
+  .tick::before {
+    width: 15px;
+    height: 1px;
+  }
+
+  .tick::after {
+    width: 1px;
+    height: 15px;
+  }
+
+  .tl {
+    left: -1px;
+    top: -1px;
+  }
+  .tl::before {
+    left: -22px;
+    top: 0;
+  }
+  .tl::after {
+    left: 0;
+    top: -22px;
+  }
+
+  .tr {
+    right: -1px;
+    top: -1px;
+  }
+  .tr::before {
+    right: -22px;
+    top: 0;
+  }
+  .tr::after {
+    right: 0;
+    top: -22px;
+  }
+
+  .bl {
+    left: -1px;
+    bottom: -1px;
+  }
+  .bl::before {
+    left: -22px;
+    bottom: 0;
+  }
+  .bl::after {
+    left: 0;
+    bottom: -22px;
+  }
+
+  .br {
+    right: -1px;
+    bottom: -1px;
+  }
+  .br::before {
+    right: -22px;
+    bottom: 0;
+  }
+  .br::after {
+    right: 0;
+    bottom: -22px;
+  }
+
+  /* --- the mark that breaks it ---------------------------------------- */
+
+  .disc {
+    position: absolute;
+    z-index: 2;
+    left: var(--dx);
+    top: var(--dy);
+    width: var(--box);
+    height: var(--box);
+    animation: disc-in 820ms 140ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  }
+
+  /*
+   * Drawn for the size it is used at: one flat red, one cream, true curves.
+   * The 32-unit grid is the artwork's own, so every measurement below is the
+   * mark's — nothing is eyeballed, it is the same shape struck cleanly.
+   */
+  .frame .disc .big {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: var(--paper);
+    overflow: visible;
+  }
+
+  .frame .disc .big circle {
+    fill: var(--red);
+  }
+
+  .frame .disc .big .smile {
+    fill: none;
+    stroke: var(--paper);
+    stroke-width: 2;
+  }
+
+  /*
+   * The knockout: the same two elements, in the same grid positions, offset by
+   * exactly the mark's own origin so they land on top of their ink originals,
+   * then masked with the disc — so the cut follows the same circle the red is
+   * drawn from. Nothing is retyped or nudged by hand.
+   */
+  .knockclip {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: var(--disc-mask);
+    mask-image: var(--disc-mask);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .knock {
+    left: calc(-1 * var(--dx));
+    top: calc(-1 * var(--dy));
+    width: 100cqw;
+    height: 100cqh;
+  }
+
+  .knock .hl {
+    color: var(--paper);
+  }
+
+  .knock .rule {
+    background: var(--paper);
+  }
+
+  @keyframes disc-in {
+    from {
+      clip-path: circle(0% at 50% 50%);
+    }
+    to {
+      clip-path: circle(50% at 50% 50%);
+    }
+  }
+
+  /* --- content, all of it on the grid --------------------------------- */
+
+  .ident {
+    grid-area: 1 / 1 / 2 / 6;
+    align-self: start;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    /* The mark stands taller than the wordmark's ascent, so the row's top
+       padding is reduced by exactly the overhang to keep the baseline put. */
+    padding-top: 3px;
+  }
+
+  /* The only small instance of the mark, and the only one doing the logo's
+     actual job: exact artwork, disc sitting on the wordmark's baseline (the
+     box overhangs it by the artwork's own two units of padding). The same
+     file appears once more on this page at forty-eight times the size. */
+  .ident .idm {
+    align-self: baseline;
+    position: relative;
+    top: 1.5px;
+    margin-right: -8px;
+  }
+
+  .wm {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .cat,
+  .tag,
+  .nt,
+  .meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .cat {
+    color: rgba(25, 19, 32, 0.62);
+  }
+
+  .tag {
+    grid-area: 1 / 6 / 2 / 10;
+    align-self: start;
+    padding-top: 12px;
+    color: var(--red-2);
+  }
+
+  .hl {
+    grid-area: 2 / 1 / 6 / 8;
+    align-self: end;
+    font-size: min(7.85vw, 118px);
+    font-weight: 700;
+    line-height: 0.88;
+    letter-spacing: -0.037em;
+    text-indent: -0.045em; /* optical: hang the M off the margin line */
+    padding-bottom: 2px;
+    animation: rise 700ms 90ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* crosses into the mark on column line 6, turns cream there, and stops on
+     column line 8 — where the headline's measure stops */
+  .rule {
+    grid-area: 6 / 1 / 7 / 8;
+    align-self: start;
+    height: var(--rule-h);
+    margin-top: var(--rule-mt);
+    background: var(--red);
+    transform-origin: left center;
+    animation: draw 760ms 260ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  }
+
+  @keyframes draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .lede {
+    grid-area: 6 / 1 / 7 / 5;
+    align-self: start;
+    padding-top: 42px;
+    padding-right: 26px;
+    font-size: 15.5px;
+    line-height: 1.48;
+    letter-spacing: -0.005em;
+    color: rgba(25, 19, 32, 0.78);
+  }
+
+  .servers {
+    grid-area: 7 / 1 / 8 / 6;
+    align-self: start;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 18px 0 0;
+    list-style: none;
+  }
+
+  .servers li {
+    padding-right: 22px;
+  }
+
+  .sq {
+    display: block;
+    width: 9px;
+    height: 9px;
+    margin-bottom: 10px;
+    background: var(--red);
+  }
+
+  .nm {
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1;
+  }
+
+  .nt {
+    display: block;
+    margin-top: 8px;
+    color: rgba(25, 19, 32, 0.58);
+    letter-spacing: 0.1em;
+    line-height: 1.42;
+  }
+
+  .actions {
+    grid-area: 8 / 1 / 9 / 6;
+    align-self: start;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 18px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 46px;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn.src {
+    background: var(--ink-2);
+    color: var(--paper);
+  }
+
+  .btn.is-pending {
+    border: 1px solid rgba(25, 19, 32, 0.26);
+    color: rgba(25, 19, 32, 0.5);
+    cursor: default;
+  }
+
+  .btn:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .meta {
+    grid-area: 8 / 1 / 9 / 7;
+    align-self: end;
+    padding-bottom: 2px;
+    color: rgba(25, 19, 32, 0.48);
+  }
+
+  /* --- mobile: same system, fewer modules ------------------------------ */
+
+  @media (max-width: 720px) {
+    :root {
+      --m: 16px;
+      --cols: 3;
+      --rows: 13;
+      --rule-h: 4px;
+      --rule-mt: 14px;
+      /* seven rows of mark: top edge on row line 1, left edge on the frame's
+         own left line — the same vertical the type hangs from — and out
+         through the right of the sheet, low enough that its arc cuts the first
+         line of the headline. A drawn circle has no steps to chew letters
+         with, so the type can run under it here too */
+      --unit: calc(7 * var(--row) / 28);
+      --dvx: 0px;
+      --dvy: var(--row);
+    }
+
+    .tick::before {
+      width: 9px;
+    }
+    .tick::after {
+      height: 9px;
+    }
+    .tl::before,
+    .bl::before {
+      left: -13px;
+    }
+    .tr::before,
+    .br::before {
+      right: -13px;
+    }
+    .tl::after,
+    .tr::after {
+      top: -13px;
+    }
+    .bl::after,
+    .br::after {
+      bottom: -13px;
+    }
+
+    .ident {
+      grid-area: 1 / 1 / 2 / 4;
+      gap: 10px;
+      padding-top: 1px;
+    }
+
+    /* The component sets its size inline, so the small-screen step down has
+       to come from the box itself. */
+    .ident .idm {
+      width: 18px;
+      height: 18px;
+      top: 1.125px;
+      margin-right: -5px;
+    }
+
+    .wm {
+      font-size: 16px;
+    }
+
+    .cat,
+    .tag,
+    .nt,
+    .meta {
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+    }
+
+    .tag {
+      grid-area: 1 / 1 / 2 / 4;
+      align-self: end;
+      padding: 0 0 6px;
+    }
+
+    .hl {
+      grid-area: 7 / 1 / 11 / 4;
+      font-size: min(13.4vw, 58px);
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      padding-bottom: 0;
+    }
+
+    .rule {
+      grid-area: 11 / 1 / 12 / 3;
+    }
+
+    .lede {
+      grid-area: 11 / 1 / 13 / 4;
+      padding-top: 22px;
+      padding-right: 14px;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .servers {
+      grid-area: 12 / 1 / 13 / 4;
+      align-self: end;
+      padding: 0;
+    }
+
+    .servers li {
+      padding-right: 10px;
+    }
+
+    .sq {
+      width: 7px;
+      height: 7px;
+      margin-bottom: 8px;
+    }
+
+    .nm {
+      font-size: 16px;
+    }
+
+    .nt {
+      display: none;
+    }
+
+    .actions {
+      grid-area: 13 / 1 / 14 / 4;
+      align-self: end;
+      gap: 8px;
+      padding-top: 0;
+    }
+
+    .btn {
+      height: 42px;
+      padding: 0 14px;
+      font-size: 12.5px;
+    }
+
+    .meta {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .disc,
+    .hl,
+    .rule {
+      animation: none;
+    }
+  }
+</style>

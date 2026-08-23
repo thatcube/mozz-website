@@ -1,0 +1,539 @@
+---
+import Mark from '../../components/Mark.astro';
+
+const GITHUB_URL = 'https://github.com/thatcube/Mozz';
+
+const bars = [
+  { height: 24, color: 'var(--ink)', delay: 3 },
+  { height: 30, color: 'var(--red)', delay: 8 },
+  { height: 27, color: 'var(--red-tint)', delay: 5 },
+  { height: 32, color: 'var(--deep-red)', delay: 11 },
+  { height: 28, color: 'var(--ink)', delay: 2 },
+  { height: 33, color: 'var(--red)', delay: 9 },
+  { height: 25, color: 'var(--red-tint)', delay: 6 },
+  { height: 31, color: 'var(--deep-red)', delay: 13 },
+  { height: 29, color: 'var(--ink)', delay: 4 },
+  { height: 92, color: 'var(--red)', delay: 10, logo: true },
+  { height: 63, color: 'var(--deep-red)', delay: 7 },
+  { height: 46, color: 'var(--red-tint)', delay: 12 },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Mozz is a free, open source player for music on your Plex, Jellyfin or Navidrome server."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#fdf6ec" />
+    <title>Mozz — a free player for music on your server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..150,100..900&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="hero">
+      <div class="meters" aria-hidden="true">
+        {bars.map((bar, index) => (
+          <span class={`channel channel-${index + 1}`}>
+            <i
+              class:list={['level', { 'level--logo': bar.logo }]}
+              style={`--height:${bar.height}%;--color:${bar.color};--delay:-${bar.delay}s`}
+            >
+              {bar.logo && (
+                <span class="face" aria-hidden="true">
+                  <span class="face__eyes"><b>z</b><b>z</b></span>
+                  <svg class="face__smile" viewBox="0 0 72 34">
+                    <path d="M8 7 Q36 31 64 7" />
+                  </svg>
+                </span>
+              )}
+            </i>
+          </span>
+        ))}
+      </div>
+
+      <div class="copy">
+        <header class="topline">
+          <p><Mark size={14} decorative /><strong>Mozz</strong><span class="slash">/</span>Self-hosted music player</p>
+          <p class="platform">iPhone + iPad <span class="slash">/</span> Open source</p>
+        </header>
+
+        <p class="note">Stream at home. Download for anywhere.</p>
+
+        <h1 aria-label="Mozz is the free player for music on your server.">
+          <span>Mozz is the</span>
+          <span class="accent">free player</span>
+          <span class="music-line" aria-hidden="true">for musıc on</span>
+          <span>your server.</span>
+        </h1>
+      </div>
+
+      <footer class="baseline">
+        <p class="compatibility">
+          <span>Works with</span>
+          <strong>Plex</strong>
+          <i></i>
+          <strong>Jellyfin</strong>
+          <i></i>
+          <strong>Navidrome</strong>
+        </p>
+
+        <div class="actions">
+          <a href={GITHUB_URL}>
+            View the source
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              <path d="M4 14 14 4M7 4h7v7" />
+            </svg>
+          </a>
+          <span class="pending" aria-disabled="true">Coming to the App Store</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #fdf6ec;
+    --off-white: #eeeae2;
+    --red: #d8002d;
+    --red-tint: #eab5bf;
+    --deep-red: #7d0019;
+    --ink: #191320;
+    --black: #0a070d;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  body {
+    font-family: 'Spline Sans Mono', 'Courier New', monospace;
+    color: var(--ink);
+  }
+
+  p,
+  h1 {
+    margin: 0;
+  }
+
+  .hero {
+    --base: 86px;
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .meters {
+    position: absolute;
+    inset: 0 0 var(--base);
+    z-index: 0;
+    display: grid;
+    grid-template-columns: 0.74fr 1.05fr 0.62fr 1.2fr 0.78fr 1.02fr 0.65fr 1.16fr 0.72fr 1.32fr 0.88fr 0.7fr;
+    gap: clamp(5px, 0.8vw, 14px);
+    padding: 0 clamp(7px, 1.15vw, 18px);
+    overflow: hidden;
+  }
+
+  .channel {
+    position: relative;
+    min-width: 0;
+  }
+
+  .level {
+    position: absolute;
+    inset: auto 0 0;
+    display: block;
+    height: var(--height);
+    background: var(--color);
+    transform-origin: 50% 100%;
+    animation: breathe 14s cubic-bezier(0.45, 0.05, 0.24, 1) var(--delay) infinite alternate;
+  }
+
+  .channel:nth-child(3n + 2) .level {
+    animation-duration: 17s;
+  }
+
+  .channel:nth-child(4n) .level {
+    animation-duration: 20s;
+  }
+
+  @keyframes breathe {
+    0% {
+      transform: scaleY(0.88);
+    }
+    42% {
+      transform: scaleY(1);
+    }
+    100% {
+      transform: scaleY(0.93);
+    }
+  }
+
+  .level--logo {
+    color: var(--red);
+  }
+
+  .face {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    display: block;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: var(--red);
+    transform: translate(-50%, -46%);
+  }
+
+  .face__eyes {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    display: flex;
+    gap: 7px;
+    transform: translateX(-50%);
+    color: var(--paper);
+    font-family: 'Spline Sans Mono', 'Courier New', monospace;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .face__eyes b {
+    font-weight: inherit;
+  }
+
+  .face__smile {
+    position: absolute;
+    top: 53px;
+    left: 50%;
+    width: 72px;
+    height: 34px;
+    transform: translateX(-50%);
+    fill: none;
+    stroke: var(--paper);
+    stroke-linecap: square;
+    stroke-width: 8;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 2;
+    height: calc(100% - var(--base));
+    padding: clamp(22px, 3.4vw, 48px) clamp(18px, 3.4vw, 50px);
+    pointer-events: none;
+  }
+
+  .topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: clamp(10px, 0.82vw, 12px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+  }
+
+  .topline p {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .topline strong {
+    font-family: 'Anybody', 'Arial Black', sans-serif;
+    font-size: 1.35em;
+    font-weight: 850;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+
+  .slash {
+    opacity: 0.32;
+  }
+
+  h1 {
+    width: max-content;
+    max-width: 70vw;
+    padding-top: clamp(20px, 2.8vh, 30px);
+    font-family: 'Anybody', 'Arial Black', sans-serif;
+    font-size: clamp(62px, 8.15vw, 124px);
+    font-stretch: 112%;
+    font-weight: 850;
+    line-height: 0.88;
+    letter-spacing: -0.058em;
+  }
+
+  h1 > span {
+    display: block;
+  }
+
+  h1 .accent {
+    color: var(--red);
+  }
+
+  h1 .music-line {
+    margin-top: 0.14em;
+  }
+
+  .note {
+    width: max-content;
+    margin-top: clamp(24px, 3.2vh, 34px);
+    font-size: clamp(11px, 0.9vw, 13px);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .baseline {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    height: var(--base);
+    padding: 0 clamp(18px, 3.4vw, 50px);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .compatibility {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.55rem, 1.2vw, 1.1rem);
+    min-width: 0;
+    font-size: clamp(10px, 0.85vw, 13px);
+    white-space: nowrap;
+  }
+
+  .compatibility span {
+    color: color-mix(in srgb, var(--paper) 56%, transparent);
+    font-size: 0.82em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .compatibility strong {
+    font-weight: 600;
+  }
+
+  .compatibility i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .actions a,
+  .pending {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 1.05rem;
+    font-size: clamp(10px, 0.8vw, 12px);
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .actions a {
+    gap: 0.65rem;
+    background: var(--paper);
+    color: var(--ink);
+    transition: color 160ms ease, background-color 160ms ease;
+  }
+
+  .actions a:hover {
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .actions svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: square;
+    stroke-width: 1.8;
+  }
+
+  .pending {
+    border: 1px dashed color-mix(in srgb, var(--paper) 38%, transparent);
+    color: color-mix(in srgb, var(--paper) 62%, transparent);
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      --base: 132px;
+    }
+
+    .meters {
+      grid-template-columns: 0.85fr 1.12fr 0.72fr 1.2fr 0.8fr 1.04fr 0.7fr 1.3fr 0.78fr;
+      gap: 6px;
+      padding-inline: 7px;
+    }
+
+    .channel-2,
+    .channel-5,
+    .channel-8 {
+      display: none;
+    }
+
+    .channel-1 .level { height: 18%; }
+    .channel-3 .level { height: 28%; }
+    .channel-4 .level { height: 35%; }
+    .channel-6 .level { height: 31%; }
+    .channel-7 .level { height: 42%; }
+    .channel-9 .level { height: 38%; }
+    .channel-10 .level { height: 51%; }
+    .channel-11 .level { height: 45%; }
+    .channel-12 .level { height: 27%; }
+
+    .face {
+      width: 60px;
+      height: 60px;
+      transform: translate(-50%, -46%);
+    }
+
+    .face__eyes {
+      top: 13px;
+      gap: 3px;
+      font-size: 14px;
+    }
+
+    .face__smile {
+      top: 28px;
+      width: 39px;
+      height: 19px;
+      stroke-width: 8;
+    }
+
+    .copy {
+      padding: 20px 16px 18px;
+    }
+
+    .platform {
+      display: none !important;
+    }
+
+    .topline {
+      font-size: 9.5px;
+    }
+
+    h1 {
+      max-width: calc(100vw - 32px);
+      padding-top: 19px;
+      font-size: clamp(43px, 12.7vw, 51px);
+      font-stretch: 92%;
+      line-height: 0.9;
+      letter-spacing: -0.055em;
+    }
+
+    .note {
+      margin-top: 22px;
+      font-size: 10.5px;
+    }
+
+    .baseline {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0.8rem;
+      padding: 13px 16px 14px;
+    }
+
+    .compatibility {
+      justify-content: space-between;
+      gap: 0.4rem;
+      width: 100%;
+      font-size: 11px;
+    }
+
+    .compatibility span {
+      font-size: 8px;
+    }
+
+    .compatibility i {
+      width: 3px;
+      height: 3px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 0.86fr 1.24fr;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .actions a,
+    .pending {
+      min-height: 38px;
+      padding: 0 0.55rem;
+      font-size: 9.5px;
+    }
+
+    .actions svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media (max-width: 370px) {
+    h1 {
+      font-size: 43px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .level {
+      animation: none;
+    }
+
+    .actions a {
+      transition: none;
+    }
+  }
+</style>
