@@ -39,6 +39,7 @@ import {
   SUBLINE,
   SERVERS,
   FEATURES,
+  CONTINUITY,
   OWNERSHIP,
   STATS,
   FAQS,
@@ -52,7 +53,7 @@ const SUPPORT =
   'Stream your library at home from Plex, Jellyfin or Navidrome, or download albums and listen with no signal at all.';
 
 const domain = SITE.replace(/^https?:\/\//, '');
-const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'iPhone and iPad'];
+const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'Equalizer'];
 
 const HERO_ART = sleeve({ kind: 'halftone', ink: INK_RED, seed: 'chorus-hero' });
 const OFF_ART = sleeve({ kind: 'grooves', ink: INK_DARK, seed: 'chorus-off' });
@@ -332,13 +333,11 @@ const BOTH = [
         <div class="chapter-head">
           <div class="chapter-title">
             <span class="eyebrow">Chapter four</span>
-            <h2 id="ch-pair">iPhone and iPad, the same library</h2>
+            <h2 id="ch-pair">The other one already knows where you were</h2>
           </div>
         </div>
 
-        <p class="pair-lede">
-          Same catalog, same downloads, same queue. iOS and iPadOS 17 or later, written in SwiftUI.
-        </p>
+        <p class="pair-lede">{CONTINUITY.body}</p>
 
         <div class="pair-stage">
           <div class="pair-slate">

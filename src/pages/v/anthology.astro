@@ -43,6 +43,7 @@ import {
   SUBLINE,
   SERVERS,
   FEATURES,
+  CONTINUITY,
   OWNERSHIP,
   STATS,
   FAQS,
@@ -55,7 +56,7 @@ const HEADLINE = 'A free player for the music on your own server.';
 const SUPPORT =
   'Point Mozz at the Plex, Jellyfin or OpenSubsonic server you already run. Stream it at home, or download an album and play it with no signal at all.';
 
-const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'iPhone and iPad'];
+const BILL = ['Streaming', 'Downloads', 'Radio', 'Mozz Weekly', 'Equalizer'];
 const domain = SITE.replace(/^https?:\/\//, '');
 
 /* Sleeves for the weekly marquee and the licence wall. Every record is
@@ -420,14 +421,11 @@ const BOTH = [
     <section class="pair" aria-labelledby="anth-pair" data-syn-track>
       <div class="sheet pair-inner">
         <div class="rule-head">
-          <h2 id="anth-pair">One library, two sizes of glass</h2>
+          <h2 id="anth-pair">Leave it on one, find it on the other</h2>
           <span class="folio">Sheet 07</span>
         </div>
 
-        <p class="pair-lede">
-          The same catalog, the same downloads and the same queue on iPhone and iPad. iOS and
-          iPadOS 17 or later, written in SwiftUI.
-        </p>
+        <p class="pair-lede">{CONTINUITY.body}</p>
 
         <div class="pair-stage">
           <div class="pair-slate">

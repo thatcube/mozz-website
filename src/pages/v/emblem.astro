@@ -32,6 +32,7 @@ import {
   SUBLINE,
   SERVERS,
   FEATURES,
+  CONTINUITY,
   OWNERSHIP,
   STATS,
   FAQS,
@@ -77,7 +78,7 @@ const acc = (n: number) => `MZ.${String(n).padStart(3, '0')}`;
         <p class="rail-note">Accession</p>
       </div>
       <div class="hero-body">
-        <p class="kicker">iPhone · iPad · free forever</p>
+        <p class="kicker">Free forever · open source · no account</p>
         <h1 id="emblem-hero">{HEADLINE}</h1>
         <p class="hero-support">{SUPPORT}</p>
         <div class="actions">
@@ -301,11 +302,11 @@ const acc = (n: number) => `MZ.${String(n).padStart(3, '0')}`;
     <section class="entry" aria-labelledby="emblem-hardware">
       <div class="rail">
         <p class="acc">{acc(6)}</p>
-        <p class="rail-note">Hardware</p>
+        <p class="rail-note">Transfer</p>
       </div>
       <div class="entry-body">
-        <h2 id="emblem-hardware">iPhone and iPad, one app.</h2>
-        <p class="lede">{FAQS[4].a}</p>
+        <h2 id="emblem-hardware">Taken up again in the next case.</h2>
+        <p class="lede">{CONTINUITY.body}</p>
 
         <div class="devices">
           <figure>

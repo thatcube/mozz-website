@@ -84,6 +84,19 @@ export const FEATURES = [
   },
 ] as const;
 
+/**
+ * What actually carries between a listener's devices.
+ *
+ * Deliberately narrow. The README supports two things: iCloud Keychain moves
+ * the sign-in, and Handoff advertises the destination you are on. It does NOT
+ * say downloads or the play queue sync — downloads are saved per device — so
+ * neither is claimed here.
+ */
+export const CONTINUITY = {
+  title: 'Pick up on the other one',
+  body: 'Sign in once and iCloud Keychain carries your server to your other devices. Handoff passes the album, artist or playlist you are on straight across, so it is already waiting.',
+} as const;
+
 /** The ownership argument, which is the whole point of the app. */
 export const OWNERSHIP = [
   {
