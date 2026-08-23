@@ -52,3 +52,6 @@ qa/
 scratch-*
 scratch_*
 qa/
+
+# local QA scratch (screenshot dumps from tools/check-four.mjs and tools/scan.mjs)
+.qa/

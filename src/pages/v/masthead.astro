@@ -1,0 +1,1809 @@
+---
+/**
+ * VARIANT — MASTHEAD
+ *
+ * The next generation of the Poster hero study.
+ *
+ * Poster set the wordmark at full width and let it carry the page as a bill.
+ * Masthead keeps the full measure and the editorial restraint, and changes
+ * where the weight sits: the word is locked to the very top of the document
+ * like a broadsheet flag, and the occlusion arrives from underneath. The phone
+ * rises up through the letterforms, and the letters behind it simply stop —
+ * no shadow, no fade, a clean bite out of the flag.
+ *
+ * Below the flag the page is a hairline grid with exactly one red mark per
+ * band. Every product claim comes from src/data/site.ts; only the hero
+ * headline, the hero support line and the meta description are written here.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../../components/Mark.astro';
+import VariantBar from '../../components/VariantBar.astro';
+import ServerLogo from '../../components/ServerLogo.astro';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  OWNERSHIP,
+  STATS,
+  FAQS,
+  GITHUB_URL,
+  APP_STORE_URL,
+} from '../../data/site';
+
+const HEADLINE = 'Your records. Your server. Your player.';
+const SUPPORT =
+  'Mozz is the app that plays the library you already keep, at home over your own network or on a phone with nothing to connect to.';
+
+const EDITION = ['Radio', 'Mozz Weekly', 'Downloads', 'Siri', 'Equalizer', 'iPhone', 'iPad'];
+
+/** Invented sleeves. Nothing here names a real record or artist. */
+const DRIFT = [
+  { title: 'Late Edition', artist: 'Halden Rill', art: 'col' },
+  { title: 'Standing Head', artist: 'Paper Cinema', art: 'rule' },
+  { title: 'Above the Fold', artist: 'North Window', art: 'fold' },
+  { title: 'Set Solid', artist: 'Quiet Motor', art: 'stack' },
+  { title: 'Running Text', artist: 'Field Assembly', art: 'measure' },
+  { title: 'Second Column', artist: 'June Current', art: 'col' },
+  { title: 'Deadline', artist: 'Glass Arcade', art: 'fold' },
+  { title: 'Final Proof', artist: 'Common Weather', art: 'stack' },
+] as const;
+
+const WALL = [
+  'col', 'rule', 'fold', 'stack', 'measure', 'col', 'fold', 'rule',
+  'stack', 'measure', 'fold', 'col', 'rule', 'stack', 'measure', 'fold',
+  'rule', 'col', 'measure', 'stack', 'fold', 'rule', 'col', 'measure',
+];
+---
+
+<Layout
+  title={`${NAME} — your records, your server, your player`}
+  description="Mozz is a free, open source music player for iPhone and iPad. Connect Plex, Jellyfin or a Subsonic server such as Navidrome, listen at home, and download albums to play with no connection."
+  themeColor="#f5f2ea"
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..200,300..800&family=IBM+Plex+Mono:wght@400;500&family=Wix+Madefor+Text:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <VariantBar slug="masthead" tone="warm" />
+
+  <main class="mh">
+    <!-- ================================================================ --
+      -- HERO — the flag at the top, bitten from below by the app         --
+      -- ================================================================ -->
+    <section class="hero" aria-labelledby="mh-h1">
+      <header class="rail">
+        <a class="lockup" href="/" aria-label={`${NAME} home`}>
+          <Mark size={24} decorative />
+          <b>{NAME}</b>
+          <i aria-hidden="true"></i>
+          <span>self&#8209;hosted music player</span>
+        </a>
+        <span class="rail-mid">Free forever &middot; open source &middot; GPL&#8209;3.0</span>
+        <span class="rail-end">No account &middot; no tracking</span>
+      </header>
+
+      <!-- the flag, and the device that comes up through it -->
+      <div class="flag">
+        <svg class="wordmark" viewBox="0 0 1000 200" aria-hidden="true" focusable="false">
+          <text x="500" y="193" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs"
+            >MOZZ</text
+          >
+        </svg>
+        <span class="bite" aria-hidden="true"></span>
+        <div
+          class="phone hero-phone"
+          role="img"
+          aria-label="An iPhone running Mozz, playing a downloaded album from a home server."
+        >
+          <div class="screen">
+            <span class="island" aria-hidden="true"></span>
+
+            <div class="status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="glyphs">
+                <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z"></path></svg>
+                <svg viewBox="0 0 26 12">
+                  <rect x="1" y="1" width="20" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+                  <rect x="3" y="3" width="14" height="6" rx="1.4"></rect>
+                  <path d="M23 4.3v3.4a1.9 1.9 0 0 0 0-3.4z"></path>
+                </svg>
+              </span>
+            </div>
+
+            <div class="scr-head" aria-hidden="true">
+              <svg class="chev" viewBox="0 0 16 16"
+                ><path d="M3 6.2 8 11l5-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg
+              >
+              <span>playing from your server</span>
+              <span class="eq"><i></i><i></i><i></i></span>
+            </div>
+
+            <div class="art" aria-hidden="true">
+              <svg viewBox="0 0 120 120">
+                <rect width="120" height="120" fill="#f5f2ea"></rect>
+                <rect x="0" y="0" width="120" height="6" fill="#141312"></rect>
+                <rect x="0" y="14" width="120" height="2" fill="#141312"></rect>
+                <rect x="10" y="28" width="42" height="62" fill="#c80028"></rect>
+                <g fill="#141312">
+                  <rect x="60" y="28" width="50" height="3"></rect>
+                  <rect x="60" y="36" width="50" height="3"></rect>
+                  <rect x="60" y="44" width="36" height="3"></rect>
+                  <rect x="60" y="56" width="50" height="3"></rect>
+                  <rect x="60" y="64" width="50" height="3"></rect>
+                  <rect x="60" y="72" width="28" height="3"></rect>
+                </g>
+                <rect x="0" y="104" width="120" height="2" fill="#141312"></rect>
+              </svg>
+            </div>
+
+            <div class="meta">
+              <strong>Late Edition</strong>
+              <span>Halden Rill &middot; Paper Weather</span>
+            </div>
+
+            <div class="bar" aria-hidden="true"><i></i></div>
+            <div class="times" aria-hidden="true"><span>1:47</span><span>&minus;2:25</span></div>
+
+            <div class="ctrl" aria-hidden="true">
+              <svg viewBox="0 0 20 20"><path d="M17.4 3.4v13.2L7.6 10z"></path><rect x="2.6" y="3.4" width="2.6" height="13.2" rx="1.2"></rect></svg>
+              <span class="play"><svg viewBox="0 0 20 20"><rect x="5.6" y="4.4" width="3.3" height="11.2" rx="1.3"></rect><rect x="11.1" y="4.4" width="3.3" height="11.2" rx="1.3"></rect></svg></span>
+              <svg viewBox="0 0 20 20"><path d="M2.6 3.4v13.2L12.4 10z"></path><rect x="14.8" y="3.4" width="2.6" height="13.2" rx="1.2"></rect></svg>
+            </div>
+
+            <div class="pill" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#c80028"></circle><path d="M4.9 8.2 6.9 10.3 11 5.9" fill="none" stroke="#f5f2ea" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span>downloaded &middot; plays offline</span>
+            </div>
+
+            <span class="home" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="edition" aria-hidden="true">
+        {EDITION.map((e) => <span>{e}</span>)}
+      </p>
+
+      <div class="body">
+        <div class="say">
+          <h1 id="mh-h1">{HEADLINE}</h1>
+          <p class="support">{SUPPORT}</p>
+
+          <div class="actions">
+            {APP_STORE_URL ? (
+              <a class="btn go" href={APP_STORE_URL}>Download on the App Store</a>
+            ) : (
+              <span class="btn go is-pending" aria-disabled="true">Coming to the App Store</span>
+            )}
+            <a class="btn src" href={GITHUB_URL} rel="noopener">Read the source</a>
+          </div>
+        </div>
+
+        <dl class="hero-stats">
+          {STATS.map((s) => (
+            <div>
+              <dt>{s.value}</dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div class="works">
+          <span class="works-tag">Plays from</span>
+          <ul role="list">
+            {SERVERS.map((s) => (
+              <li><ServerLogo name={s.name} size={16} />{s.name}</li>
+            ))}
+            <li>Subsonic</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- SERVERS                                                          --
+      -- ================================================================ -->
+    <section class="band servers" aria-labelledby="mh-servers">
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>Sources</p>
+            <h2 id="mh-servers">Point it at the server you already run.</h2>
+          </div>
+          <p class="lede">
+            Mozz signs in to yours and mirrors the catalog into a database on the device, so
+            the library stays browsable and searchable when the server is not reachable.
+          </p>
+        </div>
+
+        <ol class="columns" role="list">
+          {SERVERS.map((s, i) => (
+            <li>
+              <span class="col-no">{String(i + 1).padStart(2, '0')}</span>
+              <span class="col-logo"><ServerLogo name={s.name} size={32} /></span>
+              <h3>{s.name}</h3>
+              <p>{s.note}</p>
+            </li>
+          ))}
+          <li>
+            <span class="col-no">&mdash;</span>
+            <span class="col-logo col-logo-plain" aria-hidden="true">S</span>
+            <h3>Subsonic &amp; OpenSubsonic</h3>
+            <p>
+              Navidrome is the tested OpenSubsonic target. Other compatible servers are
+              best&#8209;effort, and the source is public if yours needs a look.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- SPLIT PAYOFF — split at the fold, not against a player. Above    --
+      -- the fold is the connected half, below it the disconnected one,   --
+      -- and neither is the lesser story.                                 --
+      -- ================================================================ -->
+    <section class="band split" aria-labelledby="mh-split">
+      <div class="shell">
+        <p class="fold-mark" aria-hidden="true">The fold</p>
+      </div>
+
+      <div class="split-grid">
+        <div class="half above">
+          <p class="kicker"><span class="tick"></span>Above the fold</p>
+          <h2 id="mh-split">Streaming</h2>
+          <p>
+            At home Mozz reads from the Plex, Jellyfin or OpenSubsonic server on your own
+            network. Your files at the quality you keep them, over a wire nobody else owns.
+          </p>
+          <ol class="marks" role="list">
+            <li><b>01</b>The whole catalog indexed on the device</li>
+            <li><b>02</b>Gapless queue, so an album runs as one piece</li>
+            <li><b>03</b>Seventy-five milliseconds from tap to first note</li>
+          </ol>
+        </div>
+
+        <div class="half below">
+          <p class="kicker"><span class="tick"></span>Below the fold</p>
+          <h2>Offline</h2>
+          <p>
+            Downloads are part of the design, not an afterthought. A record on the device
+            behaves the way it does at home, with nothing to reconnect to.
+          </p>
+          <ol class="marks" role="list">
+            <li><b>01</b>Browsing and search answer with the server unreachable</li>
+            <li><b>02</b>Mozz Weekly is built on the device, so it travels</li>
+            <li><b>03</b>No degraded mode and no reconnect prompt</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- MARQUEE PAYOFF — the ticker under the flag, recoloured to the    --
+      -- paper and demoted to a featured strip.                           --
+      -- ================================================================ -->
+    <section class="band feature" aria-labelledby="mh-feature">
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>Featured</p>
+            <h2 id="mh-feature">A new mix every week, set from your own library.</h2>
+          </div>
+          <p class="lede">
+            Mozz Weekly builds a fresh run out of music you already have. It is put together
+            on the device and stays available offline, so discovery never needs a service.
+          </p>
+        </div>
+      </div>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-rule"></div>
+        <div class="drift">
+          <div class="drift-track">
+            {[0, 1].map(() => (
+              <>
+                {DRIFT.map((d) => (
+                  <figure class="sleeve">
+                    <span class={`sleeve-art art-${d.art}`}></span>
+                    <figcaption><b>{d.title}</b><span>{d.artist}</span></figcaption>
+                  </figure>
+                ))}
+              </>
+            ))}
+          </div>
+          <span class="drift-fade drift-fade-l"></span>
+          <span class="drift-fade drift-fade-r"></span>
+        </div>
+        <div class="ticker-rule"></div>
+      </div>
+
+      <div class="shell">
+        <p class="drift-note">
+          Radio, shuffle and mixes can be sharpened by MusicBrainz and ListenBrainz when
+          enrichment is enabled. Turn it off and local, genre&#8209;based recommendations
+          still work.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- PAIR PAYOFF — iPhone and iPad, coming into register on scroll    --
+      -- ================================================================ -->
+    <section class="band pair" aria-labelledby="mh-pair">
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>Both devices</p>
+            <h2 id="mh-pair">One app, on the iPhone and the iPad.</h2>
+          </div>
+          <p class="lede">
+            Written in SwiftUI for iOS and iPadOS 17 or later. The same library, the same
+            downloads, the same player, laid out for whichever screen you picked up.
+          </p>
+        </div>
+      </div>
+
+      <div class="rig" role="img" aria-label="An iPad and an iPhone side by side, both running Mozz.">
+        <div class="tablet">
+          <div class="tab-screen">
+            <div class="tab-side" aria-hidden="true">
+              <span class="tab-lock"><Mark size={16} decorative /><b>Mozz</b></span>
+              <span class="tab-nav is-on">Library</span>
+              <span class="tab-nav">Albums</span>
+              <span class="tab-nav">Artists</span>
+              <span class="tab-nav">Downloads</span>
+              <span class="tab-nav">Mozz Weekly</span>
+              <span class="tab-nav">Radio</span>
+            </div>
+            <div class="tab-main" aria-hidden="true">
+              <span class="tab-title">Albums</span>
+              <div class="tab-grid">
+                {['col', 'rule', 'fold', 'stack', 'measure', 'col', 'fold', 'rule', 'stack', 'measure', 'fold', 'col', 'rule', 'stack', 'measure', 'fold', 'rule', 'col', 'measure', 'stack', 'fold', 'rule', 'col', 'measure'].map((k) => (
+                  <span class={`tile art-${k}`}></span>
+                ))}
+              </div>
+              <div class="tab-now">
+                <span class="tab-now-art art-fold"></span>
+                <span class="tab-now-txt"><b>Late Edition</b><span>Halden Rill</span></span>
+                <span class="tab-now-bar"><i></i></span>
+                <span class="tab-now-eq"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone pair-phone">
+          <div class="screen">
+            <span class="island" aria-hidden="true"></span>
+            <div class="status" aria-hidden="true">
+              <span>9:41</span>
+              <span class="glyphs">
+                <svg viewBox="0 0 18 12"><path d="M1 11h2V8H1zm4 0h2V6H5zm4 0h2V3H9zm4 0h2V0h-2z"></path></svg>
+              </span>
+            </div>
+            <div class="scr-head" aria-hidden="true">
+              <svg class="chev" viewBox="0 0 16 16"><path d="M3 6.2 8 11l5-4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span>downloads</span>
+              <span class="eq"><i></i><i></i><i></i></span>
+            </div>
+            <ul class="list" aria-hidden="true">
+              {DRIFT.slice(0, 5).map((d) => (
+                <li>
+                  <span class={`row-art art-${d.art}`}></span>
+                  <span class="row-txt"><b>{d.title}</b><span>{d.artist}</span></span>
+                  <svg class="row-tick" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#c80028"></circle><path d="M4.9 8.2 6.9 10.3 11 5.9" fill="none" stroke="#f5f2ea" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </li>
+              ))}
+            </ul>
+            <span class="home" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        New with the Siri work: the app reaches past the phone. Kept to the
+        claim — one handler behind the Siri button, CarPlay and Shortcuts, and
+        a HomePod that has no apps and hands the request back to the iPhone.
+      -->
+      <div class="shell">
+        <div class="beyond">
+          <div class="beyond-head">
+            <h3>And it reaches past the phone.</h3>
+            <p>
+              Siri plays a song, album, artist, playlist, genre, liked songs or a mix
+              straight from your own library. Plays you start in the app are donated, so
+              asking plainly for music learns to reach it.
+            </p>
+          </div>
+
+          <ul class="beyond-list" role="list">
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <path d="M30 8V3M21.5 10.4 19 6M38.5 10.4 41 6" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round"></path>
+                <rect x="19" y="13" width="22" height="37" rx="11" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <ellipse cx="30" cy="19.5" rx="7.5" ry="3" fill="var(--red)"></ellipse>
+                <g stroke="currentColor" stroke-width="1.5" opacity="0.42">
+                  <path d="M22.5 31h15M22.5 39h15"></path>
+                </g>
+              </svg>
+              <h4>HomePod</h4>
+              <p>
+                It has no apps of its own, so it hands the request to your iPhone, which
+                plays it and AirPlays it back.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="6" y="15" width="48" height="29" rx="4" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <rect x="11" y="20" width="15" height="19" rx="2" fill="var(--red)"></rect>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5">
+                  <path d="M31 24h18M31 30h18M31 36h11"></path>
+                </g>
+                <path d="M17 50h26" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.35"></path>
+              </svg>
+              <h4>CarPlay</h4>
+              <p>
+                Behind the same intent handler as the Siri button, so asking in the car
+                reaches the same library.
+              </p>
+            </li>
+            <li>
+              <svg class="beyond-art" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+                <rect x="13" y="10" width="34" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                <path d="M32 17 21 33h8l-1.5 11L39 28h-8.5L32 17Z" fill="var(--red)"></path>
+              </svg>
+              <h4>Shortcuts</h4>
+              <p>
+                The same handler again, so a shortcut can start a song, album, artist,
+                playlist, genre or a mix.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- WHAT IT DOES                                                     --
+      -- ================================================================ -->
+    <section class="band does" aria-labelledby="mh-does">
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>The app</p>
+            <h2 id="mh-does">Everything it does, filed in order.</h2>
+          </div>
+          <p class="lede">
+            Nothing on this list is aspirational, and nothing is held behind a paid tier,
+            because there is no paid tier for it to sit behind.
+          </p>
+        </div>
+
+        <ol class="does-list" role="list">
+          {FEATURES.map((f, i) => (
+            <li>
+              <span class="does-no">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- TRUST, over the wall used only as decoration                     --
+      -- ================================================================ -->
+    <section class="band trust" aria-labelledby="mh-trust">
+      <div class="wall" aria-hidden="true">
+        {WALL.map((k) => <span class={`wall-tile art-${k}`}></span>)}
+      </div>
+
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>Standing notice</p>
+            <h2 id="mh-trust">Four things Mozz does not have.</h2>
+          </div>
+          <p class="lede">
+            The case for keeping your own music is mostly a case about what is absent from
+            the app that plays it.
+          </p>
+        </div>
+
+        <div class="own">
+          {OWNERSHIP.map((o) => (
+            <article>
+              <h3><span class="dot" aria-hidden="true"></span>{o.title}</h3>
+              <p>{o.body}</p>
+            </article>
+          ))}
+        </div>
+
+        <dl class="stats">
+          {STATS.map((s) => (
+            <div>
+              <dt>{s.value}</dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- FAQ                                                              --
+      -- ================================================================ -->
+    <section class="band faq" aria-labelledby="mh-faq">
+      <div class="shell">
+        <div class="head">
+          <div>
+            <p class="kicker"><span class="tick"></span>Questions</p>
+            <h2 id="mh-faq">Plain answers.</h2>
+          </div>
+          <p class="lede">
+            If an answer is missing here, the source, the docs and the issue tracker are all
+            public.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          {FAQS.map((f) => (
+            <details>
+              <summary>{f.q}<span class="sign" aria-hidden="true"></span></summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ --
+      -- CLOSE — the flag again, at the foot of the page                  --
+      -- ================================================================ -->
+    <footer class="close" aria-labelledby="mh-close">
+      <div class="shell">
+        <h2 id="mh-close">{TAGLINE}</h2>
+        <p class="close-sub">{SUBLINE}</p>
+        <div class="actions">
+          {APP_STORE_URL ? (
+            <a class="btn go" href={APP_STORE_URL}>Download on the App Store</a>
+          ) : (
+            <span class="btn go is-pending" aria-disabled="true">Coming to the App Store</span>
+          )}
+          <a class="btn src" href={GITHUB_URL} rel="noopener">Read the source</a>
+        </div>
+      </div>
+
+      <p class="colophon shell">
+        <span>iPhone and iPad &middot; iOS 17 or later</span>
+        <span>No account &middot; no tracking &middot; GPL&#8209;3.0</span>
+      </p>
+
+      <div class="close-flag" aria-hidden="true">
+        <svg class="wordmark" viewBox="0 0 1000 200" focusable="false">
+          <text x="500" y="193" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs"
+            >MOZZ</text
+          >
+        </svg>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .mh {
+    --paper: #f5f2ea;
+    --paper-2: #ebe6da;
+    --ink: #141312;
+    --red: #c80028;
+    --dim: rgba(20, 19, 18, 0.68);
+    --faint: rgba(20, 19, 18, 0.44);
+    --hair: rgba(20, 19, 18, 0.2);
+
+    /* where the phone comes up through the flag, and how far it hangs below */
+    --pierce: 79%;
+    --pw: clamp(172px, 14.6vw, 250px);
+    --drop: clamp(236px, 30vh, 302px);
+    --bite-pad: clamp(9px, 0.9vw, 15px);
+
+    position: relative;
+    overflow-x: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Wix Madefor Text', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  /* ================================ hero ================================ */
+
+  .hero {
+    position: relative;
+    overflow: clip;
+    min-height: 100svh;
+    padding: clamp(52px, 6vh, 72px) clamp(18px, 4vw, 56px) clamp(20px, 3vh, 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .lockup {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 12.5px;
+  }
+
+  .lockup b {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 24, 'wdth' 110, 'wght' 800;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .lockup i { width: 1px; height: 12px; background: var(--faint); }
+  .lockup span { color: var(--dim); }
+
+  .rail-mid,
+  .rail-end,
+  .works-tag,
+  .fold-mark {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* --- the flag ------------------------------------------------------- */
+
+  .flag {
+    position: relative;
+    margin-top: clamp(6px, 1.2vh, 14px);
+  }
+
+  /*
+   * The flag is set as SVG rather than as text in a box. A masthead has to be
+   * exactly the measure and exactly as tall as its own capitals, and a line
+   * box will not give you either: web font leading is unknowable, and trimming
+   * it with negative margins collapses those margins straight out of the
+   * element. The viewBox is the cap height, so the flag's box is the ink —
+   * which is what lets the bite below be placed against it precisely.
+   *
+   * textLength with lengthAdjust also forces the word to the full measure,
+   * which is what a flag does.
+   */
+  .wordmark {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .wordmark text {
+    font-family: 'Bricolage Grotesque', 'Arial Black', system-ui;
+    font-variation-settings: 'opsz' 96, 'wdth' 200, 'wght' 800;
+    font-weight: 800;
+    font-size: 268px;
+    fill: var(--ink);
+  }
+
+  /*
+   * The bite is the paper colour, exactly as wide as the phone plus its
+   * clearance and exactly as tall as the part of the phone that is still
+   * inside the flag — so the letters stop at a clean edge instead of being
+   * covered by a shape that looks pasted over them.
+   */
+  .bite {
+    position: absolute;
+    left: var(--pierce);
+    bottom: 0;
+    z-index: 2;
+    width: calc(var(--pw) + 2 * var(--bite-pad));
+    height: calc(var(--pw) * 147.6 / 71.6 - var(--drop) + var(--bite-pad));
+    transform: translateX(-50%);
+    border-radius: calc(clamp(24px, 2.4vw, 40px) + var(--bite-pad))
+      calc(clamp(24px, 2.4vw, 40px) + var(--bite-pad)) 0 0;
+    background: var(--paper);
+  }
+
+  .edition {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.4rem;
+    /* The rule runs the full measure; the words stop before the device. */
+    padding: 0.55rem calc(100% - var(--pierce) + var(--pw) / 2) 0.55rem 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 24, 'wdth' 120, 'wght' 700;
+    font-size: clamp(12px, 1.35vw, 18px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .edition span:not(:last-child)::after {
+    content: '·';
+    margin-left: 1.4rem;
+    color: var(--red);
+  }
+
+  /* --- what the page says --------------------------------------------- */
+
+  .body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-top: clamp(20px, 3.5vh, 44px);
+  }
+
+  .say { max-width: 30rem; padding-bottom: clamp(24px, 4vh, 56px); }
+
+  h1 {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 72, 'wdth' 100, 'wght' 800;
+    font-size: clamp(30px, 3.9vw, 54px);
+    line-height: 1.0;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .support {
+    max-width: 34ch;
+    margin-top: 1rem;
+    color: var(--dim);
+    font-size: clamp(14.5px, 1.1vw, 16.5px);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.1rem;
+    font-size: 13.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: transform 140ms ease, box-shadow 140ms ease;
+  }
+
+  .btn.go {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 5px 5px 0 var(--red);
+  }
+
+  .btn.go:hover { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--red); }
+
+  .btn.go.is-pending {
+    background: transparent;
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    box-shadow: 5px 5px 0 var(--red);
+  }
+
+  .btn.src {
+    border: 2px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .btn.src:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 2.4vw, 36px);
+    margin-top: auto;
+    padding: clamp(14px, 2.2vh, 26px) 0;
+    /* clears the device hanging out of the flag */
+    padding-right: calc(100% - var(--pierce) + var(--pw) / 2);
+    border-top: 1px solid var(--hair);
+  }
+
+  .hero-stats dt {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 48, 'wdth' 130, 'wght' 800;
+    font-size: clamp(20px, 2.2vw, 30px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--red);
+  }
+
+  .hero-stats dd {
+    margin: 0.3rem 0 0;
+    color: var(--dim);
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  .works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    align-items: center;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--ink);
+  }
+
+  .works ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    align-items: center;
+  }
+
+  .works li {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .works :global(.server-logo) { color: var(--red); }
+
+  /* --- the phone, standing in the bite -------------------------------- */
+
+  .phone {
+    width: var(--pw);
+    aspect-ratio: 71.6 / 147.6;
+    padding: 0.7%;
+    border-radius: clamp(24px, 2.4vw, 40px);
+    background: var(--ink);
+    box-shadow:
+      inset 0 0 0 1px rgba(245, 242, 234, 0.22),
+      0 30px 66px -28px rgba(20, 19, 18, 0.5);
+  }
+
+  /* Anchored to the flag, on the same axis as the bite, hanging down over
+     the page below it. */
+  .hero-phone {
+    position: absolute;
+    z-index: 3;
+    left: var(--pierce);
+    bottom: calc(-1 * var(--drop));
+    transform: translateX(-50%);
+  }
+
+  .screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 7.4% 6.4% 4.6%;
+    border-radius: clamp(21px, 2.1vw, 35px);
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    container-type: inline-size;
+  }
+
+  .island {
+    position: absolute;
+    top: 3.1%;
+    left: 50%;
+    width: 30%;
+    height: 3.1%;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: var(--ink);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 3.4cqw;
+    font-weight: 700;
+  }
+
+  .glyphs { display: inline-flex; gap: 3%; align-items: center; }
+  .glyphs svg { height: 3.1cqw; width: auto; fill: currentColor; }
+
+  .scr-head {
+    display: flex;
+    gap: 3%;
+    align-items: center;
+    margin-top: 7%;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 2.7cqw;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .chev { width: 3.6cqw; flex: none; }
+  .scr-head span:not(.eq) { flex: 1; }
+
+  .eq {
+    display: inline-flex;
+    gap: 0.8cqw;
+    align-items: flex-end;
+    height: 3.4cqw;
+  }
+
+  .eq i {
+    width: 1.1cqw;
+    background: var(--red);
+    animation: eq 1.15s ease-in-out infinite;
+  }
+
+  .eq i:nth-child(1) { height: 55%; }
+  .eq i:nth-child(2) { height: 100%; animation-delay: 0.18s; }
+  .eq i:nth-child(3) { height: 72%; animation-delay: 0.36s; }
+
+  @keyframes eq {
+    0%, 100% { transform: scaleY(0.45); }
+    50% { transform: scaleY(1); }
+  }
+
+  .art {
+    margin-top: 6%;
+    border: 1px solid var(--hair);
+    overflow: hidden;
+  }
+
+  .art svg { width: 100%; height: auto; }
+
+  .meta { margin-top: 7%; }
+
+  .meta strong {
+    display: block;
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 32, 'wdth' 110, 'wght' 800;
+    font-size: 5.6cqw;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .meta span {
+    display: block;
+    margin-top: 1.4%;
+    font-size: 3.5cqw;
+    color: var(--faint);
+  }
+
+  .bar { margin-top: 6.5%; height: 0.9cqw; background: rgba(20, 19, 18, 0.16); }
+  .bar i { display: block; width: 46%; height: 100%; background: var(--red); }
+
+  .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2.4%;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 2.7cqw;
+    color: var(--faint);
+  }
+
+  .ctrl {
+    display: flex;
+    gap: 9%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6.5%;
+  }
+
+  .ctrl svg { width: 6.4cqw; fill: var(--ink); }
+
+  .play {
+    display: inline-grid;
+    place-items: center;
+    width: 14cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .play svg { width: 6.4cqw; fill: var(--paper); }
+
+  .pill {
+    display: flex;
+    gap: 2.6%;
+    align-items: center;
+    margin-top: auto;
+    padding: 2.6% 3.4%;
+    background: var(--paper-2);
+    font-size: 3.1cqw;
+    color: var(--dim);
+  }
+
+  .pill svg { width: 4cqw; flex: none; }
+
+  .home {
+    width: 34%;
+    height: 0.9cqw;
+    margin: 4% auto 0;
+    border-radius: 999px;
+    background: rgba(20, 19, 18, 0.4);
+  }
+
+  /* ============================== bands ================================= */
+
+  .band {
+    position: relative;
+    padding: clamp(62px, 8.5vh, 118px) 0;
+    border-top: 3px solid var(--ink);
+  }
+
+  .shell {
+    width: min(1120px, calc(100% - clamp(36px, 8vw, 112px)));
+    margin-inline: auto;
+  }
+
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(18px, 4vw, 68px);
+    align-items: end;
+  }
+
+  .kicker {
+    display: flex;
+    gap: 0.55rem;
+    align-items: center;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .tick { width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+
+  h2 {
+    max-width: 15ch;
+    margin-top: 0.8rem;
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 64, 'wdth' 100, 'wght' 800;
+    font-size: clamp(26px, 3.3vw, 44px);
+    line-height: 1.03;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .lede {
+    max-width: 46ch;
+    padding-bottom: 0.4rem;
+    color: var(--dim);
+    font-size: clamp(14.5px, 1.05vw, 16.5px);
+  }
+
+  h3 {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
+    font-size: clamp(17px, 1.35vw, 20px);
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+  }
+
+  /* --- servers as columns --------------------------------------------- */
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0 clamp(18px, 2.6vw, 40px);
+    margin-top: clamp(28px, 4vh, 48px);
+    padding-top: 1.2rem;
+    border-top: 3px solid var(--ink);
+  }
+
+  .columns li {
+    padding-right: clamp(18px, 2.6vw, 40px);
+    border-right: 1px solid var(--hair);
+  }
+
+  .columns li:last-child { border-right: 0; padding-right: 0; }
+
+  .col-no {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    color: var(--red);
+  }
+
+  .col-logo {
+    display: block;
+    margin: 0.85rem 0 0.95rem;
+    color: var(--ink);
+  }
+
+  .col-logo-plain {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 32, 'wdth' 130, 'wght' 800;
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .columns h3 { margin-bottom: 0.45rem; }
+  .columns p { color: var(--dim); font-size: 14.3px; }
+
+  /* --- split payoff ---------------------------------------------------- */
+
+  .split { padding-bottom: 0; }
+
+  .fold-mark {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-top: clamp(24px, 3.4vh, 44px);
+  }
+
+  .fold-mark::after {
+    content: '';
+    flex: 1;
+    border-top: 1px dashed var(--ink);
+  }
+
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 0.9rem;
+  }
+
+  .half { padding: clamp(40px, 6vh, 78px) clamp(24px, 4.4vw, 68px); }
+
+  .above { border-right: 3px solid var(--ink); }
+
+  .half h2 {
+    max-width: none;
+    margin-top: 0.55rem;
+    font-size: clamp(32px, 4.4vw, 60px);
+  }
+
+  .half > p {
+    max-width: 36ch;
+    margin-top: 0.9rem;
+    color: var(--dim);
+    font-size: clamp(14.5px, 1.05vw, 16.5px);
+  }
+
+  .marks {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 1.4rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .marks li {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 14.3px;
+    color: var(--dim);
+  }
+
+  .marks b {
+    flex: none;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 1.9;
+    color: var(--red);
+  }
+
+  /* The lower half is printed on the darker stock, so the fold reads. */
+  .below { background: var(--paper-2); }
+
+  /* --- marquee payoff --------------------------------------------------- */
+
+  .ticker { margin: clamp(30px, 4.5vh, 52px) 0; }
+
+  .ticker-rule { height: 3px; background: var(--ink); }
+
+  .drift {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(16px, 2.4vh, 26px) 0;
+  }
+
+  .drift-track {
+    display: flex;
+    gap: clamp(14px, 1.6vw, 24px);
+    width: max-content;
+    animation: drift 68s linear infinite;
+  }
+
+  @keyframes drift {
+    to { transform: translateX(-50%); }
+  }
+
+  .drift:hover .drift-track { animation-play-state: paused; }
+
+  .sleeve { width: clamp(136px, 13.5vw, 194px); flex: none; }
+
+  .sleeve-art {
+    display: block;
+    aspect-ratio: 1;
+    border: 1px solid var(--hair);
+  }
+
+  .sleeve figcaption {
+    display: block;
+    margin-top: 0.55rem;
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  .sleeve figcaption b { display: block; font-weight: 700; }
+  .sleeve figcaption span { display: block; color: var(--faint); }
+
+  .drift-fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(34px, 7vw, 110px);
+    pointer-events: none;
+  }
+
+  .drift-fade-l { left: 0; background: linear-gradient(90deg, var(--paper), transparent); }
+  .drift-fade-r { right: 0; background: linear-gradient(270deg, var(--paper), transparent); }
+
+  .drift-note { max-width: 58ch; color: var(--faint); font-size: 13.5px; }
+
+  /* the invented sleeves: newsprint geometry in three inks */
+  .art-col {
+    background:
+      linear-gradient(90deg, transparent 0 12%, var(--ink) 12% 15%, transparent 15% 50%, var(--ink) 50% 53%, transparent 53% 88%, var(--ink) 88% 91%, transparent 91%),
+      linear-gradient(180deg, var(--red) 0 22%, var(--paper) 22%);
+  }
+
+  .art-rule {
+    background:
+      repeating-linear-gradient(180deg, var(--ink) 0 2px, transparent 2px 11px),
+      linear-gradient(180deg, var(--paper) 0 64%, var(--red) 64%);
+  }
+
+  .art-fold {
+    background:
+      linear-gradient(45deg, var(--red) 0 46%, transparent 46%),
+      linear-gradient(180deg, var(--ink) 0 18%, var(--paper) 18%);
+  }
+
+  .art-stack {
+    background:
+      linear-gradient(180deg, transparent 0 20%, var(--ink) 20% 30%, transparent 30% 44%, var(--red) 44% 62%, transparent 62% 76%, var(--ink) 76% 84%, transparent 84%),
+      var(--paper);
+  }
+
+  .art-measure {
+    background:
+      repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 8px),
+      linear-gradient(180deg, var(--paper) 0 40%, var(--red) 40% 46%, var(--paper) 46%);
+  }
+
+  /* --- pair payoff ------------------------------------------------------ */
+
+  .rig {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: min(1120px, calc(100% - clamp(36px, 8vw, 112px)));
+    margin: clamp(28px, 4vh, 50px) auto 0;
+  }
+
+  .tablet {
+    width: clamp(310px, 52vw, 720px);
+    aspect-ratio: 248 / 179;
+    flex: none;
+    padding: 1.1%;
+    border-radius: clamp(16px, 1.8vw, 28px);
+    background: var(--ink);
+    box-shadow:
+      inset 0 0 0 1px rgba(245, 242, 234, 0.2),
+      0 38px 80px -34px rgba(20, 19, 18, 0.5);
+  }
+
+  .tab-screen {
+    display: grid;
+    grid-template-columns: 26% 1fr;
+    height: 100%;
+    border-radius: clamp(11px, 1.3vw, 20px);
+    overflow: hidden;
+    background: var(--paper);
+    container-type: inline-size;
+  }
+
+  .tab-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8cqw;
+    padding: 3cqw 2.4cqw;
+    border-right: 2px solid var(--ink);
+    background: var(--paper-2);
+  }
+
+  .tab-lock {
+    display: flex;
+    gap: 1.1cqw;
+    align-items: center;
+    margin-bottom: 1.2cqw;
+    font-size: 1.9cqw;
+  }
+
+  .tab-lock b {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 18, 'wdth' 110, 'wght' 800;
+  }
+
+  .tab-nav { font-size: 1.6cqw; color: var(--dim); }
+
+  .tab-nav.is-on {
+    position: relative;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .tab-nav.is-on::before {
+    content: '';
+    position: absolute;
+    left: -2.2cqw;
+    top: 0.35em;
+    width: 0.7cqw;
+    height: 0.7cqw;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .tab-main {
+    display: flex;
+    flex-direction: column;
+    padding: 3cqw 2.6cqw 2.4cqw;
+  }
+
+  .tab-title {
+    display: block;
+    margin-bottom: 2.2cqw;
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 40, 'wdth' 120, 'wght' 800;
+    font-size: 3.2cqw;
+  }
+
+  .tab-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.8cqw;
+  }
+
+  .tile { aspect-ratio: 1; border: 1px solid var(--hair); }
+
+  .tab-now {
+    display: flex;
+    gap: 1.6cqw;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 2.2cqw;
+    border-top: 2px solid var(--ink);
+  }
+
+  .tab-now-art { width: 4cqw; aspect-ratio: 1; flex: none; }
+  .tab-now-txt { flex: none; }
+  .tab-now-txt b { display: block; font-size: 1.7cqw; font-weight: 700; }
+  .tab-now-txt > span { display: block; font-size: 1.4cqw; color: var(--faint); }
+
+  .tab-now-bar { flex: 1; height: 0.4cqw; background: rgba(20, 19, 18, 0.16); }
+  .tab-now-bar i { display: block; width: 38%; height: 100%; background: var(--red); }
+
+  .tab-now-eq {
+    display: inline-flex;
+    gap: 0.4cqw;
+    align-items: flex-end;
+    height: 1.9cqw;
+    flex: none;
+  }
+
+  .tab-now-eq i {
+    width: 0.55cqw;
+    background: var(--red);
+    animation: eq 1.15s ease-in-out infinite;
+  }
+
+  .tab-now-eq i:nth-child(1) { height: 55%; }
+  .tab-now-eq i:nth-child(2) { height: 100%; animation-delay: 0.18s; }
+  .tab-now-eq i:nth-child(3) { height: 72%; animation-delay: 0.36s; }
+
+  .pair-phone {
+    --pw: clamp(150px, 19.5vw, 272px);
+    position: relative;
+    z-index: 2;
+    margin-left: clamp(-56px, -3.4vw, -18px);
+    margin-bottom: clamp(-24px, -1.6vw, -8px);
+  }
+
+  .list {
+    display: grid;
+    gap: 3.4%;
+    margin-top: 7%;
+    padding: 0;
+    list-style: none;
+  }
+
+  .list li { display: flex; gap: 3.4%; align-items: center; }
+
+  .row-art {
+    width: 15%;
+    aspect-ratio: 1;
+    flex: none;
+    border: 1px solid var(--hair);
+  }
+
+  .row-txt { flex: 1; min-width: 0; }
+
+  .row-txt b {
+    display: block;
+    font-size: 3.6cqw;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-txt span { display: block; font-size: 3cqw; color: var(--faint); }
+  .row-tick { width: 4.4cqw; flex: none; }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .tablet {
+        animation: rise-tab linear both;
+        animation-timeline: view();
+        animation-range: entry 4% entry 88%;
+      }
+
+      .pair-phone {
+        animation: rise-phone linear both;
+        animation-timeline: view();
+        animation-range: entry 12% entry 100%;
+      }
+    }
+  }
+
+  @keyframes rise-tab {
+    from { transform: translateY(30px) scale(0.972); opacity: 0.55; }
+    to { transform: none; opacity: 1; }
+  }
+
+  @keyframes rise-phone {
+    from { transform: translate(40px, 52px) rotate(3.5deg); opacity: 0.4; }
+    to { transform: none; opacity: 1; }
+  }
+
+
+  /* --- reaching past the phone ------------------------------------------ */
+
+  .beyond {
+    margin-top: clamp(46px, 7vh, 92px);
+    padding-top: clamp(24px, 3.4vh, 44px);
+    border-top: 1px solid var(--hair);
+  }
+
+  .beyond-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(18px, 4vw, 68px);
+    align-items: end;
+  }
+
+  .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 {
+    max-width: 14ch;
+    font-size: clamp(21px, 2.2vw, 30px);
+    line-height: 1.08;
+  }
+
+  .beyond-head p {
+    max-width: 46ch;
+    color: var(--dim);
+    font-size: clamp(14px, 1vw, 15.5px);
+  }
+
+  .beyond-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(22px, 3vw, 46px);
+    margin-top: clamp(26px, 4vh, 46px);
+  }
+
+  .beyond-art {
+    width: clamp(54px, 5vw, 70px);
+    height: auto;
+    margin-bottom: 0.9rem;
+    color: currentColor;
+    opacity: 0.9;
+  }
+
+  .beyond-list h4 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.2;
+  }
+
+  .beyond-list p {
+    color: var(--dim);
+    font-size: 14.2px;
+  }
+
+  @media (max-width: 1000px) {
+    .beyond-head { grid-template-columns: 1fr; }
+    .beyond-head p { margin-top: 0.9rem; }
+    .beyond-head h3,
+  .beyond-list h4 {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
+    letter-spacing: -0.02em;
+  }
+
+  .beyond-head h3 { max-width: 20ch; }
+  }
+
+  /* --- what it does ----------------------------------------------------- */
+
+  .does-list {
+    margin-top: clamp(28px, 4vh, 48px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .does-list li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 0.85fr) minmax(0, 1.5fr);
+    gap: clamp(12px, 2vw, 40px);
+    align-items: start;
+    padding: clamp(15px, 2.1vh, 25px) 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .does-no {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    line-height: 2.3;
+    color: var(--red);
+  }
+
+  .does-list p { color: var(--dim); font-size: 14.6px; }
+
+  /* --- trust ------------------------------------------------------------ */
+
+  .trust {
+    isolation: isolate;
+    overflow: clip;
+    background: var(--paper-2);
+  }
+
+  .wall {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px;
+    padding: 14px;
+    opacity: 0.22;
+    -webkit-mask-image: radial-gradient(124% 96% at 50% 46%, transparent 0 40%, #000 90%);
+    mask-image: radial-gradient(124% 96% at 50% 46%, transparent 0 40%, #000 90%);
+    pointer-events: none;
+  }
+
+  .wall-tile { aspect-ratio: 1; }
+
+  .own {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(228px, 1fr));
+    gap: clamp(22px, 2.6vw, 38px);
+    margin-top: clamp(28px, 4vh, 48px);
+  }
+
+  /* A standing head sits under a hairline rule with a single red marker,
+     the way a column head is set — not under a thick coloured tab. */
+  .own article { padding-top: 0.9rem; border-top: 1px solid var(--ink); }
+
+  .own h3 { display: flex; gap: 0.5rem; align-items: baseline; }
+
+  .own .dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    background: var(--red);
+  }
+
+  .own p { margin-top: 0.45rem; color: var(--dim); font-size: 14.4px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: clamp(20px, 2.6vw, 40px);
+    margin-top: clamp(32px, 4.6vh, 58px);
+    padding-top: clamp(22px, 3vh, 38px);
+    border-top: 1px solid var(--hair);
+  }
+
+  .stats dt {
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 64, 'wdth' 130, 'wght' 800;
+    font-size: clamp(30px, 3.4vw, 46px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--red);
+  }
+
+  .stats dd { margin: 0.4rem 0 0; color: var(--dim); font-size: 13.4px; }
+
+  /* --- faq --------------------------------------------------------------- */
+
+  .faq-list {
+    margin-top: clamp(24px, 3.4vh, 40px);
+    border-top: 3px solid var(--ink);
+  }
+
+  details { border-bottom: 1px solid var(--hair); }
+
+  summary {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Bricolage Grotesque', system-ui;
+    font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
+    font-size: clamp(15.5px, 1.25vw, 19px);
+    letter-spacing: -0.018em;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  .sign { position: relative; width: 13px; height: 13px; flex: none; }
+
+  .sign::before,
+  .sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2px;
+    background: var(--red);
+    transform: translateY(-50%);
+  }
+
+  .sign::after { transform: translateY(-50%) rotate(90deg); transition: transform 160ms ease; }
+  details[open] .sign::after { transform: translateY(-50%) rotate(0deg); }
+
+  details p {
+    max-width: 62ch;
+    padding-bottom: 1.25rem;
+    color: var(--dim);
+    font-size: 14.6px;
+  }
+
+  /* --- close -------------------------------------------------------------- */
+
+  .close {
+    position: relative;
+    overflow: clip;
+    padding-top: clamp(70px, 10vh, 132px);
+    border-top: 3px solid var(--ink);
+  }
+
+  .close h2 { max-width: 14ch; }
+
+  .close-sub {
+    margin-top: 0.85rem;
+    color: var(--red);
+    font-size: clamp(16px, 1.5vw, 21px);
+    font-weight: 800;
+  }
+
+  .close .actions { margin-top: 1.7rem; }
+
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    justify-content: space-between;
+    margin-top: clamp(38px, 5.6vh, 68px);
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--hair);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .close-flag {
+    margin-top: clamp(24px, 4vh, 52px);
+    padding: 0 clamp(18px, 4vw, 56px) clamp(18px, 2.6vh, 34px);
+  }
+
+  /* ============================ narrow ==================================== */
+
+  @media (max-width: 1000px) {
+    .mh { --pierce: 66%; }
+
+    .say { max-width: none; }
+    .support { max-width: none; }
+    .hero-stats { padding-right: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    /* Narrow, the flag is short and the device stands below it instead of
+       inside it, so there is nothing for the bite to cut. */
+    .hero-phone {
+      position: static;
+      transform: none;
+      margin: clamp(22px, 3.4vh, 40px) auto 0;
+    }
+
+    .bite { display: none; }
+    .edition { padding-right: 0; }
+
+    .head { grid-template-columns: 1fr; }
+    .head .lede { margin-top: 1rem; padding-bottom: 0; }
+    .head h2 { max-width: 20ch; }
+
+    .split-grid { grid-template-columns: 1fr; }
+    .above { border-right: 0; border-bottom: 3px solid var(--ink); }
+
+    .columns li { border-right: 0; padding-right: 0; padding-bottom: 1.4rem; }
+
+    .rig { flex-direction: column; align-items: center; }
+    .tablet { width: min(560px, 100%); }
+
+    .pair-phone {
+      --pw: clamp(150px, 34vw, 200px);
+      margin: -12% 0 0 42%;
+    }
+
+    .does-list li { grid-template-columns: 2.6rem minmax(0, 1fr); }
+    .does-list h3 { grid-column: 2; }
+    .does-list p { grid-column: 2; margin-top: 0.4rem; }
+
+    .wall { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  @media (max-width: 620px) {
+    .hero { padding-bottom: clamp(20px, 3vh, 32px); }
+    .edition { font-size: 12px; gap: 0.15rem 0.9rem; }
+    .edition span:not(:last-child)::after { margin-left: 0.9rem; }
+    .rail-end { display: none; }
+    .actions .btn { flex: 1 1 auto; justify-content: center; }
+    .wall { grid-template-columns: repeat(4, 1fr); }
+    .hero-phone { --pw: clamp(180px, 54vw, 230px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift-track { animation: none; transform: none; }
+    .eq i,
+    .tab-now-eq i { animation: none; transform: scaleY(0.8); }
+    .btn:hover { transform: none; }
+    .tablet,
+    .pair-phone { animation: none; opacity: 1; transform: none; }
+  }
+</style>
