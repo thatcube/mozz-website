@@ -55,3 +55,7 @@ qa/
 
 # local QA scratch (screenshot dumps from tools/check-four.mjs and tools/scan.mjs)
 .qa/
+
+# Private, machine-local maintainer notes. Never committed.
+AGENTS.local.md
+CLAUDE.local.md

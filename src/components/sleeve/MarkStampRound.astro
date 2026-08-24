@@ -1,18 +1,20 @@
 ---
 /**
- * The Mozz mark, as a catalogue stamp.
+ * The Mozz mark as a catalogue stamp, with a true circle instead of the
+ * stepped pixel silhouette.
  *
- * The sleeve system's `nowplaying` tile is an abstract seal — a bone circle
- * with a red centre dot on a red square. This is the same seal drawn with the
- * real identity instead: the disc silhouette and the single path carrying both
- * zz eyes and the smile, lifted verbatim from src/brand/mozz-logo.svg.
+ * The pixel disc is a drawing of a circle, made of steps because the original
+ * artwork lives on a 32-unit grid. At stamp size those steps are the whole
+ * character; blown up to plate scale they are the loudest thing on the page,
+ * and they compete with the face they are supposed to frame.
  *
- * Nothing is redrawn or re-proportioned, and the ten dithered reds of the
- * sprite are dropped — blown up to plate size they go blotchy, which is why
- * /h/umbra draws it this way too. One flat ink, one flat ground, hard edges.
+ * So this keeps the face exactly as it is — pixels intact, lifted verbatim
+ * from src/brand/mozz-logo.svg — and lets the outline be the smooth circle the
+ * steps were always approximating. The tension between the two is the point:
+ * a clean plate with a pixel face printed on it.
  *
- * The disc is set to a 56/100 diameter so it carries exactly the mass of the
- * abstract stamp it stands in for: the two pages can be compared honestly.
+ * Radius 13 on the 32-unit grid matches the pixel disc's own 26-unit span, so
+ * this and MarkStamp carry identical mass and can be compared honestly.
  */
 
 export interface Props {
@@ -26,12 +28,10 @@ export interface Props {
 
 const { ground = 'red', frame = false, class: className = '', label } = Astro.props;
 
-/** 26 pixel-art units of disc, scaled to 56 of the 100-unit field, centred. */
+/** Same 56/100 field as the stepped stamp, so the two are directly comparable. */
 const SCALE = 56 / 26;
 const OFFSET = 50 - 16 * SCALE;
 
-const DISC =
-  'M12 3H20V4H22V5H24V6H25V7H26V8H27V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z';
 const FACE =
   'M12 12h3v1h-3zm5 0h3v1h-3zm-4 1h2v1h-2zm5 0h2v1h-2zm-6 1h2v1h-2zm5 0h2v1h-2zm-5 1h3v1h-3zm5 0h3v1h-3zm-4 3h1v1h-1zm5 0h1v1h-1zm-4 1h4v1h-4z';
 ---
@@ -46,7 +46,7 @@ const FACE =
 >
   <rect class="ground" width="100" height="100" />
   <g transform={`translate(${OFFSET.toFixed(3)} ${OFFSET.toFixed(3)}) scale(${SCALE.toFixed(5)})`}>
-    <path class="disc" d={DISC} />
+    <circle class="disc" cx="16" cy="16" r="13" />
     <path class="face" d={FACE} />
   </g>
   {frame && <rect x="0.6" y="0.6" width="98.8" height="98.8" class="frame" />}
@@ -59,8 +59,12 @@ const FACE =
     height: auto;
   }
 
-  /* Pixel art. The steps are the artwork, so they are never allowed to soften. */
-  .disc,
+  /* The circle is the one thing here allowed to be smooth. */
+  .disc {
+    shape-rendering: geometricPrecision;
+  }
+
+  /* The face is still pixel art, and the steps are still the artwork. */
   .face {
     shape-rendering: crispEdges;
   }

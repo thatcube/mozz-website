@@ -55,6 +55,15 @@ export const WINNER_GROUPS: WinnerGroup[] = [
         decision: true,
       },
       {
+        slug: 'emblem-round',
+        name: 'Emblem, round',
+        base: '/v/',
+        thumbs: 'thumbs',
+        quote: 'try another with the new pixelated zz smile, but with a perfectly round outside',
+        note: 'The pixel face on a true circle. Same mass again, so all three seals compare directly.',
+        decision: true,
+      },
+      {
         slug: 'poster-site',
         name: 'Poster',
         base: '/v/',

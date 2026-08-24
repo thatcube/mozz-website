@@ -678,5 +678,14 @@ export const VARIANTS: Variant[] = [
     swatch: ['#eeeae2', '#c80028', '#1b1c1e'],
     mood: 'light',
   },
+  {
+    slug: 'emblem-round',
+    name: 'Emblem Round',
+    vibe: 'Emblem, with the pixel face printed on a true circle',
+    blurb:
+      'The third seal in the comparison. The face is the real mark, pixels intact, but the outline is the smooth circle those steps were always approximating \u2014 so the plate stays quiet and the pixels stay the only texture on it.',
+    swatch: ['#eeeae2', '#c80028', '#1b1c1e'],
+    mood: 'light',
+  },
 
 ];
