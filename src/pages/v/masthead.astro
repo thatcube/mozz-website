@@ -65,7 +65,7 @@ const WALL = [
 >
   <Fragment slot="head">
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..200,300..800&family=IBM+Plex+Mono:wght@400;500&family=Wix+Madefor+Text:wght@400..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@500;600;700;800&family=Wix+Madefor+Text:wght@400..800&display=swap"
       rel="stylesheet"
     />
   </Fragment>
@@ -90,7 +90,7 @@ const WALL = [
 
       <!-- the flag, and the device that comes up through it -->
       <div class="flag">
-        <svg class="wordmark" viewBox="0 0 1000 200" aria-hidden="true" focusable="false">
+        <svg class="wordmark" viewBox="22 -0.5 967.25 193.5" aria-hidden="true" focusable="false">
           <text x="500" y="193" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs"
             >MOZZ</text
           >
@@ -653,7 +653,7 @@ const WALL = [
   }
 
   .lockup b {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 24, 'wdth' 110, 'wght' 800;
     font-size: 16px;
     letter-spacing: -0.01em;
@@ -691,15 +691,30 @@ const WALL = [
    * textLength with lengthAdjust also forces the word to the full measure,
    * which is what a flag does.
    */
+  /*
+   * The viewBox is the measured ink, not the advance box. textLength fixes the
+   * advance to the full measure, but the M still carries a left side bearing
+   * and the final Z a right one — 22 and 10.75 units here, and not even equal
+   * to each other — so a 0..1000 box leaves the word visibly inset from the
+   * column while everything below it sits flush. Cropping to the ink instead
+   * puts the M's stem and the Z's terminal exactly on the measure.
+   *
+   * The numbers are specific to Outfit 800 at this size; re-measure if the
+   * face or the weight changes.
+   *
+   * The box bottom is the baseline, so the flat-footed M and Zs sit on the
+   * rule. The O overshoots below it, as a round letter should, and overflow
+   * is left visible so that overshoot is not sliced off.
+   */
   .wordmark {
     display: block;
     width: 100%;
     height: auto;
+    overflow: visible;
   }
 
   .wordmark text {
-    font-family: 'Bricolage Grotesque', 'Arial Black', system-ui;
-    font-variation-settings: 'opsz' 96, 'wdth' 200, 'wght' 800;
+    font-family: 'Outfit', system-ui;
     font-weight: 800;
     font-size: 268px;
     fill: var(--ink);
@@ -734,7 +749,7 @@ const WALL = [
     padding: 0.55rem calc(100% - var(--pierce) + var(--pw) / 2) 0.55rem 0;
     border-top: 3px solid var(--ink);
     border-bottom: 1px solid var(--ink);
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 24, 'wdth' 120, 'wght' 700;
     font-size: clamp(11px, 1.2vw, 17px);
     letter-spacing: 0.02em;
@@ -760,7 +775,7 @@ const WALL = [
   .say { max-width: 30rem; padding-bottom: clamp(24px, 4vh, 56px); }
 
   h1 {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 72, 'wdth' 100, 'wght' 800;
     font-size: clamp(30px, 3.9vw, 54px);
     line-height: 1.0;
@@ -832,7 +847,7 @@ const WALL = [
   }
 
   .hero-stats dt {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 48, 'wdth' 130, 'wght' 800;
     font-size: clamp(20px, 2.2vw, 30px);
     line-height: 1;
@@ -980,7 +995,7 @@ const WALL = [
 
   .meta strong {
     display: block;
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 32, 'wdth' 110, 'wght' 800;
     font-size: 5.6cqw;
     line-height: 1.1;
@@ -1084,7 +1099,7 @@ const WALL = [
   h2 {
     max-width: 15ch;
     margin-top: 0.8rem;
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 64, 'wdth' 100, 'wght' 800;
     font-size: clamp(26px, 3.3vw, 44px);
     line-height: 1.03;
@@ -1100,7 +1115,7 @@ const WALL = [
   }
 
   h3 {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
     font-size: clamp(17px, 1.35vw, 20px);
     line-height: 1.18;
@@ -1132,7 +1147,7 @@ const WALL = [
   }
 
   .col-logo-plain {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 32, 'wdth' 130, 'wght' 800;
     font-size: 30px;
     line-height: 1;
@@ -1345,7 +1360,7 @@ const WALL = [
   }
 
   .tab-lock b {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 18, 'wdth' 110, 'wght' 800;
   }
 
@@ -1377,7 +1392,7 @@ const WALL = [
   .tab-title {
     display: block;
     margin-bottom: 2.2cqw;
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 40, 'wdth' 120, 'wght' 800;
     font-size: 3.2cqw;
   }
@@ -1508,7 +1523,7 @@ const WALL = [
 
   .beyond-head h3,
   .beyond-list h4 {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
     letter-spacing: -0.02em;
   }
@@ -1556,7 +1571,7 @@ const WALL = [
     .beyond-head p { margin-top: 0.9rem; }
     .beyond-head h3,
   .beyond-list h4 {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
     letter-spacing: -0.02em;
   }
@@ -1645,7 +1660,7 @@ const WALL = [
   }
 
   .stats dt {
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 64, 'wdth' 130, 'wght' 800;
     font-size: clamp(30px, 3.4vw, 46px);
     line-height: 1;
@@ -1672,7 +1687,7 @@ const WALL = [
     padding: 1.1rem 0;
     cursor: pointer;
     list-style: none;
-    font-family: 'Bricolage Grotesque', system-ui;
+    font-family: 'Outfit', system-ui;
     font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
     font-size: clamp(15.5px, 1.25vw, 19px);
     letter-spacing: -0.018em;
