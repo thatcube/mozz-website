@@ -85,7 +85,29 @@ export const FEATURES = [
 ] as const;
 
 /**
- * What actually carries between a listener's devices.
+ * Where Mozz runs.
+ *
+ * Six platforms, in the order a listener is most likely to meet them. The
+ * `note` is for layouts that can afford a word of detail; `short` is for
+ * dense strips where only the name fits.
+ *
+ * PLATFORM_LINE is the one-sentence version, so a hero that has room for a
+ * sentence and a hero that has room for a list are still saying the same
+ * thing. Never write a different summary inline — change it here.
+ */
+export const PLATFORMS = [
+  { name: 'iPhone', short: 'iPhone', family: 'mobile' },
+  { name: 'iPad', short: 'iPad', family: 'mobile' },
+  { name: 'Android', short: 'Android', family: 'mobile' },
+  { name: 'macOS', short: 'Mac', family: 'desktop' },
+  { name: 'Windows', short: 'Windows', family: 'desktop' },
+  { name: 'Linux', short: 'Linux', family: 'desktop' },
+] as const;
+
+export const PLATFORM_LINE =
+  'On iPhone, iPad, Android, Mac, Windows and Linux.';
+
+/** What actually carries between a listener's devices.
  *
  * Deliberately narrow. The README supports two things: iCloud Keychain moves
  * the sign-in, and Handoff advertises the destination you are on. It does NOT
@@ -144,7 +166,7 @@ export const FAQS = [
   },
   {
     q: 'Which platforms?',
-    a: 'iPhone and iPad running iOS or iPadOS 17 or later. Mozz is written in SwiftUI.',
+    a: 'iPhone, iPad, Android, Mac, Windows and Linux \u2014 the same library and the same player on all six.',
   },
 ] as const;
 

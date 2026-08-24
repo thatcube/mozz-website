@@ -654,7 +654,7 @@ const WALL = [
 
   .lockup b {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 24, 'wdth' 110, 'wght' 800;
+    font-weight: 800;
     font-size: 16px;
     letter-spacing: -0.01em;
   }
@@ -711,6 +711,13 @@ const WALL = [
     width: 100%;
     height: auto;
     overflow: visible;
+    /*
+     * Clearance for the O's overshoot, which hangs below the baseline the box
+     * bottom is set to. A percentage margin resolves against the container's
+     * width, so this stays in proportion with the type at every size instead
+     * of drifting; the floor keeps it honest on narrow screens.
+     */
+    margin-bottom: max(7px, 1.15%);
   }
 
   .wordmark text {
@@ -750,7 +757,7 @@ const WALL = [
     border-top: 3px solid var(--ink);
     border-bottom: 1px solid var(--ink);
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 24, 'wdth' 120, 'wght' 700;
+    font-weight: 700;
     font-size: clamp(11px, 1.2vw, 17px);
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -776,7 +783,7 @@ const WALL = [
 
   h1 {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 72, 'wdth' 100, 'wght' 800;
+    font-weight: 800;
     font-size: clamp(30px, 3.9vw, 54px);
     line-height: 1.0;
     letter-spacing: -0.028em;
@@ -848,7 +855,7 @@ const WALL = [
 
   .hero-stats dt {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 48, 'wdth' 130, 'wght' 800;
+    font-weight: 800;
     font-size: clamp(20px, 2.2vw, 30px);
     line-height: 1;
     letter-spacing: -0.035em;
@@ -996,7 +1003,7 @@ const WALL = [
   .meta strong {
     display: block;
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 32, 'wdth' 110, 'wght' 800;
+    font-weight: 800;
     font-size: 5.6cqw;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -1100,7 +1107,7 @@ const WALL = [
     max-width: 15ch;
     margin-top: 0.8rem;
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 64, 'wdth' 100, 'wght' 800;
+    font-weight: 800;
     font-size: clamp(26px, 3.3vw, 44px);
     line-height: 1.03;
     letter-spacing: -0.028em;
@@ -1116,7 +1123,7 @@ const WALL = [
 
   h3 {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
+    font-weight: 700;
     font-size: clamp(17px, 1.35vw, 20px);
     line-height: 1.18;
     letter-spacing: -0.018em;
@@ -1148,7 +1155,7 @@ const WALL = [
 
   .col-logo-plain {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 32, 'wdth' 130, 'wght' 800;
+    font-weight: 800;
     font-size: 30px;
     line-height: 1;
   }
@@ -1361,7 +1368,7 @@ const WALL = [
 
   .tab-lock b {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 18, 'wdth' 110, 'wght' 800;
+    font-weight: 800;
   }
 
   .tab-nav { font-size: 1.6cqw; color: var(--dim); }
@@ -1393,7 +1400,7 @@ const WALL = [
     display: block;
     margin-bottom: 2.2cqw;
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 40, 'wdth' 120, 'wght' 800;
+    font-weight: 800;
     font-size: 3.2cqw;
   }
 
@@ -1524,7 +1531,7 @@ const WALL = [
   .beyond-head h3,
   .beyond-list h4 {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 
@@ -1572,7 +1579,7 @@ const WALL = [
     .beyond-head h3,
   .beyond-list h4 {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 
@@ -1661,7 +1668,7 @@ const WALL = [
 
   .stats dt {
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 64, 'wdth' 130, 'wght' 800;
+    font-weight: 800;
     font-size: clamp(30px, 3.4vw, 46px);
     line-height: 1;
     letter-spacing: -0.035em;
@@ -1688,7 +1695,7 @@ const WALL = [
     cursor: pointer;
     list-style: none;
     font-family: 'Outfit', system-ui;
-    font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 700;
+    font-weight: 700;
     font-size: clamp(15.5px, 1.25vw, 19px);
     letter-spacing: -0.018em;
   }
