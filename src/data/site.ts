@@ -113,10 +113,15 @@ export const PLATFORM_LINE =
  * the sign-in, and Handoff advertises the destination you are on. It does NOT
  * say downloads or the play queue sync — downloads are saved per device — so
  * neither is claimed here.
+ *
+ * Both mechanisms are Apple's, and Mozz now runs on six platforms, so the
+ * sentence names Apple devices out loud. Unscoped, "your other devices" would
+ * read as a cross-platform sync service — which is precisely the thing this
+ * app does not have.
  */
 export const CONTINUITY = {
   title: 'Pick up on the other one',
-  body: 'Sign in once and iCloud Keychain carries your server to your other devices. Handoff passes the album, artist or playlist you are on straight across, so it is already waiting.',
+  body: 'On your Apple devices, sign in once and iCloud Keychain carries your server across. Handoff passes the album, artist or playlist you are on straight to the one in your hand, so it is already waiting.',
 } as const;
 
 /** The ownership argument, which is the whole point of the app. */

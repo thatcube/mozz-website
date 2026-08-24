@@ -38,14 +38,15 @@ import {
   GITHUB_URL,
   DONATE_URL,
   APP_STORE_URL,
+  PLATFORMS,
+  PLATFORM_LINE,
 } from '../../data/site';
 
 /* The only copy written on this page. Everything else comes from site.ts. */
 const HEADLINE = 'A free player for the music on your own server.';
 const BODY =
   'Point Mozz at Plex, Jellyfin or Navidrome. Stream it at home, or download an album and play it with no signal at all.';
-const META =
-  'Mozz is a free, open source music player for iPhone and iPad. Play the music on your own Plex, Jellyfin or Navidrome server, at home or offline.';
+const META = `Mozz is a free, open source music player for the music on your own Plex, Jellyfin or Navidrome server, at home or offline. ${PLATFORM_LINE}`;
 
 const domain = SITE.replace(/^https?:\/\//, '');
 
@@ -274,6 +275,11 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
         <ul class="bill-list" role="list">
           {BILL.map((item) => <li>{item}</li>)}
         </ul>
+
+        <p class="runs">
+          <span class="runs-tag">Runs on</span>
+          {PLATFORMS.map((platform) => <span class="runs-on">{platform.short}</span>)}
+        </p>
 
         <div class="say">
           <h1 id="po-hero">{HEADLINE}</h1>
@@ -805,6 +811,7 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
      bone and disappears. */
   .word,
   .bill-list,
+  .runs,
   .say {
     mix-blend-mode: normal;
   }
@@ -812,6 +819,7 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
   /* The trap for running type. Eight hard offsets read as a printed spread,
      not a glow. */
   .bill-list,
+  .runs,
   .sheet h1 {
     text-shadow:
       2px 0 0 var(--paper),
@@ -894,6 +902,36 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     margin-left: 1.1rem;
     font-size: 0.7em;
     vertical-align: 0.12em;
+    color: var(--red);
+  }
+
+  /* The second line of the billing. The bill of fare is what the app does;
+     this is where it plays, set a size down in the same condensed caps so it
+     reads as part of the bill rather than a strip of badges pasted under it.
+     Names only — six vendor logos would fight the plate for the same corner
+     of the sheet. */
+  .runs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.1rem 0.75rem;
+    max-width: var(--col);
+    margin-top: 0.42rem;
+    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
+    font-size: clamp(12.5px, 1.15vw, 18px);
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    line-height: 1.15;
+  }
+
+  .runs-tag {
+    color: var(--red);
+  }
+
+  .runs-on:not(:last-child)::after {
+    content: '·';
+    margin-left: 0.75rem;
     color: var(--red);
   }
 
@@ -2070,9 +2108,8 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
       font-size: 14.5px;
     }
 
-    .bill-list {
-      font-size: 15px;
-      gap: 0.1rem 0.75rem;
+    .bill-list,
+    .runs {
       /* On a phone the list has nowhere to go but across the plate, so the trap
          is opened until the halos meet and the type reads as knocked out of the
          ink rather than printed on top of it. */
@@ -2085,6 +2122,27 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
         3px -3px 0 var(--paper),
         -3px 3px 0 var(--paper),
         -3px -3px 0 var(--paper);
+    }
+
+    .bill-list {
+      font-size: 15px;
+      gap: 0.1rem 0.75rem;
+    }
+
+    .runs {
+      font-size: 13px;
+      gap: 0.1rem 0.5rem;
+    }
+
+    /* Six machines will not share a phone-width line with their label, and
+       shrinking the names until they do makes them illegible over the plate,
+       so the label takes the line above and reads as the heading it is. */
+    .runs-tag {
+      flex: 0 0 100%;
+    }
+
+    .runs-on:not(:last-child)::after {
+      margin-left: 0.5rem;
     }
 
     .foot {

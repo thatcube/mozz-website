@@ -31,13 +31,18 @@ import {
   FAQS,
   GITHUB_URL,
   APP_STORE_URL,
+  PLATFORMS,
+  PLATFORM_LINE,
 } from '../../data/site';
 
 const HEADLINE = 'Your records. Your server. Your player.';
 const SUPPORT =
   'Mozz is the app that plays the library you already keep, at home over your own network or on a phone with nothing to connect to.';
 
-const EDITION = ['Radio', 'Mozz Weekly', 'Downloads', 'Siri', 'Equalizer', 'iPhone', 'iPad'];
+/* The contents line under the flag. The devices used to live at the end of it;
+   they are now the edition line below it, where a broadsheet keeps them, and
+   the space they left goes to another thing the app actually does. */
+const CONTENTS = ['Radio', 'Mozz Weekly', 'Downloads', 'Siri', 'Equalizer', 'Gapless'];
 
 /** Invented sleeves. Nothing here names a real record or artist. */
 const DRIFT = [
@@ -60,7 +65,7 @@ const WALL = [
 
 <Layout
   title={`${NAME} — your records, your server, your player`}
-  description="Mozz is a free, open source music player for iPhone and iPad. Connect Plex, Jellyfin or a Subsonic server such as Navidrome, listen at home, and download albums to play with no connection."
+  description={`Mozz is a free, open source music player. Connect Plex, Jellyfin or a Subsonic server such as Navidrome, listen at home, and download albums to play with no connection. ${PLATFORM_LINE}`}
   themeColor="#f5f2ea"
 >
   <Fragment slot="head">
@@ -166,9 +171,15 @@ const WALL = [
         </div>
       </div>
 
-      <p class="edition" aria-hidden="true">
-        {EDITION.map((e) => <span>{e}</span>)}
-      </p>
+      <div class="edition">
+        <p class="ed-terms" aria-hidden="true">
+          {CONTENTS.map((term) => <span>{term}</span>)}
+        </p>
+        <p class="ed-runs">
+          <span class="ed-tag">Runs on</span>
+          {PLATFORMS.map((platform) => <span class="ed-p">{platform.short}</span>)}
+        </p>
+      </div>
 
       <div class="body">
         <div class="say">
@@ -578,7 +589,7 @@ const WALL = [
       </div>
 
       <p class="colophon shell">
-        <span>iPhone and iPad &middot; iOS 17 or later</span>
+        <span>{PLATFORM_LINE}</span>
         <span>No account &middot; no tracking &middot; GPL&#8209;3.0</span>
       </p>
 
@@ -630,7 +641,7 @@ const WALL = [
     position: relative;
     overflow: clip;
     min-height: 100svh;
-    padding: clamp(52px, 6vh, 72px) clamp(18px, 4vw, 56px) clamp(20px, 3vh, 40px);
+    padding: clamp(52px, 6vh, 72px) clamp(18px, 4vw, 56px) clamp(16px, 2.4vh, 36px);
     display: flex;
     flex-direction: column;
   }
@@ -746,26 +757,59 @@ const WALL = [
     background: var(--paper);
   }
 
+  /* The strip under the flag, in two lines the way a broadsheet sets them: the
+     contents of the issue, then the edition it was printed for. */
   .edition {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 1.15rem;
     /* The rule runs the full measure; the words stop before the device. The
        device is large now, so the strip is set a size down and steps back —
        it is a contents line, not a second headline. */
-    padding: 0.55rem calc(100% - var(--pierce) + var(--pw) / 2) 0.55rem 0;
+    padding: 0.5rem calc(100% - var(--pierce) + var(--pw) / 2) 0.45rem 0;
     border-top: 3px solid var(--ink);
     border-bottom: 1px solid var(--ink);
+  }
+
+  .ed-terms,
+  .ed-runs {
+    display: flex;
+    flex-wrap: wrap;
     font-family: 'Outfit', system-ui;
-    font-weight: 700;
-    font-size: clamp(11px, 1.2vw, 17px);
-    letter-spacing: 0.02em;
     text-transform: uppercase;
   }
 
-  .edition span:not(:last-child)::after {
+  .ed-terms {
+    gap: 0.2rem 1.15rem;
+    font-weight: 700;
+    font-size: clamp(11px, 1.2vw, 17px);
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+
+  .ed-terms span:not(:last-child)::after {
     content: '·';
     margin-left: 1.15rem;
+    color: var(--red);
+  }
+
+  /* The edition line. Six machines is more words than a contents line can
+     carry without breaking somewhere unfortunate, so they get their own
+     hairline and are set fine — the line a paper prints its edition on. */
+  .ed-runs {
+    gap: 0.1rem 0.8rem;
+    margin-top: 0.34rem;
+    padding-top: 0.34rem;
+    border-top: 1px solid var(--hair);
+    color: var(--dim);
+    font-weight: 600;
+    font-size: clamp(10px, 0.86vw, 12.5px);
+    line-height: 1.25;
+    letter-spacing: 0.13em;
+  }
+
+  .ed-tag { color: var(--red); }
+
+  .ed-p:not(:last-child)::after {
+    content: '·';
+    margin-left: 0.8rem;
     color: var(--red);
   }
 
@@ -776,10 +820,10 @@ const WALL = [
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding-top: clamp(20px, 3.5vh, 44px);
+    padding-top: clamp(18px, 3vh, 42px);
   }
 
-  .say { max-width: 30rem; padding-bottom: clamp(24px, 4vh, 56px); }
+  .say { max-width: 30rem; padding-bottom: clamp(20px, 3.4vh, 52px); }
 
   h1 {
     font-family: 'Outfit', system-ui;
@@ -847,7 +891,7 @@ const WALL = [
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: clamp(12px, 2.4vw, 36px);
     margin-top: auto;
-    padding: clamp(14px, 2.2vh, 26px) 0;
+    padding: clamp(12px, 2vh, 26px) 0;
     /* clears the device hanging out of the flag */
     padding-right: calc(100% - var(--pierce) + var(--pw) / 2);
     border-top: 1px solid var(--hair);
@@ -874,7 +918,7 @@ const WALL = [
     flex-wrap: wrap;
     gap: 0.5rem 1.2rem;
     align-items: center;
-    padding-top: 0.7rem;
+    padding-top: 0.6rem;
     border-top: 1px solid var(--ink);
   }
 
@@ -1810,8 +1854,14 @@ const WALL = [
 
   @media (max-width: 620px) {
     .hero { padding-bottom: clamp(20px, 3vh, 32px); }
-    .edition { font-size: 12px; gap: 0.15rem 0.9rem; }
-    .edition span:not(:last-child)::after { margin-left: 0.9rem; }
+    .ed-terms { font-size: 12px; gap: 0.15rem 0.9rem; }
+    .ed-terms span:not(:last-child)::after { margin-left: 0.9rem; }
+    /* On a phone the six names cannot share a line with their label, and the
+       dots cost more width than they earn, so the label takes the line above
+       and the machines are separated by space alone. */
+    .ed-runs { gap: 0.1rem 0.6rem; font-size: 11px; letter-spacing: 0.09em; }
+    .ed-tag { flex: 0 0 100%; margin-bottom: 0.1rem; }
+    .ed-p:not(:last-child)::after { content: none; }
     .rail-end { display: none; }
     .actions .btn { flex: 1 1 auto; justify-content: center; }
     .wall { grid-template-columns: repeat(4, 1fr); }
