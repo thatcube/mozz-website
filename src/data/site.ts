@@ -669,5 +669,14 @@ export const VARIANTS: Variant[] = [
     swatch: ['#f5efe2', '#e03e2d', '#141110'],
     mood: 'light',
   },
+  {
+    slug: 'emblem-mark',
+    name: 'Emblem Mark',
+    vibe: 'Emblem, stamped with the logo instead of an abstract seal',
+    blurb:
+      'The logo-led counterpart to Emblem. Same catalogue, same rail, same plates — but the stamp is the real Mozz mark at plate scale, pixel disc and zz eyes and all, repeated down the page. Compare it against Emblem to see which seal the concept wants.',
+    swatch: ['#eeeae2', '#c80028', '#1b1c1e'],
+    mood: 'light',
+  },
 
 ];

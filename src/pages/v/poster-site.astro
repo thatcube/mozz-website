@@ -709,6 +709,9 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     --ink: #141110;
     --pad: clamp(18px, 3.4vw, 46px);
     --measure: 1320px;
+    /* How much of the sheet the reading column may take before it would run
+       into the red plate bleeding off the right edge. */
+    --col: 62%;
 
     position: relative;
     overflow: hidden;
@@ -741,13 +744,16 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     pointer-events: none;
   }
 
+  /* The red plate is pushed off the right edge so its rings never land in the
+     column the reading type occupies. It still bleeds, it still shows its
+     bullseye — it just stops competing with the sentence. */
   .cone {
     position: absolute;
     top: 50%;
-    right: -13%;
-    width: min(92vh, 66%);
+    right: -20%;
+    width: min(86vh, 56%);
     aspect-ratio: 1;
-    transform: translateY(-54%);
+    transform: translateY(-50%);
   }
 
   .bars {
@@ -776,8 +782,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     mix-blend-mode: multiply;
   }
 
-  /* Every mark of black is one plate, printed on top — so where it crosses
-     the red it overprints instead of hiding it. */
   .ink {
     position: relative;
     z-index: 1;
@@ -785,7 +789,40 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     flex: 1;
     flex-direction: column;
     width: 100%;
+  }
+
+  /* Every mark of black is one plate, printed on top — so where it crosses
+     the red it overprints instead of hiding it. The blend is set per line of
+     the column rather than on the column itself, because the lines that cross
+     the red plate need to knock out of it (below) and a group blend would
+     swallow the bone trap that does the knocking. */
+  .ink > * {
     mix-blend-mode: multiply;
+  }
+
+  /* These three carry a bone trap, so they print rather than overprint: the
+     spread cuts the rings away from the letterforms and the type stays crisp
+     wherever the plate runs underneath it. On bare stock the trap is bone on
+     bone and disappears. */
+  .word,
+  .bill-list,
+  .say {
+    mix-blend-mode: normal;
+  }
+
+  /* The trap for running type. Eight hard offsets read as a printed spread,
+     not a glow. */
+  .bill-list,
+  .sheet h1 {
+    text-shadow:
+      2px 0 0 var(--paper),
+      -2px 0 0 var(--paper),
+      0 2px 0 var(--paper),
+      0 -2px 0 var(--paper),
+      1.5px 1.5px 0 var(--paper),
+      -1.5px 1.5px 0 var(--paper),
+      1.5px -1.5px 0 var(--paper),
+      -1.5px -1.5px 0 var(--paper);
   }
 
   .billing {
@@ -829,10 +866,21 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     fill: var(--ink);
   }
 
+  /* The hero wordmark is the one piece of type that must cross the plate, so
+     it is printed with a bone trap under the ink: the letters cut themselves
+     out of the rings instead of drowning in them. */
+  .sheet .wordmark text {
+    stroke: var(--paper);
+    stroke-width: 9;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+
   .bill-list {
     display: flex;
     flex-wrap: wrap;
     gap: 0.15rem 1.1rem;
+    max-width: var(--col);
     margin-top: 0.5rem;
     font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
     font-size: clamp(14px, 1.55vw, 24px);
@@ -850,7 +898,11 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     color: var(--red);
   }
 
+  /* The reading column. The plate bleeds off the right of the sheet, so the
+     sentence, the bill of fare and the buttons all stop short of it — one
+     loud thing on the right, one readable thing on the left. */
   .say {
+    max-width: var(--col);
     margin-top: auto;
     padding-top: clamp(14px, 3.4vh, 40px);
   }
@@ -1995,10 +2047,29 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
   }
 
   @media (max-width: 720px) {
+    /* There is no room for a column on a phone, so the plate climbs into the
+       top corner and sits behind the wordmark — which is trapped and can take
+       it — instead of sitting under the sentence. */
+    .poster {
+      --col: 100%;
+    }
+
     .cone {
-      top: 40%;
-      right: -24%;
-      width: 96%;
+      top: clamp(70px, 12vh, 118px);
+      right: -46%;
+      width: min(104%, 43vh);
+      transform: none;
+    }
+
+    /* A short phone has almost no stock between the wordmark and the sentence,
+       so the plate climbs into the corner and prints smaller rather than
+       running down over the headline. */
+    @media (max-height: 780px) {
+      .cone {
+        top: clamp(48px, 7vh, 72px);
+        right: -16%;
+        width: min(88%, 33vh);
+      }
     }
 
     .sheet h1 {
@@ -2013,6 +2084,18 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     .bill-list {
       font-size: 15px;
       gap: 0.1rem 0.75rem;
+      /* On a phone the list has nowhere to go but across the plate, so the trap
+         is opened until the halos meet and the type reads as knocked out of the
+         ink rather than printed on top of it. */
+      text-shadow:
+        4px 0 0 var(--paper),
+        -4px 0 0 var(--paper),
+        0 4px 0 var(--paper),
+        0 -4px 0 var(--paper),
+        3px 3px 0 var(--paper),
+        3px -3px 0 var(--paper),
+        -3px 3px 0 var(--paper),
+        -3px -3px 0 var(--paper);
     }
 
     .foot {

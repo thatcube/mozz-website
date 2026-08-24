@@ -1,0 +1,82 @@
+---
+/**
+ * The Mozz mark, as a catalogue stamp.
+ *
+ * The sleeve system's `nowplaying` tile is an abstract seal — a bone circle
+ * with a red centre dot on a red square. This is the same seal drawn with the
+ * real identity instead: the disc silhouette and the single path carrying both
+ * zz eyes and the smile, lifted verbatim from src/brand/mozz-logo.svg.
+ *
+ * Nothing is redrawn or re-proportioned, and the ten dithered reds of the
+ * sprite are dropped — blown up to plate size they go blotchy, which is why
+ * /h/umbra draws it this way too. One flat ink, one flat ground, hard edges.
+ *
+ * The disc is set to a 56/100 diameter so it carries exactly the mass of the
+ * abstract stamp it stands in for: the two pages can be compared honestly.
+ */
+
+export interface Props {
+  /** Red plate with a bone mark, or bare bone with a red mark. */
+  ground?: 'red' | 'bone';
+  /** Hairline frame, as a sleeve edge. */
+  frame?: boolean;
+  class?: string;
+  label?: string;
+}
+
+const { ground = 'red', frame = false, class: className = '', label } = Astro.props;
+
+/** 26 pixel-art units of disc, scaled to 56 of the 100-unit field, centred. */
+const SCALE = 56 / 26;
+const OFFSET = 50 - 16 * SCALE;
+
+const DISC =
+  'M12 3H20V4H22V5H24V6H25V7H26L27 8V10H28V12H29V20H28V22H27V24H26V25H25V26H24V27H22V28H20V29H12V28H10V27H8V26H7V25H6V24H5V22H4V20H3V12H4V10H5V8H6V7H7V6H8V5H10V4H12V3Z';
+const FACE =
+  'M12 19H13V20H19V19H20V18H21V20H20V21H19V22H13V21H12V20H11V18H12V19ZM15 13H14V14H13V15H15V16H11V14H12V13H13V12H11V11H15V13ZM21 13H20V14H19V15H21V16H17V14H18V13H19V12H17V11H21V13Z';
+---
+
+<svg
+  class:list={['mark-stamp', ground === 'red' ? 'on-red' : 'on-bone', className]}
+  viewBox="0 0 100 100"
+  role={label ? 'img' : 'presentation'}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <rect class="ground" width="100" height="100" />
+  <g transform={`translate(${OFFSET.toFixed(3)} ${OFFSET.toFixed(3)}) scale(${SCALE.toFixed(5)})`}>
+    <path class="disc" d={DISC} />
+    <path class="face" d={FACE} />
+  </g>
+  {frame && <rect x="0.6" y="0.6" width="98.8" height="98.8" class="frame" />}
+</svg>
+
+<style>
+  .mark-stamp {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Pixel art. The steps are the artwork, so they are never allowed to soften. */
+  .disc,
+  .face {
+    shape-rendering: crispEdges;
+  }
+
+  .on-red .ground { fill: var(--sl-red, #c80028); }
+  .on-red .disc { fill: var(--sl-bone, #f2efe6); }
+  .on-red .face { fill: var(--sl-red, #c80028); }
+
+  .on-bone .ground { fill: var(--sl-bone, #f2efe6); }
+  .on-bone .disc { fill: var(--sl-red, #c80028); }
+  .on-bone .face { fill: var(--sl-bone, #f2efe6); }
+
+  .frame {
+    fill: none;
+    stroke: var(--sl-rule, rgba(19, 19, 19, 0.18));
+    stroke-width: 1.2;
+    shape-rendering: geometricPrecision;
+  }
+</style>

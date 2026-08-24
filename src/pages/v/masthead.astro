@@ -605,10 +605,16 @@ const WALL = [
     --faint: rgba(20, 19, 18, 0.44);
     --hair: rgba(20, 19, 18, 0.2);
 
-    /* where the phone comes up through the flag, and how far it hangs below */
+    /* where the phone comes up through the flag, and how far it hangs below
+       it. The device is the second thing the page says after the flag, so it
+       is sized against the shorter axis of the window as well as the wider
+       one — it takes as much of the right of the hero as the height allows. */
     --pierce: 79%;
-    --pw: clamp(172px, 14.6vw, 250px);
-    --drop: clamp(236px, 30vh, 302px);
+    --pw: clamp(172px, min(24vw, 34.5svh), 460px);
+    /* How far down the flag the device breaks through, as a share of the
+       flag's own height, so the bite scales with the type instead of drifting
+       as the window changes. */
+    --sink: 28%;
     --bite-pad: clamp(9px, 0.9vw, 15px);
 
     position: relative;
@@ -713,7 +719,7 @@ const WALL = [
     bottom: 0;
     z-index: 2;
     width: calc(var(--pw) + 2 * var(--bite-pad));
-    height: calc(var(--pw) * 147.6 / 71.6 - var(--drop) + var(--bite-pad));
+    height: calc(100% - var(--sink) + var(--bite-pad));
     transform: translateX(-50%);
     border-radius: calc(clamp(24px, 2.4vw, 40px) + var(--bite-pad))
       calc(clamp(24px, 2.4vw, 40px) + var(--bite-pad)) 0 0;
@@ -723,21 +729,23 @@ const WALL = [
   .edition {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem 1.4rem;
-    /* The rule runs the full measure; the words stop before the device. */
+    gap: 0.2rem 1.15rem;
+    /* The rule runs the full measure; the words stop before the device. The
+       device is large now, so the strip is set a size down and steps back —
+       it is a contents line, not a second headline. */
     padding: 0.55rem calc(100% - var(--pierce) + var(--pw) / 2) 0.55rem 0;
     border-top: 3px solid var(--ink);
     border-bottom: 1px solid var(--ink);
     font-family: 'Bricolage Grotesque', system-ui;
     font-variation-settings: 'opsz' 24, 'wdth' 120, 'wght' 700;
-    font-size: clamp(12px, 1.35vw, 18px);
+    font-size: clamp(11px, 1.2vw, 17px);
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
 
   .edition span:not(:last-child)::after {
     content: '·';
-    margin-left: 1.4rem;
+    margin-left: 1.15rem;
     color: var(--red);
   }
 
@@ -880,13 +888,13 @@ const WALL = [
       0 30px 66px -28px rgba(20, 19, 18, 0.5);
   }
 
-  /* Anchored to the flag, on the same axis as the bite, hanging down over
-     the page below it. */
+  /* Anchored to the flag, on the same axis as the bite: it enters the flag a
+     fixed way down the letterforms and hangs its full height below them. */
   .hero-phone {
     position: absolute;
     z-index: 3;
     left: var(--pierce);
-    bottom: calc(-1 * var(--drop));
+    top: var(--sink);
     transform: translateX(-50%);
   }
 
