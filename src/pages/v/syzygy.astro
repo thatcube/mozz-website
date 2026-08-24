@@ -252,9 +252,8 @@ const WALL = [
         </div>
 
         <ol class="axis" role="list">
-          {SERVERS.map((s, i) => (
+          {SERVERS.map((s) => (
             <li>
-              <span class="axis-no">{String(i + 1).padStart(2, '0')}</span>
               <span class="axis-logo"><ServerLogo name={s.name} size={30} /></span>
               <h3>{s.name}</h3>
               <p>{s.note}</p>
@@ -1195,15 +1194,9 @@ const WALL = [
     background: var(--void);
   }
 
-  .axis-no {
-    font-family: 'DM Mono', ui-monospace, monospace;
-    font-size: 11px;
-    color: var(--red);
-  }
-
   .axis-logo {
     display: block;
-    margin: 0.9rem 0 1rem;
+    margin: 0 0 1rem;
     color: var(--cream);
   }
 

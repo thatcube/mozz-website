@@ -101,7 +101,6 @@ const recommendationPrint = FAQS[3].a;
         <ol class="source-panels" role="list">
           {SERVERS.map((server, index) => (
             <li class="source-panel">
-              <span class="source-num">{String(index + 1).padStart(2, '0')}</span>
               <span class="source-mark"><ServerLogo name={server.name} size={34} /></span>
               <div>
                 <h3>{server.name}</h3>
@@ -429,7 +428,6 @@ const recommendationPrint = FAQS[3].a;
   .catalogue,
   .kicker,
   .side-kicker,
-  .source-num,
   .track-number,
   .fine-print,
   .label-stats,
@@ -740,16 +738,11 @@ const recommendationPrint = FAQS[3].a;
   }
   .source-panel {
     display: grid;
-    grid-template-columns: 3.4rem auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 1rem;
     align-items: start;
     padding: 1.35rem 0;
     border-bottom: 1px solid var(--rule);
-  }
-  .source-num {
-    padding-top: 0.3rem;
-    color: var(--red);
-    font-size: 0.72rem;
   }
   .source-mark {
     display: grid;
@@ -1372,10 +1365,7 @@ const recommendationPrint = FAQS[3].a;
       opacity: 0.76;
     }
     .source-panel {
-      grid-template-columns: 2.2rem minmax(0, 1fr);
-    }
-    .source-mark {
-      display: none;
+      grid-template-columns: auto minmax(0, 1fr);
     }
     .panel,
     .liner,

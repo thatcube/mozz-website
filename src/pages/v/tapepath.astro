@@ -131,7 +131,6 @@ const HEADS = [
       <div class="guide-list">
         {SERVERS.map((server, index) => (
           <article class={`guide guide-${index + 1}`}>
-            <span class="guide-index">{String(index + 1).padStart(2, '0')}</span>
             <span class="guide-pin" aria-hidden="true"></span>
             <div class="guide-logo"><ServerLogo name={server.name} size={38} /></div>
             <h3>{server.name}</h3>
@@ -512,7 +511,6 @@ const HEADS = [
   }
   .deck-meta,
   .station-mark,
-  .guide-index,
   .head-label,
   .head-kicker,
   .key,
@@ -754,11 +752,6 @@ const HEADS = [
   }
   .guide-2 {
     justify-self: start;
-  }
-  .guide-index {
-    grid-column: 1 / -1;
-    color: var(--red-hi);
-    font-size: 0.72rem;
   }
   .guide-pin {
     position: absolute;

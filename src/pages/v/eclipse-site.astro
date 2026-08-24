@@ -433,7 +433,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
                 </span>
                 <h3>{s.name}</h3>
                 <p>{s.note}</p>
-                <span class="rack-no">{String(i + 1).padStart(2, '0')}</span>
               </li>
             ))
           }
@@ -1500,7 +1499,7 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
 
   .rack-item {
     position: relative;
-    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px) clamp(26px, 2.8vw, 38px);
+    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px);
     border: 1px solid rgba(20, 16, 26, 0.2);
     background: var(--stock);
   }
@@ -1535,15 +1534,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     font-size: clamp(13px, 1vw, 15px);
     line-height: 1.55;
     opacity: 0.72;
-  }
-
-  .rack-no {
-    position: absolute;
-    right: clamp(14px, 1.6vw, 22px);
-    bottom: clamp(10px, 1.2vw, 16px);
-    font-family: 'DM Mono', ui-monospace, monospace;
-    font-size: 11px;
-    opacity: 0.45;
   }
 
   .aside {

@@ -223,16 +223,14 @@ const WALL = [
         </div>
 
         <ol class="columns" role="list">
-          {SERVERS.map((s, i) => (
+          {SERVERS.map((s) => (
             <li>
-              <span class="col-no">{String(i + 1).padStart(2, '0')}</span>
               <span class="col-logo"><ServerLogo name={s.name} size={32} /></span>
               <h3>{s.name}</h3>
               <p>{s.note}</p>
             </li>
           ))}
           <li>
-            <span class="col-no">&mdash;</span>
             <span class="col-logo col-logo-plain" aria-hidden="true">S</span>
             <h3>Subsonic &amp; OpenSubsonic</h3>
             <p>
@@ -1127,15 +1125,9 @@ const WALL = [
 
   .columns li:last-child { border-right: 0; padding-right: 0; }
 
-  .col-no {
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 10.5px;
-    color: var(--red);
-  }
-
   .col-logo {
     display: block;
-    margin: 0.85rem 0 0.95rem;
+    margin: 0 0 0.95rem;
     color: var(--ink);
   }
 

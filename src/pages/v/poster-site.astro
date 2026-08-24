@@ -331,7 +331,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
                 </span>
                 <h3>{s.name}</h3>
                 <p>{s.note}</p>
-                <span class="panel-no">{String(i + 1).padStart(2, '0')}</span>
               </li>
             ))
           }
@@ -1095,7 +1094,7 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
 
   .panel {
     position: relative;
-    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px) clamp(28px, 2.8vw, 40px);
+    padding: clamp(20px, 2.2vw, 32px) clamp(18px, 2vw, 30px);
     background: var(--paper);
   }
 
@@ -1123,16 +1122,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     line-height: 1.5;
     font-weight: 500;
     opacity: 0.82;
-  }
-
-  .panel-no {
-    position: absolute;
-    right: clamp(14px, 1.6vw, 22px);
-    bottom: clamp(9px, 1.1vw, 15px);
-    font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
-    font-size: clamp(20px, 2vw, 32px);
-    font-weight: 800;
-    color: var(--red);
   }
 
   .aside {

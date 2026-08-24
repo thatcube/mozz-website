@@ -201,16 +201,14 @@ const WALL = [
         </div>
 
         <ol class="plates" role="list">
-          {SERVERS.map((s, i) => (
+          {SERVERS.map((s) => (
             <li>
-              <span class="plate-no">{String(i + 1).padStart(2, '0')}</span>
               <span class="plate-logo"><ServerLogo name={s.name} size={34} /></span>
               <h3>{s.name}</h3>
               <p>{s.note}</p>
             </li>
           ))}
           <li class="plate-extra">
-            <span class="plate-no">&mdash;</span>
             <h3>Any other OpenSubsonic server</h3>
             <p>
               Navidrome is the tested OpenSubsonic target. Other compatible servers are
@@ -1104,23 +1102,15 @@ const WALL = [
   .plates li:last-child { border-right: 0; }
 
   .plate-extra { background: var(--ink); color: var(--paper); }
-  .plate-extra .plate-no { color: var(--red); }
   .plate-extra p { color: rgba(243, 237, 226, 0.72); }
-
-  .plate-no {
-    font-family: 'Azeret Mono', ui-monospace, monospace;
-    font-size: 11px;
-    color: var(--red);
-  }
 
   .plate-logo {
     display: block;
-    margin: 0.9rem 0 1rem;
+    margin: 0 0 1rem;
     color: var(--ink);
   }
 
   .plates h3 { margin-bottom: 0.45rem; }
-  .plate-extra h3 { margin-top: 0.9rem; }
 
   .plates p {
     color: var(--dim);

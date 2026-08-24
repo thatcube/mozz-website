@@ -120,9 +120,8 @@ const SPINDLE = [
       </div>
 
       <ul class="server-ring" role="list">
-        {SERVERS.map((server, i) => (
+        {SERVERS.map((server) => (
           <li>
-            <span class="server-index">{String(i + 1).padStart(2, '0')}</span>
             <span class="server-logo"><ServerLogo name={server.name} size={44} /></span>
             <h3>{server.name}</h3>
             <p>{server.note}</p>
@@ -659,18 +658,10 @@ const SPINDLE = [
     border-radius: 999px;
   }
 
-  .server-index {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    color: var(--red);
-  }
-
   .server-logo {
     display: grid;
     place-items: center;
-    margin: 0.9rem 0 0.7rem;
+    margin: 0 0 0.7rem;
     color: var(--bone);
   }
 

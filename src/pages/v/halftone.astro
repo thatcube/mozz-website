@@ -210,16 +210,14 @@ const WALL = [
         </div>
 
         <ol class="rows" role="list">
-          {SERVERS.map((s, i) => (
+          {SERVERS.map((s) => (
             <li>
-              <span class="row-no">{String(i + 1).padStart(2, '0')}</span>
               <span class="row-logo"><ServerLogo name={s.name} size={28} /></span>
               <h3>{s.name}</h3>
               <p>{s.note}</p>
             </li>
           ))}
           <li>
-            <span class="row-no">&mdash;</span>
             <span class="row-logo row-logo-plain" aria-hidden="true">S</span>
             <h3>Subsonic &amp; OpenSubsonic</h3>
             <p>
@@ -1067,17 +1065,11 @@ const WALL = [
 
   .rows li {
     display: grid;
-    grid-template-columns: 3.2rem 3.4rem minmax(0, 0.7fr) minmax(0, 1.4fr);
+    grid-template-columns: 3.4rem minmax(0, 0.7fr) minmax(0, 1.4fr);
     gap: clamp(12px, 2vw, 34px);
     align-items: center;
     padding: clamp(16px, 2.2vh, 26px) 0;
     border-bottom: 1px solid var(--hair);
-  }
-
-  .row-no {
-    font-family: 'Space Mono', ui-monospace, monospace;
-    font-size: 11px;
-    color: var(--red);
   }
 
   .row-logo { color: var(--cream); }
@@ -1732,13 +1724,11 @@ const WALL = [
     .word span { font-size: 40vw; }
 
     .rows li {
-      grid-template-columns: 2.6rem minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
     }
 
-    .row-logo { grid-row: 1; grid-column: 2; margin-bottom: 0.5rem; }
-    .rows h3 { grid-column: 2; }
-    .rows p { grid-column: 2; margin-top: 0.35rem; }
+    .row-logo { margin-bottom: 0.5rem; }
 
     .split-grid { grid-template-columns: 1fr; }
     .seam { height: 2px; }
