@@ -1,0 +1,309 @@
+---
+/**
+ * The shortlist. Everything Brandon picked out of the fifty, on one page.
+ *
+ * Deliberately not a gallery: the quotes matter as much as the pictures. A
+ * month from now the question will be "why did we choose this one", and the
+ * answer needs to survive without anyone remembering the conversation.
+ */
+import Layout from '../layouts/Layout.astro';
+import Mark from '../components/Mark.astro';
+import { WINNER_GROUPS } from '../data/winners';
+import { NAME } from '../data/site';
+
+const total = WINNER_GROUPS.reduce((n, g) => n + g.items.length, 0);
+const open = WINNER_GROUPS.flatMap((g) => g.items).filter((i) => i.decision);
+---
+
+<Layout
+  title={`${NAME} — the shortlist`}
+  description="Everything picked out of the fifty concepts, in one place."
+  themeColor="#f6f4ee"
+  noindex
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main>
+    <header>
+      <nav class="back">
+        <a href="/">All 51 websites</a>
+        <span aria-hidden="true">·</span>
+        <a href="/heroes">All 49 heroes</a>
+      </nav>
+
+      <div class="brand"><Mark size={38} decorative /><span>{NAME}</span></div>
+      <h1>The shortlist.</h1>
+      <p class="lede">
+        {total} things kept out of ninety-nine, in your own words. Grouped by what
+        each one is for: finished sites, the heroes they grew from, and the ideas
+        that were good but in the wrong place.
+      </p>
+
+      {open.length > 0 && (
+        <aside class="open" aria-label="Open decision">
+          <p class="open-tag">Still open</p>
+          <p class="open-body">
+            <strong>Emblem</strong> or <strong>Emblem, with the mark</strong>. The
+            two pages are identical apart from the stamp, so whichever reads
+            better is the answer. It decides how the identity repeats down the
+            whole page, not just the hero.
+          </p>
+          <p class="open-links">
+            <a href="/v/emblem">Abstract stamp</a>
+            <a href="/v/emblem-mark">Real mark</a>
+          </p>
+        </aside>
+      )}
+    </header>
+
+    {WINNER_GROUPS.map((group) => (
+      <section aria-labelledby={`g-${group.id}`}>
+        <div class="set-head">
+          <h2 id={`g-${group.id}`}>{group.title}</h2>
+          <p>{group.intro}</p>
+        </div>
+
+        <ol role="list">
+          {group.items.map((item) => (
+            <li>
+              <a class="card" href={`${item.base}${item.slug}`}>
+                <span class="shot">
+                  <img
+                    src={`/${item.thumbs}/${item.slug}.png`}
+                    alt={`${item.name}`}
+                    width="1440"
+                    height="900"
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
+                  {item.decision && <span class="flag">Decide</span>}
+                </span>
+
+                <span class="copy">
+                  <strong>{item.name}</strong>
+                  <span class="path">{item.base}{item.slug}</span>
+                  {item.quote && <q>{item.quote}</q>}
+                  {item.note && <span class="note">{item.note}</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </main>
+</Layout>
+
+<style>
+  main {
+    min-height: 100vh;
+    padding: clamp(2rem, 5vw, 5rem) 1.25rem clamp(4rem, 8vw, 7rem);
+    color: #202124;
+    background: #f6f4ee;
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  header,
+  ol,
+  .set-head {
+    width: min(78rem, 100%);
+    margin-inline: auto;
+  }
+
+  header {
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .back {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+    color: #6a6862;
+    font-size: 0.875rem;
+  }
+
+  .back span {
+    opacity: 0.5;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.75rem;
+    font-weight: 700;
+  }
+
+  h1 {
+    max-width: 12ch;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  .lede {
+    max-width: 42rem;
+    margin-top: 1.25rem;
+    color: #66645f;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.6;
+  }
+
+  /* The one unresolved thing on the page. It separates from the field by being
+     the only white surface, so the red is left to the label and the links —
+     an accent bar down the side would shout without adding information. */
+  .open {
+    max-width: 42rem;
+    margin-top: 2.5rem;
+    padding: 1.4rem 1.5rem;
+    background: #fff;
+  }
+
+  .open-tag {
+    margin-bottom: 0.5rem;
+    color: #c80028;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .open-body {
+    color: #3d3c39;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .open-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.9rem;
+  }
+
+  .open-links a {
+    color: #c80028;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .set-head {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 34rem);
+    gap: 1rem clamp(1.5rem, 3vw, 3rem);
+    align-items: baseline;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(32, 33, 36, 0.16);
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .set-head h2 {
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+    letter-spacing: -0.03em;
+  }
+
+  .set-head p {
+    color: #6a6862;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  section + section {
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .shot {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #e8e4da;
+    border: 1px solid rgba(32, 33, 36, 0.12);
+  }
+
+  .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .flag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0.35rem 0.7rem;
+    background: #c80028;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .copy strong {
+    font-size: 1.05rem;
+  }
+
+  .path {
+    color: #8a8781;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The quote is the whole reason this page exists, so it is set apart from
+     the description rather than blended into it. */
+  q {
+    margin-top: 0.35rem;
+    color: #3d3c39;
+    font-size: 0.9375rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .note {
+    color: #6a6862;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  a:focus-visible {
+    outline: 2px solid #c80028;
+    outline-offset: 5px;
+  }
+
+  @media (max-width: 43rem) {
+    ol {
+      grid-template-columns: 1fr;
+    }
+
+    .set-head {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
