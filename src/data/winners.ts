@@ -6,7 +6,8 @@
  * purpose: a favourite is only useful later if you can still remember what was
  * good about it, and "I liked it" decays into nothing within a week.
  *
- * `decision` marks the one pair that is still open. Everything else is settled.
+ * `decision` marked the one set that was still open. It is now settled: Emblem
+ * Round won and is the live site at /.
  */
 
 export interface Winner {
@@ -21,6 +22,8 @@ export interface Winner {
   /** What was done about it, if anything. */
   note?: string;
   decision?: boolean;
+  /** The direction that won and is now the homepage. */
+  chosen?: boolean;
 }
 
 export interface WinnerGroup {
@@ -51,8 +54,7 @@ export const WINNER_GROUPS: WinnerGroup[] = [
         base: '/v/',
         thumbs: 'thumbs',
         quote: 'it\u2019s not using the logo\u2026 maybe the emblem is part of why i like it?',
-        note: 'Identical to Emblem in every respect except the stamp, which is the real pixel mark at the same size and mass. Built so the question can be answered by looking rather than guessing.',
-        decision: true,
+        note: 'Identical to Emblem in every respect except the stamp, which is the real pixel mark at the same size and mass. Built so the question could be answered by looking rather than guessing.',
       },
       {
         slug: 'emblem-round',
@@ -60,8 +62,8 @@ export const WINNER_GROUPS: WinnerGroup[] = [
         base: '/v/',
         thumbs: 'thumbs',
         quote: 'try another with the new pixelated zz smile, but with a perfectly round outside',
-        note: 'The pixel face on a true circle. Same mass again, so all three seals compare directly.',
-        decision: true,
+        note: 'Chosen. The pixel face on a true circle, now the live site at /.',
+        chosen: true,
       },
       {
         slug: 'poster-site',

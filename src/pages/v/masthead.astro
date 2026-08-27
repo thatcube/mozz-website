@@ -26,18 +26,32 @@ import {
   SERVERS,
   FEATURES,
   CONTINUITY,
+  APPLE_CONTINUITY,
+  SYNC,
+  RESUME,
+  DISCOVERY,
   OWNERSHIP,
-  STATS,
   FAQS,
   GITHUB_URL,
-  APP_STORE_URL,
+  RELEASES_URL,
+  DOWNLOAD_LABEL,
   PLATFORMS,
   PLATFORM_LINE,
 } from '../../data/site';
 
-const HEADLINE = 'Your records. Your server. Your player.';
+const HEADLINE = 'Your music. Your server. Your player.';
 const SUPPORT =
-  'Mozz is the app that plays the library you already keep, at home over your own network or on a phone with nothing to connect to.';
+  'A free, open source player for the library you already keep \u2014 at home over your own network, on a laptop, or on a phone with nothing to connect to.';
+
+/* The standing facts under the flag. A broadsheet would set figures here; this
+   one deliberately does not, because a listener's hardware, network and server
+   decide what they actually get and no number measured elsewhere survives that. */
+const FACTS = [
+  { key: 'Free', note: 'Forever, and open source under GPL\u20113.0' },
+  { key: 'Yours', note: 'Your files, on hardware you control' },
+  { key: 'Offline', note: 'Downloads behave exactly like streaming' },
+  { key: 'In step', note: 'Library, history and taste on every device' },
+];
 
 /* The contents line under the flag. The devices used to live at the end of it;
    they are now the edition line below it, where a broadsheet keeps them, and
@@ -64,7 +78,7 @@ const WALL = [
 ---
 
 <Layout
-  title={`${NAME} — your records, your server, your player`}
+  title={`${NAME} — your music, your server, your player`}
   description={`Mozz is a free, open source music player. Connect Plex, Jellyfin or a Subsonic server such as Navidrome, listen at home, and download albums to play with no connection. ${PLATFORM_LINE}`}
   themeColor="#f5f2ea"
 >
@@ -187,20 +201,16 @@ const WALL = [
           <p class="support">{SUPPORT}</p>
 
           <div class="actions">
-            {APP_STORE_URL ? (
-              <a class="btn go" href={APP_STORE_URL}>Download on the App Store</a>
-            ) : (
-              <span class="btn go is-pending" aria-disabled="true">Coming to the App Store</span>
-            )}
+            <a class="btn go" href={RELEASES_URL} rel="noopener">{DOWNLOAD_LABEL}</a>
             <a class="btn src" href={GITHUB_URL} rel="noopener">Read the source</a>
           </div>
         </div>
 
         <dl class="hero-stats">
-          {STATS.map((s) => (
+          {FACTS.map((f) => (
             <div>
-              <dt>{s.value}</dt>
-              <dd>{s.label}</dd>
+              <dt>{f.key}</dt>
+              <dd>{f.note}</dd>
             </div>
           ))}
         </dl>
@@ -274,7 +284,7 @@ const WALL = [
           <ol class="marks" role="list">
             <li><b>01</b>The whole catalog indexed on the device</li>
             <li><b>02</b>Gapless queue, so an album runs as one piece</li>
-            <li><b>03</b>Seventy-five milliseconds from tap to first note</li>
+            <li><b>03</b>Your files at the quality you keep them, never re&#8209;encoded</li>
           </ol>
         </div>
 
@@ -282,7 +292,7 @@ const WALL = [
           <p class="kicker"><span class="tick"></span>Below the fold</p>
           <h2>Offline</h2>
           <p>
-            Downloads are part of the design, not an afterthought. A record on the device
+            Downloads are part of the design, not an afterthought. An album on the device
             behaves the way it does at home, with nothing to reconnect to.
           </p>
           <ol class="marks" role="list">
@@ -303,13 +313,16 @@ const WALL = [
         <div class="head">
           <div>
             <p class="kicker"><span class="tick"></span>Featured</p>
-            <h2 id="mh-feature">A new mix every week, set from your own library.</h2>
+            <h2 id="mh-feature">{DISCOVERY.title}.</h2>
           </div>
-          <p class="lede">
-            Mozz Weekly builds a fresh run out of music you already have. It is put together
-            on the device and stays available offline, so discovery never needs a service.
-          </p>
+          <p class="lede">{DISCOVERY.lede}</p>
         </div>
+
+        <ol class="marks marks--wide" role="list">
+          {DISCOVERY.steps.map((step) => (
+            <li><b>{step.key}</b>{step.title} &mdash; {step.body}</li>
+          ))}
+        </ol>
       </div>
 
       <div class="ticker" aria-hidden="true">
@@ -350,10 +363,15 @@ const WALL = [
         <div class="head">
           <div>
             <p class="kicker"><span class="tick"></span>Continued</p>
-            <h2 id="mh-pair">Continued on the other screen.</h2>
+            <h2 id="mh-pair">{CONTINUITY.title}.</h2>
           </div>
           <p class="lede">{CONTINUITY.body}</p>
         </div>
+
+        <ol class="marks marks--wide marks--pair" role="list">
+          <li><b>01</b>{SYNC.title} &mdash; {SYNC.body}</li>
+          <li><b>02</b>{RESUME.title} &mdash; {RESUME.body}</li>
+        </ol>
       </div>
 
       <div class="rig" role="img" aria-label="An iPad and an iPhone side by side, both running Mozz.">
@@ -411,6 +429,12 @@ const WALL = [
             <span class="home" aria-hidden="true"></span>
           </div>
         </div>
+      </div>
+
+      <div class="shell">
+        <p class="drift-note">
+          {APPLE_CONTINUITY.title}: {APPLE_CONTINUITY.body}
+        </p>
       </div>
 
       <!--
@@ -532,15 +556,6 @@ const WALL = [
             </article>
           ))}
         </div>
-
-        <dl class="stats">
-          {STATS.map((s) => (
-            <div>
-              <dt>{s.value}</dt>
-              <dd>{s.label}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
 
@@ -579,11 +594,7 @@ const WALL = [
         <h2 id="mh-close">{TAGLINE}</h2>
         <p class="close-sub">{SUBLINE}</p>
         <div class="actions">
-          {APP_STORE_URL ? (
-            <a class="btn go" href={APP_STORE_URL}>Download on the App Store</a>
-          ) : (
-            <span class="btn go is-pending" aria-disabled="true">Coming to the App Store</span>
-          )}
+          <a class="btn go" href={RELEASES_URL} rel="noopener">{DOWNLOAD_LABEL}</a>
           <a class="btn src" href={GITHUB_URL} rel="noopener">Read the source</a>
         </div>
       </div>
@@ -865,13 +876,6 @@ const WALL = [
   }
 
   .btn.go:hover { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--red); }
-
-  .btn.go.is-pending {
-    background: transparent;
-    border: 2px solid var(--ink);
-    color: var(--ink);
-    box-shadow: 5px 5px 0 var(--red);
-  }
 
   .btn.src {
     border: 2px solid var(--ink);
@@ -1269,6 +1273,31 @@ const WALL = [
     font-weight: 500;
     line-height: 1.9;
     color: var(--red);
+  }
+
+  /* Full-measure variant: the same ruled list, but set across the shell in
+     columns rather than down one half of a spread. */
+  .marks--wide {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2.2vw, 2.2rem);
+    margin-top: clamp(20px, 3vh, 34px);
+    align-items: start;
+    line-height: 1.55;
+  }
+
+  .marks--wide li { display: block; }
+  .marks--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .marks--wide b {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+  }
+
+  @media (max-width: 56rem) {
+    .marks--wide { grid-template-columns: 1fr; gap: 0.9rem; }
   }
 
   /* The lower half is printed on the darker stock, so the fold reads. */
@@ -1701,25 +1730,6 @@ const WALL = [
 
   .own p { margin-top: 0.45rem; color: var(--dim); font-size: 14.4px; }
 
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: clamp(20px, 2.6vw, 40px);
-    margin-top: clamp(32px, 4.6vh, 58px);
-    padding-top: clamp(22px, 3vh, 38px);
-    border-top: 1px solid var(--hair);
-  }
-
-  .stats dt {
-    font-family: 'Outfit', system-ui;
-    font-weight: 800;
-    font-size: clamp(30px, 3.4vw, 46px);
-    line-height: 1;
-    letter-spacing: -0.035em;
-    color: var(--red);
-  }
-
-  .stats dd { margin: 0.4rem 0 0; color: var(--dim); font-size: 13.4px; }
 
   /* --- faq --------------------------------------------------------------- */
 

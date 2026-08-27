@@ -1,0 +1,97 @@
+---
+/**
+ * The one download button the live site uses.
+ *
+ * Mozz is not on a store, so there is no badge to print and nothing honest to
+ * promise about one. What does exist is a releases page carrying a build for
+ * every platform, so that is where this goes — a real link that works today,
+ * rather than a disabled badge waiting on a listing.
+ *
+ * It carries no palette of its own: everything is a custom property, so each
+ * page paints it in its own ink and it never arrives as a foreign object. The
+ * mark is a plain arrow into a rule — flat geometry in the same vocabulary as
+ * the rest of the catalogue, and no vendor logos, because the point of the
+ * button is that it does not care which machine you are on.
+ */
+import { RELEASES_URL, DOWNLOAD_LABEL, DOWNLOAD_NOTE, PLATFORMS } from '../data/site';
+
+export interface Props {
+  class?: string;
+  /** Overrides the button face, e.g. "Download Mozz". */
+  label?: string;
+  /** The small line above the label. Pass '' to drop it entirely. */
+  note?: string;
+  href?: string;
+}
+
+const {
+  class: className = '',
+  label = DOWNLOAD_LABEL,
+  note = DOWNLOAD_NOTE,
+  href = RELEASES_URL,
+} = Astro.props;
+
+const platforms = PLATFORMS.map((p) => p.short).join(', ');
+---
+
+<a
+  class:list={['dl', className]}
+  href={href}
+  aria-label={`${label} — builds for ${platforms}`}
+>
+  <svg class="dl-mark" viewBox="0 0 20 18" aria-hidden="true" focusable="false">
+    <rect x="8.6" y="0.6" width="2.8" height="8.2" />
+    <path d="M5 8.2h10L10 14z" />
+    <rect x="2.6" y="15.4" width="14.8" height="2" />
+  </svg>
+
+  <span class="dl-text">
+    {note ? <small>{note}</small> : null}
+    {label}
+  </span>
+</a>
+
+<style>
+  .dl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    padding: 0.85rem 1.35rem;
+    background: var(--dl-bg, var(--store-bg, #131313));
+    color: var(--dl-fg, var(--store-fg, #f2efe6));
+    border: 1px solid var(--dl-bg, var(--store-bg, #131313));
+    font-weight: 600;
+    font-size: 0.98rem;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-decoration: none;
+    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  }
+
+  .dl-mark {
+    width: 19px;
+    height: 17px;
+    flex: none;
+    fill: currentColor;
+  }
+
+  .dl-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dl small {
+    font-size: 0.64rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    opacity: 0.72;
+    font-weight: 500;
+  }
+
+  .dl:hover,
+  .dl:focus-visible {
+    background: var(--dl-bg-hover, var(--store-bg-hover, var(--sl-red, #c80028)));
+    border-color: var(--dl-bg-hover, var(--store-bg-hover, var(--sl-red, #c80028)));
+    color: var(--dl-fg-hover, var(--dl-fg, var(--store-fg, #f2efe6)));
+  }
+</style>

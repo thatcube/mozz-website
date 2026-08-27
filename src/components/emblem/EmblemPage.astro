@@ -1,0 +1,1333 @@
+---
+/**
+ * THE EMBLEM SYSTEM — one page, three seals.
+ *
+ * A museum catalogue rather than a poster. Every claim the product makes is
+ * given an accession number, a plate and a ruled row, and the page is read down
+ * a fixed left rail the way you read a wall of labels. The primary device is the
+ * stacked hairline rule — the on-device register narrowing as you type.
+ *
+ * This file is the whole page. /v/emblem, /v/emblem-mark, /v/emblem-round and
+ * the homepage are all thin wrappers around it, because the three seals were
+ * only ever meant to differ in the seal: keeping three copies of a thousand
+ * lines guaranteed they would quietly drift apart instead.
+ *
+ *   stamp="seal"  — an abstract red plate holding a bone circle
+ *   stamp="mark"  — the real Mozz mark, pixel steps and all
+ *   stamp="round" — the same face printed on a true circle
+ *
+ * `review` is the only other difference: the variant routes carry the comparison
+ * bar and stay out of search, the homepage carries neither.
+ *
+ * No oversized wordmark anywhere, no gradient, no shadow: this concept never
+ * shouts, and the pixels on the seal are the only texture on the page.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Mark from '../Mark.astro';
+import VariantBar from '../VariantBar.astro';
+import ServerLogo from '../ServerLogo.astro';
+import DownloadButton from '../DownloadButton.astro';
+import Sleeve from '../sleeve/Sleeve.astro';
+import MarkStampSquare from '../sleeve/MarkStamp.astro';
+import MarkStampRound from '../sleeve/MarkStampRound.astro';
+import SleeveWall from '../sleeve/SleeveWall.astro';
+import Narrowing from '../sleeve/Narrowing.astro';
+import Vesica from '../sleeve/Vesica.astro';
+import CutRing from '../sleeve/CutRing.astro';
+import Radiate from '../sleeve/Radiate.astro';
+import Gapless from '../sleeve/Gapless.astro';
+import Equalizer from '../sleeve/Equalizer.astro';
+import Voice from '../sleeve/Voice.astro';
+import Pipeline from '../sleeve/Pipeline.astro';
+import Device from '../sleeve/Device.astro';
+import { featureMark, termMark, CATALOG } from '../../data/sleeve-art';
+import {
+  NAME,
+  TAGLINE,
+  SUBLINE,
+  SERVERS,
+  FEATURES,
+  CONTINUITY,
+  SYNC,
+  RESUME,
+  APPLE_CONTINUITY,
+  DISCOVERY,
+  OWNERSHIP,
+  FAQS,
+  GITHUB_URL,
+  PLATFORMS,
+  HERO,
+} from '../../data/site';
+
+export interface Props {
+  /** Which seal this printing carries. */
+  stamp?: 'seal' | 'mark' | 'round';
+  /** The variant slug, for the comparison bar. Ignored when review is false. */
+  slug?: string;
+  /** The line beside the lockup in the masthead. */
+  label?: string;
+  /** Review printings carry the comparison bar and stay out of search. */
+  review?: boolean;
+}
+
+const {
+  stamp = 'round',
+  slug = 'emblem-round',
+  label = 'Emblem Round — catalogue of the system',
+  review = true,
+} = Astro.props;
+
+/* The seal itself. `null` means the abstract plate, which is a Sleeve motif
+   rather than a stamp component, so every site of use branches once here. */
+const Stamp = stamp === 'mark' ? MarkStampSquare : stamp === 'round' ? MarkStampRound : null;
+
+const STAMP_LABEL = {
+  seal: 'The signal-red plate that stamps every entry in this catalogue',
+  mark: 'The Mozz mark printed at plate scale: the stamp on every entry in this catalogue',
+  round: 'The Mozz face printed at plate scale on a true circle: the stamp on every entry in this catalogue',
+}[stamp];
+
+/** Accession numbers for the ruled rows. Purely typographic. */
+const acc = (n: number) => `MZ.${String(n).padStart(3, '0')}`;
+---
+
+
+<Layout
+  title={HERO.title}
+  description={HERO.description}
+  themeColor="#eeeae2"
+  noindex={review}
+>
+  <Fragment slot="head">
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+
+  <main class="emblem">
+    {review && <VariantBar slug={slug} tone="warm" />}
+
+    <header class="masthead">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={30} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>{label}</p>
+      <p class="mast-end">Plate 00 · GPL-3.0</p>
+    </header>
+
+    <section class="hero" aria-labelledby="emblem-hero">
+      <div class="rail">
+        <p class="acc">{acc(0)}</p>
+        <p class="rail-note">Accession</p>
+      </div>
+      <div class="hero-body">
+        <p class="kicker">{HERO.kicker}</p>
+        <h1 id="emblem-hero">{HERO.headline}</h1>
+        <p class="hero-support">{HERO.support}</p>
+
+        <div class="editions">
+          <p class="editions-cap">
+            <span>Runs on</span>{PLATFORMS.length} platforms, one library
+          </p>
+          <ul role="list">
+            {PLATFORMS.map((platform) => (
+              <li>{platform.short}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="actions">
+          <DownloadButton />
+          <a class="ghost" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="hero-stamp">
+        {Stamp ? (
+          <Stamp ground="red" label={STAMP_LABEL} />
+        ) : (
+          <Sleeve kind="nowplaying" seed={0} label={STAMP_LABEL} />
+        )}
+        <p class="stamp-note">The stamp used on every plate below</p>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-sources">
+      <div class="rail">
+        <p class="acc">{acc(1)}</p>
+        <p class="rail-note">Sources</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-sources">Three ways in, one catalogue out.</h2>
+        <p class="lede">{FAQS[0].a}</p>
+
+        <ul class="plates" role="list">
+          {SERVERS.map((server, i) => (
+            <li>
+              <span class="plate-no">{acc(101 + i)}</span>
+              <span class="plate-logo"><ServerLogo name={server.name} size={38} /></span>
+              <h3>{server.name}</h3>
+              <p>{server.note}</p>
+            </li>
+          ))}
+        </ul>
+
+        <figure class="fig">
+          <Radiate />
+          <figcaption>
+            <span>Plate {acc(110)}</span>
+            <span>
+              The catalogue leaves one machine you already own and reaches every
+              device you carry. Nothing in the middle of this drawing belongs to us.
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="entry entry--wall" aria-labelledby="emblem-wall">
+      <div class="rail">
+        <p class="acc">{acc(2)}</p>
+        <p class="rail-note">Holdings</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-wall">The holdings are already yours.</h2>
+        <p class="lede">{FEATURES[0].body}</p>
+
+        <div class="the-wall">
+          <SleeveWall count={80} seed={41} min="52px" gap="6px" />
+        </div>
+
+        <ol class="ledger" role="list">
+          {CATALOG.slice(0, 6).map((record, i) => (
+            <li>
+              <span>{acc(201 + i)}</span>
+              <span class="ledger-title">{record.title}</span>
+              <span class="ledger-artist">{record.artist}</span>
+              <span class="ledger-year">{record.no}</span>
+            </li>
+          ))}
+        </ol>
+        <p class="ledger-note">
+          Sleeves and titles shown are drawn placeholders. Your catalogue is
+          whatever is already on your server.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 03 --
+      -- EDITIONS. The cross-platform story, given a plate of its own      --
+      -- rather than a line in a list: it is half of what the product is.  --
+      -- ================================================================ -->
+    <section class="entry" aria-labelledby="emblem-editions">
+      <div class="rail">
+        <p class="acc">{acc(3)}</p>
+        <p class="rail-note">Editions</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-editions">{CONTINUITY.title}.</h2>
+        <p class="lede">{CONTINUITY.body}</p>
+
+        <div class="two-up">
+          <article>
+            <p class="key">A — {SYNC.title}</p>
+            <p>{SYNC.body}</p>
+          </article>
+          <article>
+            <p class="key">B — {RESUME.title}</p>
+            <p>{RESUME.body}</p>
+          </article>
+        </div>
+
+        <div class="devices">
+          <figure>
+            <Device
+              kind="ipad"
+              screen="library"
+              width="clamp(240px, 29vw, 400px)"
+              label="iPad showing the album grid held on the device"
+            />
+            <figcaption>iPad — the catalogue, held on device</figcaption>
+          </figure>
+          <figure>
+            <Device
+              kind="iphone"
+              screen="search"
+              width="clamp(172px, 16vw, 236px)"
+              label="iPhone searching the whole catalogue on device"
+            />
+            <figcaption>iPhone — the register, on device</figcaption>
+          </figure>
+          <figure>
+            <Device
+              kind="iphone"
+              screen="nowplaying"
+              width="clamp(172px, 16vw, 236px)"
+              label="iPhone playing a downloaded album with no signal"
+            />
+            <figcaption>iPhone — playing with no signal</figcaption>
+          </figure>
+        </div>
+
+        <p class="footnote">
+          <span>{acc(310)}</span>
+          {APPLE_CONTINUITY.title}: {APPLE_CONTINUITY.body}
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 04 --
+      -- DISCOVERY. Three things that are usually listed apart, drawn as   --
+      -- the one line they actually are: holdings, measured, selected.     --
+      -- ================================================================ -->
+    <section class="entry" aria-labelledby="emblem-discovery">
+      <div class="rail">
+        <p class="acc">{acc(4)}</p>
+        <p class="rail-note">Discovery</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-discovery">{DISCOVERY.title}.</h2>
+        <p class="lede">{DISCOVERY.lede}</p>
+
+        <figure class="fig fig--flush">
+          <Pipeline />
+          <figcaption>
+            <span>Plate {acc(401)}</span>
+            <span>
+              Read left to right: the holdings already on your server, measured
+              as sound rather than as tags, and the week selected out of the
+              result. Nothing enters this drawing from outside the first plate.
+            </span>
+          </figcaption>
+        </figure>
+
+        <ol class="steps" role="list">
+          {DISCOVERY.steps.map((step, i) => (
+            <li>
+              <span class="step-key">{step.key}</span>
+              <span class="step-no">{acc(410 + i)}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-parity">
+      <div class="rail">
+        <p class="acc">{acc(5)}</p>
+        <p class="rail-note">Two modes</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-parity">Streamed and downloaded, catalogued identically.</h2>
+
+        <figure class="fig">
+          <Vesica />
+          <figcaption>
+            <span>Plate {acc(501)}</span>
+            <span>Streaming and downloads, drawn the same size. Neither is the main one.</span>
+          </figcaption>
+        </figure>
+
+        <div class="two-up">
+          <article>
+            <p class="key">A — Streaming</p>
+            <p>
+              Play straight off the machine in the other room, over your own
+              network. The interface does not change between server families,
+              because the app is reading your catalogue rather than someone
+              else's.
+            </p>
+          </article>
+          <article>
+            <p class="key">B — {FEATURES[1].title}</p>
+            <p>{FEATURES[1].body}</p>
+          </article>
+        </div>
+
+        <div class="cut-row">
+          <figure class="fig fig--tall">
+            <CutRing />
+            <figcaption>
+              <span>Plate {acc(502)}</span>
+              <span>The notch is the tunnel. Playback does not notice.</span>
+            </figcaption>
+          </figure>
+          <div class="cut-copy">
+            <p class="key">Downloads</p>
+            <p>{FAQS[2].a}</p>
+            <ul role="list">
+              <li><i aria-hidden="true"></i>The catalogue is held on the device, not fetched on demand.</li>
+              <li><i aria-hidden="true"></i>Search and browse with the server unreachable.</li>
+              <li><i aria-hidden="true"></i>Come back into range and it is the same library.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-search">
+      <div class="rail">
+        <p class="acc">{acc(6)}</p>
+        <p class="rail-note">The register</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-search">{FEATURES[2].title}.</h2>
+        <p class="lede">{FEATURES[2].body}</p>
+
+        <figure class="fig fig--flush">
+          <Narrowing />
+          <figcaption>
+            <span>Plate {acc(601)}</span>
+            <span>
+              Each column is the same register, one keystroke later. The rules
+              are the results, and they shorten while you are still typing.
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-features">
+      <div class="rail">
+        <p class="acc">{acc(7)}</p>
+        <p class="rail-note">Capabilities</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-features">The full list, with its marks.</h2>
+        <p class="lede">
+          Everything it does, entered one plate at a time. All of it is in the
+          free app, because there is no other kind.
+        </p>
+
+        <ol class="rows" role="list">
+          {FEATURES.map((feature, i) => (
+            <li>
+              <span class="row-no">{acc(701 + i)}</span>
+              <span class="row-mark">
+                {Stamp && featureMark(i).kind === 'nowplaying' ? (
+                  <Stamp ground="bone" frame />
+                ) : (
+                  <Sleeve kind={featureMark(i).kind} seed={i * 7 + 1} ground="bone" frame />
+                )}
+              </span>
+              <span class="row-copy">
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </span>
+              <span class="row-key">{featureMark(i).key}</span>
+            </li>
+          ))}
+        </ol>
+
+        <div class="fig-pair">
+          <figure class="fig">
+            <Gapless />
+            <figcaption>
+              <span>Plate {acc(720)}</span>
+              <span>{FEATURES[3].title}</span>
+            </figcaption>
+          </figure>
+          <figure class="fig">
+            <Equalizer />
+            <figcaption>
+              <span>Plate {acc(721)}</span>
+              <span>{FEATURES[6].title}</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="fig-pair fig-pair--uneven">
+          <figure class="fig fig--tall">
+            <Voice />
+            <figcaption>
+              <span>Plate {acc(722)}</span>
+              <span>{FEATURES[7].title}</span>
+            </figcaption>
+          </figure>
+          <div class="cut-copy">
+            <p class="key">Radio</p>
+            <p>{FEATURES[4].body}</p>
+            <p class="key key--space">Voice</p>
+            <p>{FEATURES[7].body}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-terms">
+      <div class="rail">
+        <p class="acc">{acc(8)}</p>
+        <p class="rail-note">Conditions</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-terms">The conditions of the loan.</h2>
+        <p class="lede">
+          There isn't one. It is your library, on your hardware, and the app has
+          no claim on it.
+        </p>
+
+        <div class="terms">
+          {OWNERSHIP.map((term, i) => (
+            <article>
+              <span class="term-plate">
+                {Stamp && termMark(i).kind === 'nowplaying' ? (
+                  <Stamp ground={termMark(i).red ? 'red' : 'bone'} frame />
+                ) : (
+                  <Sleeve kind={termMark(i).kind} seed={i * 9 + 2} ground={termMark(i).red ? 'red' : 'bone'} frame />
+                )}
+              </span>
+              <span class="term-key">{acc(801 + i)} · {termMark(i).key}</span>
+              <h3>{term.title}</h3>
+              <p>{term.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="entry" aria-labelledby="emblem-faq">
+      <div class="rail">
+        <p class="acc">{acc(9)}</p>
+        <p class="rail-note">Queries</p>
+      </div>
+      <div class="entry-body">
+        <h2 id="emblem-faq">Questions, answered flat.</h2>
+        <dl class="faq">
+          {FAQS.map((faq, i) => (
+            <div>
+              <dt><span>{acc(901 + i)}</span>{faq.q}</dt>
+              <dd>{faq.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="emblem-close">
+      <div class="rail rail--invert">
+        <p class="acc">{acc(10)}</p>
+        <p class="rail-note">Closing</p>
+      </div>
+      <div class="closing-body">
+        <h2 id="emblem-close">{TAGLINE}</h2>
+        <p class="closing-lede">
+          Your files, on hardware you control, played by an app with no reason to
+          know anything about you.
+        </p>
+        <div class="actions">
+          <DownloadButton />
+          <a class="ghost ghost--invert" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="closing-stamp">
+        {Stamp ? <Stamp ground="red" /> : <Sleeve kind="nowplaying" seed={0} />}
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <a class="lockup" href="/" aria-label={`${NAME} home`}>
+        <Mark size={26} decorative />
+        <span>{NAME}</span>
+      </a>
+      <p>{SUBLINE} GPL-3.0 with an App Store Exception.</p>
+      <a class="ghost ghost--small" href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(html) { background: #eeeae2; }
+
+  :global(body) {
+    margin: 0;
+    background: #eeeae2;
+  }
+
+  :global(*:focus-visible) {
+    outline: 2px solid #c80028;
+    outline-offset: 4px;
+  }
+
+  .emblem {
+    --paper: #eeeae2;
+    --ink: #1b1c1e;
+    --red: #c80028;
+    --rule: #cdc7b8;
+    --rule-soft: #ddd7ca;
+    --gut: clamp(1.15rem, 4.5vw, 3.5rem);
+    --rail-w: clamp(4.5rem, 12vw, 11rem);
+    --body: 'IBM Plex Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sl-ink: #1b1c1e;
+    --sl-bone: #eeeae2;
+    --sl-red: #c80028;
+    --sl-rule: #cdc7b8;
+    --sl-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --dl-bg: #1b1c1e;
+    --dl-fg: #eeeae2;
+    --dl-bg-hover: #c80028;
+    --dl-fg-hover: #eeeae2;
+
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Masthead ----------------------------------------------------------- */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem var(--gut);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--body);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+
+  .mast-end { text-align: right; }
+
+  @media (max-width: 48rem) {
+    .masthead p:not(.mast-end) { display: none; }
+  }
+
+  /* The rail ------------------------------------------------------------ */
+  .hero,
+  .entry,
+  .closing {
+    display: grid;
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 2.6rem);
+    padding: clamp(2.4rem, 5vw, 4.6rem) var(--gut);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .rail {
+    align-self: start;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .acc {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .rail-note {
+    margin-top: 0.4rem;
+    opacity: 0.55;
+  }
+
+  @media (max-width: 52rem) {
+    .hero,
+    .entry,
+    .closing { grid-template-columns: 1fr; }
+
+    .rail {
+      position: static;
+      display: flex;
+      gap: 0.8rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .rail-note { margin-top: 0; }
+  }
+
+  /* Hero ---------------------------------------------------------------- */
+  .hero {
+    grid-template-columns: var(--rail-w) minmax(0, 1.5fr) minmax(0, 0.62fr);
+    align-items: start;
+    padding-top: clamp(2.6rem, 6vw, 5.4rem);
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .hero h1 {
+    margin-top: clamp(1rem, 2.4vw, 1.7rem);
+    font-size: clamp(2.15rem, 4.8vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.038em;
+    font-weight: 600;
+    max-width: 17ch;
+    text-wrap: balance;
+  }
+
+  .hero-support {
+    margin-top: clamp(1.1rem, 2vw, 1.6rem);
+    max-width: 48ch;
+    font-size: clamp(1rem, 1.25vw, 1.14rem);
+    line-height: 1.6;
+    opacity: 0.78;
+  }
+
+  /* Editions ------------------------------------------------------------ */
+  /*
+   * Where the catalogue is issued. A print catalogue gives the edition a ruled
+   * line of its own rather than a badge, so the machines are set as a specimen
+   * row in the same hairline vocabulary as the plates below — type only, since
+   * six vendor logos would shout on a page that never shouts.
+   */
+  .editions {
+    margin-top: clamp(1.5rem, 2.8vw, 2.1rem);
+    max-width: 34rem;
+  }
+
+  .editions-cap {
+    display: flex;
+    gap: 0.7rem;
+    color: rgba(27, 28, 30, 0.62);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .editions-cap span {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .editions ul {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin-top: 0.5rem;
+    border-top: 2px solid var(--ink);
+    border-left: 1px solid var(--rule);
+  }
+
+  .editions li {
+    padding: 0.62rem 0.45rem;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.01em;
+    text-align: center;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(0.9rem, 2vw, 1.5rem);
+    margin-top: clamp(1.4rem, 3vw, 2.1rem);
+  }
+
+  .ghost {
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--red);
+  }
+
+  .ghost:hover { color: var(--red); }
+  .ghost--small { font-size: 0.64rem; }
+  .ghost--invert { color: var(--paper); }
+  .ghost--invert:hover { color: var(--paper); border-bottom-color: var(--paper); }
+
+  .hero-stamp :global(svg) { width: 100%; height: auto; display: block; }
+
+  .stamp-note {
+    margin-top: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  @media (max-width: 68rem) {
+    .hero { grid-template-columns: var(--rail-w) minmax(0, 1fr); }
+    .hero-stamp { grid-column: 2; max-width: 13rem; }
+  }
+
+  @media (max-width: 52rem) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-stamp { grid-column: 1; max-width: 14rem; }
+
+    /* Six cells across a phone would set every name in a column two letters
+       wide, so the specimen row folds to two ruled rows of three. */
+    .editions ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  /* Entries ------------------------------------------------------------- */
+  .entry-body h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.7rem);
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    max-width: 21ch;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 58ch;
+    font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+    line-height: 1.62;
+    opacity: 0.76;
+  }
+
+  /* Server plates ------------------------------------------------------- */
+  .plates {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 2px solid var(--ink);
+    border-left: 1px solid var(--rule);
+  }
+
+  .plates li {
+    padding: clamp(1.1rem, 2.2vw, 1.7rem);
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .plate-no {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    color: var(--red);
+  }
+
+  .plate-logo {
+    display: block;
+    margin: 1rem 0 0.7rem;
+    color: var(--ink);
+  }
+
+  .plates h3 {
+    font-size: clamp(1.05rem, 1.5vw, 1.24rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .plates p {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    opacity: 0.72;
+  }
+
+  @media (max-width: 52rem) {
+    .plates { grid-template-columns: 1fr; }
+  }
+
+  /* Figures ------------------------------------------------------------- */
+  .fig {
+    margin: clamp(2rem, 4vw, 3.2rem) 0 0;
+    max-width: 46rem;
+  }
+
+  .fig--flush { max-width: none; }
+  .fig--tall { max-width: 18rem; }
+
+  .fig figcaption {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 1rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    line-height: 1.55;
+    opacity: 0.74;
+  }
+
+  .fig figcaption span:first-child {
+    flex: none;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 1;
+  }
+
+  .fig-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.6rem, 3.5vw, 3rem);
+    align-items: start;
+  }
+
+  .fig-pair--uneven { grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr); }
+  .fig-pair--uneven .cut-copy { margin-top: clamp(2rem, 4vw, 3.2rem); }
+
+  @media (max-width: 52rem) {
+    .fig-pair,
+    .fig-pair--uneven { grid-template-columns: 1fr; }
+  }
+
+  /* Wall + ledger ------------------------------------------------------- */
+  .the-wall { margin-top: clamp(1.8rem, 3.6vw, 2.8rem); }
+
+  .the-wall :global(.wall) { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+
+  @media (max-width: 66rem) {
+    .the-wall :global(.wall) { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40rem) {
+    .the-wall :global(.wall) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  }
+
+  .ledger {
+    margin-top: clamp(1.8rem, 3.6vw, 2.6rem);
+    border-top: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.74rem;
+  }
+
+  .ledger li {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1.4fr) minmax(0, 1fr) 4rem;
+    gap: 1rem;
+    padding: 0.62rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: baseline;
+  }
+
+  .ledger li > span:first-child { color: var(--red); letter-spacing: 0.1em; }
+  .ledger-title { font-weight: 600; }
+  .ledger-artist { opacity: 0.66; }
+  .ledger-year { opacity: 0.66; text-align: right; font-variant-numeric: tabular-nums; }
+
+  .ledger-note {
+    margin-top: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 46rem) {
+    .ledger li {
+      grid-template-columns: 5rem minmax(0, 1fr);
+      row-gap: 0.15rem;
+    }
+
+    .ledger-artist { grid-column: 2; }
+    .ledger-year { display: none; }
+  }
+
+  /* Two-up + cut row ---------------------------------------------------- */
+  .two-up {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.4rem, 3.5vw, 3rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .key {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.7rem;
+  }
+
+  .key--space { margin-top: 1.6rem; }
+
+  .two-up p:not(.key),
+  .cut-copy p:not(.key) {
+    font-size: 0.98rem;
+    line-height: 1.62;
+    opacity: 0.8;
+  }
+
+  .cut-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+    gap: clamp(1.6rem, 4vw, 3.4rem);
+    align-items: center;
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .cut-row .fig { margin-top: 0; }
+
+  .cut-copy ul {
+    list-style: none;
+    margin: 1.3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .cut-copy li {
+    display: grid;
+    grid-template-columns: 10px 1fr;
+    gap: 0.8rem;
+    align-items: start;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    opacity: 0.76;
+  }
+
+  .cut-copy li i {
+    width: 8px;
+    height: 8px;
+    margin-top: 0.42rem;
+    background: var(--red);
+  }
+
+  @media (max-width: 52rem) {
+    .two-up,
+    .cut-row { grid-template-columns: 1fr; }
+    .cut-row .fig--tall { max-width: 14rem; }
+  }
+
+  /* Capability rows ----------------------------------------------------- */
+  .rows {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 2px solid var(--ink);
+  }
+
+  .rows li {
+    display: grid;
+    grid-template-columns: 5.6rem 4.4rem minmax(0, 1fr) 5rem;
+    gap: clamp(0.9rem, 2vw, 1.8rem);
+    align-items: start;
+    padding: clamp(1rem, 2vw, 1.5rem) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .row-no,
+  .row-key {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    padding-top: 0.3rem;
+  }
+
+  .row-no { color: var(--red); }
+  .row-key { text-align: right; opacity: 0.45; }
+
+  .row-mark { display: block; }
+  .row-mark :global(svg) { width: 100%; height: auto; display: block; }
+
+  .rows h3 {
+    font-size: clamp(1.05rem, 1.5vw, 1.24rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .rows .row-copy p {
+    margin-top: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    opacity: 0.76;
+    max-width: 62ch;
+  }
+
+  @media (max-width: 52rem) {
+    .rows li { grid-template-columns: 3.6rem minmax(0, 1fr); }
+    .row-mark { display: none; }
+    .row-key { display: none; }
+  }
+
+  /* Discovery steps ----------------------------------------------------- */
+  /*
+   * Three plates under the drawing, keyed A / B / C to the three plates in it,
+   * so the diagram is a legend for the prose rather than an ornament beside it.
+   */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.1rem, 2.4vw, 2.2rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .steps li {
+    padding-top: 0.9rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .step-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--red);
+  }
+
+  .step-no {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+  }
+
+  .steps h3 {
+    margin-top: 0.7rem;
+    font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .steps p {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.58;
+    opacity: 0.74;
+  }
+
+  @media (max-width: 62rem) {
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40rem) {
+    .steps { grid-template-columns: 1fr; }
+  }
+
+  /* Footnote ------------------------------------------------------------ */
+  /* Where a true but narrower claim goes, so it can never be mistaken for
+     the cross-platform one above it. */
+  .footnote {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: clamp(1.8rem, 3.4vw, 2.6rem);
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--rule);
+    max-width: 68ch;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+
+  .footnote span {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    padding-top: 0.28rem;
+  }
+
+  @media (max-width: 40rem) {
+    .footnote { flex-direction: column; gap: 0.4rem; }
+  }
+
+  /* Devices ------------------------------------------------------------- */
+  .devices {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: clamp(1.2rem, 3vw, 2.6rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .devices figure { margin: 0; }
+
+  .devices figcaption {
+    margin-top: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  /* Terms --------------------------------------------------------------- */
+  .terms {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.1rem, 2.4vw, 2rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .terms article {
+    padding-top: 1rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .term-plate {
+    display: block;
+    aspect-ratio: 1;
+    margin-bottom: 0.9rem;
+  }
+
+  .term-plate :global(svg) { width: 100%; height: 100%; }
+
+  .term-key {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .terms h3 {
+    font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .terms p {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.58;
+    opacity: 0.74;
+  }
+
+  @media (max-width: 66rem) {
+    .terms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 34rem) {
+    .terms { grid-template-columns: 1fr; }
+  }
+
+  /* FAQ ----------------------------------------------------------------- */
+  .faq {
+    margin-top: clamp(1.8rem, 3.6vw, 2.6rem);
+    border-top: 2px solid var(--ink);
+  }
+
+  .faq > div {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(1rem, 3vw, 2.4rem);
+    padding: clamp(0.95rem, 2vw, 1.4rem) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .faq dt {
+    display: flex;
+    gap: 0.9rem;
+    font-size: clamp(0.98rem, 1.4vw, 1.14rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+  }
+
+  .faq dt span {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    padding-top: 0.3rem;
+  }
+
+  .faq dd {
+    margin: 0;
+    font-size: 0.93rem;
+    line-height: 1.62;
+    opacity: 0.76;
+  }
+
+  @media (max-width: 52rem) {
+    .faq > div { grid-template-columns: 1fr; gap: 0.6rem; }
+  }
+
+  /* Closing ------------------------------------------------------------- */
+  .closing {
+    grid-template-columns: var(--rail-w) minmax(0, 1.5fr) minmax(0, 0.55fr);
+    align-items: center;
+    background: var(--ink);
+    color: var(--paper);
+    border-bottom: none;
+    --sl-ink: #eeeae2;
+    --sl-bone: #1b1c1e;
+    --dl-bg: #eeeae2;
+    --dl-fg: #1b1c1e;
+    --dl-bg-hover: #c80028;
+    --dl-fg-hover: #eeeae2;
+  }
+
+  .rail--invert .rail-note { opacity: 0.62; }
+
+  .closing h2 {
+    font-size: clamp(1.9rem, 4vw, 3.4rem);
+    line-height: 1.03;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+
+  .closing-lede {
+    margin-top: 1.1rem;
+    max-width: 44ch;
+    font-size: clamp(0.98rem, 1.25vw, 1.1rem);
+    line-height: 1.6;
+    opacity: 0.78;
+  }
+
+  /* The stamp is a printed object, so it keeps its own ink and paper even on
+     the inverted closing panel. */
+  .closing-stamp {
+    --sl-ink: #1b1c1e;
+    --sl-bone: #eeeae2;
+  }
+
+  .closing-stamp :global(svg) { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 68rem) {
+    .closing { grid-template-columns: var(--rail-w) minmax(0, 1fr); }
+    .closing-stamp { grid-column: 2; max-width: 11rem; margin-top: 2rem; }
+  }
+
+  @media (max-width: 52rem) {
+    .closing { grid-template-columns: 1fr; align-items: start; }
+    .closing-stamp { grid-column: 1; }
+    .rail--invert { border-bottom-color: rgba(238, 234, 226, 0.3); }
+  }
+
+  /* Colophon ------------------------------------------------------------ */
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem var(--gut) 2.4rem;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    opacity: 0.72;
+  }
+
+  .colophon p { max-width: 44ch; }
+</style>

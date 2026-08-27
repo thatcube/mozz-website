@@ -1,5 +1,16 @@
-# These seven design variants are an internal review deployment, not the
-# launched site. Nothing here should be indexed until a direction is picked and
-# the placeholder screenshots have been replaced.
+# The launched site is the homepage. Everything else under this domain is the
+# review material that got us there — the concept gallery, the shortlist, the
+# fifty-one variant pages and the hero studies — and every one of those also
+# carries a noindex tag. Kept reachable on purpose, kept out of search on
+# purpose.
 User-agent: *
-Disallow: /
+Allow: /$
+Disallow: /concepts
+Disallow: /winners
+Disallow: /heroes
+Disallow: /v/
+Disallow: /h/
+Disallow: /thumbs/
+Disallow: /hero-thumbs/
+
+Sitemap: https://mozzmusic.com/sitemap-index.xml

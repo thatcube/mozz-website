@@ -1,0 +1,189 @@
+---
+/**
+ * DIAGRAM — how the week is made.
+ *
+ * Three plates on one rule, read left to right, because that is the order the
+ * thing actually happens in: the catalogue you already own is read, the audio
+ * is measured, and the week is selected out of the result.
+ *
+ * A — the holdings. A ruled grid of sleeves, a few of them inked, standing for
+ *     the library sitting on the listener's own server.
+ * B — the fingerprint. The same holdings measured as sound rather than as
+ *     metadata: a column of bars against a baseline, one per property.
+ * C — the week. Seven ticks on a ring, one of them red, matching the Weekly
+ *     plate used elsewhere in the catalogue so the two read as one system.
+ *
+ * The connectors are hairlines with a solid head, not arrows with a flourish.
+ * Nothing enters this drawing from outside the first plate — that is the whole
+ * point of it.
+ */
+import Dia from './Dia.astro';
+
+export interface Props {
+  class?: string;
+  label?: string;
+}
+
+const {
+  class: className = '',
+  label =
+    'Three plates joined by a rule: a grid standing for your library, a column of measured bars standing for sonic analysis, and a seven-tick ring standing for the week selected from them',
+} = Astro.props;
+
+/* Plate A — the holdings grid. Five across, four down; the inked cells are
+   fixed rather than random so the drawing is identical on every build. */
+const INKED = new Set([1, 6, 8, 13, 16]);
+const CELLS = Array.from({ length: 20 }, (_, i) => ({
+  x: 24 + (i % 5) * 26,
+  y: 66 + Math.floor(i / 5) * 26,
+  inked: INKED.has(i),
+}));
+
+/* Plate B — the measured properties. Fixed heights, labelled underneath. */
+const BARS = [
+  { h: 44, hot: false },
+  { h: 68, hot: true },
+  { h: 30, hot: false },
+  { h: 56, hot: false },
+  { h: 78, hot: true },
+  { h: 38, hot: false },
+];
+
+/* Plate C — the week. Same construction as the Weekly plate. */
+const CX = 545;
+const CY = 132;
+const TICKS = Array.from({ length: 7 }, (_, i) => {
+  const rad = ((-90 + i * (360 / 7)) * Math.PI) / 180;
+  const hot = i === 2;
+  const inner = hot ? 40 : 50;
+  const outer = hot ? 74 : 66;
+  return {
+    x1: CX + Math.cos(rad) * inner,
+    y1: CY + Math.sin(rad) * inner,
+    x2: CX + Math.cos(rad) * outer,
+    y2: CY + Math.sin(rad) * outer,
+    hot,
+  };
+});
+---
+
+<Dia ratio="660 / 250" class={className}>
+  <svg viewBox="0 0 660 250" role="img" aria-label={label}>
+    <!-- the rule every plate stands on -->
+    <line x1="12" y1="206" x2="648" y2="206" class="rule" />
+
+    <!-- A — the holdings -->
+    <g>
+      {CELLS.map((cell) => (
+        <rect
+          x={cell.x}
+          y={cell.y}
+          width="20"
+          height="20"
+          class={cell.inked ? 'cell cell-hot' : 'cell'}
+        />
+      ))}
+      <line x1="24" y1="52" x2="154" y2="52" class="cap" />
+    </g>
+
+    <!-- A → B -->
+    <g class="link">
+      <line x1="166" y1="132" x2="222" y2="132" />
+      <rect x="222" y="128" width="8" height="8" />
+    </g>
+
+    <!-- B — the fingerprint -->
+    <g>
+      <line x1="252" y1="52" x2="382" y2="52" class="cap" />
+      <line x1="252" y1="176" x2="382" y2="176" class="base" />
+      {BARS.map((bar, i) => (
+        <rect
+          x={256 + i * 21}
+          y={176 - bar.h}
+          width="13"
+          height={bar.h}
+          class={bar.hot ? 'bar bar-hot' : 'bar'}
+        />
+      ))}
+    </g>
+
+    <!-- B → C -->
+    <g class="link">
+      <line x1="394" y1="132" x2="450" y2="132" />
+      <rect x="450" y="128" width="8" height="8" />
+    </g>
+
+    <!-- C — the week -->
+    <g>
+      <line x1="480" y1="52" x2="610" y2="52" class="cap" />
+      <circle cx={CX} cy={CY} r="58" class="ring" />
+      <circle cx={CX} cy={CY} r="34" class="ring ring-thin" />
+      {TICKS.map((tick) => (
+        <line x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} class={tick.hot ? 'tick tick-hot' : 'tick'} />
+      ))}
+      <circle cx={CX} cy={CY} r="5" class="dot" />
+    </g>
+  </svg>
+
+  <p class="dl dl--red dl--top" style="left:13.5%;top:8%">A</p>
+  <p class="dl dl--red dl--top" style="left:48%;top:8%">B</p>
+  <p class="dl dl--red dl--top" style="left:82.5%;top:8%">C</p>
+
+  <p class="dl" style="left:13.5%;top:90%">Your library<i>already on your server</i></p>
+  <p class="dl" style="left:48%;top:90%">Sonic analysis<i>tempo · energy · texture</i></p>
+  <p class="dl" style="left:82.5%;top:90%">The week<i>Mozz Weekly · Discover Weekly</i></p>
+</Dia>
+
+<style>
+  .rule,
+  .cap,
+  .base {
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2;
+  }
+
+  .rule { stroke-width: 1; opacity: 0.35; }
+  .cap { stroke-width: 2; }
+  .base { stroke-width: 1.4; }
+
+  .cell {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 1.2;
+  }
+
+  .cell-hot {
+    fill: var(--sl-red, #c80028);
+    stroke: var(--sl-red, #c80028);
+  }
+
+  .bar { fill: var(--sl-ink, #131313); }
+  .bar-hot { fill: var(--sl-red, #c80028); }
+
+  .link line {
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 1.2;
+  }
+
+  .link rect { fill: var(--sl-ink, #131313); }
+
+  .ring {
+    fill: none;
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2;
+  }
+
+  .ring-thin { stroke-width: 1.1; }
+
+  .tick {
+    stroke: var(--sl-ink, #131313);
+    stroke-width: 2.2;
+  }
+
+  .tick-hot {
+    stroke: var(--sl-red, #c80028);
+    stroke-width: 4.4;
+  }
+
+  .dot { fill: var(--sl-red, #c80028); }
+</style>

@@ -12,7 +12,7 @@ import { WINNER_GROUPS } from '../data/winners';
 import { NAME } from '../data/site';
 
 const total = WINNER_GROUPS.reduce((n, g) => n + g.items.length, 0);
-const open = WINNER_GROUPS.flatMap((g) => g.items).filter((i) => i.decision);
+const chosen = WINNER_GROUPS.flatMap((g) => g.items).find((i) => i.chosen);
 ---
 
 <Layout
@@ -31,7 +31,7 @@ const open = WINNER_GROUPS.flatMap((g) => g.items).filter((i) => i.decision);
   <main>
     <header>
       <nav class="back">
-        <a href="/">All 51 websites</a>
+        <a href="/concepts">All 51 websites</a>
         <span aria-hidden="true">·</span>
         <a href="/heroes">All 49 heroes</a>
       </nav>
@@ -44,24 +44,22 @@ const open = WINNER_GROUPS.flatMap((g) => g.items).filter((i) => i.decision);
         that were good but in the wrong place.
       </p>
 
-      {open.length > 0 && (
-        <aside class="open" aria-label="Open decision">
-          <p class="open-tag">Still open</p>
+      {chosen && (
+        <aside class="open" aria-label="The decision">
+          <p class="open-tag">Chosen</p>
           <p class="open-body">
-            <strong>Emblem</strong>, <strong>Emblem with the mark</strong>, or
-            <strong>Emblem round</strong>. The three pages are identical apart
-            from the stamp \u2014 abstract seal, stepped pixel mark, or the pixel
-            face on a true circle \u2014 so whichever reads best is the answer. It
-            decides how the identity repeats down the whole page, not just the
-            hero.
+            <strong>Emblem, round</strong> — the pixel face printed on a true
+            circle. It is the live site now, so the seal it uses is the one that
+            repeats down every plate of the real homepage, not just the hero.
           </p>
           <p class="open-links">
+            <a href="/">The live site</a>
             <a href="/v/emblem">Abstract seal</a>
             <a href="/v/emblem-mark">Pixel mark</a>
-            <a href="/v/emblem-round">Round</a>
           </p>
         </aside>
       )}
+
     </header>
 
     {WINNER_GROUPS.map((group) => (

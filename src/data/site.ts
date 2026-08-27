@@ -6,11 +6,17 @@
  * number or a feature changes in the app, it changes once, here.
  *
  * Sources (all verified against thatcube/Mozz on GitHub, never a local clone):
- *   README.md            — tagline, server support, streaming/offline parity, privacy, platforms
+ *   README.md            — tagline, server support, streaming/offline parity, privacy, platforms,
+ *                          desktop sharing one library/history/taste with the phone, opt-in resume,
+ *                          Mozz Weekly and radio
  *   docs/PRIVACY.md      — no Mozz account, analytics, or telemetry; optional enrichment services
- *   ARCHITECTURE.md §8   — FTS p95 15.7 ms @ 100k tracks, 75 ms time-to-first-audio
  *   Sources/MozzApp/Resources/Brands.xcassets — Plex, Jellyfin, Navidrome
  *   Sources/MozzRecommend/RecommendationService.swift — offline Mozz Weekly mixes
+ *
+ * One deliberate absence: no performance numbers. A listener's hardware,
+ * network and server decide what they actually see, so a figure measured on
+ * one machine is not a promise the site can keep. STATS survives only for the
+ * archived concept pages, and nothing new should print it.
  */
 
 export const SITE = 'https://mozzmusic.com';
@@ -18,11 +24,22 @@ export const GITHUB_URL = 'https://github.com/thatcube/Mozz';
 export const DONATE_URL = 'https://github.com/sponsors/thatcube';
 
 /**
+ * Where a listener actually gets the app today.
+ *
+ * Every build for every platform is published here, so this is the one honest
+ * download destination the site can point at. The live pages use it; nothing
+ * on the site invents a store listing that does not exist.
+ */
+export const RELEASES_URL = 'https://github.com/thatcube/Mozz/releases';
+export const DOWNLOAD_LABEL = 'Get Mozz';
+export const DOWNLOAD_NOTE = 'Every platform · free · GPL-3.0';
+
+/**
  * The App Store listing does not exist yet.
  *
- * Leave this empty and every variant renders its store button in a visibly
- * pending state instead of a dead link. Paste the real URL here — one place,
- * one edit — and all seven pages become live download buttons.
+ * Left empty on purpose. The live pages never render a store badge at all —
+ * they send people to RELEASES_URL, which works today. Only the archived
+ * concept pages still branch on this.
  */
 export const APP_STORE_URL = '';
 
@@ -48,6 +65,13 @@ export const SERVERS = [
   { name: 'Navidrome', note: 'The tested OpenSubsonic server; other compatible servers are best-effort.' },
 ] as const;
 
+/**
+ * The one-sentence version of SERVERS, for heroes that have room for a
+ * sentence rather than three plates. Names the two first-class servers and the
+ * open protocol, because "Navidrome" alone under-sells what will connect.
+ */
+export const SERVER_LINE = 'Plex, Jellyfin and Subsonic/OpenSubsonic servers.';
+
 /** Verified capabilities. Nothing here is aspirational. */
 export const FEATURES = [
   {
@@ -56,23 +80,23 @@ export const FEATURES = [
   },
   {
     title: 'Built to work offline',
-    body: 'Downloads are part of the design, not an afterthought bolted on later. Take a record on the subway and it behaves exactly like it does at home.',
+    body: 'Downloads are part of the design, not an afterthought bolted on later. Take an album on the subway and it behaves exactly like it does at home.',
   },
   {
     title: 'Search that keeps up',
-    body: 'The whole catalog lives in an on-device database. A hundred thousand tracks return in about 16 milliseconds, so the list moves while you type.',
+    body: 'The whole catalogue lives in an on-device database rather than behind a request to the server, so the list narrows while you are still typing — and it keeps narrowing with the server switched off.',
   },
   {
-    title: 'Starts instantly',
-    body: 'Seventy-five milliseconds from tapping a track to hearing it. Gapless queue, so an album that was mixed to run together still runs together.',
+    title: 'Gapless from end to end',
+    body: 'An album that was mixed to run together still runs together: no silence inserted between tracks, and no crossfade you did not ask for.',
   },
   {
     title: 'Radio and discovery on your terms',
     body: 'MusicBrainz and ListenBrainz can sharpen radio, mixes, and shuffle when enrichment is enabled. Turn it off and local genre-based recommendations still work.',
   },
   {
-    title: 'A new mix every week',
-    body: 'Mozz Weekly builds a fresh set from music already in your library. It runs on your device and stays available offline, so discovery never depends on a subscription service.',
+    title: 'A new set every week',
+    body: 'Mozz Weekly and Discover Weekly are both built from music already in your library. They are assembled on your device and stay available offline, so discovery never depends on a subscription service.',
   },
   {
     title: 'Tuned to your ears',
@@ -107,21 +131,89 @@ export const PLATFORMS = [
 export const PLATFORM_LINE =
   'On iPhone, iPad, Android, Mac, Windows and Linux.';
 
-/** What actually carries between a listener's devices.
+/**
+ * The launch hero, in one place.
  *
- * Deliberately narrow. The README supports two things: iCloud Keychain moves
- * the sign-in, and Handoff advertises the destination you are on. It does NOT
- * say downloads or the play queue sync — downloads are saved per device — so
- * neither is claimed here.
- *
- * Both mechanisms are Apple's, and Mozz now runs on six platforms, so the
- * sentence names Apple devices out loud. Unscoped, "your other devices" would
- * read as a cross-platform sync service — which is precisely the thing this
- * app does not have.
+ * The homepage and the shortlisted variants all lead with the same three
+ * facts, in the same order: it is free and open source, it plays music you
+ * host yourself, and it runs everywhere. Written once so a page cannot quietly
+ * drift into a fourth version of the pitch.
  */
+export const HERO = {
+  headline: 'Self-hosted music. Every platform. Free.',
+  support: `A free, open source music player for the music on your own Plex, Jellyfin or Subsonic/OpenSubsonic server. ${PLATFORM_LINE} Your library, listening history and taste sync between them on their own, so playback carries on wherever you pick it up.`,
+  kicker: 'Free forever · open source · no account',
+  title: 'Mozz — self-hosted music on every platform',
+  description: `Mozz is a free, open source music player for the music on your own Plex, Jellyfin or Subsonic server. ${PLATFORM_LINE} Your library, history and taste sync automatically, playback carries between devices, and weekly playlists, Discover Weekly and sonic analysis are all built from music you already own.`,
+} as const;
+
+/**
+ * What carries between a listener's devices.
+ *
+ * Mozz now runs on six platforms and the desktop app shares the same library,
+ * listening history and taste as the phone — so continuity is a cross-platform
+ * fact first, and an Apple-specific convenience second. The Apple mechanisms
+ * are still true, but they are a footnote to this, not the whole story.
+ *
+ * SYNC and RESUME are the two halves stated separately, for layouts that want
+ * to give each its own plate. CONTINUITY is the single-paragraph version.
+ */
+export const SYNC = {
+  title: 'One library on every machine',
+  body: 'Sign in on a second device and the same library, the same listening history and the same taste are already there. Nothing has to be exported, matched up or carried across by hand — and there is still no Mozz account in the middle of it.',
+} as const;
+
+export const RESUME = {
+  title: 'Carry on where you stopped',
+  body: 'Leave off on the desktop and the phone can offer to pick the same track up from the same second. It is opt-in, and it is an offer: playback is never yanked away from the device you are actually listening on.',
+} as const;
+
 export const CONTINUITY = {
-  title: 'Pick up on the other one',
-  body: 'On your Apple devices, sign in once and iCloud Keychain carries your server across. Handoff passes the album, artist or playlist you are on straight to the one in your hand, so it is already waiting.',
+  title: 'The same player, everywhere you listen',
+  body: 'The desktop app on Windows, macOS and Linux shares the same library, listening history and taste as the phone in your pocket, and keeps itself in step without being asked. Leave off on one device and Mozz can offer to pick playback up on another.',
+} as const;
+
+/**
+ * Apple-only extras, scoped out loud.
+ *
+ * Kept because they are real and pleasant, but deliberately named as Apple
+ * mechanisms so they can never be read as the cross-platform sync above.
+ */
+export const APPLE_CONTINUITY = {
+  title: 'A little extra on Apple hardware',
+  body: 'Between your Apple devices, iCloud Keychain carries the server sign-in across, and Handoff passes the album, artist or playlist you are looking at straight to the one in your hand.',
+} as const;
+
+/**
+ * Discovery, and where it comes from.
+ *
+ * Ordered as the pipeline actually runs — the library is read, the audio is
+ * analysed, and the week is selected out of the result — so a page can draw it
+ * as one flow instead of three unrelated features. Every step is fed by music
+ * the listener already owns; nothing reaches outside the server for material.
+ */
+export const SONIC_ANALYSIS = {
+  key: 'A',
+  title: 'Sonic analysis',
+  body: 'Mozz listens to the audio itself and describes each track by how it sounds — tempo, energy, brightness, texture, key. That fingerprint is what lets the app tell two albums apart when the genre tag says they are the same thing.',
+} as const;
+
+export const MOZZ_WEEKLY = {
+  key: 'B',
+  title: 'Mozz Weekly',
+  body: 'A fresh set every week, drawn from the music you play most and the music that sits next to it. It is put together on your device and stays available offline, so the week does not stop working when the server does.',
+} as const;
+
+export const DISCOVER_WEEKLY = {
+  key: 'C',
+  title: 'Discover Weekly',
+  body: 'The other half of the week: the parts of your own catalogue you have not reached for lately, chosen because they sound like what you have been playing. Albums you already own, surfaced again — nobody paid for the placement.',
+} as const;
+
+export const DISCOVERY = {
+  title: 'Discovery, made out of your own library',
+  lede: 'Three things, in one line. The catalogue is read, the audio is analysed, and both weekly playlists are selected out of that — on your device, from music you already own.',
+  steps: [SONIC_ANALYSIS, MOZZ_WEEKLY, DISCOVER_WEEKLY],
 } as const;
 
 /** The ownership argument, which is the whole point of the app. */
@@ -144,7 +236,14 @@ export const OWNERSHIP = [
   },
 ] as const;
 
-/** Measured, from ARCHITECTURE.md §8. */
+/**
+ * Measured once, on one machine, from ARCHITECTURE.md §8.
+ *
+ * ARCHIVAL ONLY. The live pages do not print these, and neither should any new
+ * page: a listener's hardware, network and server decide what they actually
+ * see, so a number measured here is not a promise anyone can keep. Left in
+ * place solely so the discarded concepts still render as they were reviewed.
+ */
 export const STATS = [
   { value: '16ms', label: 'search across 100,000 tracks' },
   { value: '75ms', label: 'from tap to first note' },
@@ -172,6 +271,10 @@ export const FAQS = [
   {
     q: 'Which platforms?',
     a: 'iPhone, iPad, Android, Mac, Windows and Linux \u2014 the same library and the same player on all six.',
+  },
+  {
+    q: 'Do my devices stay in step?',
+    a: 'Yes. Your library, listening history and taste sync between your devices on their own, and playback can be picked up on another one when you want it \u2014 that part is opt-in, so nothing is ever pulled away mid-song.',
   },
 ] as const;
 

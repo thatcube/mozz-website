@@ -32,12 +32,16 @@ import {
   SERVERS,
   FEATURES,
   CONTINUITY,
+  APPLE_CONTINUITY,
+  SYNC,
+  RESUME,
+  DISCOVERY,
   OWNERSHIP,
-  STATS,
   FAQS,
   GITHUB_URL,
   DONATE_URL,
-  APP_STORE_URL,
+  RELEASES_URL,
+  DOWNLOAD_LABEL,
   PLATFORMS,
   PLATFORM_LINE,
 } from '../../data/site';
@@ -55,7 +59,6 @@ const domain = SITE.replace(/^https?:\/\//, '');
 const BILL = FEATURES.map((f) => f.title);
 
 const PARITY = [FEATURES[0], FEATURES[1]];
-const WEEKLY = FEATURES[5];
 const ALOUD = FEATURES[7];
 const REST = [FEATURES[2], FEATURES[3], FEATURES[4], FEATURES[6]];
 
@@ -288,18 +291,8 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
 
         <div class="foot">
           <div class="actions">
+            <a class="store" href={RELEASES_URL} rel="noopener">{DOWNLOAD_LABEL}</a>
             <a class="source" href={GITHUB_URL}>Get the source on GitHub</a>
-            {
-              APP_STORE_URL ? (
-                <a class="store" href={APP_STORE_URL}>
-                  Download on the App Store
-                </a>
-              ) : (
-                <span class="store is-pending" aria-disabled="true">
-                  Coming to the App Store
-                </span>
-              )
-            }
           </div>
 
           <div class="works">
@@ -383,17 +376,6 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
             ))
           }
         </div>
-
-        <ul class="stats" role="list">
-          {
-            STATS.map((s, i) => (
-              <li class="reveal" style={`--i:${i}`}>
-                <b>{s.value}</b>
-                <span>{s.label}</span>
-              </li>
-            ))
-          }
-        </ul>
       </div>
     </section>
 
@@ -404,8 +386,20 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     <section class="band weekly" aria-labelledby="po-weekly-t">
       <div class="wrap">
         <p class="chapter"><i aria-hidden="true"></i><b>03</b>Featured</p>
-        <h2 id="po-weekly-t">{WEEKLY.title}</h2>
-        <p class="lede">{WEEKLY.body}</p>
+        <h2 id="po-weekly-t">{DISCOVERY.title}</h2>
+        <p class="lede">{DISCOVERY.lede}</p>
+
+        <ul class="trio" role="list">
+          {
+            DISCOVERY.steps.map((step, i) => (
+              <li class="reveal" style={`--i:${i}`}>
+                <b>{step.key}</b>
+                <strong>{step.title}</strong>
+                <span>{step.body}</span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
       <div class="roller" aria-hidden="true">
@@ -541,8 +535,23 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     <section class="band pair" aria-labelledby="po-pair-t">
       <div class="wrap">
         <p class="chapter"><i aria-hidden="true"></i><b>07</b>Handover</p>
-        <h2 id="po-pair-t">Start it here. Finish it there.</h2>
+        <h2 id="po-pair-t">{CONTINUITY.title}</h2>
         <p class="lede">{CONTINUITY.body}</p>
+
+        <ul class="trio trio--pair" role="list">
+          <li class="reveal" style="--i:0">
+            <b>A</b>
+            <strong>{SYNC.title}</strong>
+            <span>{SYNC.body}</span>
+          </li>
+          <li class="reveal" style="--i:1">
+            <b>B</b>
+            <strong>{RESUME.title}</strong>
+            <span>{RESUME.body}</span>
+          </li>
+        </ul>
+
+        <p class="aside">{APPLE_CONTINUITY.title}: {APPLE_CONTINUITY.body}</p>
       </div>
 
       <div class="rig" role="img" aria-label="An iPad showing the Mozz library beside an iPhone playing a downloaded album.">
@@ -624,18 +633,8 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
         <p class="close-sub">{SUBLINE}</p>
 
         <div class="actions">
+          <a class="store" href={RELEASES_URL} rel="noopener">{DOWNLOAD_LABEL}</a>
           <a class="source" href={GITHUB_URL}>Get the source on GitHub</a>
-          {
-            APP_STORE_URL ? (
-              <a class="store" href={APP_STORE_URL}>
-                Download on the App Store
-              </a>
-            ) : (
-              <span class="store is-pending" aria-disabled="true">
-                Coming to the App Store
-              </span>
-            )
-          }
           <a class="plain" href={DONATE_URL}>Sponsor the work</a>
         </div>
 
@@ -990,7 +989,10 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     white-space: nowrap;
   }
 
-  .source {
+  /* The releases link is the primary action now: it is the one that actually
+     does something today, so it takes the heavy plate and the source link
+     steps back to an outline. */
+  .store {
     background: var(--ink);
     color: var(--paper);
     box-shadow: 5px 5px 0 var(--red);
@@ -999,14 +1001,20 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
       box-shadow 140ms ease;
   }
 
-  .source:hover {
+  .store:hover {
     box-shadow: 2px 2px 0 var(--red);
     transform: translate(3px, 3px);
   }
 
-  .store.is-pending {
-    border: 2px dashed var(--ink);
-    opacity: 0.82;
+  .source {
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .source:hover {
+    background: var(--ink);
+    color: var(--paper);
   }
 
   .works {
@@ -1232,39 +1240,54 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
     opacity: 0.9;
   }
 
-  .stats {
+  /* The plate row that used to carry figures. It now carries the three
+     things the figures were standing in for, which is what the press should
+     have been printing in the first place. */
+  .trio {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(12px, 1.6vw, 24px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 30px);
     margin-top: clamp(24px, 3.4vh, 40px);
   }
 
-  .stats li {
+  .trio--pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trio li {
     padding-top: clamp(8px, 1.2vh, 14px);
     border-top: 3px solid var(--ink);
   }
 
-  .stats li:first-child {
+  .trio li:first-child {
     border-top-color: var(--red);
   }
 
-  .stats b {
+  .trio b {
     display: block;
     font-family: 'Big Shoulders Display', 'Arial Narrow', system-ui, sans-serif;
-    font-size: clamp(38px, 4.6vw, 76px);
+    font-size: clamp(30px, 3.4vw, 54px);
     font-weight: 900;
     line-height: 0.9;
   }
 
-  .stats li:first-child b {
+  .trio li:first-child b {
     color: var(--red);
   }
 
-  .stats span {
+  .trio strong {
     display: block;
     margin-top: 0.35rem;
-    font-size: clamp(11.5px, 0.9vw, 13.5px);
-    line-height: 1.35;
+    font-size: clamp(15px, 1.2vw, 18px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .trio span {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: clamp(12.5px, 0.95vw, 14px);
+    line-height: 1.45;
     font-weight: 500;
     opacity: 0.78;
   }
@@ -2046,7 +2069,8 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .stats {
+    .trio,
+    .trio--pair {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -2151,7 +2175,8 @@ const PAD_TILES = [3, 9, 1, 7, 11, 5, 0, 6, 10, 2, 8, 4, 7, 2, 11, 4, 9, 0, 5, 1
       gap: 0.85rem;
     }
 
-    .stats {
+    .trio,
+    .trio--pair {
       grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
     }
